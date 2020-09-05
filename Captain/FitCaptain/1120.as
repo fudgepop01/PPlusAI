@@ -1,0 +1,58 @@
+#include <Definition_AIMain.h>
+//TrueID=0x603C
+id 0x1120
+
+//Set Unknown
+unk 0x0
+
+#let pummelCount = var0
+if ODamage > 100
+  pummelCount = 4
+elif ODamage > 80
+  pummelCount = 3
+elif ODamage > 60
+  pummelCount = 2
+elif ODamage > 30
+  pummelCount = 1
+else
+  pummelCount = 0
+endif
+label
+ClearStick
+if CurrAction < hex(0x34) || CurrAction > hex(0x3C)
+  Call AIHub
+elif CurrAction < hex(0x3A) || CurrAction > hex(0x3C)
+  if pummelCount > 0
+    Button A
+    pummelCount -= 1
+    Return
+  else
+    if DistFrontEdge < 25
+      if ODamage > 20
+        Stick 1
+        moveVariant = mv_fthrow
+      else
+        Stick 0 (-1)
+        moveVariant = mv_dthrow
+      endif
+    elif DistBackEdge < 25
+      Stick (-1)
+      moveVariant = mv_bthrow
+    elif ODamage > 100
+      var1 = Rnd * 3
+      if var1 < 2
+        Stick 0 1
+        moveVariant = mv_uthrow
+      else
+        Stick 0 (-1)
+        moveVariant = mv_dthrow
+      endif
+    else
+      Stick 0 (-1)
+      moveVariant = mv_dthrow
+    endif
+  endif
+  Return
+endif
+Return
+Return
