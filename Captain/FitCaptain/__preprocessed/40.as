@@ -7,6 +7,14 @@ unk 0x20000
 
 //Strings
 
+if Equal CurrAction 276 || Equal CurrAction 16
+  Call RecoveryHub
+endif
+
+if MeteoChance
+    Call EdgeguardHub
+endif
+
 //____________________
 label
 var0=Direction*OPos*0.7

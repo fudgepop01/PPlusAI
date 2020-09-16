@@ -3,10 +3,12 @@
 id 0x2010
 
 //Set Unknown
-unk 0x130000
+unk 0x0
 
 //Strings
 str "#hi_base"
+
+Call RecoveryHub
 
 SetVec var0 Zero
 var11=Func23*(-1)

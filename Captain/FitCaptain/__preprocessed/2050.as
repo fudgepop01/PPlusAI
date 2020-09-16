@@ -7,6 +7,9 @@ unk 0x0
 
 //Strings
 
+if Equal IsOnStage 0
+    Call RecoveryHub
+endif
 Call AIHub
 
 if Rnd <= 0.5

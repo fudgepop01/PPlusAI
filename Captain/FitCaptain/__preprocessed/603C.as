@@ -22,12 +22,19 @@ else
     Button A|R
     Seek execute
   endif
-  Button X
+  if !(Equal OPos Direction)
+    Stick -0.8
+    Return
+  endif
+  if Equal AirGroundState 1 && CurrAction <= 9
+    Button X
+  endif
 endif
 Return
 
 label techChase_wait
-var0 = Rnd * 50 + 100
+SetTimeout 300
+var0 = Rnd * 75 + 75
 var1 = 0
 label
 if !(XDistLE 15)
@@ -40,7 +47,6 @@ else
 endif
 
   var5 = 0
-  var6 = OCurrAction
   if Equal var6 96 || Equal var6 81
     if OAnimFrame < 15
       var5 = 1
@@ -56,12 +62,11 @@ endif
 if Equal var5 1
   var1 = 1
 endif
-LOGSTR 2002872576 1953066496 1731079680 771751936 0
 var0 -= 1
-if Equal var1 1 && Equal var5 0
-  Goto seekOpponent
-elif OCurrAction <= 32
+if OCurrAction <= 32
   Call AIHub
+elif Equal var1 1 && Equal var5 0
+  Goto seekOpponent
 elif var0 <= 0 || Equal OYDistFloor -1
   Goto seekOpponent
 elif OYDistFloor > 10 && Equal OFramesHitstun 0
@@ -71,9 +76,9 @@ Return
 
 label seekOpponent
 var20 = 24636
-var9 = 0
+var9 = 1
 var10 = 1
-var11 = 7
+var11 = 5
 var12 = 2
 var13 = 16
 Call ApproachHub

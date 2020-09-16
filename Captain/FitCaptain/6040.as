@@ -7,8 +7,6 @@ unk 0x50000
 
 //Strings
 
-
-
 // sets up offsets to get to target position
 if Equal movePart 0
   if CalledAs NAir
@@ -49,7 +47,11 @@ if Equal movePart 0
   else
     Call AIHub
   endif
-  Call ApproachHub
+  if Equal approachType at_defend && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
 elif Equal AirGroundState 2
   ClearStick
   move_IASA = nair_IASA
@@ -81,6 +83,8 @@ if FrameGE 1
     Call AIHub
   endif
 
+  RECORD_MOVE_CONNECTFRAME
+
   if targetXDistance < 0
     AbsStick (-1)
   else
@@ -88,7 +92,7 @@ if FrameGE 1
   endif
 
 
-  if YSpeed < 0 && YDistFloor < 25 && YDistFloor >= 0
+  if YSpeed < 0 && YDistFloor < 10 && YDistFloor >= 0
     var19 = 2
     var18 = 1
     Call Landing

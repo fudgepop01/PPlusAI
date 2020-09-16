@@ -10,7 +10,13 @@ unk 0x0
 
 //Strings
 
-LOGSTR 1215652352 0 0 0 0
+if Equal AIMD 3
+  SetAIMD 1 32768
+endif
+
+if CurrAction >= 26 && CurrAction <= 29
+  Call OOSHub
+endif
 
 //______________________________________
 // Rand DI / tech "smart" implementation
@@ -21,6 +27,8 @@ if FramesHitstun > 0
   //...pick a random direction for the control stick
   var0 = Rnd - 1
   var1 = Rnd - 1
+  var2 = 1
+  var3 = Rnd * 5 + 10
   // label to make this loop each frame...
   label
   if Equal IsOnStage 0 || Damage > 80
@@ -35,7 +43,12 @@ if FramesHitstun > 0
     ClearStick
     Seek _main
   endif
-  Goto _checkTech
+  if LevelValue >= 60
+    Goto _checkMeteorCancel
+  endif
+  if LevelValue >= 21
+    Goto _checkTech
+  endif
   Return
 endif
 Goto _main
@@ -44,17 +57,48 @@ Return
 // Goto statements will return back to where they came
 // from if there isn't a label, making this possible
 //
-// makes the AI input R every 41 frames 90% of the time
+// makes the AI input R every 41 frames 80% (base) of the time
 label _checkTech
-if CurrAction >= 69 && CurrAction <= 77 && FramesSinceShield > 40
-  if Rnd >= 0.1
-    Button R
+if CurrAction >= 69 && CurrAction <= 77 && FramesSinceShield > 40 && var2 <= 0
+  var4 = (100 - LevelValue) / 100
+  var4 = 0.8 - var4
+  if Rnd < var4
+    if Equal YDistFloor -1 && Equal CurrAction 69 && FramesHitlag <= 1
+      Button R
+    elif YDistFloor < 20 && YSpeed < 0
+      Button R
+    endif
   endif
+  var2 = 41
 endif
+var2 -= 1
+Return
+
+// meteor cancels when applicable 90% (base) of the time with
+// a jump 50% of the time (if possible), otherwise with upB
+label _checkMeteorCancel
+if KBAngle >= 260 && KBAngle <= 280 && var3 <= 0 && Equal IsOnStage 0 && YDistFrontEdge > 0
+  var4 = (100 - LevelValue) / 100
+  var4 = 0.9 - var4
+  if Rnd < 0.9
+    if CanJump && Rnd < 0.5
+      Button X
+    elif CanJump && YDistFrontEdge > 40
+      Button X
+    else
+      Stick 0 0.7
+      Button B
+      Call RecoveryHub
+    endif
+  endif
+  var3 = 41
+endif
+var3 -= 1
 Return
 
 // the stuff here happens when not in hitstun.
 label _main
+var1 = 0
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
@@ -62,6 +106,26 @@ label
 // where RecoveryHub (4.as) is called
 if Equal IsOnStage 0 && InAir
   Call RecoveryHub
+endif
+
+GetIsTeammateCloser var0
+// LOGSTR 1952801024 1835884800 1952793344 1819243264 1701969920
+// LOGVAL var0
+if Equal var0 1 && OYDistFloor < 50
+  var1 = 1
+  LOGVAL var0
+  if !(XDistLE 70)
+    AbsStick OPos
+  elif XDistLE 24 && XDistBackEdge < -30
+    var0 = OPos * -1
+    AbsStick var0
+  elif Rnd < 0.05
+    AbsStick OPos
+  endif
+  if Rnd < 0.05
+    SwitchTarget
+  endif
+  Return
 endif
 
 if MeteoChance
@@ -90,13 +154,24 @@ if OFramesHitstun > 0 && !(Equal var19 255)
   Call ComboHub
 endif
 
+ClearStick
+if Equal AirGroundState 1
+  if XDistBackEdge > -15 && XDistFrontEdge > 20
+    Stick 1
+    Return
+  elif XDistFrontEdge < 15 && XDistBackEdge < -20
+    Stick -1
+    Return
+  endif
+endif
+
 // EnableDebugOverlay
 // SetDebugOverlayColor 0 0 0 200
-ClearStick
+var19 = 0
 var18 = 0
+var15 = -1
 
   var5 = 0
-  var6 = OCurrAction
   if Equal var6 96 || Equal var6 81
     if OAnimFrame < 15
       var5 = 1
@@ -118,7 +193,7 @@ if Equal var5 0
   // because we don't want to set the var0 again if we revisit
   // this, we place a label here to jump to
   label callers
-  if !(Equal var0 0)
+  if var0 >= 1
     if var0 < 2
       Call Jab123
     elif var0 < 3
@@ -160,75 +235,125 @@ if Equal var5 0
     elif var0 < 21
       Call DSpecialAir
     endif
-  else
+  elif YDistFloor < 40
+    if LevelValue >= 60 && Equal var1 0
+      if OAttacking && OCurrActionFreq > 6 && Rnd < 0.8 && !(Equal var21 32776)
+        Call FakeOutHub
+      elif Rnd < 0.05 && !(Equal var21 32776)
+        Call FakeOutHub
+      endif
+    endif
+
+    var21 = -1
+
+    if LevelValue >= 42 && Equal var1 0
+      if XDistLE 40 && Rnd < 0.15 && Equal AirGroundState 1
+        if Equal AIMD 2 || Rnd < 0.4
+          var21 = 2
+        endif
+        Call NeutralHub
+      endif
+    endif
+
+    if Equal var1 0
+      if Equal AIMD 2 || Rnd < 0.05
+        var21 = 2
+        if OYDistFloor > 45
+          Call UAir
+        endif
+        if Rnd < 0.5 && !(Equal Direction OPos)
+          Call BAir
+        else
+          Call NAir
+        endif
+      endif
+    endif
+    var21 = 1
+
+    // if the opponent is lying there doing nothing
+    if LevelValue >= 48 && Equal var1 0
+      if Equal OCurrAction 74 || Equal OCurrAction 77
+        Call DAir
+      endif
+    endif
+
     // this part is effectively falcon's whole entire neutral game.
     // if the opponent is close to the ground...
-    if OYDistFloor < 15 && Equal OIsOnStage 1
-      var0 = Rnd * 160
-      // LOGSTR 1836021248 1699964160 1811939328 0 0
-      // LOGVAL var0
-      // these moves are pretty much always relevant
-      if var0 >= 100
-        if var0 < 110
-          Call FAir
-        elif var0 < 125
-          Call DAir
-        elif var0 < 140
-          Call NAir
-        elif var0 < 150
-          Call Grab
-        else
-          var0 = Rnd * 11 + 2
-          Goto callers
-        endif
-      else
-        if ODamage >= 90
-          // LOGSTR 1044193280 959447040 0 0 0
-          if var0 < 20
-            Call Grab
-          elif var0 < 60
+    if LevelValue >= 21
+      if OYDistFloor < 15
+        var0 = Rnd * 160
+        // LOGSTR 1836021248 1699964160 1811939328 0 0
+        // LOGVAL var0
+        // these moves are pretty much always relevant
+        if var0 >= 100
+          if var0 < 110
             Call FAir
-          elif var0 < 65
-            Call Jab123
-          elif var0 < 80
-            Call FSmash
-          elif var0 < 95
-            Call USmash
-          else
+          elif var0 < 125
             Call DAir
-          endif
-        elif ODamage >= 50
-          // LOGSTR 1044193280 892338176 0 0 0
-          if var0 < 30
+          elif var0 < 140
+            Call NAir
+          elif var0 < 150
             Call Grab
           else
-            Call FTilt
+            var0 = Rnd * 11 + 2
+            Goto callers
           endif
         else
-          // LOGSTR 1008743680 805306368 0 0 0
-          if var0 < 50
-            // LOGSTR 1667329024 1816621568 1644167168 0 0
-            Call Grab
+          if ODamage >= 90
+            // LOGSTR 1044193280 959447040 0 0 0
+            if var0 < 20
+              Call Grab
+            elif var0 < 60
+              Call FAir
+            elif var0 < 65
+              Call Jab123
+            elif var0 < 80
+              Call FSmash
+            elif var0 < 95
+              Call USmash
+            else
+              Call DAir
+            endif
+          elif ODamage >= 50
+            // LOGSTR 1044193280 892338176 0 0 0
+            if var0 < 30
+              Call Grab
+            else
+              Call FTilt
+            endif
           else
-            // LOGSTR 1667329024 1816420608 1769078784 0 0
-            Call DAir
+            // LOGSTR 1008743680 805306368 0 0 0
+            if var0 < 50
+              // LOGSTR 1667329024 1816621568 1644167168 0 0
+              Call Grab
+            else
+              // LOGSTR 1667329024 1816420608 1769078784 0 0
+              Call DAir
+            endif
+            // LOGSTR 1852797952 1165518080 1660944384 0 0
           endif
-          // LOGSTR 1852797952 1165518080 1660944384 0 0
+          // LOGSTR 1852796416 1694498816 0 0 0
         endif
-        // LOGSTR 1852796416 1694498816 0 0 0
       endif
-    elif OYDistFloor < 45 && Equal OIsOnStage 1
-      if Rnd < 0.5 && ODamage > 50
-        Call FAir
-      else
-        Call UAir
+      if OYDistFloor < 45
+        if Rnd < 0.5 && ODamage > 50
+          Call FAir
+        else
+          Call UAir
+        endif
       endif
-    else
       // if we're here, then the opponent is in the air at which point
       // we just perform a random aerial for the sake of having some variety lol
       LOGSTR 1918987776 1682007296 1919508736 1811939328 0
       var0 = Rnd * 5 + 12
       Goto callers
+    else
+      var0 = Rnd * 17
+      Seek callers
+    endif
+  else
+    if Rnd < 0.05
+      Call DAir
     endif
   endif
 endif

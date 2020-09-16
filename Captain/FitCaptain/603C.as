@@ -22,14 +22,21 @@ else
     Button A|R
     Seek execute
   endif
-  Button X
+  if !(Equal OPos Direction)
+    Stick -0.8
+    Return
+  endif
+  if Equal AirGroundState 1 && CurrAction <= hex(0x09)
+    Button X
+  endif
 endif
 Return
 
 label techChase_wait
+SetTimeout 300
 #let patience = var0
 #let rollFlag = var1
-patience = Rnd * 50 + 100
+patience = Rnd * 75 + 75
 rollFlag = 0
 label
 if !(XDistLE 15)
@@ -46,12 +53,11 @@ IS_EARLY_ROLL
 if Equal isEarlyRoll 1
   rollFlag = 1
 endif
-LOGSTR str("waiting...")
 patience -= 1
-if Equal rollFlag 1 && Equal isEarlyRoll 0
-  Goto seekOpponent
-elif OCurrAction <= hex(0x20)
+if OCurrAction <= hex(0x20)
   Call AIHub
+elif Equal rollFlag 1 && Equal isEarlyRoll 0
+  Goto seekOpponent
 elif patience <= 0 || Equal OYDistFloor -1
   Goto seekOpponent
 elif OYDistFloor > 10 && Equal OFramesHitstun 0

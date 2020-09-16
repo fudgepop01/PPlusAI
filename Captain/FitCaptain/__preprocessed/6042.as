@@ -9,12 +9,16 @@ unk 0x0
 
 if Equal var18 0
   var9 = 8
-  var10 = -3
-  var11 = 9
-  var12 = 11
-  var13 = 25
+  var10 = 0
+  var11 = 11
+  var12 = 15
+  var13 = 23
   var20 = 24625
-  Call ApproachHub
+  if Equal var21 2 && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
 else
   if Equal var19 254 && OYDistFloor < 10
     if YSpeed < 0
@@ -41,8 +45,10 @@ label executeAttack
   var6 = OTopNY + var10
   // account for target's & own velocity
   var5 = var5 + (OXSpeed * 10) - (XSpeed * var13 / 2)
-  if YSpeed < 0.10 && YDistFloor > 10 && TopNY > OTopNY
-    var6 = var6 + (OYSpeed * var13 / 2) - ((YSpeed - 1) * var13 / 2) + OHurtboxSize
+  if YSpeed < 0.20 && YDistFloor > 10 && TopNY > OTopNY
+    var6 = var6 + (OYSpeed * (var13 + 3) / 2) - ((YSpeed - 1) * (var13 + 3) / 2) + OHurtboxSize + 3
+  elif YDistFloor > 10
+    var6 = var6 + (OYSpeed * var13 / 2) - ((YSpeed - 0.5) * var13 / 2)
   else
     var6 = var6 + (OYSpeed * var13 / 2) - (YSpeed * var13 / 2)
   endif
@@ -72,8 +78,12 @@ else
   AbsStick 1
 endif
 
+if Equal HitboxConnected 1 && OFramesHitstun > 0
+  var15 = AnimFrame
+endif
 
-if YSpeed < 0 && YDistFloor < 25 && YDistFloor >= 0
+
+if YSpeed < 0 && YDistFloor < 10 && YDistFloor >= 0
   var19 = 2
   var18 = 1
   Call Landing

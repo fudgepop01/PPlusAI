@@ -24,8 +24,10 @@
   targetY = OTopNY + move_yOffset
   // account for target's & own velocity
   targetX = targetX + (OXSpeed * 10) - (XSpeed * move_hitFrame / 2)
-  if YSpeed < 0.10 && YDistFloor > 10 && TopNY > OTopNY
-    targetY = targetY + (OYSpeed * move_hitFrame / 2) - ((YSpeed - 1) * move_hitFrame / 2) + OHurtboxSize
+  if YSpeed < 0.20 && YDistFloor > 10 && TopNY > OTopNY
+    targetY = targetY + (OYSpeed * (move_hitFrame + 3) / 2) - ((YSpeed - 1) * (move_hitFrame + 3) / 2) + OHurtboxSize + 3
+  elif YDistFloor > 10
+    targetY = targetY + (OYSpeed * move_hitFrame / 2) - ((YSpeed - 0.5) * move_hitFrame / 2)
   else
     targetY = targetY + (OYSpeed * move_hitFrame / 2) - (YSpeed * move_hitFrame / 2)
   endif
@@ -48,10 +50,64 @@
   targetYDistance = targetY - TopNY
 #endmacro
 
+// to make AIs less accurate with their moves the lower their level gets
+#macro MESS_MOVE_PARAMS
+  #let adjustment = var5
+
+  adjustment = (100 - LevelValue) / 3
+  move_xOffset = move_xOffset + (Rnd * adjustment * 2) - (adjustment)
+  move_yOffset = move_yOffset + (Rnd * adjustment * 2) - (adjustment)
+
+  adjustment = (100 - LevelValue) / 5
+  move_xRange = move_xRange + (Rnd * adjustment)
+  move_yRange = move_yRange + (Rnd * adjustment)
+
+  adjustment = (100 - LevelValue) / 15
+  move_hitFrame = move_hitFrame + (Rnd * adjustment) - (adjustment / 2)
+
+  adjustment = (100 - LevelValue) / 25
+  move_IASA = move_IASA + (Rnd * adjustment)
+#endmacro
+
+#macro DEFENSIVE_REACTION_TIME
+  #let delay = var0
+  #let tActionFreq = var1
+  tActionFreq = OCurrActionFreq
+  if tActionFreq >= 5
+      delay = 0
+  elif tActionFreq >= 4
+      delay = 5
+  elif tActionFreq >= 3
+      delay = 10
+  elif tActionFreq >= 2
+      delay = 15
+  else
+      delay = 25
+  endif
+  if !(Equal delay 0)
+    delay = delay + Rnd * 5
+    delay = delay + Rnd * (100 - LevelValue) / 6
+  endif
+
+  label
+  if delay <= 0
+      Seek
+  endif
+  delay -= 1
+  Return
+
+  label begin
+#endmacro
+
 // will setup and perform a jump if the target position is within the given
 // ranges
 #macro JUMP_IF_IN_RANGES
   #let targetYDistance = var6
+  LOGVAL targetYDistance
+  if MeteoChance && targetYDistance > 10 && targetYDistance < 45 && Equal IsOnStage 0 && YSpeed < 0.01
+    Button X
+  endif
+
   if targetYDistance > 10 && Equal AirGroundState 1 && CurrAction <= 9
     Button X
   endif
@@ -63,6 +119,12 @@
   if targetYDistance > 35 && targetYDistance < 55 && Equal AirGroundState 2 && YDistFloor > 20 && CanJump
     Button X
   endif
+#endmacro
+
+#macro RECORD_MOVE_CONNECTFRAME
+if Equal HitboxConnected 1 && OFramesHitstun > 0
+  move_connectFrame = AnimFrame
+endif
 #endmacro
 
 // dashdances between 0 and 5 times if the opponent is far away and
@@ -93,7 +155,6 @@
 #macro IS_EARLY_ROLL
   #let isEarlyRoll = var5
   isEarlyRoll = 0
-  var6 = OCurrAction
   if Equal var6 hex(0x60) || Equal var6 hex(0x51)
     if OAnimFrame < 15
       isEarlyRoll = 1

@@ -1,3 +1,4 @@
+// forcibly handles shields
 #include <Definition_AIMain.h>
 //TrueID=0x3020
 id 0x3020
@@ -7,10 +8,23 @@ unk 0x40000
 
 //Strings
 
-GetShieldRemain var0
-if var0 < 30
+if !(Equal AirGroundState 1)
     Finish
 endif
+GetShieldRemain var0
+if var0 < 20
+    Finish
+endif
+
+if !(OAttacking)
+  SetTimeout 10
+  Return
+endif
+
+
+SetTimeout 50
+DEFENSIVE_REACTION_TIME
+
 var10=Rnd*20+5
 var11=(100-LevelValue)*0.12
 var10+=var11
@@ -19,6 +33,7 @@ var10+=var11
 SetTimeout 20
 //____________________
 label
+Goto shieldStunCheck
 if !(Idling) && !(Dashing)
     if FrameGE 1 && !(FrameGE 3)
         Button R
@@ -31,6 +46,7 @@ Jump
 Return
 //____________________
 label
+Goto shieldStunCheck
 Button R
 if OAttacking && LevelValue >= 60 && XDistLE 20 && !(FrameGE 20)
     var10-=0.01
@@ -48,6 +64,7 @@ endif
 Return
 //____________________
 label
+Goto shieldStunCheck
 Button R
 if FrameGE var10
     var12=Rnd
@@ -87,6 +104,7 @@ endif
 Return
 //____________________
 label _0
+Goto shieldStunCheck
 Button R
 if FrameGE 3
     Stick 1
@@ -100,6 +118,7 @@ endif
 Return
 //____________________
 label _1
+Goto shieldStunCheck
 if FrameGE 2
     Stick 0 1
     Button A
@@ -123,9 +142,18 @@ endif
 if !(Act1EOr1D var10)
     Finish
 endif
+Goto shieldStunCheck
 Return
 //____________________
 label _3
+Goto shieldStunCheck
 Button R
+Return
+
+label shieldStunCheck
+if Equal CurrAction hex(0x1D)
+    Call OOSHub
+    Finish
+endif
 Return
 Return

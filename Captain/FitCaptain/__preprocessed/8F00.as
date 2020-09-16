@@ -40,8 +40,8 @@ Return
 label executed
 label
 
-if Equal var21 32769
+// if Equal var21 32769
   Call ApproachHub
-endif
+// endif
 Return
 Return

@@ -166,7 +166,7 @@ CanJump {
 
 //Entry number : 0x2
 True {
-    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
 }
 
 //_____Section1 ends_____
@@ -195,29 +195,32 @@ MeteoChance {
 }
 
 //Entry number : 0x8
-Lying&&SamePlane {
+// Lying&&SamePlane {
+!True {
     InterceptCliff 100,100,0,0
 }
 
 //Entry number : 0x9
 Not1_4_9_12And2 {
-    Unk1060 100,100,0,0
+    AIHub 100,100,0,0
 }
 
 //Entry number : 0xA
 OInHigh&&XVeryClose {
-    DJNeutral 100,100,0,0
+    AIHub 100,100,0,0
 }
 
 //Entry number : 0xB
 Back&&OInHigh {
-    WalkUp 100,100,0,0
-    FHopAway 100,100,0,0
+    AIHub 100,100,0,0
+    // WalkUp 100,100,0,0
+    // FHopAway 100,100,0,0
 }
 
 //Entry number : 0xC
 OInHigh&&!fVeryClose {
-    FHopTowards 100,100,0,0
+    AIHub 100,100,0,0
+    // FHopTowards 100,100,0,0
 }
 
 //Entry number : 0xD
@@ -231,7 +234,7 @@ ev3 {
 }
 
 //Entry number : 0xF
-Back {
+Back&&!True {
     WalkUp 100,100,0,0
     Unk3020 100,100,0,0
     Unk3080 100,100,0,0
@@ -359,7 +362,7 @@ InAir {
 }
 
 //Entry number : 0x16
-MeteoChance {
+MeteoChance&&!True {
     BlockRecovery 100,100,0,0
 }
 
@@ -368,22 +371,24 @@ if !SamePlane
 
 //Entry number : 0x18
 fXClose&&ev3 {
-    FHopTowards 100,100,0,0
-    DashUp 100,100,0,0
-    Unk22 100,100,0,0
-    RollB 100,100,0,0
-    Unk10 100,100,0,0
-    Nothing 100,100,0,0
+    AIHub 100,100,0,0
+    // FHopTowards 100,100,0,0
+    // DashUp 100,100,0,0
+    // Unk22 100,100,0,0
+    // RollB 100,100,0,0
+    // Unk10 100,100,0,0
+    // Nothing 100,100,0,0
 }
 
 //Entry number : 0x19
 fXClose&&OInHigh {
-    FHopTowards 100,100,0,0
-    Unk22 100,100,0,0
-    RollB 100,100,0,0
-    Unk3010 100,100,0,0
-    Unk10 100,100,0,0
-    Nothing 100,100,0,0
+    AIHub 100,100,0,0
+    // FHopTowards 100,100,0,0
+    // Unk22 100,100,0,0
+    // RollB 100,100,0,0
+    // Unk3010 100,100,0,0
+    // Unk10 100,100,0,0
+    // Nothing 100,100,0,0
 }
 
 //Entry number : 0x1A
@@ -409,20 +414,21 @@ Far {
 
 //Entry number : 0x1D
 True {
-    Unk1050 100,100,0,0
-    Unk3040 100,100,0,0
-    FHopTowards 100,100,0,0
-    SHopNeutral 100,100,0,0
-    Unk3080 100,100,0,0
-    Unk3010 100,100,0,0
-    Unk10 100,100,0,0
+    AIHub 100,100,0,0
+    // Unk1050 100,100,0,0
+    // Unk3040 100,100,0,0
+    // FHopTowards 100,100,0,0
+    // SHopNeutral 100,100,0,0
+    // Unk3080 100,100,0,0
+    // Unk3010 100,100,0,0
+    // Unk10 100,100,0,0
 }
 
 //Entry number : 0x1E
 endif
 
 //Entry number : 0x1F
-Back {
+Back&&!True {
     WalkUp 90,38,100,0
 }
 

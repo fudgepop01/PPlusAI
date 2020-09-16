@@ -14,7 +14,11 @@ if Equal movePart 0
   move_yRange = fair_yRange
   move_hitFrame = fair_dist1
   lastAttack = hex(0x6031)
-  Call ApproachHub
+  if Equal approachType at_defend && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
 else
   if Equal moveVariant mv_lowAerial && OYDistFloor < 10
     if YSpeed < 0
@@ -44,8 +48,9 @@ else
   AbsStick 1
 endif
 
+RECORD_MOVE_CONNECTFRAME
 
-if YSpeed < 0 && YDistFloor < 25 && YDistFloor >= 0
+if YSpeed < 0 && YDistFloor < 10 && YDistFloor >= 0
   var19 = 2
   var18 = 1
   Call Landing

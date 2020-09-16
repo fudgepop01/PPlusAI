@@ -15,6 +15,8 @@
 #let move_hitFrame = var13
 #let move_IASA = var14
 
+#let move_connectFrame = var15
+
 // used in various places to tell what part the routine should jump to
 // effectively used to communicate between scripts
 #let movePart = var18
@@ -49,6 +51,32 @@
 
 #const mv_edgeguard = 255
 
+// AI "mode" values
+#const md_attack = 1
+#const md_defend = 2
+
+// AI taunt values
+#const utaunt = 1
+#const staunt = 2
+#const dtaunt = 3
+
+// controls the approach the AI uses. It's okay because MOVES shouldn't care
+// about what script was called previously - only what move they are.
+#let approachType = var21
+#const at_attack = 1 // default
+#const at_defend = 2
+
+// AI values
+#const LV1 = 0
+#const LV2 = 15
+#const LV3 = 21
+#const LV4 = 31
+#const LV5 = 42
+#const LV6 = 48
+#const LV7 = 60
+#const LV8 = 75
+#const LV9 = 100
+
 // the following is the data that I give the AI that allows it to determine
 // where it should be before performing an attack.
 // it will attempt to a point with these parameters in
@@ -64,9 +92,9 @@
 
 // ftilt
 #const ftilt_IASA = 30
-#const ftilt_xOffset = 7
-#const ftilt_yOffset = 10
-#const ftilt_xRange = 25
+#const ftilt_xOffset = 4
+#const ftilt_yOffset = 9
+#const ftilt_xRange = 34
 #const ftilt_yRange = 10
 #const ftilt_dist1 = 20
 
@@ -96,9 +124,9 @@
 
 // usmash
 #const usmash_IASA = 32
-#const usmash_xOffset = 4
-#const usmash_yOffset = 10
-#const usmash_xRange = 13
+#const usmash_xOffset = 1
+#const usmash_yOffset = -20
+#const usmash_xRange = 10
 #const usmash_yRange = 25
 #const usmash_dist1 = 13
 
@@ -115,9 +143,9 @@
 #const mv_techChase = 1
 
 #const grab_IASA = 32
-#const grab_xOffset = 0
+#const grab_xOffset = 1
 #const grab_yOffset = 1
-#const grab_xRange = 7
+#const grab_xRange = 5
 #const grab_yRange = 2
 #const grab_dist1 = 16
 
@@ -126,19 +154,19 @@
 
 // NAir
 #const nair_IASA = 45
-#const nair_xOffset = 11
+#const nair_xOffset = 17
 #const nair_yOffset = -2
 #const nair_xRange = 20
 #const nair_yRange = 10
-#const nair_dist1 = 20
+#const nair_dist1 = 23
 
 // FAir
 #const fair_IASA = 36
 #const fair_xOffset = 8
-#const fair_yOffset = -3
-#const fair_xRange = 9
-#const fair_yRange = 11
-#const fair_dist1 = 25
+#const fair_yOffset = 0
+#const fair_xRange = 11
+#const fair_yRange = 15
+#const fair_dist1 = 23
 
 // BAir
 #const bair_IASA = 29
@@ -149,8 +177,6 @@
 #const bair_dist1 = 13
 
 // UAir
-// (not currently implemented)
-// will perform a *falling* uAir to a grounded opponent or something
 #const uair_IASA = 30
 #const uair_xOffset = 5
 #const uair_yOffset = -10

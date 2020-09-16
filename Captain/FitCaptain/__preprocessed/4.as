@@ -9,6 +9,11 @@ if !(InAir)
   Call AIHub
 endif
 
+if Equal CurrAction 276 || Equal CurrAction 16
+  Goto handleUpB
+  Return
+endif
+
 // edge range width
 // edge range height
 // a temporary variable
@@ -26,7 +31,7 @@ GetNearestCliff var1
 
 // draws a debug rectangle around the cliff so we can see a visual of what
 // the ranges are
-DrawDebugRectOutline var1 var2 60 25 255 255 255 136
+DrawDebugRectOutline var1 var2 50 25 255 255 255 136
 
 // makes var1 and var2 relative to the character's position
 var1 = TopNX - var1
@@ -36,13 +41,11 @@ var2 = var2 - TopNY * -1
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
 // and edgeguard if possible
-LOGSTR 1768846336 1866819328 0 0 0
-if Equal OYDistFloor -1 && var1 <= 60 && var1 >= -60 && var2 >= -25 && !(Equal var18 255)
+if Equal OYDistFloor -1 && var1 <= 50 && var1 >= -50 && var2 >= -25 && !(Equal var18 255)
   var18 = 0
   Call EdgeguardHub
 endif
 var18 = 0
-LOGSTR 1634104320 1701987584 1728053248 0 0
 
 // makes var0 into the distance from the ledge regardless of whether
 // the character is on the left or right of it
@@ -51,8 +54,8 @@ Abs var0
 
 // if we're above the ledge...
 if var2 > 0
-  // and are above it 50 or more units and over 20 units away
-  if var2 > 50 && var0 > 30
+  // and are above it 60 or more units and over 35 units away
+  if var2 > 60 && var0 > 35
     // if we can jump
     if CanJump
       // then jump towards the ledge
@@ -66,7 +69,7 @@ if var2 > 0
     endif
     // otherwise perform downB
     // (which doesn't seem to be working at the moment big sad)
-    if YSpeed < 0
+    if YSpeed < 0 && LevelValue >= 60
       AbsStick 0 (-1)
       Button B
       Seek bReverseIfNecessary
@@ -80,7 +83,7 @@ if var2 > 0
   else
     AbsStick (-1) 0
   endif
-  if var0 > 10 && var0 < 25 && Equal IsOnStage 0
+  if var0 > 10 && var0 < 25 && Equal IsOnStage 0 && var2 < 40 && LevelValue > 48
     Button B
     Seek bReverseIfNecessary
   elif var0 >= 25 && var0 < 50
@@ -102,21 +105,41 @@ else
 
   // after this, tempVar1 will contain the vertical distance to the ledge
   // at which point to perform the next action
-  if NoOneHanging
-    if Equal OIsOnStage 0 && var3 < var0
-      var3 = var0
-      var0 = -30
+  if LevelValue >= 48
+    if NoOneHanging
+      if Equal OIsOnStage 0 && var3 < var0
+        var3 = var0
+        var0 = -30
+      else
+        var3 = var0
+        var0 = -50
+      endif
     else
       var3 = var0
-      var0 = -55
+      var0 = -30
+    endif
+    if LevelValue <= 75
+      var0 = var0 + Rnd * 20
     endif
   else
     var3 = var0
-    var0 = -30
+    var0 = 10
   endif
-// var3 now contains the absolute distance to the ledge
-  LOGSTR 1919247104 1870030080 1919970304 2046820352 0
+  // var3 now contains the absolute distance to the ledge
   // because i'm not fully sure how OR works here, I just do this lol
+
+  if var2 < 3 && var2 > 0 && Equal IsOnStage 0
+    if var1 > -3 && var1 < 0
+      AbsStick 1 1
+      Button R
+      Call AIHub
+    elif var1 < 3 && var1 > 0
+      AbsStick (-1) 1
+      Button R
+      Call AIHub
+    endif
+  endif
+
   if CanJump && var2 < -25 && var3 > 20
     // if we're beyond 20 units away and under the vertical bounds
     Button X
@@ -152,6 +175,8 @@ if var0 > 0
   Stick (-1)
   Return
 endif
+LOGSTR 1668641280 1916887808 1953066752 1845493760 0
+LOGVAL CurrAction
 if Equal CurrAction 276
   Seek handleUpB
 elif Equal CurrAction 275
@@ -181,10 +206,12 @@ Return
 
 // this one however has a bit more complexity
 label handleUpB
+label
 // if we are no longer performing upB and aren't in special fall,
 // call AIHub
 if !(Equal CurrAction 276) && !(Equal CurrAction 16)
   if Equal AirGroundState 1 || Equal CurrAction 14 || Equal CurrAction 15
+    LOGSTR 1667329024 1818848768 1730175232 1768453376 1644167168
     Call AIHub
   endif
 endif
@@ -198,22 +225,27 @@ var2 = var2 - TopNY * -1
 // based on the direction falcon is facing, we want to be in a certain position
 // relative to the ledge so we can grab it.
 // this is the code that ensures that happens:
-if Equal Direction -1
-  if var2 > -2
+if var2 > -2
+  if var1 > 0
     AbsStick (-1)
-  elif var1 > 5
+  else
+    AbsStick 1
+  endif
+  Return
+elif Equal Direction -1
+  if var1 > 5
     AbsStick (-1)
   elif var1 < 3
     AbsStick 1
   endif
+  Return
 else
-  if var2 > -2
-    AbsStick 1
-  elif var1 < -5
+  if var1 < -5
     AbsStick 1
   elif var1 > -3
     AbsStick (-1)
   endif
+  Return
 endif
 Return
 Return

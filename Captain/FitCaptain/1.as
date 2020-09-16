@@ -5,8 +5,12 @@ id 0x8001
 
 unk 0x0
 
+SetTimeout 400
 lastScript = hex(0x8001)
 
+MESS_MOVE_PARAMS
+
+label
 // these work together to only dashdance if not in a tech-chase situation
 IF_O_IS_TECHING
 else
@@ -15,6 +19,13 @@ endif
 
 // clals distance to the target
 CALC_TARGET_DISTANCES
+
+// nothing else uses it YET so I GUESS IT WORKS FOR NOW......
+#let tempVar = var17
+
+// this is used to detect when the target x position has passed through falcon, such as when changing direction or something
+#let prevTargetXDistance = var7
+#let prevTargetPlayerNum = var8
 
 #let absTargetXDistance = var0
 #let absTargetYDistance = var1
@@ -26,68 +37,107 @@ Abs absTargetXDistance
 Abs absTargetYDistance
 // if we're not jumping
 if !(Equal CurrSubaction JumpSquat)
+  // this "tempVar" is only "defined" locally within this scope
+  #let localTempVar = var2
+
+  // if one is negative and one is positive, and it's <= move_xRange
+  // then we likely passed through it at some point within the last frame
+  localTempVar = prevTargetXDistance + targetXDistance
+  Abs localTempVar
+
   // if we want to perform an aerial, jump with respect to the
   // move_hitFrame (that's a really poor name for it tbh lol)
   // to attempt to get there by the time the move's hitbox is out
-  var2 = targetXDistance - (XSpeed * move_hitFrame / 2)
-  Abs var2
+  tempVar = targetXDistance - (XSpeed * move_hitFrame / 2)
+  Abs tempVar
   if Equal AirGroundState 1 && CurrAction <= 9
-    if var2 <= move_xRange && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+    if tempVar <= move_xRange && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+      Button X
+    elif localTempVar <= move_xRange && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       Button X
     elif Rnd <= 0.02 && lastAttack >= hex(0x6031) && lastAttack <= hex(0x603F) && XDistLE 20 40 && Equal OFramesHitstun 0
       // randomly perform tomhawk stuff if using a grounded move and not comboing
       Call mix_tomhawkJump
+    elif Rnd <= 0.02 && Equal lastAttack hex(0x8008)
+      Call mix_tomhawkJump
     endif
-  elif CanJump && Rnd <= 0.04 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && Equal IsOnStage 1 && TopNY > OTopNY
+  elif CanJump && Rnd <= 0.02 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && Equal IsOnStage 1 && TopNY > OTopNY
     // randomly double-jump aerial instead of going straight for the aerial
+    Call mix_doubleJump
+  elif CanJump && Rnd <= 0.01 && Equal lastAttack hex(0x8008) && TopNY > OTopNY
     Call mix_doubleJump
   endif
 
-  if absTargetXDistance <= move_xRange && absTargetYDistance <= move_yRange
-    // otherwise we just straight-up go to the attack performing section if
-    // we're in range
-    Goto CallAttacks
+  if absTargetXDistance <= move_xRange
+    Goto XDistCheckPassed
+    tempVar = TopNY - OTopNY
+    Abs tempVar
+    if XDistLE 35 && tempVar <= 40 && OAttacking && Equal AirGroundState 1
+      Call Unk3020
+    endif
+  elif localTempVar < move_xRange && Equal prevTargetPlayerNum OPlayerNum
+    Goto XDistCheckPassed
   endif
 endif
 
 #let nearCliffX = var2
 #let nearCliffY = var3
+#let yDistOffset = var4
+tempVar = XSpeed * 4 * Direction
+GetYDistFloorOffset yDistOffset tempVar 0
+// LOGSTR str("y dist offs")
+// LOGVAL yDistOffset
 GetNearestCliff nearCliffX
 nearCliffY = nearCliffY - TopNY * -1
 // before continuing, checks currently location and situation
 // this prevents the AI from awkwardly running offstage
-if Equal YDistFloor -1 && YSpeed < 0 && nearCliffY < 15
+if Equal yDistOffset (-1) && YSpeed < -1 && nearCliffY < 20
   Call RecoveryHub
 elif MeteoChance && !(Equal moveVariant mv_edgeguard)
   Call BlockRecovery
 endif
 
+// waveland for grounded moves
+GetYDistFloorOffset tempVar targetXDistance 0
+if YSpeed < 0.2 && YDistFloor > 1 && YDistFloor < 10 && lastAttack >= hex(0x6031) && lastAttack <= hex(0x6037) && tempVar < 6 && !(Equal tempVar -1)
+  tempVar = targetXDistance / 10
+  AbsStick tempVar (-1)
+  Button R
+endif
+
+// now that the calculations using these are over with, we'll store them
+// for the next frame
+prevTargetXDistance = targetXDistance
+prevTargetPlayerNum = OPlayerNum
+
 // if we're not in jumpsquat, we want to dash to the location
 if absTargetXDistance > move_xRange && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
-  var17 = targetXDistance
-  AbsStick var17
+  tempVar = targetXDistance
+  AbsStick tempVar
   // to ensure we dash, we clear the stick if we're walking for whatever reason
-  if Equal CurrAction 1
+  if Equal CurrAction hex(0x01) && LevelValue > LV3
     ClearStick
   endif
 else
   // otherwise...
-  var17 = targetXDistance / 10
-  if XDistFrontEdge < 10 && Equal OPos Direction
-    var17 /= 2
+  tempVar = targetXDistance / 10
+  if XDistFrontEdge < 25 && Equal OPos Direction
+    tempVar /= 2
+  elif XDistBackEdge > -25 && !(Equal OPos Direction)
+    tempVar /= 2
   endif
-  AbsStick var17
+  AbsStick tempVar
 
   // adjusts the trajectory of the jump if the
   // target is moving
   if Equal CurrSubaction JumpSquat
-    var0 = OXSpeed * 2
+    tempVar = OXSpeed * 2
     if OXSpeed > 0.3
       ClearStick
-      AbsStick var0 0
+      AbsStick tempVar 0
     elif OXSpeed < -0.3
       ClearStick
-      AbsStick var0 0
+      AbsStick tempVar 0
     endif
   endif
 
@@ -99,15 +149,33 @@ else
 endif
 
 // if we're landing or something, we call upon the landing routine (59.as)
-if YSpeed < 0 && YDistFloor < 10 && YDistFloor > -1
-  var19 = 2
-  var18 = 1
-  Call Landing
-endif
+// if YSpeed < 0 && YDistFloor < 10 && YDistFloor > -1
+//   var19 = 2
+//   var18 = 1
+//   Call Landing
+// endif
 Return
 
 label JumpIfInRange
 JUMP_IF_IN_RANGES
+Return
+
+label XDistCheckPassed
+if absTargetYDistance <= move_yRange
+  tempVar = (YSpeed - 0.5) * move_IASA
+  tempVar = (YDistFrontEdge * -1) + tempVar
+  if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+    if Equal IsOnStage 0 && tempVar < -40
+      DrawDebugRectOutline TopNX TopNY 5 25 color(0xFFFF00FF)
+    else
+      Goto CallAttacks
+    endif
+  else
+    // otherwise we just straight-up go to the attack performing section if
+    // we're in range
+    Goto CallAttacks
+  endif
+endif
 Return
 
 label CallAttacks
@@ -116,7 +184,7 @@ label CallAttacks
 if lastAttack >= hex(0x6031) && lastAttack <= hex(0x6037)
   if Equal CurrAction hex(0x03)
     // stops the dash
-    Stick (-1) 0
+    Button X
     Return
   endif
   if Equal CurrAction hex(0x04)
@@ -125,11 +193,30 @@ if lastAttack >= hex(0x6031) && lastAttack <= hex(0x6037)
     Return
   endif
   if !(Equal Direction OPos)
-    AbsStick OPos
+    tempVar = OPos * 0.5
+    AbsStick tempVar
     Return
   endif
-  if InAir
+  if Equal CurrAction hex(0x0A) || Equal CurrAction hex(0x16)
+    Return
+  endif
+  if InAir && YDistFloor < 10 && YDistFloor >= 0
+    if LevelValue <= LV7
+      if Rnd < 0.4
+        Button R
+        AbsStick targetXDistance (-1)
+      endif
+    else
+      Button R
+      AbsStick targetXDistance (-1)
+    endif
+    Return
+  elif !(Equal AirGroundState 1)
+    LOGSTR str("returning")
     Call AIHub
+  endif
+  if !(CurrAction <= hex(0x09))
+    Return
   endif
 endif
 
@@ -179,6 +266,8 @@ elif Equal lastAttack hex(0x6048)
   Call USpecialAir
 elif Equal lastAttack hex(0x6049)
   Call DSpecialAir
+elif Equal lastAttack hex(0x8008)
+  Call FakeOutHub
 endif
 Return
 Return

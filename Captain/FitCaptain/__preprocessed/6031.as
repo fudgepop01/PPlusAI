@@ -13,7 +13,11 @@ if Equal var18 0
   var11 = 20
   var12 = 5
   var13 = 6
-  Call ApproachHub
+  if Equal var21 2 && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
 else
   var14 = 14
   Button A

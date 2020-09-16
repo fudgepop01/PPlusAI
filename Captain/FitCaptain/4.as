@@ -9,8 +9,13 @@ if !(InAir)
   Call AIHub
 endif
 
+if Equal CurrAction hex(0x114) || Equal CurrAction hex(0x10)
+  Goto handleUpB
+  Return
+endif
+
 // edge range width
-#const rw = 60
+#const rw = 50
 // edge range height
 #const rh = 25
 // a temporary variable
@@ -42,13 +47,11 @@ nearCliffY = nearCliffY - TopNY * -1
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
 // and edgeguard if possible
-LOGSTR str("intoEg")
 if Equal OYDistFloor -1 && nearCliffX <= rw && nearCliffX >= -rw && nearCliffY >= -rh && !(Equal movePart hex(0xFF))
   movePart = 0
   Call EdgeguardHub
 endif
 movePart = 0
-LOGSTR str("afterEg")
 
 // makes tempVar into the distance from the ledge regardless of whether
 // the character is on the left or right of it
@@ -57,8 +60,8 @@ Abs tempVar
 
 // if we're above the ledge...
 if nearCliffY > 0
-  // and are above it 50 or more units and over 20 units away
-  if nearCliffY > 50 && tempVar > 30
+  // and are above it 60 or more units and over 35 units away
+  if nearCliffY > 60 && tempVar > 35
     // if we can jump
     if CanJump
       // then jump towards the ledge
@@ -72,7 +75,7 @@ if nearCliffY > 0
     endif
     // otherwise perform downB
     // (which doesn't seem to be working at the moment big sad)
-    if YSpeed < 0
+    if YSpeed < 0 && LevelValue >= LV7
       AbsStick 0 (-1)
       Button B
       Seek bReverseIfNecessary
@@ -86,7 +89,7 @@ if nearCliffY > 0
   else
     AbsStick (-1) 0
   endif
-  if tempVar > 10 && tempVar < 25 && Equal IsOnStage 0
+  if tempVar > 10 && tempVar < 25 && Equal IsOnStage 0 && nearCliffY < 40 && LevelValue > LV6
     Button B
     Seek bReverseIfNecessary
   elif tempVar >= 25 && tempVar < 50
@@ -108,21 +111,41 @@ else
 
   // after this, tempVar1 will contain the vertical distance to the ledge
   // at which point to perform the next action
-  if NoOneHanging
-    if Equal OIsOnStage 0 && tempVar2 < tempVar
-      tempVar2 = tempVar
-      tempVar = -30
+  if LevelValue >= LV6
+    if NoOneHanging
+      if Equal OIsOnStage 0 && tempVar2 < tempVar
+        tempVar2 = tempVar
+        tempVar = -30
+      else
+        tempVar2 = tempVar
+        tempVar = -50
+      endif
     else
       tempVar2 = tempVar
-      tempVar = -55
+      tempVar = -30
+    endif
+    if LevelValue <= LV8
+      tempVar = tempVar + Rnd * 20
     endif
   else
     tempVar2 = tempVar
-    tempVar = -30
+    tempVar = 10
   endif
-// tempVar2 now contains the absolute distance to the ledge
-  LOGSTR str("recoverplz")
+  // tempVar2 now contains the absolute distance to the ledge
   // because i'm not fully sure how OR works here, I just do this lol
+
+  if nearCliffY < 3 && nearCliffY > 0 && Equal IsOnStage 0
+    if nearCliffX > -3 && nearCliffX < 0
+      AbsStick 1 1
+      Button R
+      Call AIHub
+    elif nearCliffX < 3 && nearCliffX > 0
+      AbsStick (-1) 1
+      Button R
+      Call AIHub
+    endif
+  endif
+
   if CanJump && nearCliffY < -rh && tempVar2 > 20
     // if we're beyond 20 units away and under the vertical bounds
     Button X
@@ -158,6 +181,8 @@ if tempVar > 0
   Stick (-1)
   Return
 endif
+LOGSTR str("currAction")
+LOGVAL CurrAction
 if Equal CurrAction hex(0x114)
   Seek handleUpB
 elif Equal CurrAction hex(0x113)
@@ -187,10 +212,12 @@ Return
 
 // this one however has a bit more complexity
 label handleUpB
+label
 // if we are no longer performing upB and aren't in special fall,
 // call AIHub
 if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10))
   if Equal AirGroundState 1 || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F)
+    LOGSTR str("calling aihub")
     Call AIHub
   endif
 endif
@@ -204,22 +231,27 @@ nearCliffY = nearCliffY - TopNY * -1
 // based on the direction falcon is facing, we want to be in a certain position
 // relative to the ledge so we can grab it.
 // this is the code that ensures that happens:
-if Equal Direction -1
-  if nearCliffY > -2
+if nearCliffY > -2
+  if nearCliffX > 0
     AbsStick (-1)
-  elif nearCliffX > 5
+  else
+    AbsStick 1
+  endif
+  Return
+elif Equal Direction -1
+  if nearCliffX > 5
     AbsStick (-1)
   elif nearCliffX < 3
     AbsStick 1
   endif
+  Return
 else
-  if nearCliffY > -2
-    AbsStick 1
-  elif nearCliffX < -5
+  if nearCliffX < -5
     AbsStick 1
   elif nearCliffX > -3
     AbsStick (-1)
   endif
+  Return
 endif
 Return
 Return

@@ -1,3 +1,5 @@
+// "LYING DOWN" ROUTINE
+// the AI is FORCED into this routine when in a knockdown state
 #include <Definition_AIMain.h>
 //TrueID=0x2070
 id 0x2070
@@ -9,14 +11,16 @@ unk 0x50000
 str "#full_f"
 str "#edge_range"
 
+LOGSTR str("in 2070.as")
+if InAir || FramesHitstun > 0 || CurrAction <= hex(0x20)
+    Call AIHub
+endif
+
 var0=Rnd
 var10=0
 if var10 > 0
     var10=0
     Return
-endif
-if CurrAction >= 66 && CurrAction <= 85 && FramesSinceShield >= 40
-    Button R
 endif
 //____________________
 label _0

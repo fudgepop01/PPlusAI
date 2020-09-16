@@ -24,7 +24,7 @@ else
 endif
 AbsStick var0
 
-if YSpeed < 0 && YDistFloor < 25 && Equal CurrAction hex(0x33) && Equal FramesHitlag 0 && AnimFrame < move_IASA && FramesSinceShield > 40
+if YSpeed < 0 && YDistFloor < 5 && Equal CurrAction hex(0x33) && AnimFrame < move_IASA && FramesSinceShield > 7 && LevelValue >= LV7
   Button R
 endif
 if Equal AirGroundState 1

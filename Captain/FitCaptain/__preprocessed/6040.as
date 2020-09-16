@@ -7,24 +7,22 @@ unk 0x50000
 
 //Strings
 
-
-
 // sets up offsets to get to target position
 if Equal var18 0
   if CalledAs NAir
     var20 = 24641
-    var9 = 11
+    var9 = 17
     var10 = -2
     var11 = 20
     var12 = 10
-    var13 = 20
+    var13 = 23
   elif CalledAs FAir
     var20 = 24642
     var9 = 8
-    var10 = -3
-    var11 = 9
-    var12 = 11
-    var13 = 25
+    var10 = 0
+    var11 = 11
+    var12 = 15
+    var13 = 23
   elif CalledAs BAir
     var20 = 24643
     var9 = -5
@@ -49,7 +47,11 @@ if Equal var18 0
   else
     Call AIHub
   endif
-  Call ApproachHub
+  if Equal var21 2 && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
 elif Equal AirGroundState 2
   ClearStick
   var14 = 45
@@ -84,8 +86,10 @@ if FrameGE 1
   var6 = OTopNY + var10
   // account for target's & own velocity
   var5 = var5 + (OXSpeed * 10) - (XSpeed * var13 / 2)
-  if YSpeed < 0.10 && YDistFloor > 10 && TopNY > OTopNY
-    var6 = var6 + (OYSpeed * var13 / 2) - ((YSpeed - 1) * var13 / 2) + OHurtboxSize
+  if YSpeed < 0.20 && YDistFloor > 10 && TopNY > OTopNY
+    var6 = var6 + (OYSpeed * (var13 + 3) / 2) - ((YSpeed - 1) * (var13 + 3) / 2) + OHurtboxSize + 3
+  elif YDistFloor > 10
+    var6 = var6 + (OYSpeed * var13 / 2) - ((YSpeed - 0.5) * var13 / 2)
   else
     var6 = var6 + (OYSpeed * var13 / 2) - (YSpeed * var13 / 2)
   endif
@@ -109,6 +113,11 @@ if FrameGE 1
     Call AIHub
   endif
 
+if Equal HitboxConnected 1 && OFramesHitstun > 0
+  var15 = AnimFrame
+endif
+
+
   if var5 < 0
     AbsStick (-1)
   else
@@ -116,7 +125,7 @@ if FrameGE 1
   endif
 
 
-  if YSpeed < 0 && YDistFloor < 25 && YDistFloor >= 0
+  if YSpeed < 0 && YDistFloor < 10 && YDistFloor >= 0
     var19 = 2
     var18 = 1
     Call Landing

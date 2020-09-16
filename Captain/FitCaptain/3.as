@@ -5,9 +5,9 @@ id 0x8003
 
 unk 0x0
 
-LOGSTR str("called")
+// LOGSTR str("called")
 
-#const rw = 60
+#const rw = 50
 #const rh = 25
 #let tempVar = var0
 // risky - some macros use var5, but we aren't using any macros here so it should be fine
@@ -16,6 +16,11 @@ LOGSTR str("called")
 #let nearCliffY = var2
 #let egType = var3 // edgeguard type
 
+// I don't know why this is necessary but I hate the fact that
+// it is with a burning passion
+if Equal CurrAction hex(0x114)
+  Call RecoveryHub
+endif
 
 SetVec nearCliffX Zero
 GetNearestCliff nearCliffX
@@ -30,18 +35,28 @@ AbsOXDistFrontEdge = OXDistFrontEdge
 Abs AbsOXDistFrontEdge
 
 // if it's not worth going for an edgeguard, don't bother
-if Equal OIsOnStage 1 || YSpeed < -0.15
+if Equal OIsOnStage 1
   movePart = hex(0xFF)
   Call RecoveryHub
-// elif OYDistFrontEdge > 0 && AbsOXDistFrontEdge < 3
+elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge > 50 && !(Equal CurrAction hex(0x79))
+  movePart = hex(0xFF)
+  Call RecoveryHub
+elif LevelValue <= LV5
+  movePart = hex(0xFF)
+  Call RecoveryHub
 endif
 
 if OYDistFrontEdge > 0 && AbsOXDistFrontEdge > 30 && tempVar > 5
   egType = 1
 else
-  egType = Rnd * 3 + 1
+  egType = Rnd * 8
+  if Equal IsOnStage 0
+    egType += 1
+  endif
 endif
-// egType = 2
+// egType = 1
+LOGSTR str("eg type")
+LOGVAL egType
 label
 SetVec nearCliffX Zero
 GetNearestCliff nearCliffX
@@ -56,23 +71,41 @@ Abs tempVar
 AbsOXDistFrontEdge = OXDistFrontEdge
 Abs AbsOXDistFrontEdge
 
-if egType <= 1
+// LOGSTR str("egType")
+// LOGVAL egType
+
+if Damage < 130 && nearCliffY < -rh
+  movePart = hex(0xFF)
+  Call RecoveryHub
+endif
+
+if Equal OAirGroundState 3 && LevelValue >= LV7
+  movePart = 0
+  moveVariant = mv_edgeguard
+  Call DAir
+endif
+
+if egType <= 1 && LevelValue >= LV6 && NoOneHanging
+  LOGSTR str("<= 1")
   if !(Equal AirGroundState 3)
     if Equal IsOnStage 1
       // wavedash back to ledge?
       if tempVar < 10
         tempVar = nearCliffX * Direction
-        if tempVar < 0
+        LOGSTR str("tVar")
+        LOGVAL tempVar
+        if tempVar < -5
           Stick -1
           Return
-        elif InAir && tempVar > 5
+        elif InAir && tempVar > 2 && Equal IsOnStage 1
           Button R
-          Stick -0.8 (-0.75)
+          Stick -0.6 (-0.75)
         elif tempVar > 0 && !(Equal CurrAction hex(0x0A))
+          LOGSTR str("jumping??")
           Button X
         endif
       else
-        tempVar = OPos*0.5
+        tempVar = OPos*0.8
         AbsStick tempVar
       endif
     elif tempVar > 3
@@ -84,15 +117,19 @@ if egType <= 1
     Call AIHub
   endif
   Return
-elif egType <= 3 && OYDistFrontEdge < 10
+elif egType <= 5 && OYDistFrontEdge < 30 && LevelValue >= LV5
   if nearCliffX < rw && nearCliffX > -rw && nearCliffY > -rh
-    if nearCliffY > 5 || Equal AirGroundState 1
+    movePart = 0
+    if Equal AirGroundState 1
       moveVariant = mv_edgeguard
       Call FAir
-    elif YSpeed > 0.15 && nearCliffY > -5
+    elif OTopNY > TopNY
+      moveVariant = mv_edgeguard
+      Call UAir
+    elif YSpeed > 0.15
       moveVariant = mv_edgeguard
       Call FAir
-    elif nearCliffY > -5
+    else
       moveVariant = mv_edgeguard
       Call UAir
     endif
@@ -100,15 +137,32 @@ elif egType <= 3 && OYDistFrontEdge < 10
     movePart = hex(0xFF)
     Call RecoveryHub
   endif
+  Return
 else
-  if Equal AirGroundState 1 && Rnd < 0.2
-    Button X
+  LOGSTR str("else")
+  if !(MeteoChance)
+    Call AIHub
   endif
-endif
+  if Equal AirGroundState 1 && Idling
+    egType = Rnd * 3
 
-if Damage < 130 && nearCliffY < -rh
-  movePart = hex(0xFF)
-  Call RecoveryHub
+    Button X
+    moveVariant = mv_edgeguard
+    movePart = 0
+    tempVar = OTopNY - TopNY
+    LOGSTR str("tvar")
+    LOGVAL tempVar
+    if tempVar > 30 && tempVar < 120 && !(XDistLE 30)
+      Call FAir
+    if tempVar > 40 && tempVar < 120
+      Call UAir
+    elif tempVar < 20
+      Call DAir
+    else
+      Call NAir
+    endif
+    Return
+  endif
 endif
 Return
 

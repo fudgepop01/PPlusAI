@@ -25,8 +25,6 @@ Seek executed
 Return
 
 label executed
-if Equal var21 32769
-  Call ApproachHub
-endif
+Call ApproachHub
 Return
 Return

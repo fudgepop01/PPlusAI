@@ -54,7 +54,11 @@ if Equal movePart 0
   else
     Call AIHub
   endif
-  Call ApproachHub
+  if Equal approachType at_defend && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
 else
   ClearStick
   // move_IASA = nair_IASA
@@ -81,6 +85,8 @@ Return
 
 label ExecuteAttack
 if FrameGE 1
+  RECORD_MOVE_CONNECTFRAME
+
   if AnimFrame >= move_IASA || CurrAction <= hex(0x09) || !(Equal AirGroundState 1)
     Call AIHub
   endif

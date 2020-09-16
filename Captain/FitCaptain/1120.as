@@ -1,3 +1,5 @@
+// THROW HANDLER
+// is ALWAYS called whenever a successfully grab occurs
 #include <Definition_AIMain.h>
 //TrueID=0x603C
 id 0x1120
@@ -28,7 +30,10 @@ elif CurrAction < hex(0x3A) || CurrAction > hex(0x3C)
     Return
   else
     if DistFrontEdge < 25
-      if ODamage > 20
+      if ODamage > 60 && Rnd < 0.5
+        Stick 0 1
+        moveVariant = mv_uthrow
+      elif ODamage > 20
         Stick 1
         moveVariant = mv_fthrow
       else
@@ -36,9 +41,14 @@ elif CurrAction < hex(0x3A) || CurrAction > hex(0x3C)
         moveVariant = mv_dthrow
       endif
     elif DistBackEdge < 25
-      Stick (-1)
-      moveVariant = mv_bthrow
-    elif ODamage > 100
+      if ODamage > 60 && Rnd < 0.5
+        Stick 0 1
+        moveVariant = mv_uthrow
+      else
+        Stick (-1)
+        moveVariant = mv_bthrow
+      endif
+    elif ODamage > 80
       var1 = Rnd * 3
       if var1 < 2
         Stick 0 1

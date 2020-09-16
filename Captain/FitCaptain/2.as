@@ -11,13 +11,16 @@ unk 0x0
 ClearStick
 movePart = 0
 
+#let OYDistSelf = var1
+OYDistSelf = OTopNY - TopNY
+
 LOGSTR str("comboHub")
 if Equal lastAttack hex(0x6031)
   // ...thus we'll end up here
   if ODamage > 20
-    if OYDistFloor > 45
+    if OYDistSelf > 45
       Call UAir
-    elif OYDistFloor > 15
+    elif OYDistSelf > 15
       Call FAir
     else
       Call DAir
@@ -59,11 +62,17 @@ elif Equal lastAttack hex(0x603C)
     Call UAir
   endif
   if Equal moveVariant mv_uthrow
-    Call FAir
-  elif Equal moveVariant mv_dthrow
-    if ODamage > 100 && OYDistFloor > 10
+    if XDistLE 30
       Call FAir
-    elif OYDistFloor > 35
+    elif OYDistSelf > 20
+      Call UAir
+    else
+      Call NAir
+    endif
+  elif Equal moveVariant mv_dthrow
+    if ODamage > 60 && OYDistSelf > 5
+      Call FAir
+    elif OYDistSelf > 35 && OYSpeed > 0.15
       Call UAir
     endif
     var0 = Rnd * 3
@@ -75,13 +84,16 @@ elif Equal lastAttack hex(0x603C)
     endif
   endif
 elif Equal lastAttack hex(0x6041)
-  if OYDistFloor < 30
+  if move_connectFrame < 13 && OYDistSelf < 30
+    Call Grab
+  endif
+  if OYDistSelf < 25
     Call NAir
   else
     Call UAir
   endif
 elif Equal lastAttack hex(0x6042)
-  if OYDistFloor > 20
+  if OYDistSelf > 20
     Call FAir
   else
     Call UAir
@@ -93,7 +105,9 @@ elif Equal lastAttack hex(0x6043)
     Call UAir
   endif
 elif Equal lastAttack hex(0x6044)
-  if ODamage > 60 && OYDistFloor < 20
+  if ODamage > 60 && OYDistSelf > 30 && OYDistSelf < 60
+    Call FAir
+  elif MeteoChance && OYDistSelf < 80
     Call FAir
   else
     Call UAir
@@ -105,24 +119,24 @@ elif Equal lastAttack hex(0x6045)
   if OYSpeed <= 0.1
     Return
   endif
-  LOGSTR str("oydist")
-  LOGVAL OYDistFloor
-  if ODamage > 100 && OYDistFloor > 40
+  // LOGSTR str("oydist")
+  // LOGVAL OYDistSelf
+  if ODamage > 70 && OYDistSelf > 40
     if Rnd < 0.8
       Call FAir
     else
-      Call DAir
+      Call UAir
     endif
-  elif ODamage > 60 && OYDistFloor > 25
-    if Rnd < 0.5
+  elif ODamage > 60 && OYDistSelf > 25
+    if Rnd < 0.8
       Call FAir
     else
-      Call DAir
+      Call UAir
     endif
-  elif OYDistFloor > 25
+  elif OYDistSelf > 35
     Call UAir
   else
-    if Rnd < 0.8
+    if Rnd < 0.9
       Call DAir
     else
       Call USmash

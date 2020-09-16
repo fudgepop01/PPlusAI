@@ -1,3 +1,5 @@
+// THROW HANDLER
+// is ALWAYS called whenever a successfully grab occurs
 #include <Definition_AIMain.h>
 //TrueID=0x603C
 id 0x1120
@@ -27,7 +29,10 @@ elif CurrAction < 58 || CurrAction > 60
     Return
   else
     if DistFrontEdge < 25
-      if ODamage > 20
+      if ODamage > 60 && Rnd < 0.5
+        Stick 0 1
+        var19 = 4
+      elif ODamage > 20
         Stick 1
         var19 = 1
       else
@@ -35,9 +40,14 @@ elif CurrAction < 58 || CurrAction > 60
         var19 = 2
       endif
     elif DistBackEdge < 25
-      Stick (-1)
-      var19 = 3
-    elif ODamage > 100
+      if ODamage > 60 && Rnd < 0.5
+        Stick 0 1
+        var19 = 4
+      else
+        Stick (-1)
+        var19 = 3
+      endif
+    elif ODamage > 80
       var1 = Rnd * 3
       if var1 < 2
         Stick 0 1

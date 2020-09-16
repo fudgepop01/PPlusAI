@@ -103,7 +103,7 @@ LOGSTR 825110784 0 0 0 0
 if !(MeteoChance)
     Finish
 endif
-Cmd21
+// Cmd21
 Seek
 Return
 //____________________
@@ -112,15 +112,15 @@ LOGSTR 825111040 0 0 0 0
 if !(MeteoChance)
     Finish
 endif
-if ODistLE 30
-    Call slot10
-endif
-if Idling
-    if DistToOEdge > 10
+// if ODistLE 30
+//     Call slot10
+// endif
+if CurrAction <= 9
+    if DistToOEdge > 20
         var16=0.5*OPos
         AbsStick var16
     elif DistToOEdge < 2
-        var16=-1*OPos
+        var16=-0.7*OPos
         AbsStick var16
     else
         Call EdgeguardHub
@@ -161,7 +161,8 @@ if var0 > 2.5 && Idling
             Call EdgeguardHub
         elif NoOneHanging && Rnd < 0.1
             SetTimeout 30
-            AbsStick OPos
+            var16=0.5*OPos
+            AbsStick var16
             Seek _5
         else
             Seek _4

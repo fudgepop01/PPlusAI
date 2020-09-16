@@ -11,13 +11,15 @@ unk 0x0
 ClearStick
 var18 = 0
 
+var1 = OTopNY - TopNY
+
 LOGSTR 1668246784 1651460096 1969356800 0 0
 if Equal var20 24625
   // ...thus we'll end up here
   if ODamage > 20
-    if OYDistFloor > 45
+    if var1 > 45
       Call UAir
-    elif OYDistFloor > 15
+    elif var1 > 15
       Call FAir
     else
       Call DAir
@@ -59,11 +61,17 @@ elif Equal var20 24636
     Call UAir
   endif
   if Equal var19 4
-    Call FAir
-  elif Equal var19 2
-    if ODamage > 100 && OYDistFloor > 10
+    if XDistLE 30
       Call FAir
-    elif OYDistFloor > 35
+    elif var1 > 20
+      Call UAir
+    else
+      Call NAir
+    endif
+  elif Equal var19 2
+    if ODamage > 60 && var1 > 5
+      Call FAir
+    elif var1 > 35 && OYSpeed > 0.15
       Call UAir
     endif
     var0 = Rnd * 3
@@ -75,13 +83,16 @@ elif Equal var20 24636
     endif
   endif
 elif Equal var20 24641
-  if OYDistFloor < 30
+  if var15 < 13 && var1 < 30
+    Call Grab
+  endif
+  if var1 < 25
     Call NAir
   else
     Call UAir
   endif
 elif Equal var20 24642
-  if OYDistFloor > 20
+  if var1 > 20
     Call FAir
   else
     Call UAir
@@ -93,7 +104,9 @@ elif Equal var20 24643
     Call UAir
   endif
 elif Equal var20 24644
-  if ODamage > 60 && OYDistFloor < 20
+  if ODamage > 60 && var1 > 30 && var1 < 60
+    Call FAir
+  elif MeteoChance && var1 < 80
     Call FAir
   else
     Call UAir
@@ -105,24 +118,24 @@ elif Equal var20 24645
   if OYSpeed <= 0.1
     Return
   endif
-  LOGSTR 1870226432 1769174016 0 0 0
-  LOGVAL OYDistFloor
-  if ODamage > 100 && OYDistFloor > 40
+  // LOGSTR 1870226432 1769174016 0 0 0
+  // LOGVAL var1
+  if ODamage > 70 && var1 > 40
     if Rnd < 0.8
       Call FAir
     else
-      Call DAir
+      Call UAir
     endif
-  elif ODamage > 60 && OYDistFloor > 25
-    if Rnd < 0.5
+  elif ODamage > 60 && var1 > 25
+    if Rnd < 0.8
       Call FAir
     else
-      Call DAir
+      Call UAir
     endif
-  elif OYDistFloor > 25
+  elif var1 > 35
     Call UAir
   else
-    if Rnd < 0.8
+    if Rnd < 0.9
       Call DAir
     else
       Call USmash

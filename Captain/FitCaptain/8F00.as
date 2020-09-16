@@ -41,8 +41,8 @@ Return
 label executed
 label
 
-if Equal lastScript hex(0x8001)
+// if Equal lastScript hex(0x8001)
   Call ApproachHub
-endif
+// endif
 Return
 Return

@@ -26,8 +26,6 @@ Seek executed
 Return
 
 label executed
-if Equal lastScript hex(0x8001)
-  Call ApproachHub
-endif
+Call ApproachHub
 Return
 Return
