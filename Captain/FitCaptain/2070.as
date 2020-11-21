@@ -5,13 +5,10 @@
 id 0x2070
 
 //Set Unknown
-unk 0x50000
+unk 0x00000
 
 //Strings
-str "#full_f"
-str "#edge_range"
 
-LOGSTR str("in 2070.as")
 if InAir || FramesHitstun > 0 || CurrAction <= hex(0x20)
     Call AIHub
 endif

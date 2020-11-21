@@ -23,7 +23,7 @@ label
 ClearStick
 if CurrAction < hex(0x34) || CurrAction > hex(0x3C)
   Call AIHub
-elif CurrAction < hex(0x3A) || CurrAction > hex(0x3C)
+elif Equal CurrAction hex(0x39)
   if pummelCount > 0
     Button A
     pummelCount -= 1

@@ -10,7 +10,7 @@ if CurrAction >= 52 && CurrAction <= 60
 endif
 
 if Equal var18 0
-  LOGSTR 1735549184 1644167168 0 0 0
+  // LOGSTR 1735549184 1644167168 0 0 0
   if Equal var19 1
     Goto techChase_wait
   else
@@ -36,17 +36,23 @@ label techChase_wait
 SetTimeout 300
 var0 = Rnd * 75 + 75
 var1 = 0
+if Damage < 30
+  var2 = 15
+else
+  var2 = 25
+endif
 label
-if !(XDistLE 15)
+if !(XDistLE var2)
   // walk-up
-  var2 = OPos * 0.7
-  AbsStick var2 (-0.4)
+  var3 = OPos * 0.7
+  AbsStick var3 (-0.4)
 else
   // force crouch cancel
   Stick 0 (-1)
 endif
 
   var5 = 0
+  var6 = OCurrAction
   if Equal var6 96 || Equal var6 81
     if OAnimFrame < 15
       var5 = 1
@@ -58,34 +64,43 @@ endif
     endif
   endif
 
-
 if Equal var5 1
   var1 = 1
 endif
 var0 -= 1
-if OCurrAction <= 32
+if OCurrAction <= 21
   Call AIHub
 elif Equal var1 1 && Equal var5 0
   Goto seekOpponent
-elif var0 <= 0 || Equal OYDistFloor -1
+elif var0 <= 0
   Goto seekOpponent
-elif OYDistFloor > 10 && Equal OFramesHitstun 0
+elif Equal OIsOnStage 0 && Equal OCurrAction 73
+  Call AIHub
+elif OYDistBackEdge < -20 && Equal OFramesHitstun 0
   Goto seekOpponent
 endif
 Return
 
 label seekOpponent
+SetFrame 0
+label
+if Equal var19 1
+  var0 = (100 - LevelValue) / 100
+  if Rnd < var0 && !(FrameGE 15)
+    Return
+  endif
+endif
 var20 = 24636
-var9 = 1
-var10 = 1
+var9 = 4
+var10 = -8
 var11 = 5
 var12 = 2
-var13 = 16
+var13 = 7
 Call ApproachHub
 Return
 
 label execute
-if CurrAction < 9
+if CurrAction < 9 || Equal CurrAction 125
   Call AIHub
 elif Equal CurrAction 55 || Equal CurrAction 53
   Call 0x1120

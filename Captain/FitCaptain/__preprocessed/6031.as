@@ -6,13 +6,13 @@ id 0x6031
 unk 0x0
 
 if Equal var18 0
-  LOGSTR 1784766976 0 0 0 0
+  // LOGSTR 1784766976 0 0 0 0
   var20 = 24625
-  var9 = 2
-  var10 = 0
-  var11 = 20
-  var12 = 5
-  var13 = 6
+  var9 = 4
+  var10 = -7
+  var11 = 12
+  var12 = 6
+  var13 = 3
   if Equal var21 2 && OFramesHitstun < 1
     Call DefendHub
   else
@@ -21,23 +21,37 @@ if Equal var18 0
 else
   var14 = 14
   Button A
+  SetFrame 0
   Seek execute
 endif
 Return
 
 label execute
+
+if Equal var19 1
+  if FrameGE 15 || Idling
+    Call AIHub
+  endif
+  Return
+endif
+
+label
 ClearStick
+
+
 if FrameGE 2
   if Equal CurrSubaction Attack11
-    if Equal HitboxConnected 1 && AnimFrame > 7
+    if Equal HitboxConnected 1 && FrameGE 7
+      SetFrame 0
       Button A
-    elif AnimFrame > 15
+    elif FrameGE 15
       Call AIHub
     endif
   elif Equal CurrSubaction Attack12
-    if Equal HitboxConnected 1 && AnimFrame > 8
+    if Equal HitboxConnected 1 && FrameGE 8
+      SetFrame 0
       Button A
-    elif AnimFrame > 18
+    elif FrameGE 18
       Call AIHub
     endif
   elif Equal CurrSubaction Attack13

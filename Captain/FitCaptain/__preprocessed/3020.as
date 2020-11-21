@@ -4,7 +4,7 @@
 id 0x3020
 
 //Set Unknown
-unk 0x40000
+unk 0x00000
 
 //Strings
 
@@ -17,23 +17,26 @@ if var0 < 20
 endif
 
 if !(OAttacking)
-  SetTimeout 10
+  if FrameGE 31
+    Finish
+  endif
   Return
 endif
 
-
-SetTimeout 50
-  var1 = OCurrActionFreq
+  var1 = Rnd * 5
   if var1 >= 5
       var0 = 0
   elif var1 >= 4
       var0 = 5
+      if Equal LevelValue 100
+        var0 = 0
+      endif
   elif var1 >= 3
       var0 = 10
   elif var1 >= 2
       var0 = 15
   else
-      var0 = 25
+      var0 = 21
   endif
   if !(Equal var0 0)
     var0 = var0 + Rnd * 5
@@ -46,7 +49,6 @@ SetTimeout 50
   var0 -= 1
   Return
   label begin
-
 
 var10=Rnd*20+5
 var11=(100-LevelValue)*0.12
@@ -76,7 +78,7 @@ if OAttacking && LevelValue >= 60 && XDistLE 20 && !(FrameGE 20)
 else
     var10-=1
     if var10 <= 0
-        Finish
+        Call OOSHub
     endif
 endif
 if Act1EOr1D var10
@@ -136,7 +138,7 @@ if FrameGE 3
     endif
 endif
 if !(Act1EOr1D var10)
-    Finish
+    Call OOSHub
 endif
 Return
 //____________________
@@ -150,7 +152,7 @@ if FrameGE 2
     endif
 endif
 if !(Act1EOr1D var10)
-    Finish
+    Call OOSHub
 endif
 Return
 //____________________
@@ -163,7 +165,7 @@ if FrameGE 2
     endif
 endif
 if !(Act1EOr1D var10)
-    Finish
+    Call OOSHub
 endif
 Goto shieldStunCheck
 Return

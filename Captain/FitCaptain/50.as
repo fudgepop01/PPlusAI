@@ -3,7 +3,7 @@
 id 0x8050
 
 //Set Unknown
-unk 0xA0000
+unk 0x00000
 
 //Strings
 

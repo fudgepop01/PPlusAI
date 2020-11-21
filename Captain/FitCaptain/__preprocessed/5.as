@@ -18,7 +18,7 @@ if var1 < var2
 else
   var0 = Rnd
 endif
-
+// SAFE_INJECT_2 var0
 label
 if var20 >= 24641 && var20 <= 24655
   if var0 <= 0.2
@@ -46,8 +46,6 @@ if var20 >= 24641 && var20 <= 24655
   elif var0 <= 0.55
   // dash away aerial
     if XDistFrontEdge > 20 && XDistBackEdge < -20
-      LOGSTR 1668641280 1916887808 1953066752 1845493760 0
-      LOGVAL CurrAction
       var1 = OPos * -1
       AbsStick var1
       if Equal CurrAction 1 || Equal CurrAction 10
@@ -55,9 +53,7 @@ if var20 >= 24641 && var20 <= 24655
         Return
       endif
       if Equal CurrAction 3
-        LOGSTR 1751478784 1694498816 0 0 0
         if Rnd < 0.1
-          LOGSTR 1768824832 1919837184 0 0 0
           if Equal var20 24643 && CurrAction < 9
             Button X
           else
@@ -131,7 +127,6 @@ label turnFaceJump
   if Equal CurrAction 5 && !(Equal OPos Direction)
     Button X
   elif Equal CurrAction 6 || Equal CurrAction 8 || Equal CurrAction 9 || Idling
-    LOGSTR 1634497536 0 0 0 0
     if Equal OPos Direction
       Button X
       Return

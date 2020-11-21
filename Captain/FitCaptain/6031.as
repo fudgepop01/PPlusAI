@@ -6,13 +6,13 @@ id 0x6031
 unk 0x0
 
 if Equal movePart 0
-  LOGSTR str("jab")
+  // LOGSTR str("jab")
   lastAttack = hex(0x6031)
   move_xOffset = jab123_xOffset
   move_yOffset = jab123_yOffset
   move_xRange = jab123_xRange
   move_yRange = jab123_yRange
-  move_hitFrame = jab123_dist1
+  move_hitFrame = jab123_hitFrame
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else
@@ -21,23 +21,37 @@ if Equal movePart 0
 else
   move_IASA = jab123_IASA
   Button A
+  SetFrame 0
   Seek execute
 endif
 Return
 
 label execute
+
+if Equal moveVariant mv_jabReset
+  if FrameGE 15 || Idling
+    Call AIHub
+  endif
+  Return
+endif
+
+label
 ClearStick
+
+
 if FrameGE 2
   if Equal CurrSubaction Attack11
-    if Equal HitboxConnected 1 && AnimFrame > 7
+    if Equal HitboxConnected 1 && FrameGE 7
+      SetFrame 0
       Button A
-    elif AnimFrame > 15
+    elif FrameGE 15
       Call AIHub
     endif
   elif Equal CurrSubaction Attack12
-    if Equal HitboxConnected 1 && AnimFrame > 8
+    if Equal HitboxConnected 1 && FrameGE 8
+      SetFrame 0
       Button A
-    elif AnimFrame > 18
+    elif FrameGE 18
       Call AIHub
     endif
   elif Equal CurrSubaction Attack13

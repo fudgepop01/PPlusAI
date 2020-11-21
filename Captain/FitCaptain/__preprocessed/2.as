@@ -13,7 +13,7 @@ var18 = 0
 
 var1 = OTopNY - TopNY
 
-LOGSTR 1668246784 1651460096 1969356800 0 0
+// LOGSTR 1668246784 1651460096 1969356800 0 0
 if Equal var20 24625
   // ...thus we'll end up here
   if ODamage > 20
@@ -56,7 +56,7 @@ elif Equal var20 24628
     Call FAir
   endif
 elif Equal var20 24636
-  LOGSTR 1735549440 1131241984 1862270976 0 0
+  // LOGSTR 1735549440 1131241984 1862270976 0 0
   if Rnd < 0.05
     Call UAir
   endif
@@ -69,9 +69,9 @@ elif Equal var20 24636
       Call NAir
     endif
   elif Equal var19 2
-    if ODamage > 60 && var1 > 5
+    if ODamage > 60 && var1 > 25
       Call FAir
-    elif var1 > 35 && OYSpeed > 0.15
+    elif var1 > 25 && OYSpeed > 0.15
       Call UAir
     endif
     var0 = Rnd * 3

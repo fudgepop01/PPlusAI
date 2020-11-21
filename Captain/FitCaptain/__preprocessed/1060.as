@@ -3,12 +3,11 @@
 id 0x1060
 
 //Set Unknown
-unk 0x110000
+unk 0x00000
 
 //Strings
 
-if FrameGE 0 && !(FrameGE 1)
-    Finish
-endif
+Call AIHub
+Return
 Return
 

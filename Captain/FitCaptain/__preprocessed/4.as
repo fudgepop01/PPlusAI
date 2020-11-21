@@ -5,7 +5,7 @@ id 0x8004
 
 unk 0x0
 
-if !(InAir)
+if !(Equal AirGroundState 2) || Equal IsOnStage 1
   Call AIHub
 endif
 
@@ -31,17 +31,18 @@ GetNearestCliff var1
 
 // draws a debug rectangle around the cliff so we can see a visual of what
 // the ranges are
-DrawDebugRectOutline var1 var2 50 25 255 255 255 136
+// DrawDebugRectOutline var1 var2 50 25 255 255 255 136
 
 // makes var1 and var2 relative to the character's position
 var1 = TopNX - var1
 var1 *= -1
+var2 *= -1
 var2 = var2 - TopNY * -1
 
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
 // and edgeguard if possible
-if Equal OYDistFloor -1 && var1 <= 50 && var1 >= -50 && var2 >= -25 && !(Equal var18 255)
+if Equal OIsOnStage 0 && var1 <= 50 && var1 >= -50 && var2 >= -25 && !(Equal var18 255) && !(Equal var19 254)
   var18 = 0
   Call EdgeguardHub
 endif
@@ -128,34 +129,38 @@ else
   // var3 now contains the absolute distance to the ledge
   // because i'm not fully sure how OR works here, I just do this lol
 
-  if var2 < 3 && var2 > 0 && Equal IsOnStage 0
-    if var1 > -3 && var1 < 0
-      AbsStick 1 1
-      Button R
+  // if var2 < 3 && var2 > 0 && Equal IsOnStage 0
+  //   if var1 > -3 && var1 < 0
+  //     AbsStick 1 1
+  //     Button R
+  //     Call AIHub
+  //   elif var1 < 3 && var1 > 0
+  //     AbsStick (-1) 1
+  //     Button R
+  //     Call AIHub
+  //   endif
+  // endif
+  if CanJump
+    if var2 < -25 && var3 > 20
+      // if we're beyond 20 units away and under the vertical bounds
+      Button X
       Call AIHub
-    elif var1 < 3 && var1 > 0
-      AbsStick (-1) 1
-      Button R
+    elif var2 < -40 && var3 < 5
+      // if we're directly under the ledge then clear the stick's input
+      // and jump
+      ClearStick
+      Button X
+      Call AIHub
+    elif var2 < -40
+      Button X
+      Call AIHub
+    elif var3 > 50
+      Button X
       Call AIHub
     endif
   endif
 
-  if CanJump && var2 < -25 && var3 > 20
-    // if we're beyond 20 units away and under the vertical bounds
-    Button X
-    Call AIHub
-  elif CanJump && var2 < -45 && var3 < 5
-    // if we're directly under the ledge then clear the stick's input
-    // and jump
-    ClearStick
-    Button X
-    Call AIHub
-  elif CanJump && var2 < -65
-    // I don't recall exactly what htis does but I assume it's important
-    // if it's not important feel free to delete it
-    Button X
-    Call AIHub
-  elif var2 <= var0 && YSpeed < -1
+  if var2 <= var0 && TotalYSpeed < -1 && FramesHitstun < 1
     // this means we can't jump and are falling, at which point we want to
     // perform upB
     AbsStick 0 0.7
@@ -172,11 +177,10 @@ Return
 label bReverseIfNecessary
 var0 = var1 * Direction
 if var0 > 0
+  ClearStick
   Stick (-1)
   Return
 endif
-LOGSTR 1668641280 1916887808 1953066752 1845493760 0
-LOGVAL CurrAction
 if Equal CurrAction 276
   Seek handleUpB
 elif Equal CurrAction 275
@@ -184,7 +188,7 @@ elif Equal CurrAction 275
 elif Equal CurrAction 277
   Seek handleDownB
 else
-  Call AIHub
+  Return
 endif
 Return
 
@@ -211,7 +215,6 @@ label
 // call AIHub
 if !(Equal CurrAction 276) && !(Equal CurrAction 16)
   if Equal AirGroundState 1 || Equal CurrAction 14 || Equal CurrAction 15
-    LOGSTR 1667329024 1818848768 1730175232 1768453376 1644167168
     Call AIHub
   endif
 endif

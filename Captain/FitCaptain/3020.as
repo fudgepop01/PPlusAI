@@ -4,7 +4,7 @@
 id 0x3020
 
 //Set Unknown
-unk 0x40000
+unk 0x00000
 
 //Strings
 
@@ -17,13 +17,13 @@ if var0 < 20
 endif
 
 if !(OAttacking)
-  SetTimeout 10
+  if FrameGE 31
+    Finish
+  endif
   Return
 endif
 
-
-SetTimeout 50
-DEFENSIVE_REACTION_TIME
+DEFENSIVE_REACTION_TIME(var0, var1)
 
 var10=Rnd*20+5
 var11=(100-LevelValue)*0.12
@@ -53,7 +53,7 @@ if OAttacking && LevelValue >= 60 && XDistLE 20 && !(FrameGE 20)
 else
     var10-=1
     if var10 <= 0
-        Finish
+        Call OOSHub
     endif
 endif
 if Act1EOr1D var10
@@ -113,7 +113,7 @@ if FrameGE 3
     endif
 endif
 if !(Act1EOr1D var10)
-    Finish
+    Call OOSHub
 endif
 Return
 //____________________
@@ -127,7 +127,7 @@ if FrameGE 2
     endif
 endif
 if !(Act1EOr1D var10)
-    Finish
+    Call OOSHub
 endif
 Return
 //____________________
@@ -140,7 +140,7 @@ if FrameGE 2
     endif
 endif
 if !(Act1EOr1D var10)
-    Finish
+    Call OOSHub
 endif
 Goto shieldStunCheck
 Return

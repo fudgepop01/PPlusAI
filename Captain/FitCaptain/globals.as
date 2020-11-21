@@ -7,6 +7,8 @@
 // if you're looking for various quirks in brawl's coding that requires
 // you to do certain things, scroll to the bottom of this file
 
+#let globTempVar = var17
+
 // used when planning / executing moves
 #let move_xOffset = var9
 #let move_yOffset = var10
@@ -50,6 +52,7 @@
 #const noComboVal = 255
 
 #const mv_edgeguard = 255
+#const mv_ledgeRefresh = 254
 
 // AI "mode" values
 #const md_attack = 1
@@ -83,28 +86,31 @@
 // 1.as, and if it does, it'll perform the action provided
 
 // jab123
+#const mv_gentlemen = 0
+#const mv_jabReset = 1
+
 #const jab123_IASA = 14
-#const jab123_xOffset = 2
-#const jab123_yOffset = 0
-#const jab123_xRange = 20
-#const jab123_yRange = 5
-#const jab123_dist1 = 6
+#const jab123_xOffset = 4
+#const jab123_yOffset = -7
+#const jab123_xRange = 12
+#const jab123_yRange = 6
+#const jab123_hitFrame = 3
 
 // ftilt
 #const ftilt_IASA = 30
-#const ftilt_xOffset = 4
-#const ftilt_yOffset = 9
-#const ftilt_xRange = 34
-#const ftilt_yRange = 10
-#const ftilt_dist1 = 20
+#const ftilt_xOffset = 6
+#const ftilt_yOffset = -5
+#const ftilt_xRange = 20
+#const ftilt_yRange = 5
+#const ftilt_hitFrame = 9
 
 // utilt
 #const utilt_IASA = 38
-#const utilt_xOffset = 7
-#const utilt_yOffset = 10
+#const utilt_xOffset = 8
+#const utilt_yOffset = -7
 #const utilt_xRange = 15
 #const utilt_yRange = 10
-#const utilt_dist1 = 30
+#const utilt_hitFrame = 17
 
 // dtilt
 #const dtilt_IASA = 35
@@ -112,23 +118,37 @@
 #const dtilt_yOffset = 0
 #const dtilt_xRange = 15
 #const dtilt_yRange = 5
-#const dtilt_dist1 = 20
+#const dtilt_hitFrame = 10
 
 // fsmash
 #const fsmash_IASA = 49
-#const fsmash_xOffset = 5
-#const fsmash_yOffset = 5
-#const fsmash_xRange = 10
-#const fsmash_yRange = 10
-#const fsmash_dist1 = 13
+#const fsmash_xOffset = 7
+#const fsmash_yOffset = -5
+#const fsmash_xRange = 17
+#const fsmash_yRange = 6
+#const fsmash_hitFrame = 19
 
 // usmash
 #const usmash_IASA = 32
 #const usmash_xOffset = 1
 #const usmash_yOffset = -20
-#const usmash_xRange = 10
-#const usmash_yRange = 25
-#const usmash_dist1 = 13
+#const usmash_xRange = 11
+#const usmash_yRange = 15
+#const usmash_hitFrame = 22
+
+// dsmash
+#const dsmash_IASA = 45
+#const dsmash_xOffset = 0
+#const dsmash_yOffset = 3
+#const dsmash_xRange = 24
+#const dsmash_yRange = 3
+
+// sideB
+#const sspecial_IASA = 26
+#const sspecial_xOffset = 0
+#const sspecial_yOffset = 0
+#const sspecial_xRange = 40
+#const sspecial_yRange = 6
 
 // grab
 // "mv" stands for "move variant" - it's just a naming convention
@@ -143,11 +163,11 @@
 #const mv_techChase = 1
 
 #const grab_IASA = 32
-#const grab_xOffset = 1
-#const grab_yOffset = 1
+#const grab_xOffset = 4
+#const grab_yOffset = -8
 #const grab_xRange = 5
 #const grab_yRange = 2
-#const grab_dist1 = 16
+#const grab_hitFrame = 7
 
 // tells when an aerial should be falling & low to the ground
 #const mv_lowAerial = 254
@@ -156,41 +176,41 @@
 #const nair_IASA = 45
 #const nair_xOffset = 17
 #const nair_yOffset = -2
-#const nair_xRange = 20
+#const nair_xRange = 10
 #const nair_yRange = 10
-#const nair_dist1 = 23
+#const nair_hitFrame = 14
 
 // FAir
 #const fair_IASA = 36
 #const fair_xOffset = 8
-#const fair_yOffset = 0
-#const fair_xRange = 11
-#const fair_yRange = 15
-#const fair_dist1 = 23
+#const fair_yOffset = -4
+#const fair_xRange = 6
+#const fair_yRange = 4
+#const fair_hitFrame = 23
 
 // BAir
 #const bair_IASA = 29
-#const bair_xOffset = -5
+#const bair_xOffset = -7
 #const bair_yOffset = -5
 #const bair_xRange = 10
-#const bair_yRange = 10
-#const bair_dist1 = 13
+#const bair_yRange = 4
+#const bair_hitFrame = 10
 
 // UAir
 #const uair_IASA = 30
 #const uair_xOffset = 5
-#const uair_yOffset = -10
-#const uair_xRange = 20
-#const uair_yRange = 10
-#const uair_dist1 = 10
+#const uair_yOffset = -13
+#const uair_xRange = 10
+#const uair_yRange = 15
+#const uair_hitFrame = 6
 
 // DAir
 #const dair_IASA = 38
 #const dair_xOffset = 0
-#const dair_yOffset = 10
-#const dair_xRange = 20
-#const dair_yRange = 13
-#const dair_dist1 = 19
+#const dair_yOffset = 7
+#const dair_xRange = 10
+#const dair_yRange = 3
+#const dair_hitFrame = 16
 
 
 //___________________________

@@ -5,10 +5,17 @@ id 0x8F00
 
 unk 0x0
 
+lastScript = hex(0x8F00)
 #let tempVar = var0
 
-Button X
-Seek jsquat
+GOING_OFFSTAGE(var0, var1, 4)
+
+if !(Equal tempVar 0)
+  Goto executed
+else
+  Button X
+  Seek jsquat
+endif
 Return
 
 label jsquat

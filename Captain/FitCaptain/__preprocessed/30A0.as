@@ -12,22 +12,27 @@ if !(Equal AirGroundState 1)
 endif
 
 if !(OAttacking)
-  SetTimeout 10
+  if FrameGE 21
+    Finish
+  endif
   Return
 endif
 
 SetTimeout 50
-  var1 = OCurrActionFreq
+  var1 = Rnd * 5
   if var1 >= 5
       var0 = 0
   elif var1 >= 4
       var0 = 5
+      if Equal LevelValue 100
+        var0 = 0
+      endif
   elif var1 >= 3
       var0 = 10
   elif var1 >= 2
       var0 = 15
   else
-      var0 = 25
+      var0 = 21
   endif
   if !(Equal var0 0)
     var0 = var0 + Rnd * 5
@@ -40,7 +45,6 @@ SetTimeout 50
   var0 -= 1
   Return
   label begin
-
   Button R
   Stick 0 (-1)
   Call AIHub

@@ -3,11 +3,11 @@
 id 0x8010
 
 //Set Unknown
-unk 0x50000
+unk 0x00000
 
 //Strings
-str "#full_f"
-str "#edge_range"
+// str "#full_f"
+// str "#edge_range"
 
 if FrameGE 0 && !(FrameGE 1)
     Finish

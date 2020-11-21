@@ -7,10 +7,9 @@ unk 0x0
 
 //Strings
 
-// EDGEGUARD PART
-// LOGSTR str("ODistLedge")
-// LOGVAL OXDistFrontEdge
-// LOGVAL OYDistFrontEdge
+if Equal AIMD 2
+    Call EdgeguardHub
+endif
 
 #let AbsOXDistFrontEdge = var0
 AbsOXDistFrontEdge = OXDistFrontEdge
@@ -20,16 +19,16 @@ if Equal OIsOnStage 0 && Equal AirGroundState 3
         Button R
     elif !(MeteoChance)
         Button R
-    elif AbsOXDistFrontEdge > 10 && AbsOXDistFrontEdge < 50 && OYDistFrontEdge < 40 && Equal CurrAction hex(0x75) && AnimFrame > 7 && Rnd < 0.1
+    elif AbsOXDistFrontEdge > 10 && AbsOXDistFrontEdge < 50 && OYDistFrontEdge < 40 && Equal CurrAction hex(0x75) && AnimFrame > 7 && Rnd < 0.3
         if OYDistFrontEdge < -10
             Button X
         else
             Stick -1
         endif
-        SetAIMD 2 hex(0x8003)
-        Call EdgeguardHub
-        Finish
-    elif AnimFrame > 12 && AbsOXDistFrontEdge > 50
+        // SetAIMD 2 hex(0x2060)
+        Return
+    elif AnimFrame > 12 && AbsOXDistFrontEdge > 35
+        moveVariant = mv_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
         Finish
@@ -64,7 +63,7 @@ else
     // Button R
     Stick (-1) (-0.5)
 endif
-SetAIMD 2 hex(0x8000)
+// SetAIMD 2 hex(0x8000)
 Finish
 Return
 Return

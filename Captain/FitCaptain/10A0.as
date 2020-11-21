@@ -3,32 +3,26 @@
 id 0x10A0
 
 //Set Unknown
-unk 0x100000
+unk 0x00000
 
 //Strings
-str "#jump_start_f"
-str "#meteo_range"
-str "#atk_range_base"
-str "#atk_range_rnd"
-str "#quick_range1"
-str "#quick_range2"
-str "#dash_range"
+// str "#jump_start_f"
+// str "#meteo_range"
+// str "#atk_range_base"
+// str "#atk_range_rnd"
+// str "#quick_range1"
+// str "#quick_range2"
+// str "#dash_range"
 
-var0=36
-var10=55
-var11=32
-var12=10
-var13=30
-var14=80
-var15=40
+var0=30
+var1=80
+var2=40
 SetTimeout 600
-LOGSTR str("E")
 //____________________
 label
-LOGSTR str("E.1")
-if DistToOEdge > var15 && !(InAir)
-    var16=LevelValue*0.0099
-    if Rnd < var16
+if DistToOEdge > var2 && !(InAir)
+    var3=LevelValue*0.0099
+    if Rnd < var3
         SetTimeout 10
         Seek _0
         if Dashing
@@ -42,7 +36,6 @@ Jump
 Return
 //____________________
 label _0
-LOGSTR str("0")
 if Idling || Dashing
     // Call EdgeguardHub
     SetTimeout 600
@@ -52,7 +45,6 @@ endif
 Return
 //____________________
 label _1
-LOGSTR str("1")
 if !(MeteoChance)
     Finish
 endif
@@ -64,28 +56,28 @@ if OutOfStage
     endif
 endif
 if Dashing
-    var17=40
+    var4=40
 else
-    var17=15
+    var4=15
 endif
 var9=Direction*OPos
 if var9 < 0
-    var16=OPos*0.9
-    AbsStick var16
+    var3=OPos*0.9
+    AbsStick var3
     Return
-elif DistToOEdge > var17
-    if DistToOEdge > 20
+elif DistToOEdge > var4
+    if DistToOEdge > 10
         AbsStick OPos
     else
-        var16=OPos*0.5
-        AbsStick var16
+        var3=OPos*0.5
+        AbsStick var3
     endif
     Return
 else
-    var16=OYCoord-YCoord
-    if Dashing && var16 < 50 && var16 > 0 && XDistLE var13 var14
-        var16=0.006*LevelValue
-        if Rnd < var16
+    var3=OYCoord-YCoord
+    if Dashing && var3 < 50 && var3 > 0 && XDistLE var0 var1
+        var3=0.006*LevelValue
+        if Rnd < var3
             if Dashing
                 AbsStick OPos
             endif
@@ -93,13 +85,11 @@ else
             Finish
         endif
     endif
-    var0=0
     Seek
 endif
 Return
 //____________________
 label
-LOGSTR str("1.1")
 if !(MeteoChance)
     Finish
 endif
@@ -108,168 +98,24 @@ Seek
 Return
 //____________________
 label
-LOGSTR str("1.2")
 if !(MeteoChance)
     Finish
 endif
-// if ODistLE 30
-//     Call slot10
-// endif
 if CurrAction <= hex(0x09)
-    if DistToOEdge > 20
-        var16=0.5*OPos
-        AbsStick var16
+    if DistToOEdge > 7
+        var3=0.5*OPos
+        AbsStick var3
     elif DistToOEdge < 2
-        var16=-0.7*OPos
-        AbsStick var16
+        var3=-0.7*OPos
+        AbsStick var3
     else
         Call EdgeguardHub
-        var16=OPos*Direction
-        if var16 < 0
-            var16=0.5*OPos
-            AbsStick var16
+        var3=OPos*Direction
+        if var3 < 0
+            var3=0.5*OPos
+            AbsStick var3
         endif
     endif
-endif
-var1=OPos*15+XCoord
-EstOPassTimeX var2 var1
-if var2 < 0
-    var2=9999
-endif
-if var2 < var0
-    var0+=1
-else
-    var0=0
-endif
-if var0 > 2.5 && Idling
-    // Call EdgeguardHub
-    EstOYCoord var3 var2
-    var3-=YCoord
-    if var3 > 35
-        Stick (-0.75)
-        Seek _2
-    elif var3 > 10
-        Seek _3
-    elif var3 > 0
-        Seek _4
-    else
-        var16=OXSpeed
-        Abs var16
-        if var16 < 0.5 || DistFrontEdge > 20
-            Seek _4
-        elif LevelValue < 60
-            Call EdgeguardHub
-        elif NoOneHanging && Rnd < 0.1
-            SetTimeout 30
-            var16=0.5*OPos
-            AbsStick var16
-            Seek _5
-        else
-            Seek _4
-        endif
-    endif
-endif
-Return
-//____________________
-label _2
-LOGSTR str("2")
-Stick 0 1
-if FrameGE 10
-    Seek
-endif
-Return
-//____________________
-label
-LOGSTR str("2.1")
-if !(InAir) || NumJumps < 0.5
-    Finish
-endif
-if ODistLE 35
-    // Call EdgeguardHub
-    Finish
-endif
-if !(FrameGE 3)
-    Stick 0 1
-endif
-if YSpeed < 0
-    var4=OYCoord-YCoord
-    if var4 > 10
-        SetFrame 0
-    endif
-endif
-Return
-//____________________
-label _3
-LOGSTR str("3")
-if !(MeteoChance)
-    Finish
-endif
-// Call EdgeguardHub
-if XDistLE var10
-    Finish
-endif
-Return
-//____________________
-label _4
-LOGSTR str("4")
-AtkDiceRoll slot10
-Cmd2F var5 var11
-var16=var12*Rnd
-var5+=var16
-Seek
-Jump
-Return
-//____________________
-label
-LOGSTR str("4.1")
-
-if !(MeteoChance)
-    Finish
-endif
-var9=Direction*OPos
-if var9 < 0
-    var9=OPos*0.6
-    AbsStick var9
-    Return
-endif
-// Call EdgeguardHub
-if XDistLE var5
-    var16=OYCoord-ExactYCoord
-    if var16 > 45
-        Call DJNeutral
-    elif var16 > 25
-        Call slot5
-    else
-        Call
-    endif
-endif
-Return
-//____________________
-label _5
-LOGSTR str("5")
-// Call EdgeguardHub
-if !(MeteoChance) || FrameGE 50
-    Finish
-endif
-Stick 1
-if InAir
-    Seek
-endif
-Return
-//____________________
-label
-LOGSTR str("5.1")
-// Call EdgeguardHub
-if !(MeteoChance)
-    Finish
-endif
-if FrameGE 2
-    Stick (-1)
-    if FrameGE 6
-        Finish
-    endif
-else
-    AbsStick OPos
 endif
 Return
 Return

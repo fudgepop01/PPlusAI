@@ -17,12 +17,8 @@ if Equal movePart 0
   move_hitFrame = Rnd * 20 + 5
   Call ApproachHub
 elif Equal AirGroundState 2
-  LOGSTR str("xPos")
-  LOGVAL TopNX
-  LOGSTR str("XdistBackEdge")
-  LOGVAL XDistBackEdge
   tempVar = OPos * -1
-  if YDistFloor > 15
+  if YDistBackEdge < -15
     Button X
     AbsStick tempVar
     Call AIHub
@@ -70,6 +66,9 @@ Stick 1
 Return
 
 label wavedashBack
+if CurrAction > hex(0x09)
+  Return
+endif
 Button X
 label
 if InAir

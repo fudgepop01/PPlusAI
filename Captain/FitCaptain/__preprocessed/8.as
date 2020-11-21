@@ -16,12 +16,8 @@ if Equal var18 0
   var13 = Rnd * 20 + 5
   Call ApproachHub
 elif Equal AirGroundState 2
-  LOGSTR 2018537216 1929379840 0 0 0
-  LOGVAL TopNX
-  LOGSTR 1482975488 1936998912 1633905408 1164207872 1694498816
-  LOGVAL XDistBackEdge
   var0 = OPos * -1
-  if YDistFloor > 15
+  if YDistBackEdge < -15
     Button X
     AbsStick var0
     Call AIHub
@@ -67,6 +63,9 @@ Stick 1
 Return
 
 label wavedashBack
+if CurrAction > 9
+  Return
+endif
 Button X
 label
 if InAir

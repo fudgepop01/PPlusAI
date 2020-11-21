@@ -7,10 +7,9 @@ unk 0x0
 
 //Strings
 
-// EDGEGUARD PART
-// LOGSTR 1329883392 1937001472 1701078784 1694498816 0
-// LOGVAL OXDistFrontEdge
-// LOGVAL OYDistFrontEdge
+if Equal AIMD 2
+    Call EdgeguardHub
+endif
 
 var0 = OXDistFrontEdge
 Abs var0
@@ -19,16 +18,16 @@ if Equal OIsOnStage 0 && Equal AirGroundState 3
         Button R
     elif !(MeteoChance)
         Button R
-    elif var0 > 10 && var0 < 50 && OYDistFrontEdge < 40 && Equal CurrAction 117 && AnimFrame > 7 && Rnd < 0.1
+    elif var0 > 10 && var0 < 50 && OYDistFrontEdge < 40 && Equal CurrAction 117 && AnimFrame > 7 && Rnd < 0.3
         if OYDistFrontEdge < -10
             Button X
         else
             Stick -1
         endif
-        SetAIMD 2 32771
-        Call EdgeguardHub
-        Finish
-    elif AnimFrame > 12 && var0 > 50
+        // SetAIMD 2 8288
+        Return
+    elif AnimFrame > 12 && var0 > 35
+        var19 = 254
         Stick 0 (-1)
         Call AIHub
         Finish
@@ -62,7 +61,7 @@ else
     // Button R
     Stick (-1) (-0.5)
 endif
-SetAIMD 2 32768
+// SetAIMD 2 32768
 Finish
 Return
 Return

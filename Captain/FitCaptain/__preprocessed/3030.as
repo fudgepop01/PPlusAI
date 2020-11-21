@@ -3,10 +3,10 @@
 id 0x3030
 
 //Set Unknown
-unk 0x60000
+unk 0x00000
 
 //Strings
-str "#wait_f"
+// str "#wait_f"
 
 if !(ODistLE 23)
     Finish

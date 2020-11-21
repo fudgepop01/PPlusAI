@@ -5,7 +5,7 @@ id 0x8004
 
 unk 0x0
 
-if !(InAir)
+if !(Equal AirGroundState 2) || Equal IsOnStage 1
   Call AIHub
 endif
 
@@ -37,17 +37,18 @@ GetNearestCliff nearCliffX
 
 // draws a debug rectangle around the cliff so we can see a visual of what
 // the ranges are
-DrawDebugRectOutline nearCliffX nearCliffY rw rh color(0xffffff88)
+// DrawDebugRectOutline nearCliffX nearCliffY rw rh color(0xffffff88)
 
 // makes nearCliffX and nearCliffY relative to the character's position
 nearCliffX = TopNX - nearCliffX
 nearCliffX *= -1
+nearCliffY *= -1
 nearCliffY = nearCliffY - TopNY * -1
 
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
 // and edgeguard if possible
-if Equal OYDistFloor -1 && nearCliffX <= rw && nearCliffX >= -rw && nearCliffY >= -rh && !(Equal movePart hex(0xFF))
+if Equal OIsOnStage 0 && nearCliffX <= rw && nearCliffX >= -rw && nearCliffY >= -rh && !(Equal movePart hex(0xFF)) && !(Equal moveVariant mv_ledgeRefresh)
   movePart = 0
   Call EdgeguardHub
 endif
@@ -134,34 +135,38 @@ else
   // tempVar2 now contains the absolute distance to the ledge
   // because i'm not fully sure how OR works here, I just do this lol
 
-  if nearCliffY < 3 && nearCliffY > 0 && Equal IsOnStage 0
-    if nearCliffX > -3 && nearCliffX < 0
-      AbsStick 1 1
-      Button R
+  // if nearCliffY < 3 && nearCliffY > 0 && Equal IsOnStage 0
+  //   if nearCliffX > -3 && nearCliffX < 0
+  //     AbsStick 1 1
+  //     Button R
+  //     Call AIHub
+  //   elif nearCliffX < 3 && nearCliffX > 0
+  //     AbsStick (-1) 1
+  //     Button R
+  //     Call AIHub
+  //   endif
+  // endif
+  if CanJump
+    if nearCliffY < -rh && tempVar2 > 20
+      // if we're beyond 20 units away and under the vertical bounds
+      Button X
       Call AIHub
-    elif nearCliffX < 3 && nearCliffX > 0
-      AbsStick (-1) 1
-      Button R
+    elif nearCliffY < -40 && tempVar2 < 5
+      // if we're directly under the ledge then clear the stick's input
+      // and jump
+      ClearStick
+      Button X
+      Call AIHub
+    elif nearCliffY < -40
+      Button X
+      Call AIHub
+    elif tempVar2 > rw
+      Button X
       Call AIHub
     endif
   endif
 
-  if CanJump && nearCliffY < -rh && tempVar2 > 20
-    // if we're beyond 20 units away and under the vertical bounds
-    Button X
-    Call AIHub
-  elif CanJump && nearCliffY < -45 && tempVar2 < 5
-    // if we're directly under the ledge then clear the stick's input
-    // and jump
-    ClearStick
-    Button X
-    Call AIHub
-  elif CanJump && nearCliffY < -65
-    // I don't recall exactly what htis does but I assume it's important
-    // if it's not important feel free to delete it
-    Button X
-    Call AIHub
-  elif nearCliffY <= tempVar && YSpeed < -1
+  if nearCliffY <= tempVar && TotalYSpeed < -1 && FramesHitstun < 1
     // this means we can't jump and are falling, at which point we want to
     // perform upB
     AbsStick 0 0.7
@@ -178,11 +183,10 @@ Return
 label bReverseIfNecessary
 tempVar = nearCliffX * Direction
 if tempVar > 0
+  ClearStick
   Stick (-1)
   Return
 endif
-LOGSTR str("currAction")
-LOGVAL CurrAction
 if Equal CurrAction hex(0x114)
   Seek handleUpB
 elif Equal CurrAction hex(0x113)
@@ -190,7 +194,7 @@ elif Equal CurrAction hex(0x113)
 elif Equal CurrAction hex(0x115)
   Seek handleDownB
 else
-  Call AIHub
+  Return
 endif
 Return
 
@@ -217,7 +221,6 @@ label
 // call AIHub
 if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10))
   if Equal AirGroundState 1 || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F)
-    LOGSTR str("calling aihub")
     Call AIHub
   endif
 endif

@@ -12,12 +12,14 @@ if !(Equal AirGroundState 1)
 endif
 
 if !(OAttacking)
-  SetTimeout 10
+  if FrameGE 21
+    Finish
+  endif
   Return
 endif
 
 SetTimeout 50
-DEFENSIVE_REACTION_TIME
+DEFENSIVE_REACTION_TIME(var0, var1)
   Button R
   Stick 0 (-1)
   Call AIHub

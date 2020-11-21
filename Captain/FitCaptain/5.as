@@ -21,7 +21,7 @@ if tempVar < tempVar2
 else
   actionType = Rnd
 endif
-
+// SAFE_INJECT_2 actionType
 label
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if actionType <= 0.2
@@ -49,8 +49,6 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   elif actionType <= 0.55
   // dash away aerial
     if XDistFrontEdge > 20 && XDistBackEdge < -20
-      LOGSTR str("currAction")
-      LOGVAL CurrAction
       tempVar = OPos * -1
       AbsStick tempVar
       if Equal CurrAction hex(0x01) || Equal CurrAction hex(0x0A)
@@ -58,9 +56,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
         Return
       endif
       if Equal CurrAction hex(0x03)
-        LOGSTR str("here")
         if Rnd < 0.1
-          LOGSTR str("in rnd")
           if Equal lastAttack hex(0x6043) && CurrAction < hex(0x09)
             Button X
           else
@@ -134,7 +130,6 @@ label turnFaceJump
   if Equal CurrAction hex(0x05) && !(Equal OPos Direction)
     Button X
   elif Equal CurrAction hex(0x06) || Equal CurrAction hex(0x08) || Equal CurrAction hex(0x09) || Idling
-    LOGSTR str("alt")
     if Equal OPos Direction
       Button X
       Return

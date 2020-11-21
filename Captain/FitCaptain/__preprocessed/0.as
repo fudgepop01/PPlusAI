@@ -6,12 +6,13 @@
 id 0x8000
 
 //Set Unknown
-unk 0x0
+unk 0x00000
 
-//Strings
+if LevelValue <= 48
 
-if Equal AIMD 3
-  SetAIMD 1 32768
+  if Rnd < 0.2
+    Return
+  endif
 endif
 
 if CurrAction >= 26 && CurrAction <= 29
@@ -59,17 +60,22 @@ Return
 //
 // makes the AI input R every 41 frames 80% (base) of the time
 label _checkTech
-if CurrAction >= 69 && CurrAction <= 77 && FramesSinceShield > 40 && var2 <= 0
-  var4 = (100 - LevelValue) / 100
-  var4 = 0.8 - var4
-  if Rnd < var4
-    if Equal YDistFloor -1 && Equal CurrAction 69 && FramesHitlag <= 1
-      Button R
-    elif YDistFloor < 20 && YSpeed < 0
-      Button R
+if var2 <= 0
+  if CurrAction >= 69 && CurrAction <= 77 && FramesSinceShield > 40
+    var4 = (100 - LevelValue) / 100 * -1
+    var4 += 0.8
+    if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
+      if Rnd < var4
+        Button R
+      endif
+      var2 = 41
+    elif Equal IsOnStage 1 && YDistBackEdge > -7 && YSpeed < 0
+      if Rnd < var4
+        Button R
+      endif
+      var2 = 41
     endif
   endif
-  var2 = 41
 endif
 var2 -= 1
 Return
@@ -98,50 +104,51 @@ Return
 
 // the stuff here happens when not in hitstun.
 label _main
-var1 = 0
+var2 = 0
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
 
 // where RecoveryHub (4.as) is called
-if Equal IsOnStage 0 && InAir
+if Equal IsOnStage 0 && Equal AirGroundState 2
   Call RecoveryHub
 endif
 
-GetIsTeammateCloser var0
-// LOGSTR 1952801024 1835884800 1952793344 1819243264 1701969920
-// LOGVAL var0
-if Equal var0 1 && OYDistFloor < 50
-  var1 = 1
-  LOGVAL var0
-  if !(XDistLE 70)
-    AbsStick OPos
-  elif XDistLE 24 && XDistBackEdge < -30
-    var0 = OPos * -1
-    AbsStick var0
-  elif Rnd < 0.05
-    AbsStick OPos
-  endif
-  if Rnd < 0.05
-    SwitchTarget
-  endif
-  Return
-endif
-
-if MeteoChance
+if MeteoChance && Equal IsOnStage 1
   var18 = 0
   Call BlockRecovery
 endif
 
-// if we're going to go off the edge of a stage while performing a move,
+// if we're going to go over an edge of a stage while performing a move,
 // we hold the control stick in the opposite direction
-var0 = XSpeed * 15
-GetYDistFloorOffset var0 var0 0
-if Equal var0 -1
-  if InAir
-    Stick Direction 0
+  GetNearestCliffR var0
+  var1 = XSpeed * 15
+  var1 += TopNX
+  if Equal IsOnStage 1 && var0 < 0
+    var0 += var1
+    if var0 >= 0
+      var0 = 1
+    endif
+  elif Equal IsOnStage 1 && var0 > 0
+    var0 += var1
+    if var0 <= 0
+      var0 = -1
+    endif
   endif
-  Return
+  if !(Equal var0 1) || !(Equal var0 -1)
+    if Equal IsOnStage 0
+      var0 = 2
+    else
+      var0 = 0
+    endif
+  endif
+
+if !(Equal var0 0)
+  if InAir || Equal CurrAction 3
+    var0 = XSpeed * -10
+    AbsStick var0 0
+    Return
+  endif
 endif
 
 // not currently used, so I commented this out
@@ -150,7 +157,7 @@ endif
 // if we reach here then it's time to choose an attack to perform
 // if the opponent is in hitstun and we want to combo, we'll go to the
 // ComboHub (2.as)
-if OFramesHitstun > 0 && !(Equal var19 255)
+if OFramesHitstun > 0 && !(Equal var19 255) && LevelValue >= 42
   Call ComboHub
 endif
 
@@ -172,6 +179,7 @@ var18 = 0
 var15 = -1
 
   var5 = 0
+  var6 = OCurrAction
   if Equal var6 96 || Equal var6 81
     if OAnimFrame < 15
       var5 = 1
@@ -183,12 +191,9 @@ var15 = -1
     endif
   endif
 
-
 if Equal var5 0
-  // CUSTOM_INJECT is a value that is adjustable on the fly
-  // when debugging AI. Remove this or set it to 0 when it's time
-  // to actually put the AI into production
-  var0 = CUSTOM_INJECT
+  var0 = 0
+  // SAFE_INJECT_0 var0
 
   // because we don't want to set the var0 again if we revisit
   // this, we place a label here to jump to
@@ -235,33 +240,45 @@ if Equal var5 0
     elif var0 < 21
       Call DSpecialAir
     endif
-  elif YDistFloor < 40
-    if LevelValue >= 60 && Equal var1 0
-      if OAttacking && OCurrActionFreq > 6 && Rnd < 0.8 && !(Equal var21 32776)
+  elif YDistBackEdge > -40
+    var0 = 0
+    // SAFE_INJECT_1 var0
+
+    if LevelValue >= 60 && Equal var2 0
+      if OAttacking && Rnd < 0.8 && !(Equal var21 32776)
         Call FakeOutHub
       elif Rnd < 0.05 && !(Equal var21 32776)
+        Call FakeOutHub
+      elif Equal var0 1
         Call FakeOutHub
       endif
     endif
 
     var21 = -1
 
-    if LevelValue >= 42 && Equal var1 0
-      if XDistLE 40 && Rnd < 0.15 && Equal AirGroundState 1
-        if Equal AIMD 2 || Rnd < 0.4
+    if LevelValue >= 42 && Equal var2 0
+
+      var0 = TopNX
+      var1 = OTopNX
+      Abs var0
+      Abs var1
+      if XDistLE 40 && Rnd < 0.15 && Equal AirGroundState 1 && var1 < var0
+        if Rnd < 0.4
           var21 = 2
         endif
+        Call NeutralHub
+      elif Equal var0 2
         Call NeutralHub
       endif
     endif
 
-    if Equal var1 0
-      if Equal AIMD 2 || Rnd < 0.05
+    if Equal var2 0
+      if Rnd < 0.05 || Equal var0 3
         var21 = 2
-        if OYDistFloor > 45
+        if OYDistBackEdge < -45
           Call UAir
         endif
-        if Rnd < 0.5 && !(Equal Direction OPos)
+        if Rnd < 0.8 && !(Equal Direction OPos)
           Call BAir
         else
           Call NAir
@@ -271,16 +288,25 @@ if Equal var5 0
     var21 = 1
 
     // if the opponent is lying there doing nothing
-    if LevelValue >= 48 && Equal var1 0
+    if LevelValue >= 48 && Equal var2 0
       if Equal OCurrAction 74 || Equal OCurrAction 77
-        Call DAir
+        if Equal AirGroundState 1 || Rnd < 0.6
+          var19 = 1
+          Call Jab123
+        else
+          Call DAir
+        endif
       endif
+    endif
+
+    if LevelValue >= 42 && Equal OAirGroundState 3
+      Call EdgeguardHub
     endif
 
     // this part is effectively falcon's whole entire neutral game.
     // if the opponent is close to the ground...
     if LevelValue >= 21
-      if OYDistFloor < 15
+      if OYDistBackEdge > -15
         var0 = Rnd * 160
         // LOGSTR 1836021248 1699964160 1811939328 0 0
         // LOGVAL var0
@@ -335,7 +361,7 @@ if Equal var5 0
           // LOGSTR 1852796416 1694498816 0 0 0
         endif
       endif
-      if OYDistFloor < 45
+      if OYDistBackEdge > -45
         if Rnd < 0.5 && ODamage > 50
           Call FAir
         else
@@ -344,7 +370,7 @@ if Equal var5 0
       endif
       // if we're here, then the opponent is in the air at which point
       // we just perform a random aerial for the sake of having some variety lol
-      LOGSTR 1918987776 1682007296 1919508736 1811939328 0
+      // LOGSTR 1918987776 1682007296 1919508736 1811939328 0
       var0 = Rnd * 5 + 12
       Goto callers
     else
@@ -354,6 +380,8 @@ if Equal var5 0
   else
     if Rnd < 0.05
       Call DAir
+    elif Rnd < 0.3
+      Call UAir
     endif
   endif
 endif

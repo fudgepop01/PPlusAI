@@ -5,13 +5,10 @@
 id 0x2070
 
 //Set Unknown
-unk 0x50000
+unk 0x00000
 
 //Strings
-str "#full_f"
-str "#edge_range"
 
-LOGSTR 1768824832 842020608 808345856 1929379840 0
 if InAir || FramesHitstun > 0 || CurrAction <= 32
     Call AIHub
 endif

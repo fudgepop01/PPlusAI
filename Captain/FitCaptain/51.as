@@ -4,7 +4,7 @@ unk 0x0
 
 var21 = 51
 
-SetDebugOverlayColor 0 255 0 200
+// SetDebugOverlayColor 0 255 0 200
 if FrameGE 0 && !(FrameGE 1)
   Button X
 endif

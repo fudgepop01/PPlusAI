@@ -22,7 +22,7 @@ label
 ClearStick
 if CurrAction < 52 || CurrAction > 60
   Call AIHub
-elif CurrAction < 58 || CurrAction > 60
+elif Equal CurrAction 57
   if var0 > 0
     Button A
     var0 -= 1

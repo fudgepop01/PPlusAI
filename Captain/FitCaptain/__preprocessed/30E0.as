@@ -3,11 +3,11 @@
 id 0x30E0
 
 //Set Unknown
-unk 0x50000
+unk 0x00000
 
 //Strings
-str "#full_f"
-str "#edge_range"
+// str "#full_f"
+// str "#edge_range"
 
 Finish
 Return

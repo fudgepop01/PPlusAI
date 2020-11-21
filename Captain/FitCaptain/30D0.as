@@ -3,9 +3,9 @@
 id 0x30D0
 
 //Set Unknown
-unk 0x20000
+unk 0x00000
 
 //Strings
 
-Call Nothing
+Call AIHub
 Return

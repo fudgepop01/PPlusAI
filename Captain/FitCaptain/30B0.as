@@ -12,12 +12,14 @@ if !(Equal AirGroundState 1)
 endif
 
 if !(OAttacking)
-  SetTimeout 10
+  if FrameGE 21
+    Finish
+  endif
   Return
 endif
 
 SetTimeout 50
-DEFENSIVE_REACTION_TIME
+DEFENSIVE_REACTION_TIME(var0, var1)
 
 SetTimeout 15
 var0=100-LevelValue
@@ -101,8 +103,5 @@ else
     Button R
     Stick 0 (-1)
 endif
-Return
-Return
-
 Return
 Return

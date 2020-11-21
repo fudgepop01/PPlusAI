@@ -14,7 +14,7 @@ movePart = 0
 #let OYDistSelf = var1
 OYDistSelf = OTopNY - TopNY
 
-LOGSTR str("comboHub")
+// LOGSTR str("comboHub")
 if Equal lastAttack hex(0x6031)
   // ...thus we'll end up here
   if ODamage > 20
@@ -57,7 +57,7 @@ elif Equal lastAttack hex(0x6034)
     Call FAir
   endif
 elif Equal lastAttack hex(0x603C)
-  LOGSTR str("grbCmbo")
+  // LOGSTR str("grbCmbo")
   if Rnd < 0.05
     Call UAir
   endif
@@ -70,9 +70,9 @@ elif Equal lastAttack hex(0x603C)
       Call NAir
     endif
   elif Equal moveVariant mv_dthrow
-    if ODamage > 60 && OYDistSelf > 5
+    if ODamage > 60 && OYDistSelf > 25
       Call FAir
-    elif OYDistSelf > 35 && OYSpeed > 0.15
+    elif OYDistSelf > 25 && OYSpeed > 0.15
       Call UAir
     endif
     var0 = Rnd * 3

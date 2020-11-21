@@ -156,17 +156,29 @@ slot23 {
 //_____Section1 starts_____
 //Entry number : 0x0
 JumpRecoverRange&&CanJump {
-    AIHub 100,100,0,0
+    AIHub 0,0,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 0,0,0,0
+    EdgeguardHub 0,0,0,0
+    AerialBase 0,0,0,0
 }
 
 //Entry number : 0x1
 CanJump {
-    AIHub 100,100,0,0
+    AIHub 0,0,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 0,0,0,0
+    EdgeguardHub 0,0,0,0
+    AerialBase 0,0,0,0
 }
 
 //Entry number : 0x2
 True {
+    AIHub 0,0,0,0
     RecoveryHub 100,100,0,0
+    ApproachHub 0,0,0,0
+    EdgeguardHub 0,0,0,0
+    AerialBase 0,0,0,0
 }
 
 //_____Section1 ends_____
@@ -176,14 +188,20 @@ if OBlown
 
 //Entry number : 0x4
 InAir {
-    // AerialCombo 100,100,100,0
-    AIHub 100,100,100,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x5
 True {
-    // GroundCombo 100,100,100,0
-    AIHub 100,100,100,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x6
@@ -191,114 +209,111 @@ endif
 
 //Entry number : 0x7
 MeteoChance {
-    BlockRecovery 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
+    BlockRecovery 0,0,0,0
 }
 
 //Entry number : 0x8
-// Lying&&SamePlane {
-!True {
-    InterceptCliff 100,100,0,0
+Lying&&SamePlane {
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x9
 Not1_4_9_12And2 {
     AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0xA
 OInHigh&&XVeryClose {
     AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0xB
 Back&&OInHigh {
     AIHub 100,100,0,0
-    // WalkUp 100,100,0,0
-    // FHopAway 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0xC
 OInHigh&&!fVeryClose {
     AIHub 100,100,0,0
-    // FHopTowards 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0xD
 InAir {
-    Unk1080 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0xE
 ev3 {
-    DashUp 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0xF
-Back&&!True {
-    WalkUp 100,100,0,0
-    Unk3020 100,100,0,0
-    Unk3080 100,100,0,0
-    Unk3010 100,100,0,0
+Back {
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x10
 fXFar&&!FullCharge {
-    Unk3080 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x11
 fXFar {
-    // AIHub 100,100,0,0
     AIHub 100,100,0,0
-    // Unk33 100,100,0,0
-    // Unk32 100,100,0,0
-    // Unk22 100,100,0,0
-    // RollF 100,100,0,0
-    // Unk1090 100,100,0,0
-    // FHopTowards 100,100,0,0
-    // SHopTowards 100,100,0,0
-    // GetBehind0 100,100,0,0
-    // Unk1050 100,100,0,0
-    // Unk3080 100,100,0,0
-    // Unk3010 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x12
 fXMiddle {
     AIHub 100,100,0,0
-    // Unk1050 100,100,0,0
-    // Unk33 100,100,0,0
-    // Unk1090 100,100,0,0
-    // Unk1071 100,100,0,0
-    // Unk1073 100,100,0,0
-    // Unk1077 100,100,0,0
-    // Unk31 100,100,0,0
-    // SHopTowards 100,100,0,0
-    // SHopAway 100,100,0,0
-    // FHopTowards 100,100,0,0
-    // SHopNeutral 100,100,0,0
-    // DJNeutral 100,100,0,0
-    // SHopDJ 100,100,0,0
-    // FHopDJ 100,100,0,0
-    // GetBehind0 100,100,0,0
-    // Unk23 100,100,0,0
-    // Unk21 100,100,0,0
-    // RollB 100,100,0,0
-    // Jab123 100,100,0,0
-    // USmash 100,100,0,0
-    // DTilt 100,100,0,0
-    // FSmash 100,100,0,0
-    // DSmash 100,100,0,0
-    // USpecial 100,100,0,0
-    // FTilt 100,100,0,0
-    // UTilt 100,100,0,0
-    // Unk3020 100,100,0,0
-    // Unk24 100,100,0,0
-    // Unk3090 100,100,0,0
-    // Unk3080 100,100,0,0
-    // Unk3010 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //_____Section2 ends_____
@@ -306,64 +321,38 @@ fXMiddle {
 //Entry number : 0x13
 fVeryClose {
     AIHub 100,100,0,0
-    // Unk1010 100,100,0,0
-    // Unk1020 100,100,0,0
-    // Unk1030 100,100,0,0
-    // Unk3020 100,100,0,0
-    // Unk22 100,100,0,0
-    // RollF 100,100,0,0
-    // RollB 100,100,0,0
-    // DodgeWhenAttacked 100,100,0,0
-    // Spotdodge 100,100,0,0
-    // Unk3090 100,100,0,0
-    // SHopAway 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x14
 fXClose {
     AIHub 100,100,0,0
-    // Unk1010 100,100,0,0
-    // Unk1020 100,100,0,0
-    // Unk1030 100,100,0,0
-    // Unk1040 100,100,0,0
-    // Unk3020 100,100,0,0
-    // RollF 100,100,0,0
-    // Unk1090 100,100,0,0
-    // Unk1071 100,100,0,0
-    // Unk1076 100,100,0,0
-    // Unk1077 100,100,0,0
-    // SHopTowards 100,100,0,0
-    // FHopTowards 100,100,0,0
-    // SHopDJ 100,100,0,0
-    // SHopNeutral 100,100,0,0
-    // SHopAway 100,100,0,0
-    // Jab123 100,100,0,0
-    // DTilt 100,100,0,0
-    // UTilt 100,100,0,0
-    // USpecial 100,100,0,0
-    // RollF 100,100,0,0
-    // Unk24 100,100,0,0
-    // RollB 100,100,0,0
-    // Unk22 100,100,0,0
-    // SHopNeutral 100,100,0,0
-    // FHopAway 100,100,0,0
-    // DodgeWhenAttacked 100,100,0,0
-    // Spotdodge 100,100,0,0
-    // Unk3090 100,100,0,0
-    // Unk3080 100,100,0,0
-    // Unk3010 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x15
 InAir {
-    OnGotDamaged 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x16
-MeteoChance&&!True {
-    BlockRecovery 100,100,0,0
+MeteoChance {
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
+    BlockRecovery 0,0,0,0
 }
 
 //Entry number : 0x17
@@ -372,131 +361,113 @@ if !SamePlane
 //Entry number : 0x18
 fXClose&&ev3 {
     AIHub 100,100,0,0
-    // FHopTowards 100,100,0,0
-    // DashUp 100,100,0,0
-    // Unk22 100,100,0,0
-    // RollB 100,100,0,0
-    // Unk10 100,100,0,0
-    // Nothing 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x19
 fXClose&&OInHigh {
     AIHub 100,100,0,0
-    // FHopTowards 100,100,0,0
-    // Unk22 100,100,0,0
-    // RollB 100,100,0,0
-    // Unk3010 100,100,0,0
-    // Unk10 100,100,0,0
-    // Nothing 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x1A
 fXClose {
-    RollB 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x1B
 !FullCharge {
-    Unk3030 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x1C
 Far {
-    Unk1050 100,100,0,0
-    Unk3040 100,100,0,0
-    FHopTowards 100,100,0,0
-    SHopNeutral 100,100,0,0
-    Unk3080 100,100,0,0
-    Unk3010 100,100,0,0
-    Unk10 100,100,0,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x1D
 True {
     AIHub 100,100,0,0
-    // Unk1050 100,100,0,0
-    // Unk3040 100,100,0,0
-    // FHopTowards 100,100,0,0
-    // SHopNeutral 100,100,0,0
-    // Unk3080 100,100,0,0
-    // Unk3010 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x1E
 endif
 
 //Entry number : 0x1F
-Back&&!True {
-    WalkUp 90,38,100,0
+Back {
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x20
 fVeryClose {
     AIHub 100,100,0,0
-    // Unk1010 100,100,0,0
-    // Unk31 100,100,0,0
-    // Unk22 100,100,0,0
-    // Unk3020 100,100,0,0
-    // RollF 100,100,0,0
-    // RollB 100,100,0,0
-    // DodgeWhenAttacked 100,100,0,0
-    // Spotdodge 100,100,0,0
-    // Unk3090 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x21
 fXClose {
     AIHub 100,100,0,0
-    // Unk1040 100,100,0,0
-    // Unk31 100,100,0,0
-    // Unk22 100,100,0,0
-    // SHopTowards 100,100,0,0
-    // SHopAway 100,100,0,0
-    // RollF 100,100,0,0
-    // Unk3020 100,100,0,0
-    // RollB 100,100,0,0
-    // DodgeWhenAttacked 100,100,0,0
-    // Spotdodge 100,100,0,0
-    // Unk3090 100,100,0,0
-    // Unk3080 100,100,0,0
-    // Unk3010 100,100,0,0
-    // Unk10 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x22
 fXMiddle {
     AIHub 100,100,0,0
-    // Unk1040 5,0,100,0
-    // Unk21 8,60,100,0
-    // Unk23 5,20,50,0
-    // RollB 7,0,100,0
-    // Unk1090 10,0,100,0
-    // SHopTowards 2,0,100,0
-    // SHopAway 3,0,100,0
-    // Unk3090 2,0,80,30
-    // Unk3080 10,0,100,0
-    // Unk3010 48,10,100,0
-    // Unk10 0,30,50,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //_____Section3 ends_____
 //Entry number : 0x23
 !FullCharge {
-    Unk3030 80,0,100,30
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Entry number : 0x24
 True {
-    Unk1050 10,2,100,0
-    Unk22 30,40,100,0
-    RollF 10,0,100,0
-    Unk3080 5,5,100,0
-    Unk3010 45,15,100,0
-    FHopTowards 0,8,50,0
-    Unk10 0,30,50,0
+    AIHub 100,100,0,0
+    RecoveryHub 100,100,0,0
+    ApproachHub 100,100,0,0
+    EdgeguardHub 100,100,0,0
+    AerialBase 100,100,0,0
 }
 
 //Threshold values

@@ -25,7 +25,6 @@ if Equal var1 1 && XDistLE 15
   Return
 endif
 if Equal CurrAction 29
-  LOGVAL AnimFrame
   if Equal OPos Direction && XDistLE 15 && Rnd < 0.3 && AnimFrame > 3
     var1 = 1
   endif

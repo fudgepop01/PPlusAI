@@ -3,10 +3,10 @@
 id 0x6046
 
 //Set Unknown
-unk 0x60000
+unk 0x00000
 
 //Strings
-str "#wait_f"
+// str "#wait_f"
 
 if FrameGE 0
     Finish

@@ -3,7 +3,7 @@
 id 0x6040
 
 //Set Unknown
-unk 0x50000
+unk 0x00000
 
 //Strings
 
@@ -15,35 +15,35 @@ if Equal movePart 0
     move_yOffset = nair_yOffset
     move_xRange = nair_xRange
     move_yRange = nair_yRange
-    move_hitFrame = nair_dist1
+    move_hitFrame = nair_hitFrame
   elif CalledAs FAir
     lastAttack = hex(0x6042)
     move_xOffset = fair_xOffset
     move_yOffset = fair_yOffset
     move_xRange = fair_xRange
     move_yRange = fair_yRange
-    move_hitFrame = fair_dist1
+    move_hitFrame = fair_hitFrame
   elif CalledAs BAir
     lastAttack = hex(0x6043)
     move_xOffset = bair_xOffset
     move_yOffset = bair_yOffset
     move_xRange = bair_xRange
     move_yRange = bair_yRange
-    move_hitFrame = bair_dist1
+    move_hitFrame = bair_hitFrame
   elif CalledAs UAir
     lastAttack = hex(0x6044)
     move_xOffset = uair_xOffset
     move_yOffset = uair_yOffset
     move_xRange = uair_xRange
     move_yRange = uair_yRange
-    move_hitFrame = uair_dist1
+    move_hitFrame = uair_hitFrame
   elif CalledAs DAir
     lastAttack = hex(0x6045)
     move_xOffset = dair_xOffset
     move_yOffset = dair_yOffset
     move_xRange = dair_xRange
     move_yRange = dair_yRange
-    move_hitFrame = dair_dist1
+    move_hitFrame = dair_hitFrame
   else
     Call AIHub
   endif
@@ -52,7 +52,7 @@ if Equal movePart 0
   else
     Call ApproachHub
   endif
-elif Equal AirGroundState 2
+elif Equal AirGroundState 2 && Equal movePart 1
   ClearStick
   move_IASA = nair_IASA
   if CalledAs FAir
@@ -69,6 +69,7 @@ elif Equal AirGroundState 2
     Stick 0 (-0.5)
   endif
   Button A
+  SetFrame 0
   Seek ExecuteAttack
 else
   Call AIHub
@@ -77,9 +78,9 @@ Return
 
 label ExecuteAttack
 if FrameGE 1
-  CALC_TARGET_DISTANCES
+  CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_hitFrame, _oCalc, _sCalc)
 
-  if Equal AirGroundState 1 || Equal YDistFloor -1 || AnimFrame >= move_IASA
+  if Equal AirGroundState 1 || Equal IsOnStage 0 || FrameGE move_IASA
     Call AIHub
   endif
 
@@ -92,7 +93,7 @@ if FrameGE 1
   endif
 
 
-  if YSpeed < 0 && YDistFloor < 10 && YDistFloor >= 0
+  if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0
     var19 = 2
     var18 = 1
     Call Landing

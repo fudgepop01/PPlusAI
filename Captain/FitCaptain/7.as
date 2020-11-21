@@ -28,7 +28,6 @@ if Equal grabOOS 1 && XDistLE 15
   Return
 endif
 if Equal CurrAction hex(0x1D)
-  LOGVAL AnimFrame
   if Equal OPos Direction && XDistLE 15 && Rnd < 0.3 && AnimFrame > 3
     grabOOS = 1
   endif
