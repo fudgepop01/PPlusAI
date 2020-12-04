@@ -13,13 +13,13 @@ if Equal movePart 0
   move_xRange = fair_xRange
   move_yRange = fair_yRange
   move_hitFrame = fair_hitFrame
-  lastAttack = hex(0x6031)
+  lastAttack = hex(0x6042)
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else
     Call ApproachHub
   endif
-else
+elif True
   if Equal moveVariant mv_lowAerial && OYDistBackEdge > -10
     if YSpeed < 0
       Stick 0 (-1)
@@ -32,6 +32,7 @@ else
   Stick 1 0
   Button A
   SetFrame 0
+  move_knockback = -1
   Seek executeAttack
 endif
 Return
@@ -49,11 +50,16 @@ else
   AbsStick 1
 endif
 
-RECORD_MOVE_CONNECTFRAME
+RECORD_MOVE_KNOCKBACK
 
+Abs targetXDistance
+Abs targetYDistance
 if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0
   var19 = 2
   var18 = 1
+  if targetXDistance <= move_xRange && targetYDistance <= move_yRange && Equal move_knockback hex(0xFFFFFF)
+    Return
+  endif
   Call Landing
 endif
 Return

@@ -66,10 +66,10 @@ Jump
 Return
 //____________________
 label
-var16=OPos
+var3=OPos
 var0*=0.6
 AbsStick var0
-var16=OPos
+var3=OPos
 Seek
 Return
 //____________________

@@ -5,12 +5,21 @@ id 0x8004
 
 unk 0x0
 
-if !(Equal AirGroundState 2) || Equal IsOnStage 1
+if Equal CurrAction hex(0x114) || Equal CurrAction hex(0x10)
+  Seek handleUpB
+  Jump
+  Return
+endif
+
+#let isGoingOffstage = var0
+GOING_OFFSTAGE(var0, var1, 15)
+
+if Equal isGoingOffstage 0
+  LOGSTR str("am on stage??")
   Call AIHub
 endif
 
-if Equal CurrAction hex(0x114) || Equal CurrAction hex(0x10)
-  Goto handleUpB
+if CurrAction < hex(0x0B) && CurrAction > hex(0x10)
   Return
 endif
 
@@ -43,7 +52,13 @@ GetNearestCliff nearCliffX
 nearCliffX = TopNX - nearCliffX
 nearCliffX *= -1
 nearCliffY *= -1
-nearCliffY = nearCliffY - TopNY * -1
+nearCliffY = nearCliffY - (TopNY * -1)
+
+#let distToOpp = var4
+distToOpp = TopNY + move_yOffset - OHurtboxSize
+if Equal OIsOnStage 0 && distToOpp >= OTopNY && Equal moveVariant mv_edgeguard && OTopNY > BBoundary
+  Call ApproachHub
+endif
 
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
@@ -96,15 +111,19 @@ if nearCliffY > 0
   elif tempVar >= 25 && tempVar < 50
     Stick 0 0.7
   endif
-  Call RecoveryHub
+  Return
 else
   // otherwise, we must be below the ledge...
 
   // drift toward the ledge
-  if nearCliffX > 0
-    AbsStick (-1) 0
-  else
-    AbsStick 1 0
+  globTempVar = nearCliffX
+  Abs globTempVar
+  if !(Equal moveVariant mv_ledgeRefresh)
+    if nearCliffX < 0
+      AbsStick 1 0
+    else
+      AbsStick (-1) 0
+    endif
   endif
 
   tempVar2 = OXDistFrontEdge
@@ -113,7 +132,10 @@ else
   // after this, tempVar1 will contain the vertical distance to the ledge
   // at which point to perform the next action
   if LevelValue >= LV6
-    if NoOneHanging
+    if distToOpp < OTopNY && Equal moveVariant mv_edgeguard && TopNY > OTopNY
+      tempVar2 = tempVar
+      tempVar = -10
+    elif NoOneHanging
       if Equal OIsOnStage 0 && tempVar2 < tempVar
         tempVar2 = tempVar
         tempVar = -30
@@ -147,11 +169,19 @@ else
   //   endif
   // endif
   if CanJump
-    if nearCliffY < -rh && tempVar2 > 20
+    if globTempVar < 2 && nearCliffY >= -10 && Rnd < 0.3
+      Button X
+      Seek handleJumpToStage
+      Jump
+    elif nearCliffY <= tempVar && nearCliffY >= -30 && globTempVar < 20
+      Button X
+      Seek handleJumpToStage
+      Jump
+    elif nearCliffY < -rh && tempVar2 > 20
       // if we're beyond 20 units away and under the vertical bounds
       Button X
       Call AIHub
-    elif nearCliffY < -40 && tempVar2 < 5
+    elif nearCliffY < -40 && globTempVar < 5
       // if we're directly under the ledge then clear the stick's input
       // and jump
       ClearStick
@@ -181,19 +211,32 @@ Return
 // getting here and continuing, giving it time to actually start the
 // desired move
 label bReverseIfNecessary
+SetFrame 0
+label
 tempVar = nearCliffX * Direction
-if tempVar > 0
+// LOGVAL NumFrames
+if Equal CurrAction hex(0x114) && NumFrames < 10 && globTempVar < 5
+  tempVar = TopNX * -1
+  AbsStick tempVar
+  Return
+elif tempVar > 0
   ClearStick
   Stick (-1)
   Return
 endif
 if Equal CurrAction hex(0x114)
   Seek handleUpB
+  Jump
 elif Equal CurrAction hex(0x113)
   Seek handleSideB
+  Jump
 elif Equal CurrAction hex(0x115)
   Seek handleDownB
-else
+  Jump
+elif True
+  if FramesHitstun > 0 || NumFrames >= 10
+    Call AIHub
+  endif
   Return
 endif
 Return
@@ -216,11 +259,12 @@ Return
 
 // this one however has a bit more complexity
 label handleUpB
-label
+#let prevTopNY = var3
+
 // if we are no longer performing upB and aren't in special fall,
 // call AIHub
 if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10))
-  if Equal AirGroundState 1 || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F)
+  if !(Equal AirGroundState 2) || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F) || FramesHitstun > 0
     Call AIHub
   endif
 endif
@@ -234,27 +278,59 @@ nearCliffY = nearCliffY - TopNY * -1
 // based on the direction falcon is facing, we want to be in a certain position
 // relative to the ledge so we can grab it.
 // this is the code that ensures that happens:
-if nearCliffY > -2
+if nearCliffY > -4
   if nearCliffX > 0
-    AbsStick (-1)
-  else
-    AbsStick 1
+    if Equal IsOnStage 0
+      AbsStick (-1)
+    else
+      AbsStick 1
+    endif
+  elif True
+    if Equal IsOnStage 0
+      AbsStick 1
+    else
+      AbsStick -1
+    endif
   endif
-  Return
 elif Equal Direction -1
-  if nearCliffX > 5
+  if nearCliffX > 3
     AbsStick (-1)
-  elif nearCliffX < 3
+  elif nearCliffX < 1
     AbsStick 1
   endif
-  Return
-else
-  if nearCliffX < -5
+elif True
+  if nearCliffX < -3
     AbsStick 1
-  elif nearCliffX > -3
+  elif nearCliffX > -1
     AbsStick (-1)
   endif
-  Return
+endif
+Return
+
+label handleJumpToStage
+SetFrame 0
+label
+if CanJump && CurrAction <= hex(0x10)
+  Button X
+endif
+if YSpeed > -0.5
+  if nearCliffX > 0
+    AbsStick 1 0
+  else
+    AbsStick (-1) 0
+  endif
+elif True
+  if nearCliffX > 0
+    AbsStick -1 0
+  else
+    AbsStick 1 0
+  endif
+endif
+
+if Equal IsOnStage 1 || FrameGE 30 || FramesHitstun > 0
+  Call AIHub
+elif FrameGE 10 && !(MeteoChance)
+  Call AIHub
 endif
 Return
 Return

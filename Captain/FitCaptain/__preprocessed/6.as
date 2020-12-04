@@ -8,7 +8,7 @@ unk 0x0
 var0 = Rnd * 60 + 20
 
 label
-if InAir
+if InAir && Equal IsOnStage 1
   Stick 0 (-1)
   Button R
   Call AIHub

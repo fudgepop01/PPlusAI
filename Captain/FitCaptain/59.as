@@ -2,6 +2,8 @@ id 0x59
 
 unk 0x0
 
+RECORD_MOVE_KNOCKBACK
+
 if Equal IsOnStage 0
   Call AIHub
 endif

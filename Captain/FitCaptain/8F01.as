@@ -4,6 +4,8 @@ id 0x8F01
 
 unk 0x0
 
+lastScript = hex(0x8F01)
+
 #let tempVar = var0
 if Equal IsOnStage 1
   Button X

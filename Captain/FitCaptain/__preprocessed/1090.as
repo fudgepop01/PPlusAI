@@ -1,14 +1,14 @@
 #include <Definition_AIMain.h>
-//TrueID=0x30E0
-id 0x30E0
+//TrueID=0x1090
+id 0x1090
 
 //Set Unknown
 unk 0x00000
 
 //Strings
-// str "#full_f"
-// str "#edge_range"
 
+var21 = 4240
 Call AIHub
+Finish
 Return
-Return
+

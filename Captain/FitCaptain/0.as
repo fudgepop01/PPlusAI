@@ -8,8 +8,9 @@ id 0x8000
 //Set Unknown
 unk 0x00000
 
-if LevelValue <= LV6
+label begin
 
+if LevelValue <= LV6
   if Rnd < 0.2
     Return
   endif
@@ -17,6 +18,19 @@ endif
 
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
   Call OOSHub
+endif
+
+if Equal LevelValue LV9
+  if CurrAction >= hex(0x1E) && CurrAction <= hex(0x20)
+    Stick 0 (-1)
+    Return
+  elif CurrAction >= hex(0x4E) && CurrAction <= hex(0x53)
+    Stick 0 (-1)
+    Return
+  elif CurrAction >= hex(0x60) && CurrAction <= hex(0x61)
+    Stick 0 (-1)
+    Return
+  endif
 endif
 
 //______________________________________
@@ -29,7 +43,7 @@ endif
 #let tempVar = var4
 
 // if in hitstun...
-if FramesHitstun > 0
+if FramesHitstun > 0 && Equal CurrAction hex(0x45)
   //...pick a random direction for the control stick
   StickX = Rnd - 1
   StickY = Rnd - 1
@@ -46,8 +60,11 @@ if FramesHitstun > 0
   endif
   // until hitstun is 0
   if Equal FramesHitstun 0
-    ClearStick
-    Seek _main
+    if Equal AirGroundState 1
+      Stick -1
+    endif
+    Seek begin
+    Return
   endif
   if LevelValue >= LV7
     Goto _checkMeteorCancel
@@ -57,7 +74,13 @@ if FramesHitstun > 0
   endif
   Return
 endif
-Goto _main
+
+if FramesHitstun > 0 && Equal CurrAction hex(0x43) && LevelValue >= LV8
+  Stick 0 (-1)
+  Return
+endif
+Seek _main
+Jump
 Return
 
 // Goto statements will return back to where they came
@@ -109,37 +132,53 @@ Return
 
 // the stuff here happens when not in hitstun.
 label _main
-#let waitTeamFlag = var2
+#let waitTeamFlag = var6
 waitTeamFlag = 0
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
+#let isGoingOffstage = var0
+GOING_OFFSTAGE(var0, var1, 15)
 
 // where RecoveryHub (4.as) is called
-if Equal IsOnStage 0 && Equal AirGroundState 2
+if Equal isGoingOffstage 2 && Equal AirGroundState 2
+  movePart = 0
   Call RecoveryHub
 endif
 
-if MeteoChance && Equal IsOnStage 1
+if Equal isGoingOffstage 0 && YDistBackEdge > -15 && Equal CurrAction hex(0x33) && LevelValue >= LV7
+  Call Landing
+endif
+
+if MeteoChance && !(Equal isGoingOffstage 2)
   movePart = 0
-  Call BlockRecovery
+  Call EdgeguardHub
 endif
 
 // if we're going to go over an edge of a stage while performing a move,
 // we hold the control stick in the opposite direction
-#let isGoingOffstage = var0
-GOING_OFFSTAGE(var0, var1, 15)
 
+label
 if !(Equal isGoingOffstage 0)
   if InAir || Equal CurrAction hex(0x03)
     var0 = XSpeed * -10
     AbsStick var0 0
     Return
   endif
+elif InAir && YDistBackEdge > -5 && Equal IsOnStage 1
+  if !(Idling) && !(Lying)
+    Return
+  endif
+  tempVar = OPos * -1
+  AbsStick tempVar
+  if Equal CurrAction hex(0x01)
+    ClearStick
+  endif
+  if Dashing || XDistFrontEdge < 20
+    Seek _main
+  endif
+  Return
 endif
-
-// not currently used, so I commented this out
-// GET_WEIGHT_TABLE
 
 // if we reach here then it's time to choose an attack to perform
 // if the opponent is in hitstun and we want to combo, we'll go to the
@@ -159,18 +198,16 @@ if Equal AirGroundState 1
   endif
 endif
 
-// EnableDebugOverlay
-// SetDebugOverlayColor 0 0 0 200
 moveVariant = 0
 movePart = 0
-move_connectFrame = -1
+move_knockback = -1
 
-IS_EARLY_ROLL(var5, var6)
+IS_EARLY_ROLL(var0, var1)
 
 #let moveSelection = var0
 if Equal isEarlyRoll 0
   moveSelection = 0
-  // SAFE_INJECT_0 moveSelection
+  SAFE_INJECT_0 moveSelection
 
   // because we don't want to set the moveSelection again if we revisit
   // this, we place a label here to jump to
@@ -218,13 +255,28 @@ if Equal isEarlyRoll 0
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
-    #let injected = var0
-    injected = 0
-    // SAFE_INJECT_1 injected
+    if OCurrAction >= hex(0x55) && OCurrAction <= hex(0x5D)
+      Call FSmash
+    endif
+
+    RetrieveATKD var0 OCurrSubaction 1
+    #let oDangerStart = var0
+    #let oDangerEnd = var1
+    #let oDangerXMin = var2
+    #let oDangerXMax = var3
+    #let oDangerYMin = var4
+    #let oDangerYMax = var5
+
+    #let injected = var2
+    SAFE_INJECT_1 injected
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0
-      if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008))
-        Call FakeOutHub
+      if oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25)
+        if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && !(Equal ODirection OPos)
+          Call FakeOutHub
+        endif
+      elif OAttacking && oDangerEnd > OAnimFrame && !(Equal oDangerStart -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= LV8
+        Call SSpecial
       elif Rnd < 0.05 && !(Equal lastScript hex(0x8008))
         Call FakeOutHub
       elif Equal injected 1
@@ -234,16 +286,23 @@ if Equal isEarlyRoll 0
 
     lastScript = -1
 
+    #let defenseMul = var3
+    defenseMul = Damage - ODamage
+    defenseMul /= 200
+
     if LevelValue >= LV5 && Equal waitTeamFlag 0
       #let tempVar = var0
       #let tempVar2 = var1
+      #let defenseChance = var2
+
+      defenseChance = defenseMul * 0.2
 
       tempVar = TopNX
       tempVar2 = OTopNX
       Abs tempVar
       Abs tempVar2
       if XDistLE 40 && Rnd < 0.15 && Equal AirGroundState 1 && tempVar2 < tempVar
-        if Rnd < 0.4
+        if Rnd < defenseChance || Rnd < 0.1
           approachType = at_defend
         endif
         Call NeutralHub
@@ -253,7 +312,9 @@ if Equal isEarlyRoll 0
     endif
 
     if Equal waitTeamFlag 0
-      if Rnd < 0.05 || Equal injected 3
+      #let defenseChance = var2
+      defenseChance = defenseMul * 0.1
+      if Rnd < defenseMul || Rnd < 0.05 || Equal injected 3
         approachType = at_defend
         if OYDistBackEdge < -45
           Call UAir
@@ -261,6 +322,7 @@ if Equal isEarlyRoll 0
         if Rnd < 0.8 && !(Equal Direction OPos)
           Call BAir
         else
+          moveVariant = mv_nairHit2
           Call NAir
         endif
       endif
@@ -270,9 +332,8 @@ if Equal isEarlyRoll 0
     // if the opponent is lying there doing nothing
     if LevelValue >= LV6 && Equal waitTeamFlag 0
       if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D)
-        if Equal AirGroundState 1 || Rnd < 0.6
-          moveVariant = mv_jabReset
-          Call Jab123
+        if Equal AirGroundState 1 && Rnd < 0.5
+          Call DTilt
         else
           Call DAir
         endif
@@ -283,29 +344,50 @@ if Equal isEarlyRoll 0
       Call EdgeguardHub
     endif
 
-    // this part is effectively falcon's whole entire neutral game.
-    // if the opponent is close to the ground...
+    // these parts are effectively falcon's whole entire neutral game.
+    if !(XDistLE 20) && LevelValue >= LV7 && Rnd < 0.7
+      // LOGSTR str("throwOut")
+      moveVariant = mv_throwOut
+      Call NAir
+    endif
+
+    if Equal OCurrAction hex(0x25) && !(Equal ODirection Direction)
+      Seek callers
+      Jump
+    endif
+
     if LevelValue >= LV3
       if OYDistBackEdge > -15
-        moveSelection = Rnd * 160
+        moveSelection = Rnd * 200
         // LOGSTR str("moveSel")
         // LOGVAL moveSelection
         // these moves are pretty much always relevant
         if moveSelection >= 100
-          if moveSelection < 110
+          if moveSelection < 105
             Call FAir
-          elif moveSelection < 125
+          elif moveSelection < 115
             Call DAir
-          elif moveSelection < 140
+          elif moveSelection < 135
+            if Rnd < 0.5
+              moveVariant = mv_approachingNair
+            endif
             Call NAir
           elif moveSelection < 150
             Call Grab
           else
             moveSelection = Rnd * 11 + 2
-            Goto callers
+            Seek callers
+            Jump
           endif
         else
-          if ODamage >= 90
+          #let ODmgXWeight = var2
+
+          GET_WEIGHT_TABLE(ODmgXWeight, var1)
+
+          ODmgXWeight /= 100
+          ODmgXWeight *= ODamage
+
+          if ODmgXWeight >= 90
             // LOGSTR str(">= 90")
             if moveSelection < 20
               Call Grab
@@ -320,23 +402,29 @@ if Equal isEarlyRoll 0
             else
               Call DAir
             endif
-          elif ODamage >= 50
+          elif ODmgXWeight >= 50
             // LOGSTR str(">= 50")
             if moveSelection < 30
               Call Grab
+            elif moveSelection < 60
+              Call NAir
+            elif moveSelection < 80
+              Call DAir
             else
               Call FTilt
             endif
-          else
-            // LOGSTR str("< 50")
-            if moveSelection < 50
-              // LOGSTR str("callGrb")
+          elif True
+            if moveSelection < 30
               Call Grab
+            elif moveSelection < 80
+              moveVariant = mv_nairHit2
+              if Rnd < 0.5
+                moveVariant = mv_approachingNair
+              endif
+              Call NAir
             else
-              // LOGSTR str("callDair")
               Call DAir
             endif
-            // LOGSTR str("notExec")
           endif
           // LOGSTR str("none")
         endif
@@ -352,12 +440,13 @@ if Equal isEarlyRoll 0
       // we just perform a random aerial for the sake of having some variety lol
       // LOGSTR str("randAerial")
       moveSelection = Rnd * 5 + 12
-      Goto callers
+      Seek callers
+      Jump
     else
       moveSelection = Rnd * 17
       Seek callers
     endif
-  else
+  elif True
     if Rnd < 0.05
       Call DAir
     elif Rnd < 0.3

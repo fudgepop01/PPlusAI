@@ -14,6 +14,13 @@ unk 0x00000
 // str "#quick_range2"
 // str "#dash_range"
 
+if Equal var21 32769
+  var19 = 255
+  Call ApproachHub
+else
+  Call AIHub
+endif
+
 var0=30
 var1=80
 var2=40
@@ -93,7 +100,7 @@ label
 if !(MeteoChance)
     Finish
 endif
-// Cmd21
+// WaitForGroundCanAct
 Seek
 Return
 //____________________

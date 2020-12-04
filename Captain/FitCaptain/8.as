@@ -9,6 +9,7 @@ unk 0x0
 
 // sets up offsets to get to target position
 if Equal movePart 0
+  lastScript = hex(0x8008)
   lastAttack = hex(0x8008)
   move_xOffset = 0
   move_yOffset = 0
@@ -28,7 +29,10 @@ elif Equal AirGroundState 2
     Call AIHub
   endif
   Call AIHub
-else
+elif True
+  if Equal OCurrAction hex(0x25) || Equal OCurrAction hex(0x24)
+    Seek jumpOver
+  endif
   tempVar = Rnd
   if tempVar < 0.5 && Damage < 25 && !(Equal OCurrAction hex(0x34))
     Seek crouchCancelPunish
@@ -93,5 +97,12 @@ if shieldRemaining < 10 || timer <= 0 || Equal CurrAction hex(0x1D)
   Call OOSHub
 endif
 timer -= 1
+Return
+
+label jumpOver
+Button X
+if InAir
+  Call AIHub
+endif
 Return
 Return

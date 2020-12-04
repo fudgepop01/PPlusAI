@@ -4,6 +4,8 @@ id 0x8F01
 
 unk 0x0
 
+var21 = 36609
+
 if Equal IsOnStage 1
   Button X
   var0 = Rnd - 0.5

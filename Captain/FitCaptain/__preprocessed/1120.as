@@ -27,7 +27,7 @@ elif Equal CurrAction 57
     Button A
     var0 -= 1
     Return
-  else
+  elif True
     if DistFrontEdge < 25
       if ODamage > 60 && Rnd < 0.5
         Stick 0 1

@@ -7,22 +7,26 @@ unk 0x0
 
 var21 = 36608
 
-  GetNearestCliffR var0
+  GetNearestCliff var0
   var1 = XSpeed * 4
   var1 += TopNX
-  if Equal IsOnStage 1 && var0 < 0
-    var0 += var1
-    if var0 >= 0
-      var0 = 1
+  if var0 < 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      var0 += var1
+      if var0 >= 0
+        var0 = 1
+      endif
     endif
-  elif Equal IsOnStage 1 && var0 > 0
-    var0 += var1
-    if var0 <= 0
-      var0 = -1
+  elif var0 > 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      var0 += var1
+      if var0 <= 0
+        var0 = -1
+      endif
     endif
   endif
   if !(Equal var0 1) || !(Equal var0 -1)
-    if Equal IsOnStage 0
+    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
       var0 = 2
     else
       var0 = 0
@@ -30,7 +34,8 @@ var21 = 36608
   endif
 
 if !(Equal var0 0)
-  Goto executed
+  Seek executed
+  Jump
 else
   Button X
   Seek jsquat
@@ -60,12 +65,12 @@ if YSpeed <= 0
   Stick 0 (-1)
 endif
 if Equal AirGroundState 1
-  Goto executed
+  Seek executed
+  Jump
 endif
 Return
 
 label executed
-label
 
 // if Equal var21 32769
   Call ApproachHub

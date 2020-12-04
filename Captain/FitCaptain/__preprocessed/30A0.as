@@ -45,8 +45,10 @@ SetTimeout 50
   var0 -= 1
   Return
   label begin
+if Equal IsOnStage 1
   Button R
   Stick 0 (-1)
-  Call AIHub
+endif
+Call AIHub
 Return
 Return

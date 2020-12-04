@@ -12,12 +12,14 @@ endif
 if Equal movePart 0
   // LOGSTR str("grab")
   if Equal moveVariant mv_techChase
-    Goto techChase_wait
+    Seek techChase_wait
+    Jump
   else
-    Goto seekOpponent
+    Seek seekOpponent
+    Jump
   endif
   Return
-else
+elif True
   if Equal CurrSubaction JumpSquat
     Button A|R
     Seek execute
@@ -63,13 +65,16 @@ patience -= 1
 if OCurrAction <= hex(0x15)
   Call AIHub
 elif Equal rollFlag 1 && Equal isEarlyRoll 0
-  Goto seekOpponent
+  Seek seekOpponent
+  Jump
 elif patience <= 0
-  Goto seekOpponent
+  Seek seekOpponent
+  Jump
 elif Equal OIsOnStage 0 && Equal OCurrAction hex(0x49)
   Call AIHub
 elif OYDistBackEdge < -20 && Equal OFramesHitstun 0
-  Goto seekOpponent
+  Seek seekOpponent
+  Jump
 endif
 Return
 

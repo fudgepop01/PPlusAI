@@ -8,6 +8,7 @@ unk 0x0
 
 // sets up offsets to get to target position
 if Equal var18 0
+  var21 = 32776
   var20 = 32776
   var9 = 0
   var10 = 0
@@ -27,7 +28,10 @@ elif Equal AirGroundState 2
     Call AIHub
   endif
   Call AIHub
-else
+elif True
+  if Equal OCurrAction 37 || Equal OCurrAction 36
+    Seek jumpOver
+  endif
   var0 = Rnd
   if var0 < 0.5 && Damage < 25 && !(Equal OCurrAction 52)
     Seek crouchCancelPunish
@@ -88,5 +92,12 @@ if var2 < 10 || var1 <= 0 || Equal CurrAction 29
   Call OOSHub
 endif
 var1 -= 1
+Return
+
+label jumpOver
+Button X
+if InAir
+  Call AIHub
+endif
 Return
 Return

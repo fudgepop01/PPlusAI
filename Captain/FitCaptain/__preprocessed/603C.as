@@ -12,12 +12,14 @@ endif
 if Equal var18 0
   // LOGSTR 1735549184 1644167168 0 0 0
   if Equal var19 1
-    Goto techChase_wait
+    Seek techChase_wait
+    Jump
   else
-    Goto seekOpponent
+    Seek seekOpponent
+    Jump
   endif
   Return
-else
+elif True
   if Equal CurrSubaction JumpSquat
     Button A|R
     Seek execute
@@ -71,13 +73,16 @@ var0 -= 1
 if OCurrAction <= 21
   Call AIHub
 elif Equal var1 1 && Equal var5 0
-  Goto seekOpponent
+  Seek seekOpponent
+  Jump
 elif var0 <= 0
-  Goto seekOpponent
+  Seek seekOpponent
+  Jump
 elif Equal OIsOnStage 0 && Equal OCurrAction 73
   Call AIHub
 elif OYDistBackEdge < -20 && Equal OFramesHitstun 0
-  Goto seekOpponent
+  Seek seekOpponent
+  Jump
 endif
 Return
 

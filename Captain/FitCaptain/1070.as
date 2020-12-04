@@ -7,6 +7,19 @@ unk 0x00000
 
 //Strings
 
+#let v0 = var0
+#let v1 = var1
+#let v2 = var2
+#let v9 = var3
+#let v10 = var4
+#let v11 = var5
+#let v12 = var6
+#let v13 = var7
+#let v14 = var8
+#let v15 = var9
+#let v16 = var10
+#let v17 = var11
+
 if XDistFrontEdge <= 50 || XDistBackEdge <= 50
     Finish
 endif

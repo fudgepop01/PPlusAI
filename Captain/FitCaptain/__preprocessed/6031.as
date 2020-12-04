@@ -13,13 +13,14 @@ if Equal var18 0
   var11 = 12
   var12 = 6
   var13 = 3
+  var14 = 3
   if Equal var21 2 && OFramesHitstun < 1
     Call DefendHub
   else
     Call ApproachHub
   endif
 else
-  var14 = 14
+  var15 = 14
   Button A
   SetFrame 0
   Seek execute

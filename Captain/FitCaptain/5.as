@@ -21,6 +21,8 @@ if tempVar < tempVar2
 else
   actionType = Rnd
 endif
+// LOGSTR str("actionType")
+// LOGVAL actionType
 // SAFE_INJECT_2 actionType
 label
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
@@ -41,14 +43,14 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
         if !(Equal OPos Direction) && !(Equal lastAttack hex(0x6043))
           tempVar = OPos * 0.5
           AbsStick tempVar
-        elif Idling || Equal lastAttack hex(0x6043)
+        elif CurrAction <= hex(0x09)
           Button X
         endif
       endif
     endif
   elif actionType <= 0.55
   // dash away aerial
-    if XDistFrontEdge > 20 && XDistBackEdge < -20
+    if XDistFrontEdge > 30 && XDistBackEdge < -30
       tempVar = OPos * -1
       AbsStick tempVar
       if Equal CurrAction hex(0x01) || Equal CurrAction hex(0x0A)
@@ -57,14 +59,14 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       endif
       if Equal CurrAction hex(0x03)
         if Rnd < 0.1
-          if Equal lastAttack hex(0x6043) && CurrAction < hex(0x09)
+          if move_xOffset <= -3 && CurrAction < hex(0x09)
             Button X
           else
             ClearStick
             Stick -1
           endif
         endif
-      elif Equal CurrAction hex(0x07)
+      elif Equal CurrAction hex(0x07) && Equal Direction OPos
         Button X
       elif Equal CurrAction hex(0x04)
         actionType = 0.1
@@ -74,29 +76,34 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       if !(Equal OPos Direction) && !(Equal lastAttack hex(0x6043))
         tempVar = OPos * 0.5
         AbsStick tempVar
-      elif Idling || Equal lastAttack hex(0x6043)
+      elif CurrAction <= hex(0x09)
         Button X
       endif
     endif
   elif actionType <= 0.85
   // aerial in-place
-    if XDistFrontEdge > 30 && XDistBackEdge < -30
+    if XDistFrontEdge > 20 && XDistBackEdge < -20
       if XSpeed > 0.4 || XSpeed < -0.4
         ClearStick
         Return
       endif
       if Equal OPos Direction && !(Equal CurrAction hex(0x0A))
-        if Equal lastAttack hex(0x6043)
-          Stick -1
-        elif Idling
+        if CurrAction <= hex(0x09)
           Button X
         endif
       elif !(Equal CurrAction hex(0x0A))
-        if Equal lastAttack hex(0x6043) && Idling
+        if move_xOffset <= -3 && CurrAction <= hex(0x09)
           Button X
         else
           Stick -1
         endif
+      endif
+    elif move_xOffset <= -3
+      if Equal OPos Direction
+        Stick -0.5
+      endif
+      if !(Equal OPos Direction) && Idling && !(Equal CurrAction hex(0xA))
+        Button X
       endif
     else
       actionType = 1
@@ -104,8 +111,8 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
     endif
   else
   // approach
-    if Equal lastAttack hex(0x6043)
-      actionType = 0.80
+    if move_xOffset <= -3
+      actionType = 0.85
       Return
     else
       Call ApproachHub
@@ -114,7 +121,8 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
 
   if InAir
     if Rnd <= 0.4 || YSpeed < 0
-      Goto execute
+      Seek execute
+      Jump
     endif
   endif
 else

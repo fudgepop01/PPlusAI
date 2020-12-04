@@ -11,7 +11,8 @@ lastScript = hex(0x8F00)
 GOING_OFFSTAGE(var0, var1, 4)
 
 if !(Equal tempVar 0)
-  Goto executed
+  Seek executed
+  Jump
 else
   Button X
   Seek jsquat
@@ -41,12 +42,12 @@ if YSpeed <= 0
   Stick 0 (-1)
 endif
 if Equal AirGroundState 1
-  Goto executed
+  Seek executed
+  Jump
 endif
 Return
 
 label executed
-label
 
 // if Equal lastScript hex(0x8001)
   Call ApproachHub

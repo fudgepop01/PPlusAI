@@ -21,6 +21,18 @@ endif
 SetTimeout 50
 DEFENSIVE_REACTION_TIME(var0, var1)
 
+if Rnd < 0.5 && Equal LevelValue LV9 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 80
+    SetFrame 0
+    label
+    Stick 0 (-1)
+    if NumFrames <= 20
+        Call AIHub
+    elif FramesHitstun > 0
+        Seek
+        Jump
+    endif
+endif
+
 SetTimeout 15
 var0=100-LevelValue
 var1=var0

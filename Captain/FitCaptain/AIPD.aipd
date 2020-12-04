@@ -2,17 +2,7 @@
 //Attack dice roll table
 //_____On ground_____
 slot0 {
-    JabAttack 100,100
     FTiltAttack 30,30
-    UTiltAttack 20,20
-    DTiltAttack 10,10
-    FSmashAttack 10,2
-    USmashAttack 5,1
-    NBGroundAttack 1,5
-    UBGroundAttack 20,20
-    DBGroundAttack 2,2
-    GrabAttack 100,100
-    NoAttack 0,40
 }
 
 slot1 {
@@ -514,6 +504,7 @@ defmax.byte21=0x1E
 defmax.byte22=0x1
 defmax.byte23=0xA
 defmax.byte24=0x0
+
 defmin.float1=65.00
 defmin.float2=40.00
 defmin.byte1=0x14
@@ -557,6 +548,7 @@ defmin.byte21=0x0
 defmin.byte22=0x1
 defmin.byte23=0xA
 defmin.byte24=0x0
+
 submax.byte1=0xA
 submax.byte2=0x3C
 submax.byte3=0x0
@@ -586,6 +578,7 @@ submax.pad1=0x0
 submax.pad2=0x0
 submax.pad3=0x0
 submax.pad4=0x0
+
 submin.byte1=0x1E
 submin.byte2=0x0
 submin.byte3=0x1E
@@ -615,18 +608,13 @@ submin.pad1=0x0
 submin.pad2=0x0
 submin.pad3=0x0
 submin.pad4=0x0
+
 unk.section1Start=0x0
 unk.section1End=0x2
 unk.section2Start=0x3
 unk.section2End=0x12
 unk.section3Start=0x13
 unk.section3End=0x22
-// unk.section1Start=0x0
-// unk.section1End=0x0
-// unk.section2Start=0x0
-// unk.section2End=0xF
-// unk.section3Start=0x10
-// unk.section3End=0x1F
 unk.unk1=0x0
 unk.unk2=0x1FE01
 unk.unk3=0x1FC000A

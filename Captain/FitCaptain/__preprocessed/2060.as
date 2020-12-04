@@ -7,42 +7,141 @@ unk 0x0
 
 //Strings
 
-if Equal AIMD 2
-    Call EdgeguardHub
-endif
-
-var0 = OXDistFrontEdge
-Abs var0
-if Equal OIsOnStage 0 && Equal AirGroundState 3
-    if NoOpponent && Equal CurrAction 117
-        Button R
-    elif !(MeteoChance)
-        Button R
-    elif var0 > 10 && var0 < 50 && OYDistFrontEdge < 40 && Equal CurrAction 117 && AnimFrame > 7 && Rnd < 0.3
-        if OYDistFrontEdge < -10
-            Button X
-        else
-            Stick -1
-        endif
-        // SetAIMD 2 8288
-        Return
-    elif AnimFrame > 12 && var0 > 35
-        var19 = 254
-        Stick 0 (-1)
-        Call AIHub
-        Finish
-    elif var0 < 30 && OYDistFrontEdge < 30 && Equal CurrAction 117 && AnimFrame > 7
-        Button R
-    endif
-    Return
-endif
+// if Equal AIMD 2
+//     Call EdgeguardHub
+// endif
 
 if !(Equal AirGroundState 3)
     Call EdgeguardHub
     Finish
 endif
 
+var0 = OXDistFrontEdge
+Abs var0
+if Equal OIsOnStage 0 && Equal AirGroundState 3
+    if OXDistFrontEdge > 10 || OYDistBackEdge < 0
+        if NoOpponent && Equal CurrAction 117
+            Button R
+        elif !(MeteoChance)
+            Button R
+        elif var0 > 20 && var0 < 50 && OYDistFrontEdge < 30 && Equal CurrAction 117 && AnimFrame > 7 && Rnd < 0.3
+            if OYDistFrontEdge < -10
+                Button X
+            else
+                Stick -1
+            endif
+            Return
+        elif var0 > 80 && AnimFrame > 7
+            Button R
+        elif var0 < 30 && OYDistFrontEdge < 30 && Equal CurrAction 117 && AnimFrame > 7
+            Button R
+        elif AnimFrame > 12 && var0 > 45 && var0 < 80
+            var19 = 254
+            Stick 0 (-1)
+            Call AIHub
+            Finish
+        endif
+        Return
+    endif
+endif
+
 if !(Equal CurrAction 117)
+    Return
+endif
+
+label getupOptions
+var0 = OTopNX - TopNX
+var1 = var0
+Abs var1
+
+var2 = Rnd
+if var1 < 35 && Equal Direction OPos
+    if var2 < 0.3 && LevelValue >= 31 // offensive option
+        label
+        if Equal CurrAction 117
+            if NumFrames > 1
+                SetFrame 0
+            endif
+            if Equal NumFrames 1
+                Stick -1
+            endif
+        else
+            Stick 1
+            Button X
+            var18 = 0
+            var2 = Rnd
+            if var2 < 0.4
+                Call UAir
+            elif var2 < 0.8
+                Call NAir
+            else
+                var18 = 1
+                Call DAir
+            endif
+        endif
+        Return
+    elif var2 < 0.4 && LevelValue >= 60 // ledgedash
+        Seek ledgedash
+        Jump
+    elif var2 < 0.7 && LevelValue >= 60
+        var19 = 254
+        Stick 0 (-1)
+        Call AIHub
+    elif Equal CurrAction 117
+        Button R
+        Finish
+    endif
+elif var1 > 35 && Equal OPos Direction
+    LOGSTR 1869640704 838860800 0 0 0
+    if var2 < 0.6 && LevelValue >= 75 // ledgedash
+        Seek ledgedash
+        Jump
+    elif var2 < 0.8
+        var19 = 254
+        Stick 0 (-1)
+        Call AIHub
+    else
+        Button X
+        Call AIHub
+    endif
+elif var1 < 25
+    LOGSTR 1869640704 855638016 0 0 0
+    if Equal CurrAction 117
+        if NumFrames > 1
+            SetFrame 0
+        endif
+        if Equal NumFrames 1
+            Stick -1
+        endif
+    elif True
+        if YDistBackEdge < 10
+            Call UAir
+        else
+            Call BAir
+        endif
+    endif
+endif
+
+if !(True)
+    label ledgedash
+    if FramesHitstun > 0
+        Call AIHub
+    elif Equal CurrAction 117
+        if NumFrames > 1
+            SetFrame 0
+        endif
+        if Equal NumFrames 1
+            Stick -1
+        endif
+    else
+        Stick 1
+        if YDistBackEdge > 5
+            Button X
+        else
+            Button R
+            Call AIHub
+        endif
+    endif
     Return
 endif
 

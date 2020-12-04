@@ -7,6 +7,7 @@ unk 0x00000
 
 //Strings
 
+
 if XDistFrontEdge <= 50 || XDistBackEdge <= 50
     Finish
 endif

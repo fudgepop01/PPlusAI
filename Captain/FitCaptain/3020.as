@@ -8,7 +8,7 @@ unk 0x00000
 
 //Strings
 
-if !(Equal AirGroundState 1)
+if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
     Finish
 endif
 GetShieldRemain var0
@@ -24,6 +24,19 @@ if !(OAttacking)
 endif
 
 DEFENSIVE_REACTION_TIME(var0, var1)
+
+if Rnd < 0.5 && Equal LevelValue LV9 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 80
+    SetFrame 0
+    label
+    Stick 0 (-1)
+    if NumFrames <= 20
+        Call AIHub
+    elif FramesHitstun > 0
+        Seek
+        Jump
+    endif
+endif
+label
 
 var10=Rnd*20+5
 var11=(100-LevelValue)*0.12

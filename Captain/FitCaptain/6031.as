@@ -13,6 +13,7 @@ if Equal movePart 0
   move_xRange = jab123_xRange
   move_yRange = jab123_yRange
   move_hitFrame = jab123_hitFrame
+  move_length = jab123_length
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else

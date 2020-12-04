@@ -7,12 +7,16 @@ unk 0x0
 
 // LOGSTR 1667329024 1818584064 0 0 0
 
-// risky - some macros use var5, but we aren't using any macros here so it should be fine
 
 // I don't know why this is necessary but I hate the fact that
 // it is with a burning passion
 if Equal CurrAction 276
   Call RecoveryHub
+endif
+
+if Equal var21 32769 && XDistLE 20 && OYDistBackEdge < 0
+  var19 = 255
+  Call ApproachHub
 endif
 
 SetVec var1 Zero
@@ -24,8 +28,8 @@ var2 = var2 - TopNY * -1
 
 var0 = var1
 Abs var0
-var5 = OXDistFrontEdge
-Abs var5
+var4 = OXDistFrontEdge
+Abs var4
 
 // if it's not worth going for an edgeguard, don't bother
 if Equal OIsOnStage 1
@@ -39,15 +43,16 @@ elif LevelValue <= 42
   Call RecoveryHub
 endif
 
-if OYDistFrontEdge > 0 && var5 > 50 && var0 > 5
+if OYDistFrontEdge > -10 && var4 > 50 && var0 > 5
   var3 = 1
 else
-  var3 = Rnd * 8
+  var3 = Rnd * 9
   if Equal IsOnStage 0
     var3 += 1
   endif
 endif
-// SAFE_INJECT_2 var3
+SAFE_INJECT_2 var3
+// LOGVAL var3
 label
 SetVec var1 Zero
 GetNearestCliff var1
@@ -60,46 +65,65 @@ var2 = var2 + TopNY * -1
 
 var0 = var1
 Abs var0
-var5 = OXDistFrontEdge
-Abs var5
+var4 = OXDistFrontEdge
+Abs var4
 
 // LOGSTR 1986097664 855638016 0 0 0
 // LOGVAL var3
 
 if Damage < 130 && var2 < -25
   var18 = 255
+  var19 = 255
   Call RecoveryHub
 endif
 
-if Equal OAirGroundState 3 && LevelValue >= 60
+if var4 < 20 && OYDistFrontEdge > -10 && LevelValue >= 60
   var18 = 0
   var19 = 255
   Call DAir
 endif
 
 // GetLaBasic var0 79 1
-var0 = Rnd * 10
-if var3 <= 1 && LevelValue >= 48 && NoOneHanging && var5 > 10
+var5 = Rnd * 10
+if var3 <= 1 && LevelValue >= 48 && NoOneHanging && var4 > 10
   Goto WDBackGrabLedge
   Return
-elif var0 >= 10 && Equal OIsOnStage 0
+elif ONumJumps < 1 && OYDistBackEdge > 30
+  Goto WDBackGrabLedge
+  Return
+elif var5 >= 10 && Equal OIsOnStage 0
   ClearStick
   Return
-elif var0 >= 5 && Equal OIsOnStage 0
+elif var5 >= 7 && Equal OIsOnStage 0
   if Rnd < 0.05
     var19 = 255
     Call DTilt
   endif
   Return
-elif var0 >= 3
+elif var5 >= 5
   Goto WDBackGrabLedge
   Return
-elif var3 <= 5 && OYDistFrontEdge < 30 && LevelValue >= 42 && var5 > 10
+elif Equal IsOnStage 1 && var3 <= 5 && OYDistBackEdge > -30
+  var18 = 0
+  var19 = 255
+  if OYDistBackEdge < 0
+    Call UTilt
+  elif Rnd < 0.3
+    Call DTilt
+  elif Rnd < 0.2
+    Call UTilt
+  else
+    Call FSmash
+  endif
+elif var3 <= 6 && OYDistFrontEdge < 30 && LevelValue >= 42 && var4 > 5
   if var1 < 50 && var1 > -50 && var2 > -25
     var18 = 0
     if Equal AirGroundState 1
       var19 = 255
       Call FAir
+    elif !(Equal OPos Direction)
+      var19 = 255
+      Call BAir
     elif OTopNY > TopNY
       var19 = 255
       Call UAir
@@ -115,7 +139,7 @@ elif var3 <= 5 && OYDistFrontEdge < 30 && LevelValue >= 42 && var5 > 10
     Call RecoveryHub
   endif
   Return
-else
+elif True
   if !(MeteoChance)
     Call AIHub
   endif
@@ -131,7 +155,7 @@ else
     elif var0 > 40 && var0 < 120
       Call UAir
     else
-      Call NAir
+      Call UAir
     endif
     Return
   endif
@@ -140,17 +164,20 @@ Return
 
 label WDBackGrabLedge
 if !(Equal AirGroundState 3)
-  if Equal IsOnStage 1
+  if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
     // wavedash back to ledge?
-    if var0 < 10
+    if var0 < 15
       var0 = var1 * Direction
+      // LOGSTR 1852012544 539631616 1684632064 0 0
+      // LOGVAL var0
       if var0 < -5
         Stick -1
         Return
-      elif InAir && var0 > 2 && Equal IsOnStage 1
+      elif InAir && var0 > 2.5 && Equal IsOnStage 1
         Button R
-        Stick -0.6 (-0.75)
-      elif var0 > 0 && !(Equal CurrAction 10)
+        var0 *= -0.1
+        Stick var0 (-0.75)
+      elif var0 > 0 && !(Equal CurrAction 10) && Equal IsOnStage 1
         Button X
       endif
     else
@@ -161,7 +188,7 @@ if !(Equal AirGroundState 3)
     var18 = 255
     Call RecoveryHub
   endif
-// elif var5 < 10 && OYDistFrontEdge < 10
+// elif var4 < 10 && OYDistFrontEdge < 10
 //   Button R
 //   Call AIHub
 endif

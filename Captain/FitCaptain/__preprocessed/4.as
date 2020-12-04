@@ -5,12 +5,44 @@ id 0x8004
 
 unk 0x0
 
-if !(Equal AirGroundState 2) || Equal IsOnStage 1
+if Equal CurrAction 276 || Equal CurrAction 16
+  Seek handleUpB
+  Jump
+  Return
+endif
+
+  GetNearestCliff var0
+  var1 = XSpeed * 15
+  var1 += TopNX
+  if var0 < 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      var0 += var1
+      if var0 >= 0
+        var0 = 1
+      endif
+    endif
+  elif var0 > 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      var0 += var1
+      if var0 <= 0
+        var0 = -1
+      endif
+    endif
+  endif
+  if !(Equal var0 1) || !(Equal var0 -1)
+    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
+      var0 = 2
+    else
+      var0 = 0
+    endif
+  endif
+
+if Equal var0 0
+  LOGSTR 1634541568 1869488128 1937006848 1734688512 1056964608
   Call AIHub
 endif
 
-if Equal CurrAction 276 || Equal CurrAction 16
-  Goto handleUpB
+if CurrAction < 11 && CurrAction > 16
   Return
 endif
 
@@ -37,7 +69,12 @@ GetNearestCliff var1
 var1 = TopNX - var1
 var1 *= -1
 var2 *= -1
-var2 = var2 - TopNY * -1
+var2 = var2 - (TopNY * -1)
+
+var4 = TopNY + var10 - OHurtboxSize
+if Equal OIsOnStage 0 && var4 >= OTopNY && Equal var19 255 && OTopNY > BBoundary
+  Call ApproachHub
+endif
 
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
@@ -90,15 +127,19 @@ if var2 > 0
   elif var0 >= 25 && var0 < 50
     Stick 0 0.7
   endif
-  Call RecoveryHub
+  Return
 else
   // otherwise, we must be below the ledge...
 
   // drift toward the ledge
-  if var1 > 0
-    AbsStick (-1) 0
-  else
-    AbsStick 1 0
+  var17 = var1
+  Abs var17
+  if !(Equal var19 254)
+    if var1 < 0
+      AbsStick 1 0
+    else
+      AbsStick (-1) 0
+    endif
   endif
 
   var3 = OXDistFrontEdge
@@ -107,7 +148,10 @@ else
   // after this, tempVar1 will contain the vertical distance to the ledge
   // at which point to perform the next action
   if LevelValue >= 48
-    if NoOneHanging
+    if var4 < OTopNY && Equal var19 255 && TopNY > OTopNY
+      var3 = var0
+      var0 = -10
+    elif NoOneHanging
       if Equal OIsOnStage 0 && var3 < var0
         var3 = var0
         var0 = -30
@@ -141,11 +185,19 @@ else
   //   endif
   // endif
   if CanJump
-    if var2 < -25 && var3 > 20
+    if var17 < 2 && var2 >= -10 && Rnd < 0.3
+      Button X
+      Seek handleJumpToStage
+      Jump
+    elif var2 <= var0 && var2 >= -30 && var17 < 20
+      Button X
+      Seek handleJumpToStage
+      Jump
+    elif var2 < -25 && var3 > 20
       // if we're beyond 20 units away and under the vertical bounds
       Button X
       Call AIHub
-    elif var2 < -40 && var3 < 5
+    elif var2 < -40 && var17 < 5
       // if we're directly under the ledge then clear the stick's input
       // and jump
       ClearStick
@@ -175,19 +227,32 @@ Return
 // getting here and continuing, giving it time to actually start the
 // desired move
 label bReverseIfNecessary
+SetFrame 0
+label
 var0 = var1 * Direction
-if var0 > 0
+// LOGVAL NumFrames
+if Equal CurrAction 276 && NumFrames < 10 && var17 < 5
+  var0 = TopNX * -1
+  AbsStick var0
+  Return
+elif var0 > 0
   ClearStick
   Stick (-1)
   Return
 endif
 if Equal CurrAction 276
   Seek handleUpB
+  Jump
 elif Equal CurrAction 275
   Seek handleSideB
+  Jump
 elif Equal CurrAction 277
   Seek handleDownB
-else
+  Jump
+elif True
+  if FramesHitstun > 0 || NumFrames >= 10
+    Call AIHub
+  endif
   Return
 endif
 Return
@@ -210,11 +275,11 @@ Return
 
 // this one however has a bit more complexity
 label handleUpB
-label
+
 // if we are no longer performing upB and aren't in special fall,
 // call AIHub
 if !(Equal CurrAction 276) && !(Equal CurrAction 16)
-  if Equal AirGroundState 1 || Equal CurrAction 14 || Equal CurrAction 15
+  if !(Equal AirGroundState 2) || Equal CurrAction 14 || Equal CurrAction 15 || FramesHitstun > 0
     Call AIHub
   endif
 endif
@@ -228,27 +293,59 @@ var2 = var2 - TopNY * -1
 // based on the direction falcon is facing, we want to be in a certain position
 // relative to the ledge so we can grab it.
 // this is the code that ensures that happens:
-if var2 > -2
+if var2 > -4
   if var1 > 0
-    AbsStick (-1)
-  else
-    AbsStick 1
+    if Equal IsOnStage 0
+      AbsStick (-1)
+    else
+      AbsStick 1
+    endif
+  elif True
+    if Equal IsOnStage 0
+      AbsStick 1
+    else
+      AbsStick -1
+    endif
   endif
-  Return
 elif Equal Direction -1
-  if var1 > 5
+  if var1 > 3
     AbsStick (-1)
-  elif var1 < 3
+  elif var1 < 1
     AbsStick 1
   endif
-  Return
-else
-  if var1 < -5
+elif True
+  if var1 < -3
     AbsStick 1
-  elif var1 > -3
+  elif var1 > -1
     AbsStick (-1)
   endif
-  Return
+endif
+Return
+
+label handleJumpToStage
+SetFrame 0
+label
+if CanJump && CurrAction <= 16
+  Button X
+endif
+if YSpeed > -0.5
+  if var1 > 0
+    AbsStick 1 0
+  else
+    AbsStick (-1) 0
+  endif
+elif True
+  if var1 > 0
+    AbsStick -1 0
+  else
+    AbsStick 1 0
+  endif
+endif
+
+if Equal IsOnStage 1 || FrameGE 30 || FramesHitstun > 0
+  Call AIHub
+elif FrameGE 10 && !(MeteoChance)
+  Call AIHub
 endif
 Return
 Return

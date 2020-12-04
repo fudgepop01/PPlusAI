@@ -11,13 +11,17 @@
 // calculates the target distance to the opponent and visualizes it for
 // debugging purposes. The rectangle color is based on the player number
 #macro CALC_TARGET_DISTANCES(out1, out2, calcVar, gravVar, frameCount, lab1, lab2)
-  // DrawDebugPoint TopNX TopNY color(0xFF000055)
+  if Equal var8 move_length
+    // DrawDebugPoint TopNX TopNY color(0xFF00FFFF)
+  endif
 
   #let tempMacVar1 = {out1}
   #let tempMacVar2 = {out2}
   tempMacVar1 = TopNX + (move_xOffset * Direction)
   tempMacVar2 = TopNY - move_yOffset
-  // DrawDebugPoint tempMacVar1 tempMacVar2 color(0xFF00FFFF)
+  if Equal var8 move_length
+    // DrawDebugPoint tempMacVar1 tempMacVar2 color(0xFF00FFFF)
+  endif
 
   #let targetX = {out1}
   #let targetY = {out2}
@@ -25,8 +29,8 @@
   #let deltaY = {out1}
   #let oDeltaY = {out2}
   // targetY
-  oDeltaY = OHurtboxSize
-  deltaY = HurtboxSize
+  oDeltaY = 0
+  deltaY = 0
 
   GET_WEIGHT_TABLE({calcVar}, {gravVar})
 
@@ -34,24 +38,33 @@
 
   if OInAir && !(Equal OYSpeed 0) && !(Equal OCurrAction hex(0x54))
     O_CALC_SELF_Y_CHANGE_GRAVITY({out2}, {calcVar}, {gravVar}, {frameCount}, {lab1})
-    globTempVar = oDeltaY * -1
-    if OYDistBackEdge < globTempVar && Equal OIsOnStage 1
-      oDeltaY = OYDistBackEdge * -1
+    oDeltaY *= -1
+    if OYDistBackEdge > oDeltaY && Equal OIsOnStage 1
+      oDeltaY = OYDistBackEdge
     endif
+    oDeltaY *= -1
+    // globTempVar = OTopNY - oDeltaY
+    // DrawDebugPoint OTopNX globTempVar color(0xFF0000FF)
   endif
   if InAir
     CALC_SELF_Y_CHANGE_GRAVITY({out1}, {calcVar}, {frameCount}, {lab2})
-    globTempVar = deltaY * -1
-    if YDistBackEdge < globTempVar && Equal IsOnStage 1
-      deltaY = YDistBackEdge * -1
+    deltaY *= -1
+    if YDistBackEdge > deltaY && Equal IsOnStage 1
+      deltaY = YDistBackEdge
+      if YSpeed < 0
+        Call AIHub
+      endif
     endif
+    deltaY *= -1
+    // globTempVar = TopNY - deltaY
+    // DrawDebugPoint TopNX globTempVar color(0xFF0000FF)
   endif
 
-  targetY = OTopNY + move_yOffset + (OHurtboxSize) + (oDeltaY - deltaY)
-
-  if TopNY > OTopNY
-    targetY *= -1
-  endif
+  // if TopNY > OTopNY
+  //   targetY = OTopNY - move_yOffset + (oDeltaY - deltaY)
+  // else
+  // endif
+    targetY = OTopNY + move_yOffset - (oDeltaY - deltaY)
 
   // targetX
   if Equal CurrAction hex(0x07)
@@ -60,17 +73,32 @@
     targetX = OTopNX + (move_xOffset * Direction * -1)
   endif
 
-  targetX = targetX + (OXSpeed * move_hitFrame) - (XSpeed * move_hitFrame)
-  // if Equal PlayerNum 0
-  //   DrawDebugRectOutline targetX targetY move_xRange move_yRange color(0xFF000055)
-  // elif Equal PlayerNum 1
-  //   DrawDebugRectOutline targetX targetY move_xRange move_yRange color(0x0000FF55)
-  // elif Equal PlayerNum 2
-  //   DrawDebugRectOutline targetX targetY move_xRange move_yRange color(0xFFFF0055)
-  // elif Equal PlayerNum 3
-  //   DrawDebugRectOutline targetX targetY move_xRange move_yRange color(0x00FF0055)
-  // else
-  //   DrawDebugRectOutline targetX targetY move_xRange move_yRange color(0x00000055)
+  if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+    if InAir || Equal var8 1
+      globTempVar = {frameCount}
+      if Equal AirGroundState 1
+        globTempVar -= 3
+      endif
+      targetX = targetX + (OTotalXSpeed * globTempVar) - (XSpeed * globTempVar)
+    endif
+    // targetX = targetX + (TotalXSpeed * globTempVar)
+  else
+    globTempVar = move_xRange / 3
+    targetX = targetX + (OTotalXSpeed * globTempVar) - (XSpeed * globTempVar)
+  endif
+  // if Equal var8 1 || Equal var8 move_length
+  //   globTempVar = move_yRange + OHurtboxSize
+  //   if Equal PlayerNum 0
+  //     DrawDebugRectOutline targetX targetY move_xRange globTempVar color(0xFF000055)
+  //   elif Equal PlayerNum 1
+  //     DrawDebugRectOutline targetX targetY move_xRange globTempVar color(0x0000FF55)
+  //   elif Equal PlayerNum 2
+  //     DrawDebugRectOutline targetX targetY move_xRange globTempVar color(0xFFFF0055)
+  //   elif Equal PlayerNum 3
+  //     DrawDebugRectOutline targetX targetY move_xRange globTempVar color(0x00FF0055)
+  //   else
+  //     DrawDebugRectOutline targetX targetY move_xRange globTempVar color(0x00000055)
+  //   endif
   // endif
   // DrawDebugPoint targetX targetY color(0xFF000055)
 
@@ -89,8 +117,9 @@
   globTempVar = {frameCount}
 
   accumulator = 0
-  tracker = TotalYSpeed
-  Goto {lName}
+  tracker = YSpeed * -1
+  Seek {lName}
+  Jump
   if !(True)
     label {lName}
     accumulator += tracker
@@ -100,10 +129,13 @@
       tracker = MaxFallSpeed
     endif
     if globTempVar < 1
-      Return
+      Seek
+    else
+      Seek {lName}
     endif
-    Goto {lName}
+    Jump
   endif
+  label
 #endmacro
 
 // does what "CalcYChangeGravity" does but with more lines
@@ -114,8 +146,10 @@
   globTempVar = {frameCount}
 
   accumulator = 0
-  tracker = OTotalYSpeed
-  Goto {lName}
+  tracker = OCharYSpeed + OKBYSpeed
+  tracker *= -1
+  Seek {lName}
+  Jump
   if !(True)
     label {lName}
     accumulator += tracker
@@ -125,10 +159,13 @@
       tracker = OMaxFallSpeed
     endif
     if globTempVar < 1
-      Return
+      Seek
+    else
+      Seek {lName}
     endif
-    Goto {lName}
+    Jump
   endif
+  label
 #endmacro
 
 // will calculate whether or not the player will be on stage at their current X velocity after
@@ -136,24 +173,28 @@
 #macro GOING_OFFSTAGE(outVar, throwAwayVar, frameCount)
   #let goingOffstage = {outVar}
   #let relCliffXPos = {outVar}
-  GetNearestCliffR relCliffXPos
+  GetNearestCliff relCliffXPos
 
   #let xPosOffs = {throwAwayVar}
   xPosOffs = XSpeed * {frameCount}
   xPosOffs += TopNX
-  if Equal IsOnStage 1 && relCliffXPos < 0
-    relCliffXPos += xPosOffs
-    if relCliffXPos >= 0
-      goingOffstage = 1
+  if relCliffXPos < 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      relCliffXPos += xPosOffs
+      if relCliffXPos >= 0
+        goingOffstage = 1
+      endif
     endif
-  elif Equal IsOnStage 1 && relCliffXPos > 0
-    relCliffXPos += xPosOffs
-    if relCliffXPos <= 0
-      goingOffstage = -1
+  elif relCliffXPos > 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      relCliffXPos += xPosOffs
+      if relCliffXPos <= 0
+        goingOffstage = -1
+      endif
     endif
   endif
   if !(Equal goingOffstage 1) || !(Equal goingOffstage -1)
-    if Equal IsOnStage 0
+    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
       goingOffstage = 2
     else
       goingOffstage = 0
@@ -164,8 +205,6 @@
 // to make AIs less accurate with their moves the lower their level gets
 #macro MESS_MOVE_PARAMS(adjustVar)
   #let adjustment = {adjustVar}
-
-  move_yRange = move_yRange + OHurtboxSize
 
   adjustment = (100 - LevelValue) / 3
   move_xOffset = move_xOffset + (Rnd * adjustment * 2) - (adjustment)
@@ -219,26 +258,26 @@
 // ranges
 #macro JUMP_IF_IN_RANGES(tempVar)
   #let targetYDistance = {tempVar}
-  if MeteoChance && targetYDistance > 10 && targetYDistance < 45 && Equal IsOnStage 0 && YSpeed < 0.01
+  if MeteoChance && Equal IsOnStage 0 && YSpeed < 0.01 && targetYDistance > 35 && targetYDistance < 55
     Button X
   endif
 
-  if targetYDistance > 15 && Equal AirGroundState 1 && CurrAction <= 9
+  if targetYDistance > 15 && targetYDistance < 50 && Equal AirGroundState 1 && CurrAction <= 9
     Button X
   endif
 
-  if targetYDistance > 26 && Equal CurrSubaction JumpSquat
+  if targetYDistance > 15 && targetYDistance < 70 && Equal CurrSubaction JumpSquat
     Button X
   endif
 
-  if targetYDistance > 35 && targetYDistance < 55 && Equal AirGroundState 2 && YDistBackEdge > 20 && CanJump
+  if targetYDistance > 35 && targetYDistance < 55 && Equal AirGroundState 2 && YDistBackEdge < -20 && CanJump && OTotalYSpeed <= 0.5
     Button X
   endif
 #endmacro
 
-#macro RECORD_MOVE_CONNECTFRAME()
-if Equal HitboxConnected 1 && OFramesHitstun > 0
-  move_connectFrame = AnimFrame
+#macro RECORD_MOVE_KNOCKBACK()
+if Equal HitboxConnected 1 && OKBSpeed > move_knockback && OFramesHitstun > 0
+  move_knockback = OKBSpeed
 endif
 #endmacro
 
@@ -249,21 +288,40 @@ endif
   #let frameCount = {tempVar2}
   amount = (120 - LevelValue) / 100
   amount = (Rnd * 10) - 10 * amount
-  frameCount = (Rnd * 15) + 3
+  frameCount = (Rnd * 10) + 3
   label _dashdance
-  if Equal AirGroundState 1 && amount > 0 && Equal OFramesHitstun 0 && DistFrontEdge > 7 && !(ODistLE 4)
-    if NumFrames >= frameCount && Equal CurrAction hex(0x03)
+  if Equal AirGroundState 1 && amount > 0 && Equal OFramesHitstun 0 && !(ODistLE 4)
+    if Equal CurrAction hex(0x01) && !(Equal CurrAction hex(0x07))
+        ClearStick
+    elif NumFrames >= frameCount && Equal CurrAction hex(0x03)
+      Goto _ddSubr
+    elif AnimFrame >= 27 && Equal CurrAction hex(0x03)
+      Goto _ddSubr
+    elif Equal CurrAction hex(0x04)
+      ClearStick
+    elif Rnd < 0.7 && Equal CurrAction hex(0x03) && !(XDistFrontEdge <= 10)
+    elif XDistFrontEdge <= 10
       SetFrame 0
-      amount = amount - 1
-      Stick (-1)
-      frameCount = (Rnd * 15) + 3
+      Stick -1
+      amount -= 1
     else
       Stick 1
-      if !(CurrAction < hex(0x01)) && !(Equal CurrAction hex(0x07))
-        ClearStick
-      endif
     endif
+    Return
   endif
+  ClearStick
+  Seek _dashdanceEnd
+  Jump
+
+  label _ddSubr
+  SetFrame 0
+  amount = amount - 1
+  if (amount > 0)
+    Stick (-1)
+  endif
+  frameCount = (Rnd * 10) + 3
+  Return
+
   label _dashdanceEnd
 #endmacro
 

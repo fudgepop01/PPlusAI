@@ -9,6 +9,7 @@ unk 0x00000
 // str "#full_f"
 // str "#edge_range"
 
-Finish
+Call AIHub
+Return
 Return
 

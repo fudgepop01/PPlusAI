@@ -28,7 +28,7 @@ elif Equal CurrAction hex(0x39)
     Button A
     pummelCount -= 1
     Return
-  else
+  elif True
     if DistFrontEdge < 25
       if ODamage > 60 && Rnd < 0.5
         Stick 0 1

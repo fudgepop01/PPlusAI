@@ -18,6 +18,8 @@ if var1 < var2
 else
   var0 = Rnd
 endif
+// LOGSTR 1986097664 805306368 0 0 0
+// LOGVAL var0
 // SAFE_INJECT_2 var0
 label
 if var20 >= 24641 && var20 <= 24655
@@ -38,14 +40,14 @@ if var20 >= 24641 && var20 <= 24655
         if !(Equal OPos Direction) && !(Equal var20 24643)
           var1 = OPos * 0.5
           AbsStick var1
-        elif Idling || Equal var20 24643
+        elif CurrAction <= 9
           Button X
         endif
       endif
     endif
   elif var0 <= 0.55
   // dash away aerial
-    if XDistFrontEdge > 20 && XDistBackEdge < -20
+    if XDistFrontEdge > 30 && XDistBackEdge < -30
       var1 = OPos * -1
       AbsStick var1
       if Equal CurrAction 1 || Equal CurrAction 10
@@ -54,14 +56,14 @@ if var20 >= 24641 && var20 <= 24655
       endif
       if Equal CurrAction 3
         if Rnd < 0.1
-          if Equal var20 24643 && CurrAction < 9
+          if var9 <= -3 && CurrAction < 9
             Button X
           else
             ClearStick
             Stick -1
           endif
         endif
-      elif Equal CurrAction 7
+      elif Equal CurrAction 7 && Equal Direction OPos
         Button X
       elif Equal CurrAction 4
         var0 = 0.1
@@ -71,29 +73,34 @@ if var20 >= 24641 && var20 <= 24655
       if !(Equal OPos Direction) && !(Equal var20 24643)
         var1 = OPos * 0.5
         AbsStick var1
-      elif Idling || Equal var20 24643
+      elif CurrAction <= 9
         Button X
       endif
     endif
   elif var0 <= 0.85
   // aerial in-place
-    if XDistFrontEdge > 30 && XDistBackEdge < -30
+    if XDistFrontEdge > 20 && XDistBackEdge < -20
       if XSpeed > 0.4 || XSpeed < -0.4
         ClearStick
         Return
       endif
       if Equal OPos Direction && !(Equal CurrAction 10)
-        if Equal var20 24643
-          Stick -1
-        elif Idling
+        if CurrAction <= 9
           Button X
         endif
       elif !(Equal CurrAction 10)
-        if Equal var20 24643 && Idling
+        if var9 <= -3 && CurrAction <= 9
           Button X
         else
           Stick -1
         endif
+      endif
+    elif var9 <= -3
+      if Equal OPos Direction
+        Stick -0.5
+      endif
+      if !(Equal OPos Direction) && Idling && !(Equal CurrAction 10)
+        Button X
       endif
     else
       var0 = 1
@@ -101,8 +108,8 @@ if var20 >= 24641 && var20 <= 24655
     endif
   else
   // approach
-    if Equal var20 24643
-      var0 = 0.80
+    if var9 <= -3
+      var0 = 0.85
       Return
     else
       Call ApproachHub
@@ -111,7 +118,8 @@ if var20 >= 24641 && var20 <= 24655
 
   if InAir
     if Rnd <= 0.4 || YSpeed < 0
-      Goto execute
+      Seek execute
+      Jump
     endif
   endif
 else

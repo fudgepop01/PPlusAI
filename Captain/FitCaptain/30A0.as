@@ -20,8 +20,10 @@ endif
 
 SetTimeout 50
 DEFENSIVE_REACTION_TIME(var0, var1)
+if Equal IsOnStage 1
   Button R
   Stick 0 (-1)
-  Call AIHub
+endif
+Call AIHub
 Return
 Return

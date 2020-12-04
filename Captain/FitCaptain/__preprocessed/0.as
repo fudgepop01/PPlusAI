@@ -8,8 +8,9 @@ id 0x8000
 //Set Unknown
 unk 0x00000
 
-if LevelValue <= 48
+label begin
 
+if LevelValue <= 48
   if Rnd < 0.2
     Return
   endif
@@ -19,12 +20,25 @@ if CurrAction >= 26 && CurrAction <= 29
   Call OOSHub
 endif
 
+if Equal LevelValue 100
+  if CurrAction >= 30 && CurrAction <= 32
+    Stick 0 (-1)
+    Return
+  elif CurrAction >= 78 && CurrAction <= 83
+    Stick 0 (-1)
+    Return
+  elif CurrAction >= 96 && CurrAction <= 97
+    Stick 0 (-1)
+    Return
+  endif
+endif
+
 //______________________________________
 // Rand DI / tech "smart" implementation
 // randomly DIs unless conditions are met for survival DI
 
 // if in hitstun...
-if FramesHitstun > 0
+if FramesHitstun > 0 && Equal CurrAction 69
   //...pick a random direction for the control stick
   var0 = Rnd - 1
   var1 = Rnd - 1
@@ -41,8 +55,11 @@ if FramesHitstun > 0
   endif
   // until hitstun is 0
   if Equal FramesHitstun 0
-    ClearStick
-    Seek _main
+    if Equal AirGroundState 1
+      Stick -1
+    endif
+    Seek begin
+    Return
   endif
   if LevelValue >= 60
     Goto _checkMeteorCancel
@@ -52,7 +69,13 @@ if FramesHitstun > 0
   endif
   Return
 endif
-Goto _main
+
+if FramesHitstun > 0 && Equal CurrAction 67 && LevelValue >= 75
+  Stick 0 (-1)
+  Return
+endif
+Seek _main
+Jump
 Return
 
 // Goto statements will return back to where they came
@@ -104,60 +127,80 @@ Return
 
 // the stuff here happens when not in hitstun.
 label _main
-var2 = 0
+var6 = 0
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
-
-// where RecoveryHub (4.as) is called
-if Equal IsOnStage 0 && Equal AirGroundState 2
-  Call RecoveryHub
-endif
-
-if MeteoChance && Equal IsOnStage 1
-  var18 = 0
-  Call BlockRecovery
-endif
-
-// if we're going to go over an edge of a stage while performing a move,
-// we hold the control stick in the opposite direction
-  GetNearestCliffR var0
+  GetNearestCliff var0
   var1 = XSpeed * 15
   var1 += TopNX
-  if Equal IsOnStage 1 && var0 < 0
-    var0 += var1
-    if var0 >= 0
-      var0 = 1
+  if var0 < 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      var0 += var1
+      if var0 >= 0
+        var0 = 1
+      endif
     endif
-  elif Equal IsOnStage 1 && var0 > 0
-    var0 += var1
-    if var0 <= 0
-      var0 = -1
+  elif var0 > 0
+    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
+      var0 += var1
+      if var0 <= 0
+        var0 = -1
+      endif
     endif
   endif
   if !(Equal var0 1) || !(Equal var0 -1)
-    if Equal IsOnStage 0
+    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
       var0 = 2
     else
       var0 = 0
     endif
   endif
 
+// where RecoveryHub (4.as) is called
+if Equal var0 2 && Equal AirGroundState 2
+  var18 = 0
+  Call RecoveryHub
+endif
+
+if Equal var0 0 && YDistBackEdge > -15 && Equal CurrAction 51 && LevelValue >= 60
+  Call Landing
+endif
+
+if MeteoChance && !(Equal var0 2)
+  var18 = 0
+  Call EdgeguardHub
+endif
+
+// if we're going to go over an edge of a stage while performing a move,
+// we hold the control stick in the opposite direction
+
+label
 if !(Equal var0 0)
   if InAir || Equal CurrAction 3
     var0 = XSpeed * -10
     AbsStick var0 0
     Return
   endif
+elif InAir && YDistBackEdge > -5 && Equal IsOnStage 1
+  if !(Idling) && !(Lying)
+    Return
+  endif
+  var4 = OPos * -1
+  AbsStick var4
+  if Equal CurrAction 1
+    ClearStick
+  endif
+  if Dashing || XDistFrontEdge < 20
+    Seek _main
+  endif
+  Return
 endif
-
-// not currently used, so I commented this out
-// GET_WEIGHT_TABLE
 
 // if we reach here then it's time to choose an attack to perform
 // if the opponent is in hitstun and we want to combo, we'll go to the
 // ComboHub (2.as)
-if OFramesHitstun > 0 && !(Equal var19 255) && LevelValue >= 42
+if OFramesHitstun > 0 && !(Equal var19 256) && LevelValue >= 42
   Call ComboHub
 endif
 
@@ -172,28 +215,26 @@ if Equal AirGroundState 1
   endif
 endif
 
-// EnableDebugOverlay
-// SetDebugOverlayColor 0 0 0 200
 var19 = 0
 var18 = 0
-var15 = -1
+var16 = -1
 
-  var5 = 0
-  var6 = OCurrAction
-  if Equal var6 96 || Equal var6 81
-    if OAnimFrame < 15
-      var5 = 1
-    endif
-  endif
-  if Equal var6 30 || Equal var6 31 || Equal var6 32 || Equal var6 78 || Equal var6 80 || Equal var6 82 || Equal var6 83 || Equal var6 97
-    if OAnimFrame < 21
-      var5 = 1
-    endif
-  endif
-
-if Equal var5 0
   var0 = 0
-  // SAFE_INJECT_0 var0
+  var1 = OCurrAction
+  if Equal var1 96 || Equal var1 81
+    if OAnimFrame < 15
+      var0 = 1
+    endif
+  endif
+  if Equal var1 30 || Equal var1 31 || Equal var1 32 || Equal var1 78 || Equal var1 80 || Equal var1 82 || Equal var1 83 || Equal var1 97
+    if OAnimFrame < 21
+      var0 = 1
+    endif
+  endif
+
+if Equal var0 0
+  var0 = 0
+  SAFE_INJECT_0 var0
 
   // because we don't want to set the var0 again if we revisit
   // this, we place a label here to jump to
@@ -241,39 +282,54 @@ if Equal var5 0
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
-    var0 = 0
-    // SAFE_INJECT_1 var0
+    if OCurrAction >= 85 && OCurrAction <= 93
+      Call FSmash
+    endif
 
-    if LevelValue >= 60 && Equal var2 0
-      if OAttacking && Rnd < 0.8 && !(Equal var21 32776)
-        Call FakeOutHub
+    RetrieveATKD var0 OCurrSubaction 1
+
+    SAFE_INJECT_1 var2
+
+    if LevelValue >= 60 && Equal var6 0
+      if var1 < OAnimFrame || Equal OCurrAction 37
+        if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && !(Equal ODirection OPos)
+          Call FakeOutHub
+        endif
+      elif OAttacking && var1 > OAnimFrame && !(Equal var0 -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= 75
+        Call SSpecial
       elif Rnd < 0.05 && !(Equal var21 32776)
         Call FakeOutHub
-      elif Equal var0 1
+      elif Equal var2 1
         Call FakeOutHub
       endif
     endif
 
     var21 = -1
 
-    if LevelValue >= 42 && Equal var2 0
+    var3 = Damage - ODamage
+    var3 /= 200
+
+    if LevelValue >= 42 && Equal var6 0
+
+      var2 = var3 * 0.2
 
       var0 = TopNX
       var1 = OTopNX
       Abs var0
       Abs var1
       if XDistLE 40 && Rnd < 0.15 && Equal AirGroundState 1 && var1 < var0
-        if Rnd < 0.4
+        if Rnd < var2 || Rnd < 0.1
           var21 = 2
         endif
         Call NeutralHub
-      elif Equal var0 2
+      elif Equal var2 2
         Call NeutralHub
       endif
     endif
 
-    if Equal var2 0
-      if Rnd < 0.05 || Equal var0 3
+    if Equal var6 0
+      var2 = var3 * 0.1
+      if Rnd < var3 || Rnd < 0.05 || Equal var2 3
         var21 = 2
         if OYDistBackEdge < -45
           Call UAir
@@ -281,6 +337,7 @@ if Equal var5 0
         if Rnd < 0.8 && !(Equal Direction OPos)
           Call BAir
         else
+          var19 = 2
           Call NAir
         endif
       endif
@@ -288,11 +345,10 @@ if Equal var5 0
     var21 = 1
 
     // if the opponent is lying there doing nothing
-    if LevelValue >= 48 && Equal var2 0
+    if LevelValue >= 48 && Equal var6 0
       if Equal OCurrAction 74 || Equal OCurrAction 77
-        if Equal AirGroundState 1 || Rnd < 0.6
-          var19 = 1
-          Call Jab123
+        if Equal AirGroundState 1 && Rnd < 0.5
+          Call DTilt
         else
           Call DAir
         endif
@@ -303,29 +359,183 @@ if Equal var5 0
       Call EdgeguardHub
     endif
 
-    // this part is effectively falcon's whole entire neutral game.
-    // if the opponent is close to the ground...
+    // these parts are effectively falcon's whole entire neutral game.
+    if !(XDistLE 20) && LevelValue >= 60 && Rnd < 0.7
+      // LOGSTR 1953001984 1870089984 1970536448 0 0
+      var19 = 253
+      Call NAir
+    endif
+
+    if Equal OCurrAction 37 && !(Equal ODirection Direction)
+      Seek callers
+      Jump
+    endif
+
     if LevelValue >= 21
       if OYDistBackEdge > -15
-        var0 = Rnd * 160
+        var0 = Rnd * 200
         // LOGSTR 1836021248 1699964160 1811939328 0 0
         // LOGVAL var0
         // these moves are pretty much always relevant
         if var0 >= 100
-          if var0 < 110
+          if var0 < 105
             Call FAir
-          elif var0 < 125
+          elif var0 < 115
             Call DAir
-          elif var0 < 140
+          elif var0 < 135
+            if Rnd < 0.5
+              var19 = 1
+            endif
             Call NAir
           elif var0 < 150
             Call Grab
           else
             var0 = Rnd * 11 + 2
-            Goto callers
+            Seek callers
+            Jump
           endif
         else
-          if ODamage >= 90
+
+if OIsCharOf Bowser
+  var2 = 113
+  var1 = 0.13
+elif OIsCharOf Falcon
+  var2 = 104
+  var1 = 0.13
+elif OIsCharOf Lizardon // Charizard
+  var2 = 106
+  var1 = 0.105
+elif OIsCharOf Diddy
+  var2 = 85
+  var1 = 0.12
+elif OIsCharOf Donkey
+  var2 = 109
+  var1 = 0.1
+elif OIsCharOf Falco
+  var2 = 80
+  var1 = 0.17
+elif OIsCharOf Fox
+  var2 = 75
+  var1 = 0.23
+elif OIsCharOf Gamewatch
+  var2 = 75
+  var1 = 0.095
+elif OIsCharOf Ganondorf
+  var2 = 109
+  var1 = 0.13
+// GIGA BOWSER WOULD GO HERE
+// elif OIsCharOf Bowser
+//   var2 = 113
+//   var1 = 0.13
+elif OIsCharOf Nana || OIsCharOf Popo
+  var2 = 88
+  var1 = 0.1
+elif OIsCharOf Ike
+  var2 = 100
+  var1 = 0.103
+elif OIsCharOf Fushigisou // Ivysaur
+  var2 = 85
+  var1 = 0.075
+elif OIsCharOf Purin // Jigglypuff
+  var2 = 62
+  var1 = 0.064
+elif OIsCharOf DDD // King Dedede
+  var2 = 107
+  var1 = 0.095
+elif OIsCharOf Kirby
+  var2 = 74
+  var1 = 0.08
+elif OIsCharOf Knuckles
+  var2 = 90
+  var1 = 0.14
+elif OIsCharOf Link
+  var2 = 104
+  var1 = 0.11
+elif OIsCharOf Lucario
+  var2 = 94
+  var1 = 0.125
+elif OIsCharOf Lucas
+  var2 = 80
+  var1 = 0.125
+elif OIsCharOf Luigi
+  var2 = 100
+  var1 = 0.069 // nice
+elif OIsCharOf Mario
+  var2 = 100
+  var1 = 0.095
+elif OIsCharOf Marth
+  var2 = 87
+  var1 = 0.085
+elif OIsCharOf Metaknight
+  var2 = 79
+  var1 = 0.11
+elif OIsCharOf Mewtwo
+  var2 = 90
+  var1 = 0.082
+elif OIsCharOf Ness
+  var2 = 94
+  var1 = 0.09
+elif OIsCharOf Pikmin // Olimar
+  var2 = 90
+  var1 = 0.09
+elif OIsCharOf Peach
+  var2 = 90
+  var1 = 0.08
+elif OIsCharOf Pikachu
+  var2 = 80
+  var1 = 0.11
+elif OIsCharOf Pit
+  var2 = 80
+  var1 = 0.095
+elif OIsCharOf Robot // ROB
+  var2 = 104
+  var1 = 0.09
+elif OIsCharOf Roy
+  var2 = 85
+  var1 = 0.114
+elif OIsCharOf Samus
+  var2 = 110
+  var1 = 0.66
+elif OIsCharOf Shiek
+  var2 = 90
+  var1 = 0.12
+elif OIsCharOf Snake
+  var2 = 105
+  var1 = 0.098
+elif OIsCharOf Sonic
+  var2 = 82
+  var1 = 0.122
+elif OIsCharOf Zenigame // Squirtle
+  var2 = 85
+  var1 = 0.126
+elif OIsCharOf Toonlink
+  var2 = 85
+  var1 = 0.11
+elif OIsCharOf Wario
+  var2 = 102
+  var1 = 0.112
+// WARIO MAN GOES HERE
+// elif OIsCharOf Bowser
+//   var2 = 113
+//   var1 = 0.13
+elif OIsCharOf Wolf
+  var2 = 85
+  var1 = 0.16
+elif OIsCharOf Yoshi
+  var2 = 108
+  var1 = 0.093
+elif OIsCharOf Zelda
+  var2 = 90
+  var1 = 0.073
+elif OIsCharOf ZSS // Zero Suit Samus
+  var2 = 85
+  var1 = 0.135
+endif
+
+          var2 /= 100
+          var2 *= ODamage
+
+          if var2 >= 90
             // LOGSTR 1044193280 959447040 0 0 0
             if var0 < 20
               Call Grab
@@ -340,23 +550,29 @@ if Equal var5 0
             else
               Call DAir
             endif
-          elif ODamage >= 50
+          elif var2 >= 50
             // LOGSTR 1044193280 892338176 0 0 0
             if var0 < 30
               Call Grab
+            elif var0 < 60
+              Call NAir
+            elif var0 < 80
+              Call DAir
             else
               Call FTilt
             endif
-          else
-            // LOGSTR 1008743680 805306368 0 0 0
-            if var0 < 50
-              // LOGSTR 1667329024 1816621568 1644167168 0 0
+          elif True
+            if var0 < 30
               Call Grab
+            elif var0 < 80
+              var19 = 2
+              if Rnd < 0.5
+                var19 = 1
+              endif
+              Call NAir
             else
-              // LOGSTR 1667329024 1816420608 1769078784 0 0
               Call DAir
             endif
-            // LOGSTR 1852797952 1165518080 1660944384 0 0
           endif
           // LOGSTR 1852796416 1694498816 0 0 0
         endif
@@ -372,12 +588,13 @@ if Equal var5 0
       // we just perform a random aerial for the sake of having some variety lol
       // LOGSTR 1918987776 1682007296 1919508736 1811939328 0
       var0 = Rnd * 5 + 12
-      Goto callers
+      Seek callers
+      Jump
     else
       var0 = Rnd * 17
       Seek callers
     endif
-  else
+  elif True
     if Rnd < 0.05
       Call DAir
     elif Rnd < 0.3

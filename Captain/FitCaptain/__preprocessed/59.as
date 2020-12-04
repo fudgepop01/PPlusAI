@@ -2,6 +2,10 @@ id 0x59
 
 unk 0x0
 
+if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
+  var16 = OKBSpeed
+endif
+
 if Equal IsOnStage 0
   Call AIHub
 endif
@@ -22,7 +26,7 @@ else
 endif
 AbsStick var0
 
-if YSpeed < 0 && YDistBackEdge > -5 && Equal CurrAction 51 && AnimFrame < var14 && FramesSinceShield > 7 && LevelValue >= 60
+if YSpeed < 0 && YDistBackEdge > -5 && Equal CurrAction 51 && AnimFrame < var15 && FramesSinceShield > 7 && LevelValue >= 60
   Button R
 endif
 if Equal AirGroundState 1
