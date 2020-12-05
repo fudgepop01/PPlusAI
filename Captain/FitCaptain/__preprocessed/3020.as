@@ -42,9 +42,15 @@ endif
     var0 = var0 + Rnd * 5
     var0 = var0 + Rnd * (100 - LevelValue) / 6
   endif
+  var1 = 0
   label
-  if var0 <= 0
-      Seek
+  if !(OAttacking)
+    var1 = 1
+  endif
+  if Equal var1 1 && OAttacking
+    Seek
+  elif var0 <= 0
+    Seek
   endif
   var0 -= 1
   Return

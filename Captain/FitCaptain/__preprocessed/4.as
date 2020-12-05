@@ -44,6 +44,8 @@ endif
 
 if CurrAction < 11 && CurrAction > 16
   Return
+elif Equal CurrAction 51 && AnimFrame <= var15
+  Return
 endif
 
 // edge range width
@@ -231,7 +233,7 @@ SetFrame 0
 label
 var0 = var1 * Direction
 // LOGVAL NumFrames
-if Equal CurrAction 276 && NumFrames < 10 && var17 < 5
+if Equal CurrAction 276 && NumFrames < 10 && var17 > -5
   var0 = TopNX * -1
   AbsStick var0
   Return

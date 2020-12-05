@@ -14,18 +14,18 @@ if Equal var18 0
   if CalledAs FTilt
     // LOGSTR 1718905088 1819541504 0 0 0
     var20 = 24626
-    var9 = 0
+    var9 = 10
     var10 = -5
-    var11 = 20
-    var12 = 5
+    var11 = 11
+    var12 = -1
     var13 = 9
     var14 = 3
   elif CalledAs UTilt
     // LOGSTR 1970563328 1819541504 0 0 0
     var20 = 24627
-    var9 = 8
-    var10 = -7
-    var11 = 15
+    var9 = 10
+    var10 = -8
+    var11 = 13
     var12 = 10
     var13 = 17
     var14 = 6
@@ -82,7 +82,7 @@ else
     var15 = 49
     Stick 1 0
   elif CalledAs USmash
-    var15 = 32
+    var15 = 41
     Stick 0 1
   endif
   Button A

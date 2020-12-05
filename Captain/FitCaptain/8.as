@@ -9,11 +9,24 @@ unk 0x0
 
 // sets up offsets to get to target position
 if Equal movePart 0
+  RetrieveATKD var0 OCurrSubaction 1
+  #let oDangerStart = var0
+  #let oDangerEnd = var1
+  #let oDangerXMin = var2
+  #let oDangerXMax = var3
+  #let oDangerYMin = var4
+  #let oDangerYMax = var5
+
   lastScript = hex(0x8008)
   lastAttack = hex(0x8008)
   move_xOffset = 0
+  move_xRange = 25
+  if Equal oDangerStart -1
+    move_xOffset = oDangerXMax
+    move_xRange = 10 + (oDangerXMax - oDangerXMin)
+    Abs move_xRange
+  endif
   move_yOffset = 0
-  move_xRange = 20
   move_yRange = 50
   move_hitFrame = Rnd * 20 + 5
   Call ApproachHub
@@ -23,13 +36,18 @@ elif Equal AirGroundState 2
     Button X
     AbsStick tempVar
     Call AIHub
-  elif XDistBackEdge > -10
+  elif XDistFrontEdge > 10
     AbsStick tempVar (-1)
     Button R
     Call AIHub
   endif
   Call AIHub
 elif True
+  if !(Equal Direction OPos)
+    tempVar = OPos * 0.65
+    AbsStick tempVar
+    Return
+  endif
   if Equal OCurrAction hex(0x25) || Equal OCurrAction hex(0x24)
     Seek jumpOver
   endif
@@ -43,12 +61,13 @@ elif True
   else
     Seek offensiveShield
   endif
+  Jump
 endif
 Return
 
 label crouchCancelPunish
 #let timer = var0
-timer = Rnd * 20 + 10
+timer = Rnd * 30 + 10
 label
 Stick 0 (-1)
 if FramesHitstun > 0 || timer <= 0

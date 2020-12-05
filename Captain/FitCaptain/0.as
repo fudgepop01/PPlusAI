@@ -43,7 +43,7 @@ endif
 #let tempVar = var4
 
 // if in hitstun...
-if FramesHitstun > 0 && Equal CurrAction hex(0x45)
+if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
   //...pick a random direction for the control stick
   StickX = Rnd - 1
   StickY = Rnd - 1
@@ -183,7 +183,9 @@ endif
 // if we reach here then it's time to choose an attack to perform
 // if the opponent is in hitstun and we want to combo, we'll go to the
 // ComboHub (2.as)
-if OFramesHitstun > 0 && !(Equal noCombo noComboVal) && LevelValue >= LV5
+if Equal HitboxConnected 1 && !(Equal noCombo noComboVal) && LevelValue >= LV5
+  Call ComboHub
+elif OFramesHitstun > 0 && LevelValue >= LV5
   Call ComboHub
 endif
 
@@ -273,9 +275,10 @@ if Equal isEarlyRoll 0
     if LevelValue >= LV7 && Equal waitTeamFlag 0
       if oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25)
         if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && !(Equal ODirection OPos)
+          movePart = 1
           Call FakeOutHub
         endif
-      elif OAttacking && oDangerEnd > OAnimFrame && !(Equal oDangerStart -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= LV8
+      elif OAttacking && oDangerEnd > OAnimFrame && !(Equal oDangerStart -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= LV8 && !(Equal OCurrAction hex(0x1B))
         Call SSpecial
       elif Rnd < 0.05 && !(Equal lastScript hex(0x8008))
         Call FakeOutHub
@@ -316,7 +319,7 @@ if Equal isEarlyRoll 0
       defenseChance = defenseMul * 0.1
       if Rnd < defenseMul || Rnd < 0.05 || Equal injected 3
         approachType = at_defend
-        if OYDistBackEdge < -45
+        if OYDistBackEdge < -20
           Call UAir
         endif
         if Rnd < 0.8 && !(Equal Direction OPos)
@@ -358,7 +361,7 @@ if Equal isEarlyRoll 0
 
     if LevelValue >= LV3
       if OYDistBackEdge > -15
-        moveSelection = Rnd * 200
+        moveSelection = Rnd * 160
         // LOGSTR str("moveSel")
         // LOGVAL moveSelection
         // these moves are pretty much always relevant
@@ -429,7 +432,7 @@ if Equal isEarlyRoll 0
           // LOGSTR str("none")
         endif
       endif
-      if OYDistBackEdge > -45
+      if OYDistBackEdge < -20
         if Rnd < 0.5 && ODamage > 50
           Call FAir
         else
@@ -447,10 +450,14 @@ if Equal isEarlyRoll 0
       Seek callers
     endif
   elif True
-    if Rnd < 0.05
+    if Rnd < 0.4
       Call DAir
-    elif Rnd < 0.3
+    elif Rnd < 0.2
       Call UAir
+    elif Rnd < 0.3
+      Call FAir
+    else
+      Call NAir
     endif
   endif
 endif

@@ -9,9 +9,9 @@ unk 0x0
 
 if Equal var18 0
   var9 = 8
-  var10 = -6
+  var10 = -4
   var11 = 6
-  var12 = 4
+  var12 = -3
   var13 = 14
   var20 = 24642
   if Equal var21 2 && OFramesHitstun < 1
@@ -38,14 +38,27 @@ endif
 Return
 
 label executeAttack
-  if Equal var8 var14
-    // DrawDebugPoint TopNX TopNY 255 0 255 255
-  endif
+  // if Equal var8 var14
+  //   DrawDebugPoint TopNX TopNY 255 0 255 255
+  // endif
   var5 = TopNX + (var9 * Direction)
   var6 = TopNY - var10
-  if Equal var8 var14
-    // DrawDebugPoint var5 var6 255 0 255 255
-  endif
+  // if Equal var8 0 || Equal var8 1
+  //   var6 += OHurtboxSize
+  //   var17 = var12 + OHurtboxSize
+  //   if Equal PlayerNum 0
+  //     DrawDebugRectOutline var5 var6 var11 var17 255 68 68 85
+  //   elif Equal PlayerNum 1
+  //     DrawDebugRectOutline var5 var6 var11 var17 68 68 255 85
+  //   elif Equal PlayerNum 2
+  //     DrawDebugRectOutline var5 var6 var11 var17 255 255 68 85
+  //   elif Equal PlayerNum 3
+  //     DrawDebugRectOutline var5 var6 var11 var17 68 255 68 85
+  //   else
+  //     DrawDebugRectOutline var5 var6 var11 var17 68 68 68 85
+  //   endif
+  //   DrawDebugPoint var5 var6 255 0 255 255
+  // endif
   // var6
   var6 = 0
   var5 = 0
@@ -241,9 +254,6 @@ endif
     var5 *= -1
     if YDistBackEdge > var5 && Equal IsOnStage 1
       var5 = YDistBackEdge
-      if YSpeed < 0
-        Call AIHub
-      endif
     endif
     var5 *= -1
     // var17 = TopNY - var5
@@ -254,6 +264,7 @@ endif
   // else
   // endif
     var6 = OTopNY + var10 - (var6 - var5)
+    var6 += OHurtboxSize
   // var5
   if Equal CurrAction 7
     var5 = OTopNX + (var9 * Direction)
@@ -273,7 +284,7 @@ endif
     var17 = var11 / 3
     var5 = var5 + (OTotalXSpeed * var17) - (XSpeed * var17)
   endif
-  // if Equal var8 1 || Equal var8 var14
+  // if Equal var8 0 || Equal var8 1 || Equal var8 var14
   //   var17 = var12 + OHurtboxSize
   //   if Equal PlayerNum 0
   //     DrawDebugRectOutline var5 var6 var11 var17 255 0 0 85

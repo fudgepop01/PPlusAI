@@ -30,33 +30,33 @@ if Equal var18 0
   elif CalledAs FAir
     var20 = 24642
     var9 = 8
-    var10 = -6
+    var10 = -4
     var11 = 6
-    var12 = 4
+    var12 = -3
     var13 = 14
     var14 = 3
   elif CalledAs BAir
     var20 = 24643
     var9 = -7
-    var10 = -5
+    var10 = 0
     var11 = 10
-    var12 = -4
+    var12 = -3
     var13 = 10
     var14 = 8
   elif CalledAs UAir
     var20 = 24644
-    var9 = 5
-    var10 = -16
-    var11 = 10
-    var12 = 8
+    var9 = 7
+    var10 = -13
+    var11 = 6
+    var12 = 1
     var13 = 6
     var14 = 8
   elif CalledAs DAir
     var20 = 24645
     var9 = 0
     var10 = -14
-    var11 = 10
-    var12 = 10
+    var11 = 12
+    var12 = 5
     var13 = 16
     var14 = 5
   else
@@ -95,14 +95,27 @@ endif
 Return
 
 label ExecuteAttack
-  if Equal var8 var14
-    // DrawDebugPoint TopNX TopNY 255 0 255 255
-  endif
+  // if Equal var8 var14
+  //   DrawDebugPoint TopNX TopNY 255 0 255 255
+  // endif
   var5 = TopNX + (var9 * Direction)
   var6 = TopNY - var10
-  if Equal var8 var14
-    // DrawDebugPoint var5 var6 255 0 255 255
-  endif
+  // if Equal var8 0 || Equal var8 1
+  //   var6 += OHurtboxSize
+  //   var17 = var12 + OHurtboxSize
+  //   if Equal PlayerNum 0
+  //     DrawDebugRectOutline var5 var6 var11 var17 255 68 68 85
+  //   elif Equal PlayerNum 1
+  //     DrawDebugRectOutline var5 var6 var11 var17 68 68 255 85
+  //   elif Equal PlayerNum 2
+  //     DrawDebugRectOutline var5 var6 var11 var17 255 255 68 85
+  //   elif Equal PlayerNum 3
+  //     DrawDebugRectOutline var5 var6 var11 var17 68 255 68 85
+  //   else
+  //     DrawDebugRectOutline var5 var6 var11 var17 68 68 68 85
+  //   endif
+  //   DrawDebugPoint var5 var6 255 0 255 255
+  // endif
   // var6
   var6 = 0
   var5 = 0
@@ -298,9 +311,6 @@ endif
     var5 *= -1
     if YDistBackEdge > var5 && Equal IsOnStage 1
       var5 = YDistBackEdge
-      if YSpeed < 0
-        Call AIHub
-      endif
     endif
     var5 *= -1
     // var17 = TopNY - var5
@@ -311,6 +321,7 @@ endif
   // else
   // endif
     var6 = OTopNY + var10 - (var6 - var5)
+    var6 += OHurtboxSize
   // var5
   if Equal CurrAction 7
     var5 = OTopNX + (var9 * Direction)
@@ -330,7 +341,7 @@ endif
     var17 = var11 / 3
     var5 = var5 + (OTotalXSpeed * var17) - (XSpeed * var17)
   endif
-  // if Equal var8 1 || Equal var8 var14
+  // if Equal var8 0 || Equal var8 1 || Equal var8 var14
   //   var17 = var12 + OHurtboxSize
   //   if Equal PlayerNum 0
   //     DrawDebugRectOutline var5 var6 var11 var17 255 0 0 85
@@ -348,22 +359,6 @@ endif
   var5 = var5 - TopNX
   var6 = var6 - TopNY
 
-if Equal AirGroundState 1 || Equal IsOnStage 0 || FrameGE var15
-  Call AIHub
-endif
-
-if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
-  var16 = OKBSpeed
-endif
-
-if var5 < 0
-  AbsStick (-1)
-else
-  AbsStick 1
-endif
-
-Abs var5
-Abs var6
   GetNearestCliff var0
   var1 = XSpeed * 10
   var1 += TopNX
@@ -389,6 +384,24 @@ Abs var6
       var0 = 0
     endif
   endif
+
+if Equal AirGroundState 1 || FrameGE var15
+  Call AIHub
+endif
+
+if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
+  var16 = OKBSpeed
+endif
+
+ClearStick
+if var5 < 0
+  AbsStick -1 0
+else
+  AbsStick 1 0
+endif
+
+Abs var5
+Abs var6
 if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
   var19 = 2
   var18 = 1

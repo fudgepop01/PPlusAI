@@ -16,6 +16,17 @@ lastScript = hex(0x8002)
 #let OYDistSelf = var1
 OYDistSelf = OTopNY - TopNY
 
+// globTempVar = TopNY + 15
+// DrawDebugRectOutline TopNX globTempVar 10 1 color(0xFFFFFFDD)
+// globTempVar += 15
+// DrawDebugRectOutline TopNX globTempVar 10 1 color(0xFFAAAADD)
+// globTempVar += 15
+// DrawDebugRectOutline TopNX globTempVar 10 1 color(0xFF7777DD)
+// globTempVar += 15
+// DrawDebugRectOutline TopNX globTempVar 10 1 color(0xFF4444DD)
+// globTempVar += 15
+// DrawDebugRectOutline TopNX globTempVar 10 1 color(0xFF0000DD)
+
 #let ODmgXWeight = var2
 
 GET_WEIGHT_TABLE(var2, var0)
@@ -27,13 +38,15 @@ if Equal move_knockback -1
   move_knockback = hex(0xFFFF)
 endif
 
+LOGSTR str("OYDS")
+LOGVAL OYDistSelf
 // LOGSTR str("comboHub")
 if Equal lastAttack hex(0x6031)
   // ...thus we'll end up here
   if ODmgXWeight > 20
-    if OYDistSelf > 45
+    if OYDistSelf > 30
       Call UAir
-    elif OYDistSelf > 15
+    elif OYDistSelf > 10
       Call FAir
     else
       Call DAir
@@ -53,11 +66,13 @@ elif Equal lastAttack hex(0x6032)
 // elif Equal lastAttack hex(0x6033)
 elif Equal lastAttack hex(0x6034)
   if ODmgXWeight < 50
-    var0 = Rnd * 2
+    var0 = Rnd * 3
     if var0 < 1
       Call Grab
     elif var0 < 2
       Call Jab123
+    else
+      Call DAir
     endif
   elif ODmgXWeight < 90
     var0 = Rnd * 2
@@ -66,8 +81,12 @@ elif Equal lastAttack hex(0x6034)
     elif var0 < 2
       Call UAir
     endif
-  else
-    Call FAir
+  elif True
+    if OYDistSelf < 15
+      Call DAir
+    else
+      Call FAir
+    endif
   endif
 elif Equal lastAttack hex(0x603C)
   // LOGSTR str("grbCmbo")
@@ -75,9 +94,9 @@ elif Equal lastAttack hex(0x603C)
     Call UAir
   endif
   if Equal moveVariant mv_uthrow
-    if XDistLE 30
+    if ODmgXWeight > 80
       Call FAir
-    elif OYDistSelf > 20
+    elif OYDistSelf > 25
       Call UAir
     else
       Call NAir
@@ -97,42 +116,49 @@ elif Equal lastAttack hex(0x603C)
     endif
   endif
 elif Equal lastAttack hex(0x6041)
-  if move_knockback < 2 && OYDistSelf < 30
+  if move_knockback < 4 && OYDistSelf < 30 && Rnd < 0.5
     Call Grab
   endif
   if OYDistSelf < 25
-    Call NAir
+    if ODmgXWeight > 40 && Rnd < 0.7
+      Call FAir
+    elif Rnd < 0.3
+      Call DAir
+    else
+      Call NAir
+    endif
   else
     Call UAir
   endif
-elif Equal lastAttack hex(0x6042)
-  if OYDistSelf > 20
-    Call FAir
-  else
-    Call UAir
-  endif
-elif Equal lastAttack hex(0x6043)
-  if ODmgXWeight > 60
-    Call FAir
-  else
-    Call UAir
-  endif
+// elif Equal lastAttack hex(0x6042)
+//   if OYDistSelf > 20
+//     Call FAir
+//   else
+//     Call UAir
+//   endif
+// elif Equal lastAttack hex(0x6043)
+//   if ODmgXWeight > 60
+//     Call FAir
+//   else
+//     Call UAir
+//   endif
 elif Equal lastAttack hex(0x6044)
-  if ODmgXWeight > 60 && OYDistSelf > 30 && OYDistSelf < 60
+  if MeteoChance && OYDistSelf < 80
     Call FAir
-  elif MeteoChance && OYDistSelf < 80
+  elif Equal AirGroundState 1 && OYDistSelf < 20
+    if Rnd < 0.5
+      Call FAir
+    elif Rnd < 0.5
+      Call NAir
+    else
+      Call DAir
+    endif
+  if ODmgXWeight > 60 && OYDistSelf > 15 && OYDistSelf < 60
     Call FAir
   else
     Call UAir
   endif
 elif Equal lastAttack hex(0x6045)
-  if Equal OAirGroundState 1 && OCurrAction <= hex(0x20) || Equal OCurrAction hex(0x4D) || Equal OFramesHitstun 0
-    Call AIHub
-  endif
-  if OYSpeed <= 0.1
-    Return
-  endif
-
   // LOGSTR str("oydist")
   // LOGVAL OYDistSelf
   if ODmgXWeight > 70 && OYDistSelf > 40
@@ -169,6 +195,49 @@ elif Equal lastAttack hex(0x6039)
     endif
   endif
   Call NAir
+endif
+
+if True
+  if OYDistSelf < 15
+    if XDistLE 30
+      var0 = Rnd
+      if var0 < 0.3
+        Call Jab123
+      elif var0 < 0.5
+        Call Grab
+      elif var0 < 0.7
+        Call DTilt
+      elif var0 < 0.85
+        Call DAir
+      else
+        Call NAir
+      endif
+    elif Rnd < 0.5
+      Call NAir
+    endif
+  elif OYDistSelf < 30
+    if XDistLE 45
+      if ODmgXWeight > 60
+        Call FAir
+      else
+        Call UAir
+      endif
+    elif True
+      if ODmgXWeight > 60
+        Call FAir
+      else
+        Call NAir
+      endif
+    endif
+  else
+    if ODmgXWeight > 80 && XDistLE 50
+      Call FAir
+    elif ODmgXWeight > 40
+      Call UAir
+    else
+      Call NAir
+    endif
+  endif
 endif
 
 noCombo = noComboVal

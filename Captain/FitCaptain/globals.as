@@ -92,28 +92,28 @@
 #const mv_jabReset = 1
 
 #const jab123_IASA = 14
-#const jab123_xOffset = 4
-#const jab123_yOffset = -7
+#const jab123_xOffset = 6
+#const jab123_yOffset = -5
 #const jab123_xRange = 12
-#const jab123_yRange = 6
+#const jab123_yRange = 0
 #const jab123_hitFrame = 3
 #const jab123_length = 3
 
 // ftilt
 #const ftilt_IASA = 30
-#const ftilt_xOffset = 0
+#const ftilt_xOffset = 10
 #const ftilt_yOffset = -5
-#const ftilt_xRange = 20
-#const ftilt_yRange = 5
+#const ftilt_xRange = 11
+#const ftilt_yRange = -1
 #const ftilt_hitFrame = 9
 #const ftilt_length = 3
 
 
 // utilt
 #const utilt_IASA = 38
-#const utilt_xOffset = 8
-#const utilt_yOffset = -7
-#const utilt_xRange = 15
+#const utilt_xOffset = 10
+#const utilt_yOffset = -8
+#const utilt_xRange = 13
 #const utilt_yRange = 10
 #const utilt_hitFrame = 17
 #const utilt_length = 6
@@ -137,7 +137,7 @@
 #const fsmash_length = 3
 
 // usmash
-#const usmash_IASA = 32
+#const usmash_IASA = 41
 #const usmash_xOffset = 1
 #const usmash_yOffset = -20
 #const usmash_xRange = 11
@@ -209,27 +209,27 @@
 // FAir
 #const fair_IASA = 36
 #const fair_xOffset = 8
-#const fair_yOffset = -6
+#const fair_yOffset = -4
 #const fair_xRange = 6
-#const fair_yRange = 4
+#const fair_yRange = -3
 #const fair_hitFrame = 14
 #const fair_length = 3
 
 // BAir
 #const bair_IASA = 29
 #const bair_xOffset = -7
-#const bair_yOffset = -5
+#const bair_yOffset = 0
 #const bair_xRange = 10
-#const bair_yRange = -4
+#const bair_yRange = -3
 #const bair_hitFrame = 10
 #const bair_length = 8
 
 // UAir
 #const uair_IASA = 30
-#const uair_xOffset = 5
-#const uair_yOffset = -16
-#const uair_xRange = 10
-#const uair_yRange = 8
+#const uair_xOffset = 7
+#const uair_yOffset = -13
+#const uair_xRange = 6
+#const uair_yRange = 1
 #const uair_hitFrame = 6
 #const uair_length = 8
 
@@ -237,8 +237,8 @@
 #const dair_IASA = 38
 #const dair_xOffset = 0
 #const dair_yOffset = -14
-#const dair_xRange = 10
-#const dair_yRange = 10
+#const dair_xRange = 12
+#const dair_yRange = 5
 #const dair_hitFrame = 16
 #const dair_length = 5
 

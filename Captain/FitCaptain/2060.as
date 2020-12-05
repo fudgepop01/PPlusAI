@@ -72,14 +72,13 @@ if absOCloseness < 35 && Equal Direction OPos
         else
             Stick 1
             Button X
-            movePart = 0
+            movePart = 1
             rndChoice = Rnd
             if rndChoice < 0.4
                 Call UAir
             elif rndChoice < 0.8
                 Call NAir
             else
-                movePart = 1
                 Call DAir
             endif
         endif
@@ -96,7 +95,6 @@ if absOCloseness < 35 && Equal Direction OPos
         Finish
     endif
 elif absOCloseness > 35 && Equal OPos Direction
-    LOGSTR str("opt2")
     if rndChoice < 0.6 && LevelValue >= LV8 // ledgedash
         Seek ledgedash
         Jump
@@ -109,7 +107,6 @@ elif absOCloseness > 35 && Equal OPos Direction
         Call AIHub
     endif
 elif absOCloseness < 25
-    LOGSTR str("opt3")
     if Equal CurrAction hex(0x75)
         if NumFrames > 1
             SetFrame 0

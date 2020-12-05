@@ -68,14 +68,13 @@ if var1 < 35 && Equal Direction OPos
         else
             Stick 1
             Button X
-            var18 = 0
+            var18 = 1
             var2 = Rnd
             if var2 < 0.4
                 Call UAir
             elif var2 < 0.8
                 Call NAir
             else
-                var18 = 1
                 Call DAir
             endif
         endif
@@ -92,7 +91,6 @@ if var1 < 35 && Equal Direction OPos
         Finish
     endif
 elif var1 > 35 && Equal OPos Direction
-    LOGSTR 1869640704 838860800 0 0 0
     if var2 < 0.6 && LevelValue >= 75 // ledgedash
         Seek ledgedash
         Jump
@@ -105,7 +103,6 @@ elif var1 > 35 && Equal OPos Direction
         Call AIHub
     endif
 elif var1 < 25
-    LOGSTR 1869640704 855638016 0 0 0
     if Equal CurrAction 117
         if NumFrames > 1
             SetFrame 0

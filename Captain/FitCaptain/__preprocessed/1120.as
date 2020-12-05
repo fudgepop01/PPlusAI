@@ -47,9 +47,9 @@ elif Equal CurrAction 57
         Stick (-1)
         var19 = 3
       endif
-    elif ODamage > 80
-      var1 = Rnd * 3
-      if var1 < 2
+    elif ODamage > 30
+      var1 = Rnd * 2
+      if var1 < 1
         Stick 0 1
         var19 = 4
       else

@@ -21,6 +21,8 @@ endif
 
 if CurrAction < hex(0x0B) && CurrAction > hex(0x10)
   Return
+elif Equal CurrAction hex(0x33) && AnimFrame <= move_IASA
+  Return
 endif
 
 // edge range width
@@ -215,7 +217,7 @@ SetFrame 0
 label
 tempVar = nearCliffX * Direction
 // LOGVAL NumFrames
-if Equal CurrAction hex(0x114) && NumFrames < 10 && globTempVar < 5
+if Equal CurrAction hex(0x114) && NumFrames < 10 && globTempVar > -5
   tempVar = TopNX * -1
   AbsStick tempVar
   Return

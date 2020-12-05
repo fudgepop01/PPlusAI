@@ -31,6 +31,11 @@ endif
 
 label BEGIN_MAIN
 
+SAFE_INJECT_4 move_xOffset
+SAFE_INJECT_5 move_yOffset
+SAFE_INJECT_6 move_xRange
+SAFE_INJECT_7 move_yRange
+
 if FramesHitstun > 0
   Call AIHub
 endif
@@ -63,6 +68,10 @@ if MeteoChance
   endif
 
   if localTempVar < OTopNY && Equal IsOnStage 0 && Equal moveVariant mv_edgeguard && OXDistFrontEdge < 20 && YDistBackEdge > 30
+    Call RecoveryHub
+  elif CanJump && YDistBackEdge > 50
+    Call RecoveryHub
+  elif YDistBackEdge > 30
     Call RecoveryHub
   endif
 endif
@@ -133,14 +142,26 @@ if !(True)
     Abs localTempVar
 
     if absTargetXDistance <= move_xRange
+      #let shouldAttack = var2
       Goto XDistCheckPassed
+      if Equal shouldAttack 1
+        Seek CallAttacks
+        Jump
+      endif
       tempVar = TopNY - OTopNY
       Abs tempVar
       if XDistLE 35 && tempVar <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
         Call Unk3020
       endif
     elif localTempVar <= move_xRange
+      #let shouldAttack = var2
       Goto XDistCheckPassed
+      if Equal shouldAttack 1
+        Seek CallAttacks
+        Jump
+      endif
+    elif YSpeed < 0
+      Call AIHub
     endif
     if YDistBackEdge > 30
       Call AIHub
@@ -201,10 +222,10 @@ if !(Equal CurrSubaction JumpSquat)
     elif Rnd <= 0.02 && Equal lastAttack hex(0x8008)
       Call mix_tomhawkJump
     endif
-  elif CanJump && Rnd <= 0.03 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && Equal IsOnStage 1 && TopNY > OTopNY
+  elif CanJump && Rnd <= 0.01 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && Equal IsOnStage 1 && TopNY > OTopNY && OFramesHitstun < 1
     // randomly double-jump aerial instead of going straight for the aerial
     Call mix_doubleJump
-  elif CanJump && Rnd <= 0.01 && Equal lastAttack hex(0x8008) && TopNY > OTopNY
+  elif CanJump && Rnd <= 0.01 && Equal lastAttack hex(0x8008) && TopNY > OTopNY && OFramesHitstun < 1
     Call mix_doubleJump
   endif
 
@@ -213,12 +234,15 @@ if !(Equal CurrSubaction JumpSquat)
       Button X
     endif
     if Rnd < 0.2 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && InAir && Equal Direction OPos
-      Seek CallAttacks
+      Seek
+      Goto CallAttacks
       Jump
     elif Rnd < 0.2 && lastAttack >= hex(0x6031) && lastAttack <= hex(0x603F) && !(InAir)
-      Seek CallAttacks
+      Seek
+      Goto CallAttacks
       Jump
     endif
+    label
   endif
 endif
 
@@ -307,7 +331,15 @@ if YDistFloor < 0.2 && targetYDistance < 0 && !(SamePlane) && Equal AirGroundSta
   Return
 endif
 
-tempVar = move_yRange + OHurtboxSize
+#let shouldAttack = var2
+shouldAttack = 0
+
+tempVar = HurtboxSize
+if targetYDistance < tempVar && Equal AirGroundState 1 && Equal YSpeed 0 && !(Equal CurrAction JumpSquat)
+  tempVar = hex(0xFFFF)
+else
+  tempVar = move_yRange + OHurtboxSize
+endif
 if absTargetYDistance <= tempVar
   #let approxDist = var4
   CALC_SELF_Y_CHANGE_GRAVITY(var4, var3, move_IASA, l_test)
@@ -316,14 +348,17 @@ if absTargetYDistance <= tempVar
   #let isGoingOffstage = var2
   GOING_OFFSTAGE(var2, var3, move_IASA + 3)
 
-
   if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
-    if Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat) && CurrAction <= hex(0x09)
-      if move_xOffset >= 3 && !(Equal Direction OPos)
+    if Equal AirGroundState 1 && CurrAction <= hex(0x09)
+      if move_xOffset >= 1 && !(Equal Direction OPos)
+        ClearStick
         Stick -0.5
         Return
       endif
       Button X
+      Return
+    elif Equal AirGroundState 1
+      Return
     elif CanJump && !(Equal isGoingOffstage 0) && approxDist < -70
       // DrawDebugRectOutline TopNX TopNY 5 5 color(0xFFFF00AA)
       moveVariant = 0
@@ -334,57 +369,69 @@ if absTargetYDistance <= tempVar
       Call AIHub
     else
       // LOGSTR str("appDist")
-      Seek CallAttacks
-      Jump
+      shouldAttack = 1
     endif
   elif Equal AirGroundState 1
     // otherwise we just straight-up go to the attack performing section if
     // we're in range
-    Seek CallAttacks
-    Jump
+    shouldAttack = 1
   endif
 endif
 Return
 
 label CallAttacks
-label
 
 // if the action requires us to be stopped,
 if lastAttack >= hex(0x6031) && lastAttack <= hex(0x6037)
   if Equal CurrAction hex(0x03)
     // stops the dash
+    ClearStick
     Button X
     Return
   endif
   if Equal CurrAction hex(0x04)
     // interrupts run with crouch for one frame
+    ClearStick
     Stick 0 (-1)
     Return
   endif
-  if move_xOffset >= 3 && !(Equal Direction OPos)
-    Stick -0.5
+  if Equal CurrAction hex(0x0A) || Equal CurrSubaction JumpSquat
     Return
   endif
-  if Equal CurrAction hex(0x0A) || Equal CurrAction hex(0x16)
-    Return
-  endif
-  if InAir && YDistBackEdge > -10 && YDistBackEdge <= 0
+
+  #let isGoingOffstage = var2
+  GOING_OFFSTAGE(var2, var3, 2)
+
+  if InAir && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal isGoingOffstage 0
+    globTempVar = targetXDistance / 10
     if LevelValue <= LV7
       if Rnd < 0.4
         Button R
-        AbsStick targetXDistance (-1)
+        AbsStick globTempVar (-1)
       endif
     else
       Button R
-      AbsStick targetXDistance (-1)
+      AbsStick globTempVar (-1)
     endif
     Return
   elif !(Equal AirGroundState 1)
     Call AIHub
   endif
-  if !(CurrAction <= hex(0x09))
+  if move_xOffset >= 1 && !(Equal Direction OPos)
+    ClearStick
+    Stick -0.5
     Return
   endif
+  if CurrAction > hex(0x15)
+    Return
+  endif
+elif lastAttack >= hex(0x6040) && lastAttack <= hex(0x604F) && Equal AirGroundState 1
+  if AnimFrame >= move_IASA || CurrAction <= hex(0x09)
+    Button X
+  endif
+  Return
+elif Equal CurrSubaction JumpSquat
+  Return
 endif
 
 // sets movePart to 1 so we know to actually perform the move instead

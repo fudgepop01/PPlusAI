@@ -11,17 +11,30 @@
 // calculates the target distance to the opponent and visualizes it for
 // debugging purposes. The rectangle color is based on the player number
 #macro CALC_TARGET_DISTANCES(out1, out2, calcVar, gravVar, frameCount, lab1, lab2)
-  if Equal var8 move_length
-    // DrawDebugPoint TopNX TopNY color(0xFF00FFFF)
-  endif
+  // if Equal var8 move_length
+  //   DrawDebugPoint TopNX TopNY color(0xFF00FFFF)
+  // endif
 
   #let tempMacVar1 = {out1}
   #let tempMacVar2 = {out2}
   tempMacVar1 = TopNX + (move_xOffset * Direction)
   tempMacVar2 = TopNY - move_yOffset
-  if Equal var8 move_length
-    // DrawDebugPoint tempMacVar1 tempMacVar2 color(0xFF00FFFF)
-  endif
+  // if Equal var8 0 || Equal var8 1
+  //   tempMacVar2 += OHurtboxSize
+  //   globTempVar = move_yRange + OHurtboxSize
+  //   if Equal PlayerNum 0
+  //     DrawDebugRectOutline tempMacVar1 tempMacVar2 move_xRange globTempVar color(0xFF444455)
+  //   elif Equal PlayerNum 1
+  //     DrawDebugRectOutline tempMacVar1 tempMacVar2 move_xRange globTempVar color(0x4444FF55)
+  //   elif Equal PlayerNum 2
+  //     DrawDebugRectOutline tempMacVar1 tempMacVar2 move_xRange globTempVar color(0xFFFF4455)
+  //   elif Equal PlayerNum 3
+  //     DrawDebugRectOutline tempMacVar1 tempMacVar2 move_xRange globTempVar color(0x44FF4455)
+  //   else
+  //     DrawDebugRectOutline tempMacVar1 tempMacVar2 move_xRange globTempVar color(0x44444455)
+  //   endif
+  //   DrawDebugPoint tempMacVar1 tempMacVar2 color(0xFF00FFFF)
+  // endif
 
   #let targetX = {out1}
   #let targetY = {out2}
@@ -51,9 +64,6 @@
     deltaY *= -1
     if YDistBackEdge > deltaY && Equal IsOnStage 1
       deltaY = YDistBackEdge
-      if YSpeed < 0
-        Call AIHub
-      endif
     endif
     deltaY *= -1
     // globTempVar = TopNY - deltaY
@@ -65,6 +75,7 @@
   // else
   // endif
     targetY = OTopNY + move_yOffset - (oDeltaY - deltaY)
+    targetY += OHurtboxSize
 
   // targetX
   if Equal CurrAction hex(0x07)
@@ -86,7 +97,7 @@
     globTempVar = move_xRange / 3
     targetX = targetX + (OTotalXSpeed * globTempVar) - (XSpeed * globTempVar)
   endif
-  // if Equal var8 1 || Equal var8 move_length
+  // if Equal var8 0 || Equal var8 1 || Equal var8 move_length
   //   globTempVar = move_yRange + OHurtboxSize
   //   if Equal PlayerNum 0
   //     DrawDebugRectOutline targetX targetY move_xRange globTempVar color(0xFF000055)
@@ -244,9 +255,16 @@
     delay = delay + Rnd * (100 - LevelValue) / 6
   endif
 
+  #let oFinished = {tempVar2}
+  oFinished = 0
   label
-  if delay <= 0
-      Seek
+  if !(OAttacking)
+    oFinished = 1
+  endif
+  if Equal oFinished 1 && OAttacking
+    Seek
+  elif delay <= 0
+    Seek
   endif
   delay -= 1
   Return

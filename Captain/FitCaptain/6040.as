@@ -97,22 +97,24 @@ Return
 label ExecuteAttack
 CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_hitFrame, _oCalc, _sCalc)
 
-if Equal AirGroundState 1 || Equal IsOnStage 0 || FrameGE move_IASA
+#let isGoingOffstage = var0
+GOING_OFFSTAGE(var0, var1, 10)
+
+if Equal AirGroundState 1 || FrameGE move_IASA
   Call AIHub
 endif
 
 RECORD_MOVE_KNOCKBACK
 
+ClearStick
 if targetXDistance < 0
-  AbsStick (-1)
+  AbsStick -1 0
 else
-  AbsStick 1
+  AbsStick 1 0
 endif
 
 Abs targetXDistance
 Abs targetYDistance
-#let isGoingOffstage = var0
-GOING_OFFSTAGE(var0, var1, 10)
 if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
   var19 = 2
   var18 = 1

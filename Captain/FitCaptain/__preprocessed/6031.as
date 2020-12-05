@@ -8,10 +8,10 @@ unk 0x0
 if Equal var18 0
   // LOGSTR 1784766976 0 0 0 0
   var20 = 24625
-  var9 = 4
-  var10 = -7
+  var9 = 6
+  var10 = -5
   var11 = 12
-  var12 = 6
+  var12 = 0
   var13 = 3
   var14 = 3
   if Equal var21 2 && OFramesHitstun < 1

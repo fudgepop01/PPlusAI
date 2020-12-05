@@ -38,7 +38,7 @@ endif
 // randomly DIs unless conditions are met for survival DI
 
 // if in hitstun...
-if FramesHitstun > 0 && Equal CurrAction 69
+if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   //...pick a random direction for the control stick
   var0 = Rnd - 1
   var1 = Rnd - 1
@@ -200,7 +200,9 @@ endif
 // if we reach here then it's time to choose an attack to perform
 // if the opponent is in hitstun and we want to combo, we'll go to the
 // ComboHub (2.as)
-if OFramesHitstun > 0 && !(Equal var19 256) && LevelValue >= 42
+if Equal HitboxConnected 1 && !(Equal var19 256) && LevelValue >= 42
+  Call ComboHub
+elif OFramesHitstun > 0 && LevelValue >= 42
   Call ComboHub
 endif
 
@@ -293,9 +295,10 @@ if Equal var0 0
     if LevelValue >= 60 && Equal var6 0
       if var1 < OAnimFrame || Equal OCurrAction 37
         if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && !(Equal ODirection OPos)
+          var18 = 1
           Call FakeOutHub
         endif
-      elif OAttacking && var1 > OAnimFrame && !(Equal var0 -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= 75
+      elif OAttacking && var1 > OAnimFrame && !(Equal var0 -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= 75 && !(Equal OCurrAction 27)
         Call SSpecial
       elif Rnd < 0.05 && !(Equal var21 32776)
         Call FakeOutHub
@@ -331,7 +334,7 @@ if Equal var0 0
       var2 = var3 * 0.1
       if Rnd < var3 || Rnd < 0.05 || Equal var2 3
         var21 = 2
-        if OYDistBackEdge < -45
+        if OYDistBackEdge < -20
           Call UAir
         endif
         if Rnd < 0.8 && !(Equal Direction OPos)
@@ -373,7 +376,7 @@ if Equal var0 0
 
     if LevelValue >= 21
       if OYDistBackEdge > -15
-        var0 = Rnd * 200
+        var0 = Rnd * 160
         // LOGSTR 1836021248 1699964160 1811939328 0 0
         // LOGVAL var0
         // these moves are pretty much always relevant
@@ -577,7 +580,7 @@ endif
           // LOGSTR 1852796416 1694498816 0 0 0
         endif
       endif
-      if OYDistBackEdge > -45
+      if OYDistBackEdge < -20
         if Rnd < 0.5 && ODamage > 50
           Call FAir
         else
@@ -595,10 +598,14 @@ endif
       Seek callers
     endif
   elif True
-    if Rnd < 0.05
+    if Rnd < 0.4
       Call DAir
-    elif Rnd < 0.3
+    elif Rnd < 0.2
       Call UAir
+    elif Rnd < 0.3
+      Call FAir
+    else
+      Call NAir
     endif
   endif
 endif

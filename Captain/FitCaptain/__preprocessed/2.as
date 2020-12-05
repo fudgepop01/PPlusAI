@@ -15,6 +15,17 @@ var21 = 32770
 
 var1 = OTopNY - TopNY
 
+// var17 = TopNY + 15
+// DrawDebugRectOutline TopNX var17 10 1 255 255 255 221
+// var17 += 15
+// DrawDebugRectOutline TopNX var17 10 1 255 170 170 221
+// var17 += 15
+// DrawDebugRectOutline TopNX var17 10 1 255 119 119 221
+// var17 += 15
+// DrawDebugRectOutline TopNX var17 10 1 255 68 68 221
+// var17 += 15
+// DrawDebugRectOutline TopNX var17 10 1 255 0 0 221
+
 
 if OIsCharOf Bowser
   var2 = 113
@@ -159,13 +170,15 @@ if Equal var16 -1
   var16 = 65535
 endif
 
+LOGSTR 1331250176 1392508928 0 0 0
+LOGVAL var1
 // LOGSTR 1668246784 1651460096 1969356800 0 0
 if Equal var20 24625
   // ...thus we'll end up here
   if var2 > 20
-    if var1 > 45
+    if var1 > 30
       Call UAir
-    elif var1 > 15
+    elif var1 > 10
       Call FAir
     else
       Call DAir
@@ -185,11 +198,13 @@ elif Equal var20 24626
 // elif Equal var20 24627
 elif Equal var20 24628
   if var2 < 50
-    var0 = Rnd * 2
+    var0 = Rnd * 3
     if var0 < 1
       Call Grab
     elif var0 < 2
       Call Jab123
+    else
+      Call DAir
     endif
   elif var2 < 90
     var0 = Rnd * 2
@@ -198,8 +213,12 @@ elif Equal var20 24628
     elif var0 < 2
       Call UAir
     endif
-  else
-    Call FAir
+  elif True
+    if var1 < 15
+      Call DAir
+    else
+      Call FAir
+    endif
   endif
 elif Equal var20 24636
   // LOGSTR 1735549440 1131241984 1862270976 0 0
@@ -207,9 +226,9 @@ elif Equal var20 24636
     Call UAir
   endif
   if Equal var19 4
-    if XDistLE 30
+    if var2 > 80
       Call FAir
-    elif var1 > 20
+    elif var1 > 25
       Call UAir
     else
       Call NAir
@@ -229,42 +248,49 @@ elif Equal var20 24636
     endif
   endif
 elif Equal var20 24641
-  if var16 < 2 && var1 < 30
+  if var16 < 4 && var1 < 30 && Rnd < 0.5
     Call Grab
   endif
   if var1 < 25
-    Call NAir
+    if var2 > 40 && Rnd < 0.7
+      Call FAir
+    elif Rnd < 0.3
+      Call DAir
+    else
+      Call NAir
+    endif
   else
     Call UAir
   endif
-elif Equal var20 24642
-  if var1 > 20
-    Call FAir
-  else
-    Call UAir
-  endif
-elif Equal var20 24643
-  if var2 > 60
-    Call FAir
-  else
-    Call UAir
-  endif
+// elif Equal var20 24642
+//   if var1 > 20
+//     Call FAir
+//   else
+//     Call UAir
+//   endif
+// elif Equal var20 24643
+//   if var2 > 60
+//     Call FAir
+//   else
+//     Call UAir
+//   endif
 elif Equal var20 24644
-  if var2 > 60 && var1 > 30 && var1 < 60
+  if MeteoChance && var1 < 80
     Call FAir
-  elif MeteoChance && var1 < 80
+  elif Equal AirGroundState 1 && var1 < 20
+    if Rnd < 0.5
+      Call FAir
+    elif Rnd < 0.5
+      Call NAir
+    else
+      Call DAir
+    endif
+  if var2 > 60 && var1 > 15 && var1 < 60
     Call FAir
   else
     Call UAir
   endif
 elif Equal var20 24645
-  if Equal OAirGroundState 1 && OCurrAction <= 32 || Equal OCurrAction 77 || Equal OFramesHitstun 0
-    Call AIHub
-  endif
-  if OYSpeed <= 0.1
-    Return
-  endif
-
   // LOGSTR 1870226432 1769174016 0 0 0
   // LOGVAL var1
   if var2 > 70 && var1 > 40
@@ -301,6 +327,49 @@ elif Equal var20 24633
     endif
   endif
   Call NAir
+endif
+
+if True
+  if var1 < 15
+    if XDistLE 30
+      var0 = Rnd
+      if var0 < 0.3
+        Call Jab123
+      elif var0 < 0.5
+        Call Grab
+      elif var0 < 0.7
+        Call DTilt
+      elif var0 < 0.85
+        Call DAir
+      else
+        Call NAir
+      endif
+    elif Rnd < 0.5
+      Call NAir
+    endif
+  elif var1 < 30
+    if XDistLE 45
+      if var2 > 60
+        Call FAir
+      else
+        Call UAir
+      endif
+    elif True
+      if var2 > 60
+        Call FAir
+      else
+        Call NAir
+      endif
+    endif
+  else
+    if var2 > 80 && XDistLE 50
+      Call FAir
+    elif var2 > 40
+      Call UAir
+    else
+      Call NAir
+    endif
+  endif
 endif
 
 var19 = 256

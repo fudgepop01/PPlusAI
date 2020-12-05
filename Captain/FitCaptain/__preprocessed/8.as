@@ -8,11 +8,18 @@ unk 0x0
 
 // sets up offsets to get to target position
 if Equal var18 0
+  RetrieveATKD var0 OCurrSubaction 1
+
   var21 = 32776
   var20 = 32776
   var9 = 0
+  var11 = 25
+  if Equal var0 -1
+    var9 = var3
+    var11 = 10 + (var3 - var2)
+    Abs var11
+  endif
   var10 = 0
-  var11 = 20
   var12 = 50
   var13 = Rnd * 20 + 5
   Call ApproachHub
@@ -22,13 +29,18 @@ elif Equal AirGroundState 2
     Button X
     AbsStick var0
     Call AIHub
-  elif XDistBackEdge > -10
+  elif XDistFrontEdge > 10
     AbsStick var0 (-1)
     Button R
     Call AIHub
   endif
   Call AIHub
 elif True
+  if !(Equal Direction OPos)
+    var0 = OPos * 0.65
+    AbsStick var0
+    Return
+  endif
   if Equal OCurrAction 37 || Equal OCurrAction 36
     Seek jumpOver
   endif
@@ -42,11 +54,12 @@ elif True
   else
     Seek offensiveShield
   endif
+  Jump
 endif
 Return
 
 label crouchCancelPunish
-var0 = Rnd * 20 + 10
+var0 = Rnd * 30 + 10
 label
 Stick 0 (-1)
 if FramesHitstun > 0 || var0 <= 0
