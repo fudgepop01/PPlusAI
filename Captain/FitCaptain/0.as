@@ -10,6 +10,10 @@ unk 0x00000
 
 label begin
 
+if Equal CurrAction hex(0x114) || Equal CurrAction hex(0x10)
+  Call RecoveryHub
+endif
+
 if LevelValue <= LV6
   if Rnd < 0.2
     Return
@@ -48,7 +52,7 @@ if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
   StickX = Rnd - 1
   StickY = Rnd - 1
   TechWindow = 1
-  MeteorCancelWindow = Rnd * 5 + 10
+  MeteorCancelWindow = Rnd * 5 + 15
   // label to make this loop each frame...
   label
   if Equal IsOnStage 0 || Damage > 80
@@ -140,6 +144,11 @@ label
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(var0, var1, 15)
 
+if Equal CurrAction hex(0x18)
+  Seek _main
+  Return
+endif
+
 // where RecoveryHub (4.as) is called
 if Equal isGoingOffstage 2 && Equal AirGroundState 2
   movePart = 0
@@ -147,7 +156,14 @@ if Equal isGoingOffstage 2 && Equal AirGroundState 2
 endif
 
 if Equal isGoingOffstage 0 && YDistBackEdge > -15 && Equal CurrAction hex(0x33) && LevelValue >= LV7
-  Call Landing
+  if CanJump && Rnd < 0.5 && LevelValue >= LV8
+    Button X
+    Return
+  else
+    var18 = 1
+    var19 = 2
+    Call Landing
+  endif
 endif
 
 if MeteoChance && !(Equal isGoingOffstage 2)
@@ -184,6 +200,10 @@ endif
 // if the opponent is in hitstun and we want to combo, we'll go to the
 // ComboHub (2.as)
 if Equal HitboxConnected 1 && !(Equal noCombo noComboVal) && LevelValue >= LV5
+  if Equal CurrAction hex(0x18)
+    Seek _main
+    Return
+  endif
   Call ComboHub
 elif OFramesHitstun > 0 && LevelValue >= LV5
   Call ComboHub
@@ -202,14 +222,19 @@ endif
 
 moveVariant = 0
 movePart = 0
-move_knockback = -1
+hit_knockback = -1
+
+if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction hex(0x49)
+  TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 75 + 75, _afterTCS, _afterTCS)
+endif
 
 IS_EARLY_ROLL(var0, var1)
 
 #let moveSelection = var0
 if Equal isEarlyRoll 0
+  label _afterTCS
   moveSelection = 0
-  SAFE_INJECT_0 moveSelection
+  // SAFE_INJECT_0 moveSelection
 
   // because we don't want to set the moveSelection again if we revisit
   // this, we place a label here to jump to
@@ -270,7 +295,7 @@ if Equal isEarlyRoll 0
     #let oDangerYMax = var5
 
     #let injected = var2
-    SAFE_INJECT_1 injected
+   // SAFE_INJECT_1 injected
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0
       if oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25)
@@ -314,6 +339,15 @@ if Equal isEarlyRoll 0
       endif
     endif
 
+    if LevelValue >= LV7 && Equal waitTeamFlag 0
+      #let fakeChance = var2
+      fakeChance = defenseMul * 0.1
+      Abs fakeChance
+      if Rnd < fakeChance
+        Call FakeOutHub
+      endif
+    endif
+
     if Equal waitTeamFlag 0
       #let defenseChance = var2
       defenseChance = defenseMul * 0.1
@@ -335,8 +369,10 @@ if Equal isEarlyRoll 0
     // if the opponent is lying there doing nothing
     if LevelValue >= LV6 && Equal waitTeamFlag 0
       if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D)
-        if Equal AirGroundState 1 && Rnd < 0.5
+        if Equal AirGroundState 1 && Rnd < 0.3
           Call DTilt
+        elif Equal AirGroundState 1 && Rnd < 0.3
+          Call SSpecial
         else
           Call DAir
         endif
@@ -350,7 +386,7 @@ if Equal isEarlyRoll 0
     // these parts are effectively falcon's whole entire neutral game.
     if !(XDistLE 20) && LevelValue >= LV7 && Rnd < 0.7
       // LOGSTR str("throwOut")
-      moveVariant = mv_throwOut
+      approachType = at_throwOut
       Call NAir
     endif
 
@@ -360,22 +396,22 @@ if Equal isEarlyRoll 0
     endif
 
     if LevelValue >= LV3
-      if OYDistBackEdge > -15
-        moveSelection = Rnd * 160
+      if OYDistBackEdge > -5
+        moveSelection = Rnd * 105
         // LOGSTR str("moveSel")
         // LOGVAL moveSelection
         // these moves are pretty much always relevant
         if moveSelection >= 100
-          if moveSelection < 105
+          if moveSelection < 101
             Call FAir
-          elif moveSelection < 115
+          elif moveSelection < 102
             Call DAir
-          elif moveSelection < 135
+          elif moveSelection < 103
             if Rnd < 0.5
               moveVariant = mv_approachingNair
             endif
             Call NAir
-          elif moveSelection < 150
+          elif moveSelection < 104
             Call Grab
           else
             moveSelection = Rnd * 11 + 2
@@ -392,16 +428,19 @@ if Equal isEarlyRoll 0
 
           if ODmgXWeight >= 90
             // LOGSTR str(">= 90")
-            if moveSelection < 20
+            if moveSelection < 30
               Call Grab
-            elif moveSelection < 60
+            elif moveSelection < 35
+              globTempVar = OPos * XSpeed
+              if !(Equal Direction OPos) && XDistLE 20 && globTempVar <= 0
+                approachType = at_throwOut
+                Call BAir
+              endif
+              Call NAir
+            elif moveSelection < 50
               Call FAir
-            elif moveSelection < 65
+            elif moveSelection < 60
               Call Jab123
-            elif moveSelection < 80
-              Call FSmash
-            elif moveSelection < 95
-              Call USmash
             else
               Call DAir
             endif
@@ -410,16 +449,25 @@ if Equal isEarlyRoll 0
             if moveSelection < 30
               Call Grab
             elif moveSelection < 60
+              globTempVar = OPos * XSpeed
+              if !(Equal Direction OPos) && XDistLE 20 && globTempVar <= 0
+                approachType = at_throwOut
+                Call BAir
+              endif
+              moveVariant = mv_nairHit2
               Call NAir
             elif moveSelection < 80
               Call DAir
-            else
-              Call FTilt
             endif
           elif True
             if moveSelection < 30
               Call Grab
             elif moveSelection < 80
+              globTempVar = OPos * XSpeed
+              if !(Equal Direction OPos) && XDistLE 20 && globTempVar <= 0
+                approachType = at_throwOut
+                Call BAir
+              endif
               moveVariant = mv_nairHit2
               if Rnd < 0.5
                 moveVariant = mv_approachingNair
@@ -432,11 +480,20 @@ if Equal isEarlyRoll 0
           // LOGSTR str("none")
         endif
       endif
-      if OYDistBackEdge < -20
-        if Rnd < 0.5 && ODamage > 50
-          Call FAir
-        else
+      if OYDistBackEdge <= -5
+        if TopNY < OTopNY
           Call UAir
+        else
+          globTempVar = TopNX - OTopNX
+          Abs globTempVar
+          if globTempVar > 20
+            if Equal Direction OPos
+              Call NAir
+            else
+              Call BAir
+            endif
+          endif
+          Call DAir
         endif
       endif
       // if we're here, then the opponent is in the air at which point

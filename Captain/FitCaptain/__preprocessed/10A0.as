@@ -15,7 +15,7 @@ unk 0x00000
 // str "#dash_range"
 
 if Equal var21 32769
-  var19 = 255
+  var16 = 3
   Call ApproachHub
 else
   Call AIHub

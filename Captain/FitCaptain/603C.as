@@ -35,48 +35,10 @@ endif
 Return
 
 label techChase_wait
-SetTimeout 300
-#let patience = var0
-#let rollFlag = var1
-#let distance = var2
-patience = Rnd * 75 + 75
-rollFlag = 0
-if Damage < 30
-  distance = 15
-else
-  distance = 25
-endif
-label
-if !(XDistLE distance)
-  // walk-up
-  var3 = OPos * 0.7
-  AbsStick var3 (-0.4)
-else
-  // force crouch cancel
-  Stick 0 (-1)
-endif
+TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 75 + 75, _AIHub, seekOpponent)
 
-IS_EARLY_ROLL(var5, var6)
-
-if Equal isEarlyRoll 1
-  rollFlag = 1
-endif
-patience -= 1
-if OCurrAction <= hex(0x15)
-  Call AIHub
-elif Equal rollFlag 1 && Equal isEarlyRoll 0
-  Seek seekOpponent
-  Jump
-elif patience <= 0
-  Seek seekOpponent
-  Jump
-elif Equal OIsOnStage 0 && Equal OCurrAction hex(0x49)
-  Call AIHub
-elif OYDistBackEdge < -20 && Equal OFramesHitstun 0
-  Seek seekOpponent
-  Jump
-endif
-Return
+label _AIHub
+Call AIHub
 
 label seekOpponent
 SetFrame 0
@@ -89,11 +51,13 @@ if Equal moveVariant mv_techChase
   endif
 endif
 lastAttack = hex(0x603C)
+move_IASA = grab_IASA
 move_xOffset = grab_xOffset
 move_yOffset = grab_yOffset
 move_xRange = grab_xRange
 move_yRange = grab_yRange
 move_hitFrame = grab_hitFrame
+move_lastHitFrame = grab_lastHitFrame
 Call ApproachHub
 Return
 

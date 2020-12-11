@@ -5,6 +5,10 @@ id 0x8004
 
 unk 0x0
 
+if FramesHitstun > 0
+  Return
+endif
+
 if Equal CurrAction hex(0x114) || Equal CurrAction hex(0x10)
   Seek handleUpB
   Jump
@@ -15,7 +19,6 @@ endif
 GOING_OFFSTAGE(var0, var1, 15)
 
 if Equal isGoingOffstage 0
-  LOGSTR str("am on stage??")
   Call AIHub
 endif
 
@@ -56,16 +59,18 @@ nearCliffX *= -1
 nearCliffY *= -1
 nearCliffY = nearCliffY - (TopNY * -1)
 
-#let distToOpp = var4
-distToOpp = TopNY + move_yOffset - OHurtboxSize
-if Equal OIsOnStage 0 && distToOpp >= OTopNY && Equal moveVariant mv_edgeguard && OTopNY > BBoundary
-  Call ApproachHub
+if Equal OIsOnStage 0 && Equal approachType at_edgeguard && OTopNY > BBoundary
+  if CanJump && YDistBackEdge < 50
+    Call ApproachHub
+  elif !(CanJump) && YDistBackEdge < 30
+    Call ApproachHub
+  endif
 endif
 
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
 // and edgeguard if possible
-if Equal OIsOnStage 0 && nearCliffX <= rw && nearCliffX >= -rw && nearCliffY >= -rh && !(Equal movePart hex(0xFF)) && !(Equal moveVariant mv_ledgeRefresh)
+if Equal OIsOnStage 0 && nearCliffX <= rw && nearCliffX >= -rw && nearCliffY >= -rh && !(Equal movePart hex(0xFF)) && !(Equal approachType at_ledgeRefresh)
   movePart = 0
   Call EdgeguardHub
 endif
@@ -92,7 +97,6 @@ if nearCliffY > 0
       Call AIHub
     endif
     // otherwise perform downB
-    // (which doesn't seem to be working at the moment big sad)
     if YSpeed < 0 && LevelValue >= LV7
       AbsStick 0 (-1)
       Button B
@@ -107,7 +111,7 @@ if nearCliffY > 0
   else
     AbsStick (-1) 0
   endif
-  if tempVar > 10 && tempVar < 25 && Equal IsOnStage 0 && nearCliffY < 40 && LevelValue > LV6
+  if tempVar > 10 && tempVar < 25 && Equal IsOnStage 0 && nearCliffY < 40 && LevelValue >= LV7 && Rnd < 0.2
     Button B
     Seek bReverseIfNecessary
   elif tempVar >= 25 && tempVar < 50
@@ -117,10 +121,13 @@ if nearCliffY > 0
 else
   // otherwise, we must be below the ledge...
 
-  // drift toward the ledge
+  tempVar2 = OXDistFrontEdge
+  Abs tempVar2
+
   globTempVar = nearCliffX
   Abs globTempVar
-  if !(Equal moveVariant mv_ledgeRefresh)
+
+  if !(Equal approachType at_ledgeRefresh)
     if nearCliffX < 0
       AbsStick 1 0
     else
@@ -128,13 +135,10 @@ else
     endif
   endif
 
-  tempVar2 = OXDistFrontEdge
-  Abs tempVar2
-
   // after this, tempVar1 will contain the vertical distance to the ledge
   // at which point to perform the next action
   if LevelValue >= LV6
-    if distToOpp < OTopNY && Equal moveVariant mv_edgeguard && TopNY > OTopNY
+    if Equal approachType at_edgeguard && TopNY > OTopNY && YDistBackEdge > 0
       tempVar2 = tempVar
       tempVar = -10
     elif NoOneHanging
@@ -266,7 +270,7 @@ label handleUpB
 // if we are no longer performing upB and aren't in special fall,
 // call AIHub
 if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10))
-  if !(Equal AirGroundState 2) || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F) || FramesHitstun > 0
+  if Equal AirGroundState 1 || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F) || FramesHitstun > 0
     Call AIHub
   endif
 endif

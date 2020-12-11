@@ -52,7 +52,7 @@ SetTimeout 50
   Return
   label begin
 
-if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 80
+if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 60
     SetFrame 0
     label
     Stick 0 (-1)
@@ -62,6 +62,7 @@ if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun 
         Seek
         Jump
     endif
+    Return
 endif
 
 SetTimeout 15

@@ -16,7 +16,7 @@ if Equal IsOnStage 0
 endif
 
 if Equal var18 1 && YSpeed <= 0 && Equal IsFastfalling 0 && Equal IsOnStage 1
-  Stick 0 (-1)
+  // Stick 0 (-1)
 elif Equal var19 1
   var0 = OPos
 elif Equal var19 2

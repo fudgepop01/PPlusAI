@@ -5,6 +5,10 @@ id 0x8004
 
 unk 0x0
 
+if FramesHitstun > 0
+  Return
+endif
+
 if Equal CurrAction 276 || Equal CurrAction 16
   Seek handleUpB
   Jump
@@ -12,24 +16,25 @@ if Equal CurrAction 276 || Equal CurrAction 16
 endif
 
   GetNearestCliff var0
-  var1 = XSpeed * 15
+  var17 = 15
+  var1 = XSpeed * var17
   var1 += TopNX
   if var0 < 0
-    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
-      var0 += var1
+    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
+      var0 -= var1
       if var0 >= 0
         var0 = 1
       endif
     endif
   elif var0 > 0
-    if Equal IsOnStage 0 || Equal DistBackEdge DistFrontEdge
-      var0 += var1
+    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
+      var0 -= var1
       if var0 <= 0
         var0 = -1
       endif
     endif
   endif
-  if !(Equal var0 1) || !(Equal var0 -1)
+  if !(Equal var0 1) && !(Equal var0 -1)
     if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
       var0 = 2
     else
@@ -38,7 +43,6 @@ endif
   endif
 
 if Equal var0 0
-  LOGSTR 1634541568 1869488128 1937006848 1734688512 1056964608
   Call AIHub
 endif
 
@@ -73,15 +77,18 @@ var1 *= -1
 var2 *= -1
 var2 = var2 - (TopNY * -1)
 
-var4 = TopNY + var10 - OHurtboxSize
-if Equal OIsOnStage 0 && var4 >= OTopNY && Equal var19 255 && OTopNY > BBoundary
-  Call ApproachHub
+if Equal OIsOnStage 0 && Equal var16 3 && OTopNY > BBoundary
+  if CanJump && YDistBackEdge < 50
+    Call ApproachHub
+  elif !(CanJump) && YDistBackEdge < 30
+    Call ApproachHub
+  endif
 endif
 
 // if the opponent is offstage and we're offstage and within the bounds of the rect
 // AND we have not yet determined if we can edgeguard the opponent, then check
 // and edgeguard if possible
-if Equal OIsOnStage 0 && var1 <= 50 && var1 >= -50 && var2 >= -25 && !(Equal var18 255) && !(Equal var19 254)
+if Equal OIsOnStage 0 && var1 <= 50 && var1 >= -50 && var2 >= -25 && !(Equal var18 255) && !(Equal var16 5)
   var18 = 0
   Call EdgeguardHub
 endif
@@ -108,7 +115,6 @@ if var2 > 0
       Call AIHub
     endif
     // otherwise perform downB
-    // (which doesn't seem to be working at the moment big sad)
     if YSpeed < 0 && LevelValue >= 60
       AbsStick 0 (-1)
       Button B
@@ -123,7 +129,7 @@ if var2 > 0
   else
     AbsStick (-1) 0
   endif
-  if var0 > 10 && var0 < 25 && Equal IsOnStage 0 && var2 < 40 && LevelValue > 48
+  if var0 > 10 && var0 < 25 && Equal IsOnStage 0 && var2 < 40 && LevelValue >= 60 && Rnd < 0.2
     Button B
     Seek bReverseIfNecessary
   elif var0 >= 25 && var0 < 50
@@ -133,10 +139,13 @@ if var2 > 0
 else
   // otherwise, we must be below the ledge...
 
-  // drift toward the ledge
+  var3 = OXDistFrontEdge
+  Abs var3
+
   var17 = var1
   Abs var17
-  if !(Equal var19 254)
+
+  if !(Equal var16 5)
     if var1 < 0
       AbsStick 1 0
     else
@@ -144,13 +153,10 @@ else
     endif
   endif
 
-  var3 = OXDistFrontEdge
-  Abs var3
-
   // after this, tempVar1 will contain the vertical distance to the ledge
   // at which point to perform the next action
   if LevelValue >= 48
-    if var4 < OTopNY && Equal var19 255 && TopNY > OTopNY
+    if Equal var16 3 && TopNY > OTopNY && YDistBackEdge > 0
       var3 = var0
       var0 = -10
     elif NoOneHanging
@@ -281,7 +287,7 @@ label handleUpB
 // if we are no longer performing upB and aren't in special fall,
 // call AIHub
 if !(Equal CurrAction 276) && !(Equal CurrAction 16)
-  if !(Equal AirGroundState 2) || Equal CurrAction 14 || Equal CurrAction 15 || FramesHitstun > 0
+  if Equal AirGroundState 1 || Equal CurrAction 14 || Equal CurrAction 15 || FramesHitstun > 0
     Call AIHub
   endif
 endif

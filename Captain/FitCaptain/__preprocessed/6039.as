@@ -7,12 +7,12 @@ unk 0x0
 
 if Equal var18 0
   var20 = 24633
-  var9 = 20
+  var9 = 0
   var10 = 0
   var11 = 20
-  var12 = 6
+  var12 = 10
   var13 = 20
-  var14 = 1
+  var14 = 20
   Call ApproachHub
 else
   var15 = 26

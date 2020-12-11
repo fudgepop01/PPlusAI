@@ -15,7 +15,7 @@ unk 0x00000
 // str "#dash_range"
 
 if Equal lastScript hex(0x8001)
-  moveVariant = mv_edgeguard
+  approachType = at_edgeguard
   Call ApproachHub
 else
   Call AIHub

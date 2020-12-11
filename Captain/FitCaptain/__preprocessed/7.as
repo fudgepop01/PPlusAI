@@ -47,7 +47,15 @@ label jumpHandler
 var0 = OXSpeed
 Abs var0
 var1 = OXSpeed * OPos
-if SamePlane && var1 < 0 && var0 > 0.4
+if SamePlane && var1 < 0 && var0 > 0.2
+  if XDistLE 20
+    Call DAir
+  elif !(Equal OPos Direction) && XDistLE 40
+    Call BAir
+  elif XDistLE 40
+    Call NAir
+  endif
+elif Rnd < 0.3
   if XDistLE 20
     Call DAir
   elif !(Equal OPos Direction) && XDistLE 40
@@ -58,13 +66,18 @@ if SamePlane && var1 < 0 && var0 > 0.4
 endif
 
 if InAir
-  if var1 < 0 && XDistFrontEdge > 15
-    Stick 1 (-1)
-  elif var1 > 0 && XDistBackEdge < -8
-    Stick (-1) (-1)
+  if Equal OPos Direction
+    if XDistBackEdge < -15
+      var17 = OPos * -1
+      AbsStick var17 (-1)
+    endif
+  elif XDistFrontEdge > 15
+    var17 = OPos * -1
+    AbsStick var17 (-1)
   else
-    Stick 0 (-1)
+    AbsStick 0 (-1)
   endif
+
   Button R
   Call AIHub
 endif

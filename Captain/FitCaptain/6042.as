@@ -7,57 +7,77 @@ id 0x6031
 //Set Unknown
 unk 0x0
 
+#let frameCounter = var3
+
 if Equal movePart 0
   move_xOffset = fair_xOffset
   move_yOffset = fair_yOffset
   move_xRange = fair_xRange
   move_yRange = fair_yRange
   move_hitFrame = fair_hitFrame
+  move_lastHitFrame = fair_lastHitFrame
+  move_IASA = fair_IASA
   lastAttack = hex(0x6042)
+
+  if Equal moveVariant mv_fair_weak
+    move_hitFrame = fair_weak_hitFrame
+    move_lastHitFrame = fair_weak_lastHitFrame
+  endif
+
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else
     Call ApproachHub
   endif
 elif True
-  if Equal moveVariant mv_lowAerial && OYDistBackEdge > -10
-    if YSpeed < 0
-      Stick 0 (-1)
-    endif
-    if YDistBackEdge < -15 || YSpeed > 0
-      Call ApproachHub
-    endif
-  endif
   move_IASA = fair_IASA
   Stick 1 0
   Button A
   SetFrame 0
-  move_knockback = -1
+  hit_knockback = -1
   Seek executeAttack
 endif
 Return
 
 label executeAttack
-CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_hitFrame, _oCalc, _sCalc)
+var1 = 0
+CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
 
-if Equal AirGroundState 1 || Equal IsOnStage 0 || FrameGE move_IASA
+#let isGoingOffstage = var0
+GOING_OFFSTAGE(var0, var1, move_IASA - NumFrames)
+
+if Equal AirGroundState 1 || FrameGE move_IASA
   Call AIHub
 endif
 
-if targetXDistance < 0
-  AbsStick (-1)
-else
-  AbsStick 1
+RECORD_HIT_KNOCKBACK
+
+ClearStick
+
+if YSpeed <= 0 && Equal IsOnStage 1 && Equal shouldFastFall 1 && Equal isGoingOffstage 0
+  Stick 0 (-1)
 endif
 
-RECORD_MOVE_KNOCKBACK
+if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)
+  AbsStick isGoingOffstage
+elif True
+  if targetXDistance < 0
+    AbsStick -1 0
+  else
+    AbsStick 1 0
+  endif
+endif
 
 Abs targetXDistance
 Abs targetYDistance
-if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0
+Seek executeAttack
+frameCounter += 1
+if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
   var19 = 2
   var18 = 1
-  if targetXDistance <= move_xRange && targetYDistance <= move_yRange && Equal move_knockback hex(0xFFFFFF)
+  if targetXDistance <= move_xRange && targetYDistance <= move_yRange && Equal hit_knockback hex(0xFFFFFF)
+    Return
+  elif !(Equal isGoingOffstage 0)
     Return
   endif
   Call Landing

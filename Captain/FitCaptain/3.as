@@ -7,6 +7,10 @@ unk 0x0
 
 // LOGSTR str("called")
 
+if FramesHitstun > 0
+  Return
+endif
+
 #const rw = 50
 #const rh = 25
 #let tempVar = var0
@@ -21,8 +25,8 @@ if Equal CurrAction hex(0x114)
   Call RecoveryHub
 endif
 
-if Equal lastScript hex(0x8001) && XDistLE 20 && OYDistBackEdge < 0
-  moveVariant = mv_edgeguard
+if Equal lastScript hex(0x8001) && XDistLE 20 && OYDistBackEdge < 0 && Equal movePart 0 && OFramesHitstun > 0
+  approachType = at_edgeguard
   Call ApproachHub
 endif
 
@@ -45,22 +49,32 @@ if Equal OIsOnStage 1
 elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge > 50 && !(Equal CurrAction hex(0x79))
   movePart = hex(0xFF)
   Call RecoveryHub
+elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge < -50 && !(Equal CurrAction hex(0x79))
+  movePart = hex(0xFF)
+  Call RecoveryHub
 elif LevelValue <= LV5
   movePart = hex(0xFF)
   Call RecoveryHub
 endif
 
-if OYDistFrontEdge > -10 && AbsOXDistFrontEdge > 50 && tempVar > 5
+if OYDistFrontEdge > -10 && AbsOXDistFrontEdge > 45 && tempVar > 5
   egType = 1
 else
   egType = Rnd * 9
   if Equal IsOnStage 0
     egType += 1
   endif
+  if Damage < 60 && egType > 7
+    egType = 7
+  endif
 endif
-SAFE_INJECT_2 egType
+// SAFE_INJECT_2 egType
 // LOGVAL egType
 label
+if YDistBackEdge >= 50
+  Call RecoveryHub
+endif
+
 SetVec nearCliffX Zero
 GetNearestCliff nearCliffX
 
@@ -80,40 +94,28 @@ Abs AbsOXDistFrontEdge
 
 if Damage < 130 && nearCliffY < -rh
   movePart = hex(0xFF)
-  moveVariant = mv_edgeguard
+  approachType = at_edgeguard
   Call RecoveryHub
 endif
 
 if AbsOXDistFrontEdge < 20 && OYDistFrontEdge > -10 && LevelValue >= LV7
   movePart = 0
-  moveVariant = mv_edgeguard
-  Call DAir
+  approachType = at_edgeguard
+  if !(Equal OPos Direction)
+    Call BAir
+  else
+    Call DAir
+  endif
 endif
 
-#let OConsecutiveLedgeGrabs = var5
+// #let OConsecutiveLedgeGrabs = var5
 // GetLaBasic tempVar hex(0x4F) 1
-OConsecutiveLedgeGrabs = Rnd * 10
-if egType <= 1 && LevelValue >= LV6 && NoOneHanging && AbsOXDistFrontEdge > 10
+if egType <= 3 && LevelValue >= LV6 && NoOneHanging && AbsOXDistFrontEdge > 10
   Goto WDBackGrabLedge
   Return
-elif ONumJumps < 1 && OYDistBackEdge > 30
-  Goto WDBackGrabLedge
-  Return
-elif OConsecutiveLedgeGrabs >= 10 && Equal OIsOnStage 0
-  ClearStick
-  Return
-elif OConsecutiveLedgeGrabs >= 7 && Equal OIsOnStage 0
-  if Rnd < 0.05
-    moveVariant = mv_edgeguard
-    Call DTilt
-  endif
-  Return
-elif OConsecutiveLedgeGrabs >= 5
-  Goto WDBackGrabLedge
-  Return
-elif Equal IsOnStage 1 && egType <= 5 && OYDistBackEdge > -30
+elif Equal IsOnStage 1 && egType <= 7 && OYDistBackEdge > 30
   movePart = 0
-  moveVariant = mv_edgeguard
+  approachType = at_edgeguard
   if OYDistBackEdge < 0
     Call UTilt
   elif Rnd < 0.3
@@ -123,23 +125,23 @@ elif Equal IsOnStage 1 && egType <= 5 && OYDistBackEdge > -30
   else
     Call FSmash
   endif
-elif egType <= 6 && OYDistFrontEdge < 30 && LevelValue >= LV5 && AbsOXDistFrontEdge > 5
+elif egType <= 9 && OYDistFrontEdge < -30 && LevelValue >= LV5 && AbsOXDistFrontEdge > 5
   if nearCliffX < rw && nearCliffX > -rw && nearCliffY > -rh
     movePart = 0
     if Equal AirGroundState 1
-      moveVariant = mv_edgeguard
+      approachType = at_edgeguard
       Call FAir
     elif !(Equal OPos Direction)
-      moveVariant = mv_edgeguard
+      approachType = at_edgeguard
       Call BAir
     elif OTopNY > TopNY
-      moveVariant = mv_edgeguard
+      approachType = at_edgeguard
       Call UAir
     elif YSpeed > 0.15
-      moveVariant = mv_edgeguard
+      approachType = at_edgeguard
       Call FAir
     else
-      moveVariant = mv_edgeguard
+      approachType = at_edgeguard
       Call UAir
     endif
   else
@@ -155,7 +157,7 @@ elif True
     egType = Rnd * 3
 
     Button X
-    moveVariant = mv_edgeguard
+    approachType = at_edgeguard
     movePart = 0
     tempVar = OTopNY - TopNY
     if tempVar > 30 && tempVar < 120 && !(XDistLE 30)

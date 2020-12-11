@@ -48,6 +48,9 @@ elif Equal CurrAction hex(0x39)
         Stick (-1)
         moveVariant = mv_bthrow
       endif
+    elif ODamage > 80
+      Stick 0 1
+      moveVariant = mv_uthrow
     elif ODamage > 30
       var1 = Rnd * 2
       if var1 < 1

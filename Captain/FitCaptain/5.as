@@ -26,30 +26,31 @@ endif
 // SAFE_INJECT_2 actionType
 label
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
-  // if actionType <= 0.2
-  // // Retreating RAR aerial (if possible without going offstage)
-  //   if Equal AirGroundState 1
-  //     if XDistFrontEdge > 30 && XDistBackEdge < -30
-  //       tempVar = OPos * -1
-  //       AbsStick tempVar
-  //       if Equal CurrAction hex(0x01)
-  //         ClearStick
-  //         Return
-  //       endif
-  //       if CurrAction >= hex(0x04) && CurrAction <= hex(0x09) && !(Equal CurrAction hex(0x06))
-  //         Goto turnFaceJump
-  //       endif
-  //     elif !(Equal CurrAction hex(0x0A))
-  //       if !(Equal OPos Direction) && !(Equal lastAttack hex(0x6043))
-  //         tempVar = OPos * 0.5
-  //         AbsStick tempVar
-  //       elif CurrAction <= hex(0x09)
-  //         Button X
-  //       endif
-  //     endif
-  //   endif
-  if actionType <= 0.55
+  if actionType <= 0.2
+  // Retreating RAR aerial (if possible without going offstage)
+    if Equal AirGroundState 1
+      if XDistFrontEdge > 30 && XDistBackEdge < -30
+        tempVar = OPos * -1
+        AbsStick tempVar
+        if Equal CurrAction hex(0x01)
+          ClearStick
+          Return
+        endif
+        if CurrAction >= hex(0x04) && CurrAction <= hex(0x09) && !(Equal CurrAction hex(0x06))
+          Goto turnFaceJump
+        endif
+      elif !(Equal CurrAction hex(0x0A))
+        if !(Equal OPos Direction) && !(Equal lastAttack hex(0x6043))
+          tempVar = OPos * 0.5
+          AbsStick tempVar
+        elif CurrAction <= hex(0x09)
+          Button X
+        endif
+      endif
+    endif
+  elif actionType <= 0.55
   // dash away aerial
+  // LOGSTR str("DAR")
     if XDistFrontEdge > 30 && XDistBackEdge < -30
       tempVar = OPos * -1
       AbsStick tempVar

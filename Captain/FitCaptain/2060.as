@@ -11,40 +11,25 @@ unk 0x0
 //     Call EdgeguardHub
 // endif
 
-if !(Equal AirGroundState 3)
+// we're unable to actually break out of this routine during the ledgejump
+// actions, so I need to force the character to move to the target here
+if CurrAction >= hex(0x79) && CurrAction <= hex(0x7B)
+    AbsStick OPos
+    Call ApproachHub
+elif !(Equal AirGroundState 3) && MeteoChance
     Call EdgeguardHub
     Finish
+elif Equal AirGroundState 2 && Equal lastScript hex(0x8001) && !(MeteoChance)
+    lastScript = hex(0x2060)
+    Call ApproachHub
+    Finish
+elif Equal AirGroundState 1
+    Call AIHub
 endif
 
 #let AbsOXDistFrontEdge = var0
 AbsOXDistFrontEdge = OXDistFrontEdge
 Abs AbsOXDistFrontEdge
-if Equal OIsOnStage 0 && Equal AirGroundState 3
-    if OXDistFrontEdge > 10 || OYDistBackEdge < 0
-        if NoOpponent && Equal CurrAction hex(0x75)
-            Button R
-        elif !(MeteoChance)
-            Button R
-        elif AbsOXDistFrontEdge > 20 && AbsOXDistFrontEdge < 50 && OYDistFrontEdge < 30 && Equal CurrAction hex(0x75) && AnimFrame > 7 && Rnd < 0.3
-            if OYDistFrontEdge < -10
-                Button X
-            else
-                Stick -1
-            endif
-            Return
-        elif AbsOXDistFrontEdge > 80 && AnimFrame > 7
-            Button R
-        elif AbsOXDistFrontEdge < 30 && OYDistFrontEdge < 30 && Equal CurrAction hex(0x75) && AnimFrame > 7
-            Button R
-        elif AnimFrame > 12 && AbsOXDistFrontEdge > 45 && AbsOXDistFrontEdge < 80
-            moveVariant = mv_ledgeRefresh
-            Stick 0 (-1)
-            Call AIHub
-            Finish
-        endif
-        Return
-    endif
-endif
 
 if !(Equal CurrAction hex(0x75))
     Return
@@ -87,7 +72,7 @@ if absOCloseness < 35 && Equal Direction OPos
         Seek ledgedash
         Jump
     elif rndChoice < 0.7 && LevelValue >= LV7
-        moveVariant = mv_ledgeRefresh
+        approachType = at_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
     elif Equal CurrAction hex(0x75)
@@ -99,14 +84,27 @@ elif absOCloseness > 35 && Equal OPos Direction
         Seek ledgedash
         Jump
     elif rndChoice < 0.8
-        moveVariant = mv_ledgeRefresh
+        approachType = at_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
     else
         Button X
         Call AIHub
     endif
-elif absOCloseness < 25
+elif absOCloseness < 50 && OYDistBackEdge < -15
+    if Equal CurrAction hex(0x75)
+        if NumFrames > 1
+            SetFrame 0
+        endif
+        if Equal NumFrames 1
+            Button X
+            Call BAir
+            Finish
+        endif
+        Return
+    endif
+elif absOCloseness < 70 && Rnd < 0.1 && !(Equal OPos Direction)
+    label
     if Equal CurrAction hex(0x75)
         if NumFrames > 1
             SetFrame 0
@@ -114,13 +112,38 @@ elif absOCloseness < 25
         if Equal NumFrames 1
             Stick -1
         endif
-    elif True
-        if YDistBackEdge < 10
-            Call UAir
-        else
-            Call BAir
+        Return
+    elif YSpeed <= 0
+        if Equal NumFrames 2
+            approachType = at_edgeguard
+            if OYDistBackEdge < 10
+                moveVariant = mv_uair_tipman
+                Call UAir
+            elif OYDistBackEdge > 50
+                Call DAir
+            else
+                Call BAir
+            endif
         endif
+        Return
     endif
+elif absOCloseness < 50 && !(Equal OPos Direction)
+    label
+    if Equal CurrAction hex(0x75) && absOCloseness > 30
+        if NumFrames > 1
+            SetFrame 0
+        endif
+        if Equal NumFrames 1
+            approachType = at_ledgeRefresh
+            Stick 0 (-1)
+            Call AIHub
+        endif
+        Return
+    endif
+    if !(MeteoChance) || (Equal OCurrAction hex(0xBD))
+        Seek getupOptions
+    endif
+    Return
 endif
 
 if !(True)

@@ -2,7 +2,7 @@ id 0x59
 
 unk 0x0
 
-RECORD_MOVE_KNOCKBACK
+RECORD_HIT_KNOCKBACK
 
 if Equal IsOnStage 0
   Call AIHub
@@ -16,7 +16,7 @@ if Equal IsOnStage 0
 endif
 
 if Equal shouldFastFall 1 && YSpeed <= 0 && Equal IsFastfalling 0 && Equal IsOnStage 1
-  Stick 0 (-1)
+  // Stick 0 (-1)
 elif Equal moveMode 1
   var0 = OPos
 elif Equal moveMode 2

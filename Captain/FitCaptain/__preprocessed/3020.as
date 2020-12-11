@@ -11,6 +11,7 @@ unk 0x00000
 if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
     Finish
 endif
+
 GetShieldRemain var0
 if var0 < 20
     Finish
@@ -55,6 +56,12 @@ endif
   var0 -= 1
   Return
   label begin
+
+if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+    Finish
+endif
+
+label
 
 if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 80
     SetFrame 0

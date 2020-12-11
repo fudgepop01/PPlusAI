@@ -7,6 +7,10 @@ unk 0x00000
 
 //Strings
 
-Call Nothing
+if Equal var21 32769
+  Call ApproachHub
+else
+  Call AIHub
+endif
 Return
-
+Return

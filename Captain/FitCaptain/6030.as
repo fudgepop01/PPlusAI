@@ -19,7 +19,7 @@ if Equal movePart 0
     move_xRange = ftilt_xRange
     move_yRange = ftilt_yRange
     move_hitFrame = ftilt_hitFrame
-    move_length = ftilt_length
+    move_lastHitFrame = ftilt_lastHitFrame
   elif CalledAs UTilt
     // LOGSTR str("utilt")
     lastAttack = hex(0x6033)
@@ -28,7 +28,7 @@ if Equal movePart 0
     move_xRange = utilt_xRange
     move_yRange = utilt_yRange
     move_hitFrame = utilt_hitFrame
-    move_length = utilt_length
+    move_lastHitFrame = utilt_lastHitFrame
   elif CalledAs DTilt
     // LOGSTR str("dtilt")
     lastAttack = hex(0x6034)
@@ -37,7 +37,7 @@ if Equal movePart 0
     move_xRange = dtilt_xRange
     move_yRange = dtilt_yRange
     move_hitFrame = dtilt_hitFrame
-    move_length = dtilt_length
+    move_lastHitFrame = dtilt_lastHitFrame
   elif CalledAs FSmash
     // LOGSTR str("fsmash")
     lastAttack = hex(0x6035)
@@ -46,7 +46,7 @@ if Equal movePart 0
     move_xRange = fsmash_xRange
     move_yRange = fsmash_yRange
     move_hitFrame = fsmash_hitFrame
-    move_length = fsmash_length
+    move_lastHitFrame = fsmash_lastHitFrame
   elif CalledAs USmash
     // LOGSTR str("usmash")
     lastAttack = hex(0x6036)
@@ -55,12 +55,12 @@ if Equal movePart 0
     move_xRange = usmash_xRange
     move_yRange = usmash_yRange
     move_hitFrame = usmash_hitFrame
-    move_length = usmash_length
+    move_lastHitFrame = usmash_lastHitFrame
   else
     Call AIHub
   endif
-  SAFE_INJECT_4 move_xOffset
-  SAFE_INJECT_5 move_xRange
+ // SAFE_INJECT_4 move_xOffset
+ // SAFE_INJECT_5 move_xRange
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else
@@ -87,13 +87,16 @@ else
   endif
   Button A
   SetFrame 0
-  move_knockback = -1
+  hit_knockback = -1
   Seek ExecuteAttack
 endif
 Return
 
 label ExecuteAttack
-RECORD_MOVE_KNOCKBACK
+var1 = 0
+CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
+
+RECORD_HIT_KNOCKBACK
 
 if FrameGE move_IASA || CurrAction <= hex(0x09) || !(Equal AirGroundState 1)
   Call AIHub

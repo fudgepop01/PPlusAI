@@ -14,7 +14,7 @@ if Equal var18 0
   var20 = 32776
   var9 = 0
   var11 = 25
-  if Equal var0 -1
+  if !(Equal var0 -1)
     var9 = var3
     var11 = 10 + (var3 - var2)
     Abs var11
@@ -36,6 +36,7 @@ elif Equal AirGroundState 2
   endif
   Call AIHub
 elif True
+  var21 = 32776
   if !(Equal Direction OPos)
     var0 = OPos * 0.65
     AbsStick var0
@@ -59,7 +60,7 @@ endif
 Return
 
 label crouchCancelPunish
-var0 = Rnd * 30 + 10
+var0 = Rnd * 20 + 10
 label
 Stick 0 (-1)
 if FramesHitstun > 0 || var0 <= 0
@@ -70,10 +71,13 @@ var0 -= 1
 Return
 
 label dashAway
-Stick (-1) 0
+if Equal Direction OPos
+  Stick (-1) 0
+endif
 Seek
+Return
 label
-if !(XDistLE 30) || XDistFrontEdge < 25
+if !(XDistLE 20) || XDistFrontEdge < 35
   Call AIHub
 endif
 Stick 1

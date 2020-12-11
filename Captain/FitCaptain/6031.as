@@ -13,7 +13,7 @@ if Equal movePart 0
   move_xRange = jab123_xRange
   move_yRange = jab123_yRange
   move_hitFrame = jab123_hitFrame
-  move_length = jab123_length
+  move_lastHitFrame = jab123_lastHitFrame
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else
@@ -38,7 +38,8 @@ endif
 
 label
 ClearStick
-
+var1 = 0
+CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
 
 if FrameGE 2
   if Equal CurrSubaction Attack11

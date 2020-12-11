@@ -7,5 +7,10 @@ unk 0x00000
 
 //Strings
 
-Call Nothing
+if Equal lastScript hex(0x8001)
+  Call ApproachHub
+else
+  Call AIHub
+endif
+Return
 Return

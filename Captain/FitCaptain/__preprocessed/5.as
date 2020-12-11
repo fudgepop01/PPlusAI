@@ -23,30 +23,31 @@ endif
 // SAFE_INJECT_2 var0
 label
 if var20 >= 24641 && var20 <= 24655
-  // if var0 <= 0.2
-  // // Retreating RAR aerial (if possible without going offstage)
-  //   if Equal AirGroundState 1
-  //     if XDistFrontEdge > 30 && XDistBackEdge < -30
-  //       var1 = OPos * -1
-  //       AbsStick var1
-  //       if Equal CurrAction 1
-  //         ClearStick
-  //         Return
-  //       endif
-  //       if CurrAction >= 4 && CurrAction <= 9 && !(Equal CurrAction 6)
-  //         Goto turnFaceJump
-  //       endif
-  //     elif !(Equal CurrAction 10)
-  //       if !(Equal OPos Direction) && !(Equal var20 24643)
-  //         var1 = OPos * 0.5
-  //         AbsStick var1
-  //       elif CurrAction <= 9
-  //         Button X
-  //       endif
-  //     endif
-  //   endif
-  if var0 <= 0.55
+  if var0 <= 0.2
+  // Retreating RAR aerial (if possible without going offstage)
+    if Equal AirGroundState 1
+      if XDistFrontEdge > 30 && XDistBackEdge < -30
+        var1 = OPos * -1
+        AbsStick var1
+        if Equal CurrAction 1
+          ClearStick
+          Return
+        endif
+        if CurrAction >= 4 && CurrAction <= 9 && !(Equal CurrAction 6)
+          Goto turnFaceJump
+        endif
+      elif !(Equal CurrAction 10)
+        if !(Equal OPos Direction) && !(Equal var20 24643)
+          var1 = OPos * 0.5
+          AbsStick var1
+        elif CurrAction <= 9
+          Button X
+        endif
+      endif
+    endif
+  elif var0 <= 0.55
   // dash away aerial
+  // LOGSTR 1145131520 0 0 0 0
     if XDistFrontEdge > 30 && XDistBackEdge < -30
       var1 = OPos * -1
       AbsStick var1

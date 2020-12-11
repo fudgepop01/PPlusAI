@@ -4,8 +4,26 @@
 //
 // ex. in here, "move_xOffset" will always be replaced with "var9"
 
-// if you're looking for various quirks in brawl's coding that requires
-// you to do certain things, scroll to the bottom of this file
+// defining attributes here as constants (just in case)
+#const walkInitVel = 0.15
+#const walkAcc = 0.1
+#const walkMaxVel = 0.85
+#const groundFric = 0.08
+#const dashInitVel = 2
+#const dashRunTermVel = 2.3
+#const groundedMaxXVel = 3
+#const dashCancelFrameWindow = 1
+#const guardOnMaxMomentum = 0.75
+#const jumpSquatFrames = 4
+#const jumpXInitVel = 0.95
+#const jumpYInitVel = 3.23
+#const jumpXGroundMult = 0.75
+#const fastFallSpeed = 3.5
+#const gravity = 0.13
+#const weight = 104
+#const shieldSize = 9.6
+
+//
 
 #let globTempVar = var17
 
@@ -15,10 +33,14 @@
 #let move_xRange = var11
 #let move_yRange = var12
 #let move_hitFrame = var13
-#let move_length = var14
+#let move_lastHitFrame = var14
 #let move_IASA = var15
 
-#let move_knockback = var16
+
+// recorded after the move is executed / hits;
+// will not interfere with move position type
+#let hit_knockback = var16
+
 
 // used in various places to tell what part the routine should jump to
 // effectively used to communicate between scripts
@@ -52,10 +74,6 @@
 #let noCombo = var19
 #const noComboVal = 256
 
-#const mv_edgeguard = 255
-#const mv_ledgeRefresh = 254
-#const mv_throwOut = 253
-
 // AI "mode" values
 #const md_attack = 1
 #const md_defend = 2
@@ -67,9 +85,12 @@
 
 // controls the approach the AI uses. It's okay because MOVES shouldn't care
 // about what script was called previously - only what move they are.
-#let approachType = var21
+#let approachType = var16
 #const at_attack = 1 // default
 #const at_defend = 2
+#const at_edgeguard = 3
+#const at_throwOut = 4
+#const at_ledgeRefresh = 5
 
 // AI values
 #const LV1 = 0
@@ -87,63 +108,68 @@
 // it will attempt to a point with these parameters in
 // 1.as, and if it does, it'll perform the action provided
 
+// this works because it's used exclusively in 1.as and aerial attacks
+// where it's used IMMEDIATELY before being modified
+#let shouldFastFall = var2
+
 // jab123
 #const mv_gentlemen = 0
 #const mv_jabReset = 1
 
 #const jab123_IASA = 14
-#const jab123_xOffset = 6
-#const jab123_yOffset = -5
-#const jab123_xRange = 12
-#const jab123_yRange = 0
+#const jab123_xOffset = 1
+#const jab123_yOffset = -9
+#const jab123_xRange = 8
+#const jab123_yRange = 2
 #const jab123_hitFrame = 3
-#const jab123_length = 3
+#const jab123_lastHitFrame = 5
 
 // ftilt
 #const ftilt_IASA = 30
-#const ftilt_xOffset = 10
-#const ftilt_yOffset = -5
-#const ftilt_xRange = 11
-#const ftilt_yRange = -1
+#const ftilt_xOffset = 1
+#const ftilt_yOffset = -9
+#const ftilt_xRange = 9
+#const ftilt_yRange = 3
 #const ftilt_hitFrame = 9
-#const ftilt_length = 3
+#const ftilt_lastHitFrame = 11
 
 
 // utilt
 #const utilt_IASA = 38
-#const utilt_xOffset = 10
-#const utilt_yOffset = -8
-#const utilt_xRange = 13
-#const utilt_yRange = 10
+#const utilt_xOffset = 1
+#const utilt_yOffset = 2
+#const utilt_xRange = 7
+#const utilt_yRange = 13
 #const utilt_hitFrame = 17
-#const utilt_length = 6
+#const utilt_lastHitFrame = 22
 
 // dtilt
 #const dtilt_IASA = 35
-#const dtilt_xOffset = 5
+#const dtilt_xOffset = 1
 #const dtilt_yOffset = 0
-#const dtilt_xRange = 15
+#const dtilt_xRange = 10
 #const dtilt_yRange = 5
 #const dtilt_hitFrame = 10
-#const dtilt_length = 6
+#const dtilt_lastHitFrame = 15
 
 // fsmash
 #const fsmash_IASA = 49
-#const fsmash_xOffset = 7
-#const fsmash_yOffset = -5
-#const fsmash_xRange = 17
-#const fsmash_yRange = 6
+#const fsmash_xOffset = 3
+#const fsmash_yOffset = -7
+#const fsmash_xRange = 8
+#const fsmash_yRange = 3
 #const fsmash_hitFrame = 19
-#const fsmash_length = 3
+#const fsmash_lastHitFrame = 21
 
 // usmash
 #const usmash_IASA = 41
-#const usmash_xOffset = 1
-#const usmash_yOffset = -20
-#const usmash_xRange = 11
-#const usmash_yRange = 15
+#const usmash_xOffset = -1
+#const usmash_yOffset = -3
+#const usmash_xRange = 6
+#const usmash_yRange = 13
 #const usmash_hitFrame = 22
-#const usmash_length = 8
+#const usmash_lastHitFrame = 29
+
 
 // dsmash
 // #const dsmash_IASA = 45
@@ -152,17 +178,17 @@
 // #const dsmash_xRange = 24
 // #const dsmash_yRange = 3
 // #const dsmash_yRange = 3
-// #const usmash_length = 8
+// #const usmash_lastHitFrame = 8
 
 
 // sideB
 #const sspecial_IASA = 26
-#const sspecial_xOffset = 20
+#const sspecial_xOffset = 0
 #const sspecial_yOffset = 0
 #const sspecial_xRange = 20
-#const sspecial_yRange = 6
+#const sspecial_yRange = 10
 #const sspecial_hitFrame = 20
-#const sspecial_length = 1
+#const sspecial_lastHitFrame = 20 // just a dummy
 
 // grab
 // "mv" stands for "move variant" - it's just a naming convention
@@ -177,70 +203,80 @@
 #const mv_techChase = 1
 
 #const grab_IASA = 32
-#const grab_xOffset = 4
-#const grab_yOffset = -8
-#const grab_xRange = 5
-#const grab_yRange = 2
+#const grab_xOffset = 1
+#const grab_yOffset = -6
+#const grab_xRange = 3
+#const grab_yRange = 4
 #const grab_hitFrame = 7
-#const grab_length = 2
-
-// tells when an aerial should be falling & low to the ground
-#const mv_lowAerial = 254
+#const grab_lastHitFrame = 8
 
 // NAir
 #const nair_IASA = 45
-#const nair_xOffset = 17
+#const nair_xOffset = -4
 #const nair_yOffset = -3
 #const nair_xRange = 10
 #const nair_yRange = 3
-#const nair_hitFrame = 14
-#const nair_length = 6
+#const nair_hitFrame = 7
+#const nair_lastHitFrame = 12
 
 #const mv_approachingNair = 1
-#const app_nair_xOffset = 5
+#const app_nair_xOffset = -4
 #const app_nair_yOffset = -3
-#const app_nair_xRange = 35
-#const app_nair_hitFrame = 11
+#const app_nair_xRange = 25
+#const app_nair_hitFrame = 7
+#const app_nair_lastHitFrame = 29
 
 #const mv_nairHit2 = 2
 #const nairHit2_hitFrame = 20
-#const nairHit2_length = 9
+#const nairHit2_lastHitFrame = 29
 
 // FAir
 #const fair_IASA = 36
-#const fair_xOffset = 8
-#const fair_yOffset = -4
+#const fair_xOffset = 1
+#const fair_yOffset = 0
 #const fair_xRange = 6
-#const fair_yRange = -3
+#const fair_yRange = 6
 #const fair_hitFrame = 14
-#const fair_length = 3
+#const fair_lastHitFrame = 16
+
+#const mv_fair_weak = 1
+#const fair_weak_hitFrame = 17
+#const fair_weak_lastHitFrame = 30
 
 // BAir
 #const bair_IASA = 29
-#const bair_xOffset = -7
-#const bair_yOffset = 0
-#const bair_xRange = 10
-#const bair_yRange = -3
+#const bair_xOffset = -15
+#const bair_yOffset = -2
+#const bair_xRange = 7
+#const bair_yRange = 4
 #const bair_hitFrame = 10
-#const bair_length = 8
+#const bair_lastHitFrame = 17
 
 // UAir
 #const uair_IASA = 30
-#const uair_xOffset = 7
-#const uair_yOffset = -13
-#const uair_xRange = 6
-#const uair_yRange = 1
+#const uair_xOffset = 0
+#const uair_yOffset = -3
+#const uair_xRange = 8
+#const uair_yRange = 8
 #const uair_hitFrame = 6
-#const uair_length = 8
+#const uair_lastHitFrame = 10
+
+#const mv_uair_tipman = 1
+#const uair_tipman_xOffset = -8
+#const uair_tipman_yOffset = -3
+#const uair_tipman_xRange = 8
+#const uair_tipman_yRange = 8
+#const uair_tipman_hitFrame = 11
+#const uair_tipman_lastHitFrame = 13
 
 // DAir
 #const dair_IASA = 38
-#const dair_xOffset = 0
-#const dair_yOffset = -14
-#const dair_xRange = 12
-#const dair_yRange = 5
+#const dair_xOffset = -4
+#const dair_yOffset = 10
+#const dair_xRange = 5
+#const dair_yRange = 12
 #const dair_hitFrame = 16
-#const dair_length = 5
+#const dair_lastHitFrame = 20
 
 
 //___________________________

@@ -21,7 +21,7 @@ if Equal movePart 0
   lastAttack = hex(0x8008)
   move_xOffset = 0
   move_xRange = 25
-  if Equal oDangerStart -1
+  if !(Equal oDangerStart -1)
     move_xOffset = oDangerXMax
     move_xRange = 10 + (oDangerXMax - oDangerXMin)
     Abs move_xRange
@@ -43,6 +43,7 @@ elif Equal AirGroundState 2
   endif
   Call AIHub
 elif True
+  lastScript = hex(0x8008)
   if !(Equal Direction OPos)
     tempVar = OPos * 0.65
     AbsStick tempVar
@@ -67,7 +68,7 @@ Return
 
 label crouchCancelPunish
 #let timer = var0
-timer = Rnd * 30 + 10
+timer = Rnd * 20 + 10
 label
 Stick 0 (-1)
 if FramesHitstun > 0 || timer <= 0
@@ -79,10 +80,13 @@ Return
 
 label dashAway
 #let timer = var0
-Stick (-1) 0
+if Equal Direction OPos
+  Stick (-1) 0
+endif
 Seek
+Return
 label
-if !(XDistLE 30) || XDistFrontEdge < 25
+if !(XDistLE 20) || XDistFrontEdge < 35
   Call AIHub
 endif
 Stick 1

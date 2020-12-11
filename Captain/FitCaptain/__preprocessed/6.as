@@ -15,7 +15,7 @@ if InAir && Equal IsOnStage 1
 endif
 
 if !(XDistLE 40) || Equal IsOnStage 0
-  if Equal var21 2
+  if Equal var16 2
     Button R
   endif
   Call AIHub

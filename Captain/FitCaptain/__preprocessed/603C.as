@@ -35,56 +35,70 @@ endif
 Return
 
 label techChase_wait
-SetTimeout 300
-var0 = Rnd * 75 + 75
-var1 = 0
-if Damage < 30
-  var2 = 15
-else
-  var2 = 25
-endif
-label
-if !(XDistLE var2)
-  // walk-up
-  var3 = OPos * 0.7
-  AbsStick var3 (-0.4)
-else
-  // force crouch cancel
-  Stick 0 (-1)
-endif
-
-  var5 = 0
-  var6 = OCurrAction
-  if Equal var6 96 || Equal var6 81
+  SetTimeout 300
+  var0 = Rnd * 75 + 75
+  var1 = 0
+  if Damage < 80
+    var2 = 10
+  else
+    var2 = 25
+  endif
+  label
+  if !(XDistLE var2)
+    // walk-up
+    var3 = OPos
+    AbsStick var3 (-0.4)
+    if Equal CurrAction 1
+      ClearStick
+    endif
+  elif Equal AirGroundState 1
+    // force crouch cancel
+    Stick 0 (-1)
+    if Rnd < 0.1 || Equal CurrAction 10
+      Button X
+    elif Rnd < 0.05 && YDistBackEdge < -25
+      ClearStick
+      Stick -1 0
+    elif Rnd < 0.1
+      Button R
+    endif
+  endif
+  var4 = 0
+  var5 = OCurrAction
+  if Equal var5 96 || Equal var5 81
     if OAnimFrame < 15
-      var5 = 1
+      var4 = 1
     endif
   endif
-  if Equal var6 30 || Equal var6 31 || Equal var6 32 || Equal var6 78 || Equal var6 80 || Equal var6 82 || Equal var6 83 || Equal var6 97
+  if Equal var5 30 || Equal var5 31 || Equal var5 32 || Equal var5 78 || Equal var5 80 || Equal var5 82 || Equal var5 83 || Equal var5 97
     if OAnimFrame < 21
-      var5 = 1
+      var4 = 1
     endif
   endif
+  if Equal var4 1
+    var1 = 1
+  endif
+  var0 -= 1
+  if OCurrAction < 69
+    Seek seekOpponent
+    Jump
+  elif Equal var1 1 && Equal var4 0
+    Seek _AIHub
+    Jump
+  elif var0 <= 0
+    Seek _AIHub
+    Jump
+  elif Equal OIsOnStage 0 && Equal OCurrAction 73
+    Seek seekOpponent
+    Jump
+  elif OYDistBackEdge < -20 && Equal OFramesHitstun 0
+    Seek _AIHub
+    Jump
+  endif
+  Return
 
-if Equal var5 1
-  var1 = 1
-endif
-var0 -= 1
-if OCurrAction <= 21
-  Call AIHub
-elif Equal var1 1 && Equal var5 0
-  Seek seekOpponent
-  Jump
-elif var0 <= 0
-  Seek seekOpponent
-  Jump
-elif Equal OIsOnStage 0 && Equal OCurrAction 73
-  Call AIHub
-elif OYDistBackEdge < -20 && Equal OFramesHitstun 0
-  Seek seekOpponent
-  Jump
-endif
-Return
+label _AIHub
+Call AIHub
 
 label seekOpponent
 SetFrame 0
@@ -96,11 +110,13 @@ if Equal var19 1
   endif
 endif
 var20 = 24636
-var9 = 4
-var10 = -8
-var11 = 5
-var12 = 2
+var15 = 32
+var9 = 1
+var10 = -6
+var11 = 3
+var12 = 4
 var13 = 7
+var14 = 8
 Call ApproachHub
 Return
 

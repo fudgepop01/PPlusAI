@@ -12,7 +12,7 @@ if Equal movePart 0
   move_xRange = sspecial_xRange
   move_yRange = sspecial_yRange
   move_hitFrame = sspecial_hitFrame
-  move_length = sspecial_length
+  move_lastHitFrame = sspecial_lastHitFrame
   Call ApproachHub
 else
   move_IASA = sspecial_IASA
