@@ -124,7 +124,7 @@ label execute
 if CurrAction < 9 || Equal CurrAction 125
   Call AIHub
 elif Equal CurrAction 55 || Equal CurrAction 53
-  Call 0x1120
+  Call Unk1120
 endif
 Return
 Return

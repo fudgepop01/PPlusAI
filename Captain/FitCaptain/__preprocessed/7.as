@@ -7,7 +7,7 @@ unk 0x0
 
 var1 = 0
 if LevelValue >= 60
-  var2 = 17
+  var2 = 1 + 3
 elif LevelValue >= 21
   var2 = 40
 else
@@ -67,11 +67,11 @@ endif
 
 if InAir
   if Equal OPos Direction
-    if XDistBackEdge < -15
+    if XDistBackEdge < -10
       var17 = OPos * -1
       AbsStick var17 (-1)
     endif
-  elif XDistFrontEdge > 15
+  elif XDistFrontEdge > 10
     var17 = OPos * -1
     AbsStick var17 (-1)
   else

@@ -48,6 +48,9 @@ req InAirOnSaved : 0x100E
 ///We haven't figured out what action 0x1E and 0x1D mean.
 req Act1EOr1D : 0x100F
 
+///Still being Researched
+req Act1EOr1D : 0x100F zeroToTwo
+
 ///If any character is within certain range, returns true.
 req CharDistLE : 0x1010
 
@@ -177,7 +180,7 @@ req PeachHover : 0x16
 ///Opponent is very close to the character or in his back
 req VeryCloseOrBack : 0x17
 
-///Not in state of MeteoChance,too far,not on the same plane,in the air 
+///Not in state of MeteoChance,too far,not on the same plane,in the air
 ///but in the state of the opponent is in high sky
 req Not1_4_9_12And2 : 0x18
 

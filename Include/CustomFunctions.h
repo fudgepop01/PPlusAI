@@ -194,8 +194,23 @@ func OArticleYSpeed : 0x50
 
 // C++ INJECTIONS START HERE
 
+///self-explanatory
 func PlayerNum : 0x51
 func OPlayerNum : 0x151
 
-///value injected during debug mode
-func CUSTOM_INJECT : 0xFF
+///returns the "mode" that the AI is in
+func AIMD : 0x52
+func OAIMD : 0x152
+
+/// how many times the current action appears in the
+/// stale-move queue
+func CurrActionFreq : 0x53
+func OCurrActionFreq : 0x153
+
+/// if the character can pass through the ground
+func IsOnPassableGround : 0x54
+func OIsOnPassableGround : 0x154
+
+/// if the character can cancel their current attack
+func CanCancelAttack : 0x55
+func OCanCancelAttack : 0x155

@@ -20,6 +20,7 @@ if Equal var18 0
     var12 = 3
     var13 = 9
     var14 = 11
+    var15 = 30
   elif CalledAs UTilt
     // LOGSTR 1970563328 1819541504 0 0 0
     var20 = 24627
@@ -29,6 +30,7 @@ if Equal var18 0
     var12 = 13
     var13 = 17
     var14 = 22
+    var15 = 38
   elif CalledAs DTilt
     // LOGSTR 1685350656 1819541504 0 0 0
     var20 = 24628
@@ -38,6 +40,7 @@ if Equal var18 0
     var12 = 5
     var13 = 10
     var14 = 15
+    var15 = 35
   elif CalledAs FSmash
     // LOGSTR 1718840576 1634953216 0 0 0
     var20 = 24629
@@ -47,6 +50,7 @@ if Equal var18 0
     var12 = 3
     var13 = 19
     var14 = 21
+    var15 = 49
   elif CalledAs USmash
     // LOGSTR 1970498816 1634953216 0 0 0
     var20 = 24630
@@ -56,6 +60,7 @@ if Equal var18 0
     var12 = 13
     var13 = 22
     var14 = 29
+    var15 = 41
   else
     Call AIHub
   endif
@@ -68,7 +73,6 @@ if Equal var18 0
   endif
 else
   ClearStick
-  // var15 = 45
   if CalledAs FTilt
     var15 = 30
     Stick (0.5) 0
@@ -94,6 +98,11 @@ Return
 
 label ExecuteAttack
 var1 = 0
+  // SAFE_INJECT_4 var9
+  // SAFE_INJECT_5 var10
+  // SAFE_INJECT_6 var11
+  // SAFE_INJECT_7 var12
+  
   var17 = OTopNY + OHurtboxSize
   var0 = var12 / 2
   var0 = TopNY - var10 + var0

@@ -23,7 +23,28 @@
 #const weight = 104
 #const shieldSize = 9.6
 
-//
+#const maxYEdgeDistWithJump = 65
+#const maxYEdgeDist = 45
+#const oWalkingDist = 10
+#const shortEdgeRange = 10
+#const edgeRange = 25
+#const calloutSpeed = 0.3
+
+#const jumpIfOWithin = 70
+#const SHIfOBeyond = 15
+#const FHIfOBeyond = 20
+#const DJIfOWithin = 55
+#const DJIfOBeyond = 35
+
+#const techChaseCloseDist = 10
+#const techChaseFarDist = 25
+
+#const dashCountMax = 10
+#const dashForceTurnFrame = 27
+#const dashDanceMinFrames = 3
+
+#const minBaseReactionTime = 0
+#const maxBaseReactionTime = 21
 
 #let globTempVar = var17
 
@@ -70,6 +91,28 @@
 
 #const techRollVulFrame = 21
 
+#const valJab123 = 24625
+#const valFTilt = 24626
+#const valUTilt = 24627
+#const valDTilt = 24628
+#const valFSmash = 24629
+#const valUSmash = 24630
+#const valDSmash = 24631
+#const valNSp = 24632
+#const valSSp = 24633
+#const valUSp = 24634
+#const valDSp = 24635
+#const valGrab = 24636
+
+#const valNAir = 24641
+#const valFAir = 24642
+#const valBAir = 24643
+#const valUAir = 24644
+#const valDAir = 24645
+#const valNSpAir = 24646
+#const valSSpAir = 24647
+#const valUSpAir = 24648
+#const valDSpAir = 24649
 
 #let noCombo = var19
 #const noComboVal = 256
@@ -133,7 +176,6 @@
 #const ftilt_hitFrame = 9
 #const ftilt_lastHitFrame = 11
 
-
 // utilt
 #const utilt_IASA = 38
 #const utilt_xOffset = 1
@@ -170,16 +212,51 @@
 #const usmash_hitFrame = 22
 #const usmash_lastHitFrame = 29
 
-
 // dsmash
-// #const dsmash_IASA = 45
-// #const dsmash_xOffset = 0
-// #const dsmash_yOffset = 3
-// #const dsmash_xRange = 24
-// #const dsmash_yRange = 3
-// #const dsmash_yRange = 3
-// #const usmash_lastHitFrame = 8
+#const dsmash_IASA = 9999.9999
+#const dsmash_xOffset = 9999.9999
+#const dsmash_yOffset = 9999.9999
+#const dsmash_xRange = 9999.9999
+#const dsmash_yRange = 9999.9999
+#const dsmash_yRange = 9999.9999
+#const dsmash_hitFrame = 9999.9999
+#const dsmash_lastHitFrame = 9999.9999
 
+// noochB
+#const nspecial_IASA = 9999.9999
+#const nspecial_xOffset = 9999.9999
+#const nspecial_yOffset = 9999.9999
+#const nspecial_xRange = 9999.9999
+#const nspecial_yRange = 9999.9999
+#const nspecial_hitFrame = 9999.9999
+#const nspecial_lastHitFrame = 9999.9999
+
+// sideB
+#const sspecial_IASA = 9999.9999
+#const sspecial_xOffset = 9999.9999
+#const sspecial_yOffset = 9999.9999
+#const sspecial_xRange = 9999.9999
+#const sspecial_yRange = 9999.9999
+#const sspecial_hitFrame = 9999.9999
+#const sspecial_lastHitFrame = 9999.9999
+
+// upB
+#const uspecial_IASA = 9999.9999
+#const uspecial_xOffset = 9999.9999
+#const uspecial_yOffset = 9999.9999
+#const uspecial_xRange = 9999.9999
+#const uspecial_yRange = 9999.9999
+#const uspecial_hitFrame = 9999.9999
+#const uspecial_lastHitFrame = 9999.9999
+
+// downB
+#const dspecial_IASA = 9999.9999
+#const dspecial_xOffset = 9999.9999
+#const dspecial_yOffset = 9999.9999
+#const dspecial_xRange = 9999.9999
+#const dspecial_yRange = 9999.9999
+#const dspecial_hitFrame = 9999.9999
+#const dspecial_lastHitFrame = 9999.9999
 
 // sideB
 #const sspecial_IASA = 26

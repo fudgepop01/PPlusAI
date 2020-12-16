@@ -40,6 +40,11 @@ Return
 
 label executeAttack
 var1 = 0
+  // SAFE_INJECT_4 var9
+  // SAFE_INJECT_5 var10
+  // SAFE_INJECT_6 var11
+  // SAFE_INJECT_7 var12
+  
   var17 = OTopNY + OHurtboxSize
   var0 = var12 / 2
   var0 = TopNY - var10 + var0
@@ -146,6 +151,8 @@ ClearStick
 
 if YSpeed <= 0 && Equal IsOnStage 1 && Equal var2 1 && Equal var0 0
   Stick 0 (-1)
+else
+  Stick 0 0.5
 endif
 
 if !(Equal var0 0) && !(Equal var0 2)

@@ -21,7 +21,7 @@ func OXCoord : 0x5
 ///Returns the distance between the character and an edge in which side the opponent is.
 func DistToOEdge : 0x6
 
-//Returns how many frames has passed since current execution of the routine started.
+///Returns how many frames has passed since current execution of the routine started.
 func NumFrames : 0x7
 
 ///Returns X speed of the character
@@ -97,11 +97,14 @@ func Damage : 0x1E
 
 ///Returns the damage of the opponent.
 func ODamage : 0x1F
+
 func Func20 : 0x20
-func Func21 : 0x21
-func Func22 : 0x22
-func Func23 : 0x23
-func Func24 : 0x24
+
+func GetJumpHeight : 0x21
+func GetJumpLength : 0x22
+
+func OGetAirHigh : 0x23
+func OGetAirLength : 0x24
 
 ///Returns opponent's direction.
 ///If the opponent is facing left,-1,otherwise,1

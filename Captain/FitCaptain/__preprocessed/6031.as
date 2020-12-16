@@ -14,6 +14,7 @@ if Equal var18 0
   var12 = 2
   var13 = 3
   var14 = 5
+  var15 = 14
   if Equal var16 2 && OFramesHitstun < 1
     Call DefendHub
   else
@@ -39,6 +40,11 @@ endif
 label
 ClearStick
 var1 = 0
+  // SAFE_INJECT_4 var9
+  // SAFE_INJECT_5 var10
+  // SAFE_INJECT_6 var11
+  // SAFE_INJECT_7 var12
+  
   var17 = OTopNY + OHurtboxSize
   var0 = var12 / 2
   var0 = TopNY - var10 + var0

@@ -9,23 +9,12 @@ SetTimeout 400
 
 var18 = 0
 
-var17 = 0
-// SAFE_INJECT_2 var17
-// SAFE_INJECT_4 var9
-// SAFE_INJECT_5 var10
-// SAFE_INJECT_6 var11
-// SAFE_INJECT_7 var12
-if !(Equal var17 0)
-  Seek CallAttacks
-  Jump
-endif
-
-// if !(Equal var21 36609) && !(Equal var21 36608) && !(Equal var21 32769) && !(Equal var21 8288)
-//   var9 = var9 + (var11 * 0.5)
-//   var10 = var10 + (var12)
-//   var11 *= 1.5
-//   var12 *= 2
-// endif
+  var17 = 0
+  SAFE_INJECT_2 var17
+  if !(Equal var17 0)
+    Seek CallAttacks
+    Jump
+  endif
 
 if FramesHitstun > 0 || Equal var11 0
   Call AIHub
@@ -53,6 +42,7 @@ label
 
 // these work together to only dashdance if not in a tech-chase or combo situation
   if Equal OCurrAction 78 || Equal OCurrAction 80 || Equal OCurrAction 82 || Equal OCurrAction 96 || Equal OCurrAction 97
+
 elif Equal var21 36608 || Equal var21 8288 || Equal var21 32770 || OYDistBackEdge < -20
 elif Equal var16 4 && Rnd < 0.3
 else
@@ -97,23 +87,16 @@ endif
 
 label BEGIN_MAIN
 
-// SAFE_INJECT_4 var9
-// SAFE_INJECT_5 var10
-// SAFE_INJECT_6 var11
-// SAFE_INJECT_7 var12
-
-if Equal CurrAction 276
-  Call RecoveryHub
-endif
-
 if Equal OAirGroundState 1 && Equal var16 3
   Call AIHub
 endif
 
-if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73
-  Call AIHub
-endif
-
+  if Equal CurrAction 276
+    Call RecoveryHub
+  endif
+  if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73
+    Call AIHub
+  endif
 if Equal OCurrAction 77 && Equal var20 24636 && !(Equal var19 1)
   Call AIHub
 endif
@@ -166,9 +149,7 @@ if !(True)
     AbsStick var2
     Return
   elif var2 < 20
-    if !(Equal Direction OPos)
-      Stick (-0.5)
-    elif OYDistBackEdge > -50
+    if OYDistBackEdge > -50
       if OYDistBackEdge < 30
         Button X
       endif
@@ -195,14 +176,38 @@ endif
 
 var8 = (var14 - var13) + 1
 
+if Rnd < 0.05
+  if YDistFloor < 0.2 && var6 < 0 && !(SamePlane) && Equal AirGroundState 1
+    var17 = 3
+    Seek platformDrop
+    Jump
+  endif
+endif
+
+if !(True)
+  label platformDrop
+  ClearStick
+  if CurrAction <= 5 && !(Equal CurrAction 3) || Equal CurrAction 17
+    AbsStick 0 (-1)
+  endif
+
+  var17 -= 1
+
+  if var17 <= 0
+    Seek
+  else
+    Seek platformDrop
+  endif
+  Return
+endif
+label
+
 if !(Equal YSpeed 0)
   Seek LOOP_DIST_CHECK
   Jump
 elif Equal AirGroundState 1
   Seek LOOP_DIST_CHECK
   Jump
-else
-  SetFrame 0
 endif
 label LOOP_DIST_EXIT
 if !(True)
@@ -223,6 +228,11 @@ if !(True)
     endif
   endif
 
+  // SAFE_INJECT_4 var9
+  // SAFE_INJECT_5 var10
+  // SAFE_INJECT_6 var11
+  // SAFE_INJECT_7 var12
+  
   var17 = OTopNY + OHurtboxSize
   var3 = var12 / 2
   var3 = TopNY - var10 + var3
@@ -305,26 +315,7 @@ if !(True)
     var2 = var7 + var5
     Abs var2
 
-    var17 = var11 * 1.5
-    if var0 <= var11
-      Goto XDistCheckPassed
-      if Equal var2 1
-        Seek CallAttacks
-        Jump
-      endif
-      var17 = TopNY - OTopNY
-      Abs var17
-      if XDistLE 35 && var17 <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
-        Call Unk3020
-      endif
-    elif var2 <= var11
-      Goto XDistCheckPassed
-      if Equal var2 1
-        Seek CallAttacks
-        Jump
-      endif
-    endif
-    if Equal AirGroundState 2 && var0 <= var11 && LevelValue >= 75
+  if Equal AirGroundState 2 && var0 <= var11 && LevelValue >= 75
   var17 = var13 + var8 - 2
   if YSpeed > 0
     var3 = YSpeed
@@ -356,12 +347,34 @@ if !(True)
   endif
   var17 = TopNY + var2
   var17 -= var3
-  if var17 <= var12 && var17 > 0 && !(var2 < YDistBackEdge)
+  var4 = YDistBackEdge + 2
+  var2 *= -1
+  if var17 <= var12 && var17 > 0 && var2 > YDistBackEdge
     var2 = 1
   else
     var2 = 0
   endif
+    if Equal var2 1
+      Seek CallAttacks
+      Jump
+    endif
+  endif
+    if var0 <= var11
+      Goto XDistCheckPassed
       if Equal var2 1
+        var2 = 0
+        Seek CallAttacks
+        Jump
+      endif
+      var17 = TopNY - OTopNY
+      Abs var17
+      if XDistLE 35 && var17 <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
+        Call Unk3020
+      endif
+    elif var2 <= var11
+      Goto XDistCheckPassed
+      if Equal var2 1
+        var2 = 0
         Seek CallAttacks
         Jump
       endif
@@ -426,10 +439,10 @@ if !(Equal CurrSubaction JumpSquat)
       Call mix_tomhawkJump
     endif
   elif CanJump && Rnd <= 0.01 && var20 >= 24641 && var20 <= 24655 && Equal IsOnStage 1 && TopNY > OTopNY && OFramesHitstun < 1
-    // randomly double-jump aerial instead of going straight for the aerial
     Call mix_doubleJump
   elif CanJump && Rnd <= 0.01 && Equal var20 32776 && TopNY > OTopNY && OFramesHitstun < 1
     Call mix_doubleJump
+
   endif
 
   if Equal var16 4
@@ -476,23 +489,15 @@ endif
 
 GetNearestCliff var3
 var3 = TopNX - var3
-Abs var3
 
-if Equal var2 2 && var3 > 50
-  var18 = 0
-  Call RecoveryHub
+if var3 > 50 || var3 < -50
+  if Equal var2 2
+    var18 = 0
+    Call RecoveryHub
+  endif
 endif
 
 label VAR2_SAFE
-
-if Equal var16 3 && var20 < 24640
-elif YSpeed < 0.2 && YDistBackEdge < -1 && YDistBackEdge > -10 && var20 >= 24625 && var20 <= 24631 && YDistBackEdge > -6 && Equal IsOnStage 1
-  var17 = var5 / 10
-  AbsStick var17 (-1)
-  Button R
-  Seek BEGIN_MAIN
-  Return
-endif
 
 // now that the calculations using these are over with, we'll store them
 // for the next frame
@@ -561,7 +566,6 @@ else
   endif
 endif
 
-var17 = NumFrames
 Seek BEGIN_MAIN
 if var2 > 0
   Return
@@ -588,15 +592,6 @@ label JumpIfInRange
 Return
 
 label XDistCheckPassed
-
-if YDistFloor < 0.2 && var6 < 0 && !(SamePlane) && Equal AirGroundState 1
-  ClearStick
-  if CurrAction <= 5 && !(Equal CurrAction 3) || Equal CurrAction 17
-    AbsStick 0 (-1)
-  endif
-  var2 = 2
-  Return
-endif
 
 var2 = 0
 
@@ -661,7 +656,8 @@ if var1 <= var17
 
   if var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1 && CurrAction <= 9
-      var17 = var9 + (var11 / 2)
+      var17 = var9 + (var11 * 2)
+      var17 /= 2
       if var17 >= 1 && !(Equal Direction OPos)
         ClearStick
         Stick (-0.5)
@@ -675,12 +671,13 @@ if var1 <= var17
       Return
     elif Equal AirGroundState 1
       Return
-    elif CanJump && Equal var2 2 && var4 < -75
+    elif CanJump && Equal var2 2 && var4 < -65
       var19 = 0
       Call AIHub
     elif !CanJump && Equal var2 2 && var4 < -45
       var19 = 0
       Call AIHub
+
     else
       var2 = 1
     endif
@@ -693,7 +690,7 @@ Return
 label CallAttacks
 
 // if the action requires us to be stopped,
-if var20 >= 24625 && var20 <= 24631
+if var20 >= 24625 && var20 <= 24635
   if Equal CurrAction 3
     // stops the dash
     ClearStick
@@ -752,7 +749,8 @@ if var20 >= 24625 && var20 <= 24631
   elif !(Equal AirGroundState 1)
     Call AIHub
   endif
-  var17 = var9 + (var11 / 2)
+  var17 = var9 + (var11 * 2)
+  var17 /= 2
   if var17 >= 1 && !(Equal Direction OPos)
     ClearStick
     Stick (-0.7)

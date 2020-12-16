@@ -119,11 +119,13 @@ cmd Abs : 0x1E variable
 cmd AbsStick : 0x1F x @y
 
 ///There are no scripts that use this
-cmd Cmd20 : 0x20
+/// Wait until on ground before continuing the script
+cmd WaitForGround : 0x20
 
 ///Something to do with moving character
 /// possibly execute wait?
-cmd Cmd21 : 0x21
+/// Wait until on ground and actionable before continuing the script
+cmd WaitForGroundCanAct : 0x21
 
 ///Sets execution timeout
 /// max num frames a routine can last naturally

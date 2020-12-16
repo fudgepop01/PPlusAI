@@ -20,6 +20,7 @@ if Equal movePart 0
     move_yRange = ftilt_yRange
     move_hitFrame = ftilt_hitFrame
     move_lastHitFrame = ftilt_lastHitFrame
+    move_IASA = ftilt_IASA
   elif CalledAs UTilt
     // LOGSTR str("utilt")
     lastAttack = hex(0x6033)
@@ -29,6 +30,7 @@ if Equal movePart 0
     move_yRange = utilt_yRange
     move_hitFrame = utilt_hitFrame
     move_lastHitFrame = utilt_lastHitFrame
+    move_IASA = utilt_IASA
   elif CalledAs DTilt
     // LOGSTR str("dtilt")
     lastAttack = hex(0x6034)
@@ -38,6 +40,7 @@ if Equal movePart 0
     move_yRange = dtilt_yRange
     move_hitFrame = dtilt_hitFrame
     move_lastHitFrame = dtilt_lastHitFrame
+    move_IASA = dtilt_IASA
   elif CalledAs FSmash
     // LOGSTR str("fsmash")
     lastAttack = hex(0x6035)
@@ -47,6 +50,7 @@ if Equal movePart 0
     move_yRange = fsmash_yRange
     move_hitFrame = fsmash_hitFrame
     move_lastHitFrame = fsmash_lastHitFrame
+    move_IASA = fsmash_IASA
   elif CalledAs USmash
     // LOGSTR str("usmash")
     lastAttack = hex(0x6036)
@@ -56,6 +60,7 @@ if Equal movePart 0
     move_yRange = usmash_yRange
     move_hitFrame = usmash_hitFrame
     move_lastHitFrame = usmash_lastHitFrame
+    move_IASA = usmash_IASA
   else
     Call AIHub
   endif
@@ -68,7 +73,6 @@ if Equal movePart 0
   endif
 else
   ClearStick
-  // move_IASA = nair_IASA
   if CalledAs FTilt
     move_IASA = ftilt_IASA
     Stick (0.5) 0

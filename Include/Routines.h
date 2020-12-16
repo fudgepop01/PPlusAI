@@ -132,6 +132,7 @@ act Reflect : 0x30E0
 
 //Attack performing routines
 
+act GroundBase : 0x6030
 act Jab123 : 0x6031
 act FTilt : 0x6032
 act UTilt : 0x6033
@@ -146,6 +147,7 @@ act DSpecial : 0x603B
 act Grab : 0x603C
 act Nothing : 0x603D
 
+act AerialBase : 0x6040
 act NAir : 0x6041
 act FAir : 0x6042
 act BAir : 0x6043
@@ -162,102 +164,102 @@ act AutoThrow : 0x6100
 act GroundCombo : 0x4010
 act AerialCombo : 0x4020
 
-act ATKVClose : 0x4030
-act ATKVClose : 0x4031
-act ATKVClose : 0x4032
-act ATKVClose : 0x4033
-act ATKVClose : 0x4034
-act ATKVClose : 0x4035
-act ATKVClose : 0x4036
-act ATKVClose : 0x4037
-act ATKVClose : 0x4038
-act ATKVClose : 0x4039
-act ATKVClose : 0x403A
-act ATKVClose : 0x403B
-act ATKVClose : 0x403C
-act ATKVClose : 0x403D
-act ATKVClose : 0x403E
-act ATKVClose : 0x403F
+act ATKVClose0 : 0x4030
+act ATKVClose1 : 0x4031
+act ATKVClose2 : 0x4032
+act ATKVClose3 : 0x4033
+act ATKVClose4 : 0x4034
+act ATKVClose5 : 0x4035
+act ATKVClose6 : 0x4036
+act ATKVClose7 : 0x4037
+act ATKVClose8 : 0x4038
+act ATKVClose9 : 0x4039
+act ATKVCloseA : 0x403A
+act ATKVCloseB : 0x403B
+act ATKVCloseC : 0x403C
+act ATKVCloseD : 0x403D
+act ATKVCloseE : 0x403E
+act ATKVCloseF : 0x403F
 
-act ATKClose : 0x4040
-act ATKClose : 0x4041
-act ATKClose : 0x4042
-act ATKClose : 0x4043
-act ATKClose : 0x4044
-act ATKClose : 0x4045
-act ATKClose : 0x4046
-act ATKClose : 0x4047
-act ATKClose : 0x4048
-act ATKClose : 0x4049
-act ATKClose : 0x404A
-act ATKClose : 0x404B
-act ATKClose : 0x404C
-act ATKClose : 0x404D
-act ATKClose : 0x404E
-act ATKClose : 0x404F
+act ATKClose0 : 0x4040
+act ATKClose1 : 0x4041
+act ATKClose2 : 0x4042
+act ATKClose3 : 0x4043
+act ATKClose4 : 0x4044
+act ATKClose5 : 0x4045
+act ATKClose6 : 0x4046
+act ATKClose7 : 0x4047
+act ATKClose8 : 0x4048
+act ATKClose9 : 0x4049
+act ATKCloseA : 0x404A
+act ATKCloseB : 0x404B
+act ATKCloseC : 0x404C
+act ATKCloseD : 0x404D
+act ATKCloseE : 0x404E
+act ATKCloseF : 0x404F
 
-act ATKMid : 0x4050
-act ATKMid : 0x4051
-act ATKMid : 0x4052
-act ATKMid : 0x4053
-act ATKMid : 0x4054
-act ATKMid : 0x4055
-act ATKMid : 0x4056
-act ATKMid : 0x4057
-act ATKMid : 0x4058
-act ATKMid : 0x4059
-act ATKMid : 0x405A
-act ATKMid : 0x405B
-act ATKMid : 0x405C
-act ATKMid : 0x405D
-act ATKMid : 0x405E
-act ATKMid : 0x405F
+act ATKMid0 : 0x4050
+act ATKMid1 : 0x4051
+act ATKMid2 : 0x4052
+act ATKMid3 : 0x4053
+act ATKMid4 : 0x4054
+act ATKMid5 : 0x4055
+act ATKMid6 : 0x4056
+act ATKMid7 : 0x4057
+act ATKMid8 : 0x4058
+act ATKMid9 : 0x4059
+act ATKMidA : 0x405A
+act ATKMidB : 0x405B
+act ATKMidC : 0x405C
+act ATKMidD : 0x405D
+act ATKMidE : 0x405E
+act ATKMidF : 0x405F
 
-act ATKFar : 0x4060
-act ATKFar : 0x4061
-act ATKFar : 0x4062
-act ATKFar : 0x4063
-act ATKFar : 0x4064
-act ATKFar : 0x4065
-act ATKFar : 0x4066
-act ATKFar : 0x4067
-act ATKFar : 0x4068
-act ATKFar : 0x4069
-act ATKFar : 0x406A
-act ATKFar : 0x406B
-act ATKFar : 0x406C
-act ATKFar : 0x406D
-act ATKFar : 0x406E
-act ATKFar : 0x406F
+act ATKFar0 : 0x4060
+act ATKFar1 : 0x4061
+act ATKFar2 : 0x4062
+act ATKFar3 : 0x4063
+act ATKFar4 : 0x4064
+act ATKFar5 : 0x4065
+act ATKFar6 : 0x4066
+act ATKFar7 : 0x4067
+act ATKFar8 : 0x4068
+act ATKFar9 : 0x4069
+act ATKFarA : 0x406A
+act ATKFarB : 0x406B
+act ATKFarC : 0x406C
+act ATKFarD : 0x406D
+act ATKFarE : 0x406E
+act ATKFarF : 0x406F
 
-act ATKBack : 0x4070
-act ATKBack : 0x4071
-act ATKBack : 0x4072
-act ATKBack : 0x4073
-act ATKBack : 0x4074
-act ATKBack : 0x4075
-act ATKBack : 0x4076
-act ATKBack : 0x4077
-act ATKBack : 0x4078
-act ATKBack : 0x4079
-act ATKBack : 0x407A
-act ATKBack : 0x407B
-act ATKBack : 0x407C
-act ATKBack : 0x407D
-act ATKBack : 0x407E
-act ATKBack : 0x407F
+act ATKBack0 : 0x4070
+act ATKBack1 : 0x4071
+act ATKBack2 : 0x4072
+act ATKBack3 : 0x4073
+act ATKBack4 : 0x4074
+act ATKBack5 : 0x4075
+act ATKBack6 : 0x4076
+act ATKBack7 : 0x4077
+act ATKBack8 : 0x4078
+act ATKBack9 : 0x4079
+act ATKBackA : 0x407A
+act ATKBackB : 0x407B
+act ATKBackC : 0x407C
+act ATKBackD : 0x407D
+act ATKBackE : 0x407E
+act ATKBackF : 0x407F
 
 
-act ComboG : 0x5000
-act ComboG : 0x5001
-act ComboG : 0x5002
-act ComboG : 0x5003
-act ComboG : 0x5004
-act ComboG : 0x5005
-act ComboG : 0x5006
-act ComboG : 0x5007
-act ComboG : 0x5008
-act ComboG : 0x5009
+act ComboG0 : 0x5000
+act ComboG1 : 0x5001
+act ComboG2 : 0x5002
+act ComboG3 : 0x5003
+act ComboG4 : 0x5004
+act ComboG5 : 0x5005
+act ComboG6 : 0x5006
+act ComboG7 : 0x5007
+act ComboG8 : 0x5008
+act ComboG9 : 0x5009
 act ComboG : 0x500A
 act ComboG : 0x500B
 act ComboG : 0x500C
@@ -266,26 +268,32 @@ act ComboG : 0x500E
 act ComboG : 0x500F
 act ComboG : 0x5010
 
-act StageC : 0x6000
-act StageC : 0x6001
-act StageC : 0x6002
-act StageC : 0x6003
-act StageC : 0x6004
-act StageC : 0x6005
-act StageC : 0x6006
-act StageC : 0x6007
-act StageC : 0x6008
-act StageC : 0x6009
-act StageC : 0x600A
-act StageC : 0x600B
-act StageC : 0x600C
-act StageC : 0x600D
-act StageC : 0x600E
-act StageC : 0x600F
+act StageC0 : 0x6000
+act StageC1 : 0x6001
+act StageC2 : 0x6002
+act StageC3 : 0x6003
+act StageC4 : 0x6004
+act StageC5 : 0x6005
+act StageC6 : 0x6006
+act StageC7 : 0x6007
+act StageC8 : 0x6008
+act StageC9 : 0x6009
+act StageCA : 0x600A
+act StageCB : 0x600B
+act StageCC : 0x600C
+act StageCD : 0x600D
+act StageCE : 0x600E
+act StageCF : 0x600F
 
 act TurnWDBack : 0x7010
 
-// Custom Attack preforming routines
+// Custom routines
+
+// [DOES NOT YET WORK / EXIST]
+// thanks to a code, the game will force
+// the AI into this script when no opponent
+// is around
+act NoTarget : 0x2080
 
 act Landing : 0x59
 
@@ -294,35 +302,29 @@ act ApproachHub : 0x8001
 act ComboHub : 0x8002
 act EdgeguardHub : 0x8003
 act RecoveryHub : 0x8004
+act DefendHub : 0x8005
+act NeutralHub : 0x8006
+act OOSHub : 0x8007
+act FakeOutHub : 0x8008
 
 act mix_tomhawkJump : 0x8F00
 act mix_doubleJump : 0x8F01
 
-act LvL1Hub : 0x8100
-act LvL2Hub : 0x8200
-act LvL3Hub : 0x8300
-act LvL4Hub : 0x8400
-act LvL5Hub : 0x8500
-act LvL6Hub : 0x8600
-act LvL7Hub : 0x8700
-act LvL8Hub : 0x8800
-act LvL9Hub : 0x8900
-
-act LvL1R1 : 0x8101
-act LvL1R2 : 0x8102
-act LvL1R3 : 0x8103
-act LvL1R4 : 0x8104
-act LvL1R5 : 0x8105
-act LvL1R6 : 0x8106
-act LvL1R7 : 0x8107
-act LvL1R8 : 0x8108
-act LvL1R9 : 0x8109
-act LvL1RA : 0x810A
-act LvL1RB : 0x810B
-act LvL1RC : 0x810C
-act LvL1RD : 0x810D
-act LvL1RE : 0x810E
-act LvL1RF : 0x810F
+act ChrSpecific1 : 0x8101
+act ChrSpecific2 : 0x8102
+act ChrSpecific3 : 0x8103
+act ChrSpecific4 : 0x8104
+act ChrSpecific5 : 0x8105
+act ChrSpecific6 : 0x8106
+act ChrSpecific7 : 0x8107
+act ChrSpecific8 : 0x8108
+act ChrSpecific9 : 0x8109
+act ChrSpecificA : 0x810A
+act ChrSpecificB : 0x810B
+act ChrSpecificC : 0x810C
+act ChrSpecificD : 0x810D
+act ChrSpecificE : 0x810E
+act ChrSpecificF : 0x810F
 
 act LvL2R1 : 0x8201
 act LvL2R2 : 0x8202
@@ -462,4 +464,6 @@ act Unk6022 : 0x6022
 act Unk6023 : 0x6023
 act Unk6024 : 0x6024
 act Unk6025 : 0x6025
-act Unk6040 : 0x6040
+
+// get_c_req_id
+act Unk6026 : 0x6026

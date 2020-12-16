@@ -9,6 +9,11 @@
 // I can use targetXDistance. you'll see this in 1.as
 
 #macro CALC_TARGET_DISTANCES(out1, out2, calcVar, gravVar, frameCount, lab1, lab2)
+  // SAFE_INJECT_4 move_xOffset
+  // SAFE_INJECT_5 move_yOffset
+  // SAFE_INJECT_6 move_xRange
+  // SAFE_INJECT_7 move_yRange
+  
   #let targetXDistance = {out1}
   #let targetYDistance = {out2}
   #let heightOffset = {calcVar}
@@ -93,6 +98,17 @@
   targetYDistance -= TopNY
 #endmacro
 
+#macro LOAD_MOVE_DATA(value, name)
+  lastAttack = {value}
+  move_xOffset = {name}_xOffset
+  move_yOffset = {name}_yOffset
+  move_xRange = {name}_xRange
+  move_yRange = {name}_yRange
+  move_hitFrame = {name}_hitFrame
+  move_lastHitFrame = {name}_lastHitFrame
+  move_IASA = {name}_IASA
+#endmacro
+
 #macro COULD_HIT_WITH_FASTFALL(outVar, throwAway1, throwAway2, targetYDistance, frameCount, lName)
   #let canHit = {outVar}
   #let estimate = {throwAway1}
@@ -112,7 +128,11 @@
   globTempVar = TopNY + canHit
   globTempVar -= estimate
 
-  if globTempVar <= move_yRange && globTempVar > 0 && !(canHit < YDistBackEdge)
+  #let YDistOffs = {throwAway2}
+  YDistOffs = YDistBackEdge + 2
+
+  canHit *= -1
+  if globTempVar <= move_yRange && globTempVar > 0 && canHit > YDistBackEdge
     canHit = 1
   else
     canHit = 0
@@ -270,21 +290,9 @@
 #macro DEFENSIVE_REACTION_TIME(tempVar1, tempVar2)
   #let delay = {tempVar1}
   #let tActionFreq = {tempVar2}
-  tActionFreq = Rnd * 5
-  if tActionFreq >= 5
-      delay = 0
-  elif tActionFreq >= 4
-      delay = 5
-      if Equal LevelValue LV9
-        delay = 0
-      endif
-  elif tActionFreq >= 3
-      delay = 10
-  elif tActionFreq >= 2
-      delay = 15
-  else
-      delay = 21
-  endif
+  tActionFreq = Rnd * 10
+  delay = maxBaseReactionTime - minBaseReactionTime
+  delay = tActionFreq * delay + minBaseReactionTime
   if !(Equal delay 0)
     delay = delay + Rnd * 5
     delay = delay + Rnd * (100 - LevelValue) / 6
@@ -316,15 +324,15 @@
     Button X
   endif
 
-  if globTempVar > 15 && globTempVar < 70 && Equal AirGroundState 1 && CurrAction <= 9
+  if globTempVar > SHIfOBeyond && globTempVar < jumpIfOWithin && Equal AirGroundState 1 && CurrAction <= 9
     Button X
   endif
 
-  if globTempVar > 20 && globTempVar < 70 && Equal CurrSubaction JumpSquat
+  if globTempVar > FHIfOBeyond && globTempVar < jumpIfOWithin && Equal CurrSubaction JumpSquat
     Button X
   endif
 
-  if globTempVar > 35 && globTempVar < 55 && Equal AirGroundState 2 && CanJump && Equal IsOnStage 1
+  if globTempVar > DJIfOBeyond && globTempVar < DJIfOWithin && Equal AirGroundState 2 && CanJump && Equal IsOnStage 1
     Button X
   endif
 #endmacro
@@ -343,9 +351,9 @@ endif
   patience = {patience}
   rollFlag = 0
   if Damage < 80
-    distance = 10
+    distance = techChaseCloseDist
   else
-    distance = 25
+    distance = techChaseFarDist
   endif
   label
   if !(XDistLE distance)
@@ -399,15 +407,15 @@ endif
   #let amount = {tempVar1}
   #let frameCount = {tempVar2}
   amount = (120 - LevelValue) / 100
-  amount = (Rnd * 10) - 10 * amount
-  frameCount = (Rnd * 10) + 3
+  amount = (Rnd * dashCountMax) - dashCountMax * amount
+  frameCount = (Rnd * 10) + dashDanceMinFrames
   label _dashdance
   if Equal AirGroundState 1 && amount > 0 && Equal OFramesHitstun 0 && !(ODistLE 15)
     if Equal CurrAction hex(0x01) && !(Equal CurrAction hex(0x07))
         ClearStick
     elif NumFrames >= frameCount && Equal CurrAction hex(0x03)
       Goto _ddSubr
-    elif AnimFrame >= 27 && Equal CurrAction hex(0x03)
+    elif AnimFrame >= dashForceTurnFrame && Equal CurrAction hex(0x03)
       Goto _ddSubr
     elif Equal CurrAction hex(0x04)
       ClearStick
@@ -433,7 +441,7 @@ endif
   if (amount > 0)
     Stick (-1)
   endif
-  frameCount = (Rnd * 10) + 3
+  frameCount = (Rnd * 10) + dashDanceMinFrames
   Return
 
   label _dashdanceEnd

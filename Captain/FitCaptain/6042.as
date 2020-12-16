@@ -56,6 +56,8 @@ ClearStick
 
 if YSpeed <= 0 && Equal IsOnStage 1 && Equal shouldFastFall 1 && Equal isGoingOffstage 0
   Stick 0 (-1)
+else
+  Stick 0 0.5
 endif
 
 if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)

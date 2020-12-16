@@ -1,6 +1,3 @@
-// var21 is the previous routine (set manually)
-// var20 is the previous attack routine (set manually)
-
 #include <Definition_AIMain.h>
 //TrueID=0x0
 id 0x8000
@@ -9,6 +6,8 @@ id 0x8000
 unk 0x00000
 
 label begin
+
+
 
 if Equal CurrAction 276 || Equal CurrAction 16
   Call RecoveryHub
@@ -132,6 +131,7 @@ Return
 // the stuff here happens when not in hitstun.
 label _main
 var6 = 0
+
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
@@ -177,10 +177,6 @@ if Equal var0 0 && YDistBackEdge > -15 && Equal CurrAction 51 && LevelValue >= 6
   if CanJump && Rnd < 0.5 && LevelValue >= 75
     Button X
     Return
-  else
-    var18 = 1
-    var19 = 2
-    Call Landing
   endif
 endif
 
@@ -321,9 +317,10 @@ endif
 
 if Equal var0 0
   label _afterTCS
-  var0 = 0
-  // SAFE_INJECT_0 var0
 
+
+  var0 = 0
+  SAFE_INJECT_0 var0
   // because we don't want to set the var0 again if we revisit
   // this, we place a label here to jump to
   label callers
@@ -376,7 +373,7 @@ if Equal var0 0
 
     RetrieveATKD var0 OCurrSubaction 1
 
-   // SAFE_INJECT_1 var2
+    SAFE_INJECT_1 var2
 
     if LevelValue >= 60 && Equal var6 0
       if var1 < OAnimFrame || Equal OCurrAction 37
@@ -385,7 +382,11 @@ if Equal var0 0
           Call FakeOutHub
         endif
       elif OAttacking && var1 > OAnimFrame && !(Equal var0 -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= 75 && !(Equal OCurrAction 27)
-        Call SSpecial
+  if Rnd < 0.8
+    Call SSpecial
+  else
+    Call Grab
+  endif
       elif Rnd < 0.05 && !(Equal var21 32776)
         Call FakeOutHub
       elif Equal var2 1
@@ -428,15 +429,15 @@ if Equal var0 0
       var2 = var3 * 0.1
       if Rnd < var3 || Rnd < 0.05 || Equal var2 3
         var16 = 2
-        if OYDistBackEdge < -20
-          Call UAir
-        endif
-        if Rnd < 0.8 && !(Equal Direction OPos)
-          Call BAir
-        else
-          var19 = 2
-          Call NAir
-        endif
+  if OYDistBackEdge < -20
+    Call UAir
+  endif
+  if Rnd < 0.8 && !(Equal Direction OPos)
+    Call BAir
+  else
+    var19 = 2
+    Call NAir
+  endif
       endif
     endif
     var16 = 1
@@ -444,13 +445,13 @@ if Equal var0 0
     // if the opponent is lying there doing nothing
     if LevelValue >= 48 && Equal var6 0
       if Equal OCurrAction 74 || Equal OCurrAction 77
-        if Equal AirGroundState 1 && Rnd < 0.3
-          Call DTilt
-        elif Equal AirGroundState 1 && Rnd < 0.3
-          Call SSpecial
-        else
-          Call DAir
-        endif
+  if Equal AirGroundState 1 && Rnd < 0.3
+    Call DTilt
+  elif Equal AirGroundState 1 && Rnd < 0.3
+    Call SSpecial
+  else
+    Call DAir
+  endif
       endif
     endif
 
@@ -458,12 +459,10 @@ if Equal var0 0
       Call EdgeguardHub
     endif
 
-    // these parts are effectively falcon's whole entire neutral game.
-    if !(XDistLE 20) && LevelValue >= 60 && Rnd < 0.7
-      // LOGSTR 1953001984 1870089984 1970536448 0 0
-      var16 = 4
-      Call NAir
-    endif
+  if !(XDistLE 20) && LevelValue >= 60 && Rnd < 0.7
+    var16 = 4
+    Call NAir
+  endif
 
     if Equal OCurrAction 37 && !(Equal ODirection Direction)
       Seek callers
@@ -471,30 +470,29 @@ if Equal var0 0
     endif
 
     if LevelValue >= 21
-      if OYDistBackEdge > -5
-        var0 = Rnd * 105
-        // LOGSTR 1836021248 1699964160 1811939328 0 0
-        // LOGVAL var0
-        // these moves are pretty much always relevant
-        if var0 >= 100
-          if var0 < 101
-            Call FAir
-          elif var0 < 102
-            Call DAir
-          elif var0 < 103
-            if Rnd < 0.5
-              var19 = 1
-            endif
-            Call NAir
-          elif var0 < 104
-            Call Grab
-          else
-            var0 = Rnd * 11 + 2
-            Seek callers
-            Jump
-          endif
-        else
-
+  if OYDistBackEdge > -5
+    var0 = Rnd * 105
+    // LOGSTR 1836021248 1699964160 1811939328 0 0
+    // LOGVAL var0
+    // these moves are pretty much always relevant
+    if var0 >= 100
+      if var0 < 101
+        Call FAir
+      elif var0 < 102
+        Call DAir
+      elif var0 < 103
+        if Rnd < 0.5
+          var19 = 1
+        endif
+        Call NAir
+      elif var0 < 104
+        Call Grab
+      else
+        var0 = Rnd * 11 + 2
+        Seek callers
+        Jump
+      endif
+    else
 if OIsCharOf Bowser
   var2 = 113
   var1 = 0.13
@@ -630,83 +628,78 @@ elif OIsCharOf ZSS // Zero Suit Samus
   var2 = 85
   var1 = 0.135
 endif
-
-          var2 /= 100
-          var2 *= ODamage
-
-          if var2 >= 90
-            // LOGSTR 1044193280 959447040 0 0 0
-            if var0 < 30
-              Call Grab
-            elif var0 < 35
-              var17 = OPos * XSpeed
-              if !(Equal Direction OPos) && XDistLE 20 && var17 <= 0
-                var16 = 4
-                Call BAir
-              endif
-              Call NAir
-            elif var0 < 50
-              Call FAir
-            elif var0 < 60
-              Call Jab123
-            else
-              Call DAir
-            endif
-          elif var2 >= 50
-            // LOGSTR 1044193280 892338176 0 0 0
-            if var0 < 30
-              Call Grab
-            elif var0 < 60
-              var17 = OPos * XSpeed
-              if !(Equal Direction OPos) && XDistLE 20 && var17 <= 0
-                var16 = 4
-                Call BAir
-              endif
-              var19 = 2
-              Call NAir
-            elif var0 < 80
-              Call DAir
-            endif
-          elif True
-            if var0 < 30
-              Call Grab
-            elif var0 < 80
-              var17 = OPos * XSpeed
-              if !(Equal Direction OPos) && XDistLE 20 && var17 <= 0
-                var16 = 4
-                Call BAir
-              endif
-              var19 = 2
-              if Rnd < 0.5
-                var19 = 1
-              endif
-              Call NAir
-            else
-              Call DAir
-            endif
+      var2 /= 100
+      var2 *= ODamage
+      if var2 >= 90
+        // LOGSTR 1044193280 959447040 0 0 0
+        if var0 < 30
+          Call Grab
+        elif var0 < 35
+          var17 = OPos * XSpeed
+          if !(Equal Direction OPos) && XDistLE 20 && var17 <= 0
+            var16 = 4
+            Call BAir
           endif
-          // LOGSTR 1852796416 1694498816 0 0 0
-        endif
-      endif
-      if OYDistBackEdge <= -5
-        if TopNY < OTopNY
-          Call UAir
+          Call NAir
+        elif var0 < 50
+          Call FAir
+        elif var0 < 60
+          Call Jab123
         else
-          var17 = TopNX - OTopNX
-          Abs var17
-          if var17 > 20
-            if Equal Direction OPos
-              Call NAir
-            else
-              Call BAir
-            endif
+          Call DAir
+        endif
+      elif var2 >= 50
+        // LOGSTR 1044193280 892338176 0 0 0
+        if var0 < 30
+          Call Grab
+        elif var0 < 60
+          var17 = OPos * XSpeed
+          if !(Equal Direction OPos) && XDistLE 20 && var17 <= 0
+            var16 = 4
+            Call BAir
           endif
+          var19 = 2
+          Call NAir
+        elif var0 < 80
+          Call DAir
+        endif
+      elif True
+        if var0 < 30
+          Call Grab
+        elif var0 < 80
+          var17 = OPos * XSpeed
+          if !(Equal Direction OPos) && XDistLE 20 && var17 <= 0
+            var16 = 4
+            Call BAir
+          endif
+          var19 = 2
+          if Rnd < 0.5
+            var19 = 1
+          endif
+          Call NAir
+        else
           Call DAir
         endif
       endif
-      // if we're here, then the opponent is in the air at which point
-      // we just perform a random aerial for the sake of having some variety lol
-      // LOGSTR 1918987776 1682007296 1919508736 1811939328 0
+      // LOGSTR 1852796416 1694498816 0 0 0
+    endif
+  endif
+  if OYDistBackEdge <= -5
+    if TopNY < OTopNY
+      Call UAir
+    else
+      var17 = TopNX - OTopNX
+      Abs var17
+      if var17 > 20
+        if Equal Direction OPos
+          Call NAir
+        else
+          Call BAir
+        endif
+      endif
+      Call DAir
+    endif
+  endif
       var0 = Rnd * 5 + 12
       Seek callers
       Jump
@@ -715,15 +708,15 @@ endif
       Seek callers
     endif
   elif True
-    if Rnd < 0.4
-      Call DAir
-    elif Rnd < 0.2
-      Call UAir
-    elif Rnd < 0.3
-      Call FAir
-    else
-      Call NAir
-    endif
+  if Rnd < 0.4
+    Call DAir
+  elif Rnd < 0.2
+    Call UAir
+  elif Rnd < 0.3
+    Call FAir
+  else
+    Call NAir
+  endif
   endif
 endif
 Return
