@@ -162,7 +162,7 @@ endif
   var2 /= 100
   var2 *= ODamage
 
-  if var2 > 60 && OYDistBackEdge > -5 && Equal OIsOnStage 1 && XDistLE 30
+  if var2 > 60 && OYDistBackEdge < -5 && Equal OIsOnStage 1 && XDistLE 30
     var19 = 1
     Call NAir
   elif Equal Direction OPos

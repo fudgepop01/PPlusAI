@@ -8,6 +8,9 @@ unk 0x0
 var21 = 32773
 
 
+var17 = var9 + (var11 * 2)
+var17 /= 2
+
 var1 = TopNX
 var2 = OTopNX
 Abs var1
@@ -21,7 +24,6 @@ endif
 // LOGSTR 1986097664 805306368 0 0 0
 // LOGVAL var0
 // SAFE_INJECT_2 var0
-var0 = 0.3
 label
 if var20 >= 24641 && var20 <= 24655
   if var0 <= 0.2
@@ -57,11 +59,12 @@ if var20 >= 24641 && var20 <= 24655
       endif
       if Equal CurrAction 3
         if Rnd < 0.1
-          if var9 <= -3 && CurrAction < 9
+          if var17 <= -1 && CurrAction < 9
             Button X
           else
             ClearStick
-            Stick -1
+            AbsStick OPos
+            Return
           endif
         endif
       elif Equal CurrAction 7 || Equal CurrAction 6 
@@ -92,13 +95,13 @@ if var20 >= 24641 && var20 <= 24655
           Button X
         endif
       elif !(Equal CurrAction 10)
-        if var9 <= -3 && CurrAction <= 9
+        if var17 <= -1 && CurrAction <= 9
           Button X
         else
           Stick -1
         endif
       endif
-    elif var9 <= -3
+    elif var17 <= -1
       if Equal OPos Direction
         Stick -0.5
       endif
@@ -111,7 +114,7 @@ if var20 >= 24641 && var20 <= 24655
     endif
   else
   // approach
-    if var9 <= -3
+    if var17 <= -1
       var0 = 0.85
       Return
     else

@@ -28,24 +28,30 @@ elif Equal CurrAction 57
     var0 -= 1
     Return
   elif True
-    if DistFrontEdge < 25
-      if Rnd < 0.2
-        Stick 0 (-1)
-        var19 = 2
-      elif ODamage > 20
-        Stick 1
-        var19 = 1
-      else
-        Stick 0 (-1)
-        var19 = 2
-      endif
-    elif DistBackEdge < 60
+    GetNearestCliff var1
+    var1 = TopNX - var1
+    var1 *= -1
+    var1 *= Direction
+    LOGSTR 1027423488 1027423488 0 0 0
+    LOGVAL var1
+    if var1 > 0 && var1 < 60
       if Rnd < 0.2
         Stick 0 (-1)
         var19 = 2
       else
         Stick (-1)
         var19 = 3
+      endif
+    elif var1 < 0 && var1 > -25
+      if Rnd < 0.2
+        Stick 0 (-1)
+        var19 = 2
+      elif ODamage > 60
+        Stick 1
+        var19 = 1
+      else
+        Stick 0 (-1)
+        var19 = 2
       endif
     elif ODamage > 110
       Stick 0 1

@@ -6,6 +6,10 @@ id 0x8008
 unk 0x0
 
 
+if Equal XDistFrontEdge XDistBackEdge
+  Call RecoveryHub
+endif
+
 // sets up offsets to get to target position
 if Equal var18 0
   RetrieveATKD var0 OCurrSubaction 1

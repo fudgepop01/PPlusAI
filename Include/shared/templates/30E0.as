@@ -9,6 +9,23 @@ unk 0x00000
 // str "#full_f"
 // str "#edge_range"
 
-Call AIHub
+globTempVar = Rnd * 20
+
+if Equal AirGroundState 1 && Rnd < 0.5
+  Button X
+endif
+Seek
+Return
+label 
+if Equal AirGroundState 1 && !(Equal CurrAction hex(0x0A))
+  Button R
+elif Equal CurrAction hex(0x0A)
+  Button X
+else
+  Call AIHub
+endif
+if FrameGE globTempVar
+  Call AIHub
+endif
 Return
 Return

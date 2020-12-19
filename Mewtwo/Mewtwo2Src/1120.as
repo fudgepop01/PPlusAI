@@ -8,6 +8,7 @@ id 0x1120
 unk 0x0
 
 #let pummelCount = var0
+#let nearCliffX = var1
 if ODamage > 100
   pummelCount = 4
 elif ODamage > 80
@@ -29,24 +30,30 @@ elif Equal CurrAction hex(0x39)
     pummelCount -= 1
     Return
   elif True
-    if DistFrontEdge < 25
-      if Rnd < 0.2
-        Stick 0 (-1)
-        moveVariant = mv_dthrow
-      elif ODamage > 20
-        Stick 1
-        moveVariant = mv_fthrow
-      else
-        Stick 0 (-1)
-        moveVariant = mv_dthrow
-      endif
-    elif DistBackEdge < 60
+    GetNearestCliff nearCliffX
+    nearCliffX = TopNX - nearCliffX
+    nearCliffX *= -1
+    nearCliffX *= Direction
+    LOGSTR str("======")
+    LOGVAL nearCliffX
+    if nearCliffX > 0 && nearCliffX < 60
       if Rnd < 0.2
         Stick 0 (-1)
         moveVariant = mv_dthrow
       else
         Stick (-1)
         moveVariant = mv_bthrow
+      endif
+    elif nearCliffX < 0 && nearCliffX > -25
+      if Rnd < 0.2
+        Stick 0 (-1)
+        moveVariant = mv_dthrow
+      elif ODamage > 60
+        Stick 1
+        moveVariant = mv_fthrow
+      else
+        Stick 0 (-1)
+        moveVariant = mv_dthrow
       endif
     elif ODamage > 110
       Stick 0 1

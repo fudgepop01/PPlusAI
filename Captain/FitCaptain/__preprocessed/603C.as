@@ -43,6 +43,7 @@ label techChase_wait
   else
     var2 = 25
   endif
+  var17 = Rnd
   label
   if !(XDistLE var2)
     // walk-up
@@ -54,13 +55,15 @@ label techChase_wait
   elif Equal AirGroundState 1
     // force crouch cancel
     Stick 0 (-1)
-    if Rnd < 0.1 || Equal CurrAction 10
-      Button X
-    elif Rnd < 0.05 && YDistBackEdge < -25
-      ClearStick
-      Stick -1 0
-    elif Rnd < 0.1
-      Button R
+    if var0 <= 20
+      if var17 < 0.3 && var20 >= 24641 && var20 <= 24655
+        Button X
+      elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 19
+        ClearStick
+        Stick -1 0
+      elif var17 >= 0.6
+        Button R
+      endif
     endif
   endif
   var4 = 0

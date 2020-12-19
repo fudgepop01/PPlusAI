@@ -42,9 +42,12 @@
 #const dashCountMax = 10
 #const dashForceTurnFrame = 27
 #const dashDanceMinFrames = 3
+#const DDWaveDash = 0.1
 
 #const minBaseReactionTime = 0
 #const maxBaseReactionTime = 21
+
+#const killComboThreshold = 80
 
 #let globTempVar = var17
 

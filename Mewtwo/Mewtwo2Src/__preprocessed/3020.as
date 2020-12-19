@@ -17,18 +17,9 @@ if var0 < 20
     Finish
 endif
 
-if !(OAttacking)
-  if FrameGE 31
-    Finish
-  endif
-  Return
-endif
-
-  var1 = Rnd * 10
   var0 = 21 - 0
-  var0 = var1 * var0 + 0
+  var0 = Rnd * var0 + 0
   if !(Equal var0 0)
-    var0 = var0 + Rnd * 5
     var0 = var0 + Rnd * (100 - LevelValue) / 6
   endif
   var1 = 0
@@ -38,11 +29,15 @@ endif
   endif
   if Equal var1 1 && OAttacking
     Seek
+    Jump
   elif var0 <= 0
     Seek
+    Jump
   endif
   var0 -= 1
   Return
+  label
+  SetFrame 0
   label begin
 
 if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
@@ -51,16 +46,17 @@ endif
 
 label
 
-if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 80
+if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 60
     SetFrame 0
     label
     Stick 0 (-1)
-    if NumFrames <= 20
+    if NumFrames >= 20
         Call AIHub
     elif FramesHitstun > 0
         Seek
         Jump
     endif
+    Return
 endif
 label
 

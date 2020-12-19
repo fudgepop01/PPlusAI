@@ -96,6 +96,11 @@ if !(True)
     AbsStick localTempVar
     Return
   elif localTempVar < 20
+    globTempVar = move_xOffset + (move_xRange * 2)
+    globTempVar /= 2
+    if globTempVar > 1 && !(Equal Direction OPos)
+      Stick -0.5
+    endif
     if OYDistBackEdge > -50
       if OYDistBackEdge < 30
         Button X
@@ -128,32 +133,6 @@ if lastAttack > hex(0x604F)
 endif
 
 loopTempVar = (move_lastHitFrame - move_hitFrame) + 1
-
-if Rnd < 0.05
-  if YDistFloor < 0.2 && targetYDistance < 0 && !(SamePlane) && Equal AirGroundState 1
-    globTempVar = 3
-    Seek platformDrop
-    Jump
-  endif
-endif
-
-if !(True)
-  label platformDrop
-  ClearStick
-  if CurrAction <= hex(0x05) && !(Equal CurrAction hex(0x03)) || Equal CurrAction hex(0x11)
-    AbsStick 0 (-1)
-  endif
-
-  globTempVar -= 1
-
-  if globTempVar <= 0
-    Seek
-  else
-    Seek platformDrop
-  endif
-  Return
-endif
-label
 
 if !(Equal YSpeed 0)
   Seek LOOP_DIST_CHECK
@@ -200,13 +179,18 @@ if !(True)
     Abs localTempVar
 
     {FASTFALL_CHECK}
+
+    #let shouldAttack = var2
     if absTargetXDistance <= move_xRange
-      #let shouldAttack = var2
+      shouldAttack = 0
       Goto XDistCheckPassed
       if Equal shouldAttack 1
         shouldAttack = 0
         Seek CallAttacks
         Jump
+      elif Equal shouldAttack 2
+        Seek BEGIN_MAIN
+        Return
       endif
       tempVar = TopNY - OTopNY
       Abs tempVar
@@ -214,12 +198,15 @@ if !(True)
         Call Unk3020
       endif
     elif localTempVar <= move_xRange
-      #let shouldAttack = var2
+      shouldAttack = 0
       Goto XDistCheckPassed
       if Equal shouldAttack 1
         shouldAttack = 0
         Seek CallAttacks
         Jump
+      elif Equal shouldAttack 2
+        Seek BEGIN_MAIN
+        Return
       endif
     endif
     if CanJump && YDistBackEdge > maxYEdgeDistWithJump
@@ -252,8 +239,7 @@ if !(Equal CurrSubaction JumpSquat)
     localTempVar = hex(0xFFFF)
   endif
   // if we want to perform an aerial, jump with respect to the
-  // move_hitFrame (that's a really poor name for it tbh lol)
-  // to attempt to get there by the time the move's hitbox is out
+  // move_hitFrame to attempt to get there by the time the move's hitbox is out
   tempVar = targetXDistance + (TotalXSpeed * move_hitFrame * -1)
   localTempVar = targetXDistance + (XSpeed * move_hitFrame)
   Abs tempVar
@@ -266,6 +252,13 @@ if !(Equal CurrSubaction JumpSquat)
           Button X
         endif
       elif targetYDistance <= 70
+        globTempVar = move_xOffset + (move_xRange * 2)
+        globTempVar /= 2
+        label
+        if globTempVar <= -1 && Equal Direction OPos
+          Stick -1
+          Return
+        endif
         Button X
       endif
     elif localTempVar <= move_xRange && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
@@ -274,6 +267,13 @@ if !(Equal CurrSubaction JumpSquat)
           Button X
         endif
       elif targetYDistance <= 70
+        globTempVar = move_xOffset + (move_xRange * 2)
+        globTempVar /= 2
+        label
+        if globTempVar <= -1 && Equal Direction OPos
+          Stick -1
+          Return
+        endif
         Button X
       endif
     elif Rnd <= 0.02 && lastAttack >= hex(0x6031) && lastAttack <= hex(0x603F) && XDistLE 80 100 && OFramesHitstun < 1
@@ -300,6 +300,36 @@ if !(Equal CurrSubaction JumpSquat)
     label
   endif
 endif
+
+if !(SamePlane) && Rnd < 0.8
+  if Equal AirGroundState 1 && targetYDistance < 0
+    globTempVar = 4
+    Seek platformDrop
+    Jump
+  endif
+endif
+
+if !(True)
+  label platformDrop
+  ClearStick
+  if CurrAction <= hex(0x05) && !(Equal CurrAction hex(0x03))
+    AbsStick 0 (-1)
+  elif Equal CurrAction hex(0x11)
+    AbsStick 0 (-1)
+  else
+    Return
+  endif
+
+  globTempVar -= 1
+
+  if globTempVar <= 0
+    Seek
+  else
+    Seek platformDrop
+  endif
+  Return
+endif
+label
 
 #let isGoingOffstage = var2
 GOING_OFFSTAGE(var2, var3, move_IASA)
@@ -339,6 +369,10 @@ elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
   // to ensure we dash, we clear the stick if we're walking for whatever reason
   if Equal CurrAction hex(0x01) && LevelValue > LV3 && oWalkingDist < absTargetXDistance
     ClearStick
+  endif
+
+  if !(SamePlane) && absTargetXDistance <= oWalkingDist
+    Goto JumpIfInRange
   endif
 else
   // otherwise...
@@ -424,11 +458,13 @@ if absTargetYDistance <= tempVar
       globTempVar /= 2
       if globTempVar >= 1 && !(Equal Direction OPos)
         ClearStick
-        Stick (-0.5)
+        Stick (-1)
+        shouldAttack = 2
         Return
       elif globTempVar <= -1 && Equal Direction OPos
         ClearStick
-        Stick (-0.5)
+        Stick (-1)
+        shouldAttack = 2
         Return
       endif
       Button X
@@ -484,6 +520,10 @@ if lastAttack >= hex(0x6031) && lastAttack <= hex(0x603B)
     else
       Button R
       AbsStick globTempVar (-1)
+    endif
+    if XDistBackEdge > -shortEdgeRange || XDistFrontEdge < shortEdgeRange
+      ClearStick
+      AbsStick 0 (-1)
     endif
     Return
   elif !(Equal AirGroundState 1)

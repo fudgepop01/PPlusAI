@@ -67,18 +67,20 @@ var3 = 0
   var17 = var17 - (OTopNY - TopNY)
   var1 = var1 - var17
   var0 += TopNX
-  var0 = var0 - (var11 * Direction)
+  var17 = var9 + (var11 * 2)
+  var17 /= 2
+  if var17 <= -1
+    var0 = var0 - (var11 * OPos * -1)
+    var0 = var0 - (var9 * OPos * -1)
+  else
+    var0 = var0 - (var11 * Direction)
+    var0 = var0 - (var9 * Direction)
+  endif
   var1 += TopNY
-  // var17 = YDistBackEdge
-  // if var10 > -2 && var20 >= 24641 && var20 <= 24655
-  //   var1 = var1 + var10 + 2 - var2 - OHurtboxSize
-  // endif
-  // var1 -= TopNY
   var17 = var2 * 2
   var1 -= var17
   var1 = var1 - var12
   var1 += var10
-  var0 = var0 - (var9 * Direction)
   // if Equal var8 0 || Equal var8 1 || Equal var18 1
   //   DrawDebugRectOutline var0 var1 var11 var12 255 0 0 136
   // endif
@@ -103,7 +105,7 @@ elif True
     var1 /= var17
     AbsStick var0 var1
     if !(InAir) && var1 < 0.3
-      Stick 0 0.5
+      Stick 0 0.4
     endif
     Return
   else

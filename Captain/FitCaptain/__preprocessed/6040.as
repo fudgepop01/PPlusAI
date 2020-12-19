@@ -82,8 +82,6 @@ if Equal var18 0
   else
     Call AIHub
   endif
- // SAFE_INJECT_3 var10
- // SAFE_INJECT_4 var12
   if Equal var16 2 && OFramesHitstun < 1
     Call DefendHub
   else
@@ -116,11 +114,10 @@ Return
 
 label ExecuteAttack
 var1 = 0
-  // SAFE_INJECT_4 var9
-  // SAFE_INJECT_5 var10
-  // SAFE_INJECT_6 var11
-  // SAFE_INJECT_7 var12
-  
+  SAFE_INJECT_4 var9
+  SAFE_INJECT_5 var10
+  SAFE_INJECT_6 var11
+  SAFE_INJECT_7 var12
   var17 = OTopNY + OHurtboxSize
   var0 = var12 / 2
   var0 = TopNY - var10 + var0
@@ -170,18 +167,20 @@ var1 = 0
   var17 = var17 - (OTopNY - TopNY)
   var6 = var6 - var17
   var5 += TopNX
-  var5 = var5 - (var11 * Direction)
+  var17 = var9 + (var11 * 2)
+  var17 /= 2
+  if var17 <= -1
+    var5 = var5 - (var11 * OPos * -1)
+    var5 = var5 - (var9 * OPos * -1)
+  else
+    var5 = var5 - (var11 * Direction)
+    var5 = var5 - (var9 * Direction)
+  endif
   var6 += TopNY
-  // var17 = YDistBackEdge
-  // if var10 > -2 && var20 >= 24641 && var20 <= 24655
-  //   var6 = var6 + var10 + 2 - var0 - OHurtboxSize
-  // endif
-  // var6 -= TopNY
   var17 = var0 * 2
   var6 -= var17
   var6 = var6 - var12
   var6 += var10
-  var5 = var5 - (var9 * Direction)
   // if Equal var8 0 || Equal var8 1 || Equal var18 1
   //   DrawDebugRectOutline var5 var6 var11 var12 255 0 0 136
   // endif

@@ -5,7 +5,7 @@ id 0x8004
 
 unk 0x0
 
-if FramesHitstun > 0
+if FramesHitstun > 0 || !(FrameGE 2)
   Return
 endif
 
@@ -42,7 +42,7 @@ endif
     endif
   endif
 
-if Equal var0 0
+if Equal var0 0 || Equal AirGroundState 1
   Call AIHub
 endif
 
@@ -121,23 +121,25 @@ else
   Goto upB
 endif
 
+
+
 // after this, tempVar1 will contain the vertical distance to the ledge
 // at which point to perform the next action
-if LevelValue >= 48
+if LevelValue >= 48 
   if Equal var16 3 && TopNY > OTopNY && YDistBackEdge > 0
     var3 = var0
-    var0 = -10
+    var0 = -40
   elif NoOneHanging
     if Equal OIsOnStage 0 && var3 < var0
       var3 = var0
-      var0 = -30
+      var0 = -80 + 20
     else
       var3 = var0
-      var0 = -50
+      var0 = -80
     endif
   else
     var3 = var0
-    var0 = -30
+    var0 = -80 + 20
   endif
   if LevelValue <= 75
     var0 = var0 + Rnd * 20
@@ -148,33 +150,24 @@ else
 endif
 
 if CanJump
-  if var17 < 2 && var2 >= -10 && Rnd < 0.3
+  var4 = BBoundary - TopNY
+  if var4 > -10
     Seek handleJumpToStage
     Jump
-  elif var2 <= var0 && var2 >= -30 && var17 < 20
+  elif var3 < 20 && var2 <= -40 && Rnd < 0.3
     Seek handleJumpToStage
     Jump
-  elif var2 < -25 && var3 > 20
-    // if we're beyond 20 units away and under the vertical bounds
+  elif var2 <= var0
     Seek handleJumpToStage
     Jump
-  elif var2 < -40 && var17 < 5
-    // if we're directly under the ledge then clear the stick's input
-    // and jump
-    ClearStick
-    Seek handleJumpToStage
-    Jump
-  elif var2 < -40
-    Seek handleJumpToStage
-    Jump
-  elif var3 > 50
+  elif var2 <= 40 && var3 > 40
     Seek handleJumpToStage
     Jump
   endif
 endif
 
 
-if var2 <= var0 && FramesHitstun < 1
+if var2 <= 20 && FramesHitstun < 1
   Goto upB
 endif
 Return
@@ -183,9 +176,9 @@ label upB
 if !(NoOneHanging)
   var2 -= 25
   if var1 > 0
-    var1 -= 15
-  else
     var1 += 15
+  else
+    var1 -= 15
   endif
 endif
 Norm var17 var1 var2
@@ -219,22 +212,6 @@ else
 endif
 Return
 
-// these two aren't super special because you really can't do much with
-// them once they're performed
-label handleDownB
-if !(Equal CurrSubaction DSpecialAir) && !(Equal CurrAction 16)
-  Call AIHub
-endif
-
-Return
-
-label handleSideB
-if !(Equal CurrSubaction SSpecialAir) && !(Equal CurrAction 16)
-  Call AIHub
-endif
-
-Return
-
 label handleUpB
 if !(Equal CurrAction 276) && !(Equal CurrAction 16)
   if Equal AirGroundState 1 || Equal CurrAction 14 || Equal CurrAction 15 || FramesHitstun > 0
@@ -251,9 +228,9 @@ if Equal CurrSubaction 473 || Equal CurrSubaction 474
   if !(NoOneHanging)
     var2 -= 25
     if var1 > 0
-      var1 -= 10
+      var1 += 15
     else
-      var1 += 10
+      var1 -= 15
     endif
   endif
 
@@ -264,7 +241,15 @@ if Equal CurrSubaction 473 || Equal CurrSubaction 474
   var1 *= -1
   var2 *= -1
 
-  AbsStick var1 var2
+  if 0.1 < var1 && var1 < 0.25
+    AbsStick 0.3 var2
+  elif -0.25 < var1 && var1 < -0.1
+    AbsStick -0.3 var2
+  else
+    AbsStick var1 var2
+  endif
+
+  
 else
   var17 = TopNX * -1
   AbsStick var17
@@ -277,9 +262,15 @@ label
 if CanJump && CurrAction <= 16
   Button X
 endif
-if var1 > 0
+
+GetNearestCliff var1
+var1 = TopNX - var1
+var1 *= -1
+var2 = var2 - TopNY * -1
+
+if var1 > 10
   AbsStick -1 0
-else
+elif var1 < -10
   AbsStick 1 0
 endif
 

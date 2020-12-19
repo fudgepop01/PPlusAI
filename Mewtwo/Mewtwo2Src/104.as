@@ -37,7 +37,7 @@ elif True
     targetYDistance /= globTempVar
     AbsStick targetXDistance targetYDistance
     if !(InAir) && targetYDistance < 0.3
-      Stick 0 0.5
+      Stick 0 0.4
     endif
     Return
   else

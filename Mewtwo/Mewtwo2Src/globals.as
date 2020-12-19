@@ -32,8 +32,8 @@
 #const calloutSpeed = 0.3
 
 #const jumpIfOWithin = 70
-#const SHIfOBeyond = 15
-#const FHIfOBeyond = 25
+#const SHIfOBeyond = 13
+#const FHIfOBeyond = 18
 #const DJIfOWithin = 65
 #const DJIfOBeyond = 15
 
@@ -47,6 +47,8 @@
 
 #const minBaseReactionTime = 0
 #const maxBaseReactionTime = 21
+
+#const killComboThreshold = 80
 
 #const at_hover = 255
 #const at_teleport = 254

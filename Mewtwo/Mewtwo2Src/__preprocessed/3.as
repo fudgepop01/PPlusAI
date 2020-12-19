@@ -42,10 +42,10 @@ if Equal OIsOnStage 1
 elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge > 50 && !(Equal CurrAction 121)
   var18 = 255
   Call RecoveryHub
-elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge < -50 && !(Equal CurrAction 121)
+elif !(CanJump) && var0 > 40 && Equal IsOnStage 0
   var18 = 255
   Call RecoveryHub
-elif LevelValue <= 42 || !(CanJump)
+elif LevelValue <= 42
   var18 = 255
   Call RecoveryHub
 endif

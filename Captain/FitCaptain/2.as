@@ -2,10 +2,10 @@
 #endsnippet
 
 #snippet MOVE_SPECIFIC_COMBOS
-  if Equal lastAttack hex(0x603C)
+  if Equal lastAttack valGrab
     // LOGSTR str("grbCmbo")
     if Equal moveVariant mv_uthrow
-      if ODmgXWeight > 80
+      if ODmgXWeight > 50
         if XDistLE 20
           Call FAir
         else
@@ -17,7 +17,7 @@
         Call NAir
       endif
     elif Equal moveVariant mv_dthrow
-      if ODmgXWeight > 60 && OYDistSelf > 25
+      if ODmgXWeight > 50 && OYDistSelf > 25
         Call FAir
       elif OYDistSelf > 25 && OYSpeed > 0.15
         Call UAir
@@ -31,14 +31,32 @@
       endif
     endif
   endif
+  if hit_knockback < 4
+    Goto grab
+    comboLeniency = 8
+    if OYDistBackEdge < -5
+      moveVariant = mv_techChase
+    endif
+    Goto analyze
+  endif
+  if ODmgXWeight > 50
+    Goto fair
+    comboLeniency = 2
+  else
+    Goto dair
+    comboLeniency = 2
+  endif
+  Goto analyze
 #endsnippet
 
 #snippet COMBO_OPTIONS
   globTempVar = Rnd * 6
   if globTempVar < 1
     Goto dtilt
+    comboLeniency = 5
   elif globTempVar < 2
     Goto uair
+    comboLeniency = 10
   elif globTempVar < 3
     Goto nair
   elif globTempVar < 4
@@ -77,8 +95,10 @@
     Goto nair
   elif globTempVar < 6
     Goto fair
+    comboLeniency = 5
   elif globTempVar < 7
     Goto uair
+    comboLeniency = 10
   elif globTempVar < 8
     Goto dair
   endif

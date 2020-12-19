@@ -161,9 +161,13 @@ if Equal var16 -1
   var16 = 65535
 endif
 
+  if Equal var20 24643
+    Goto bair
+    var16 = 255
+    Goto analyze
+  endif
 
-
-if OYDistBackEdge > -5 && Equal OCurrAction 73 && Rnd < 0.5
+if OYDistBackEdge > -5 && Equal OCurrAction 73 && Rnd < 0.7
   Seek techChase_wait
   Jump
 endif
@@ -180,6 +184,7 @@ label techChase_wait
   else
     var2 = 25
   endif
+  var17 = Rnd
   label
   if !(XDistLE var2)
     // walk-up
@@ -191,13 +196,15 @@ label techChase_wait
   elif Equal AirGroundState 1
     // force crouch cancel
     Stick 0 (-1)
-    if Rnd < 0.1 || Equal CurrAction 10
-      Button X
-    elif Rnd < 0.05 && YDistBackEdge < -25
-      ClearStick
-      Stick -1 0
-    elif Rnd < 0.1
-      Button R
+    if var0 <= 20
+      if var17 < 0.3 && var20 >= 24641 && var20 <= 24655
+        Button X
+      elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 19
+        ClearStick
+        Stick -1 0
+      elif var17 >= 0.6
+        Button R
+      endif
     endif
   endif
   var4 = 0
@@ -247,8 +254,32 @@ var17 = OTopNX - (TopNX + var0)
 Abs var0
 Abs var17
 
-
-if var0 < var17 && Equal OIsOnStage 1 && OYDistBackEdge > -60
+if var17 < var0 && OYDistBackEdge > -60 && var17 < 20
+  var6 = 10
+  label edgeguard
+  var17 = Rnd * 6
+  if var17 < 1
+    Goto ftilt
+  elif var17 < 2
+    Goto fsmash
+  elif var17 < 3
+    Goto dsmash
+  elif var17 < 4
+    if Equal Direction OPos
+      Goto nair
+    else
+      Goto bair
+    endif
+  elif var17 < 5
+    Goto uair
+  elif var17 < 6
+    Goto dair
+  endif
+  if YDistBackEdge < -15
+    var16 = 255
+  endif
+  Seek edgeguard
+elif Equal OIsOnStage 1 && OYDistBackEdge > -90
   if var8 < 80
     var6 = 10
     label combo
@@ -272,6 +303,10 @@ if var0 < var17 && Equal OIsOnStage 1 && OYDistBackEdge > -60
   elif var17 < 9
     Goto grab
   endif
+  if YDistBackEdge < -15
+    var16 = 255
+  endif
+    Seek combo
   else
     var6 = 10
     label kill
@@ -285,27 +320,10 @@ if var0 < var17 && Equal OIsOnStage 1 && OYDistBackEdge > -60
   elif var17 < 4
     Goto fair
   endif
+  if YDistBackEdge < -15
+    var16 = 255
   endif
-elif var17 < var0 && OYDistBackEdge > -60
-  var6 = 10
-  label edgeguard
-  var17 = Rnd * 6
-  if var17 < 1
-    Goto ftilt
-  elif var17 < 2
-    Goto fsmash
-  elif var17 < 3
-    Goto dsmash
-  elif var17 < 4
-    if Equal Direction OPos
-      Goto nair
-    else
-      Goto bair
-    endif
-  elif var17 < 5
-    Goto uair
-  elif var17 < 6
-    Goto dair
+    Seek kill
   endif
 else
   var6 = 10
@@ -320,6 +338,10 @@ else
   elif var17 < 4
     Goto usmash
   endif
+  if YDistBackEdge < -15
+    var16 = 255
+  endif
+  Seek juggle
 endif
 Goto analyze
 var6 -= 1
@@ -327,6 +349,7 @@ if var6 <= 0
   Seek NCombo
   Jump
 endif
+Jump
 Return
 
 label NCombo
@@ -524,7 +547,9 @@ Return
 
 label analyze
 
-if OFramesHitstun < var13
+var17 = OFramesHitstun + var7
+if var17 < var13
+  var7 = 0
   Return
 endif
 
@@ -588,18 +613,20 @@ var3 = 0
   var17 = var17 - (OTopNY - TopNY)
   var1 = var1 - var17
   var0 += TopNX
-  var0 = var0 - (var11 * Direction)
+  var17 = var9 + (var11 * 2)
+  var17 /= 2
+  if var17 <= -1
+    var0 = var0 - (var11 * OPos * -1)
+    var0 = var0 - (var9 * OPos * -1)
+  else
+    var0 = var0 - (var11 * Direction)
+    var0 = var0 - (var9 * Direction)
+  endif
   var1 += TopNY
-  // var17 = YDistBackEdge
-  // if var10 > -2 && var20 >= 24641 && var20 <= 24655
-  //   var1 = var1 + var10 + 2 - var2 - OHurtboxSize
-  // endif
-  // var1 -= TopNY
   var17 = var2 * 2
   var1 -= var17
   var1 = var1 - var12
   var1 += var10
-  var0 = var0 - (var9 * Direction)
   // if Equal var8 0 || Equal var8 1 || Equal var18 1
   //   DrawDebugRectOutline var0 var1 var11 var12 255 0 0 136
   // endif
@@ -674,18 +701,20 @@ endif
   var17 = var17 - (OTopNY - TopNY)
   var1 = var1 - var17
   var0 += TopNX
-  var0 = var0 - (var11 * Direction)
+  var17 = var9 + (var11 * 2)
+  var17 /= 2
+  if var17 <= -1
+    var0 = var0 - (var11 * OPos * -1)
+    var0 = var0 - (var9 * OPos * -1)
+  else
+    var0 = var0 - (var11 * Direction)
+    var0 = var0 - (var9 * Direction)
+  endif
   var1 += TopNY
-  // var17 = YDistBackEdge
-  // if var10 > -2 && var20 >= 24641 && var20 <= 24655
-  //   var1 = var1 + var10 + 2 - var2 - OHurtboxSize
-  // endif
-  // var1 -= TopNY
   var17 = var2 * 2
   var1 -= var17
   var1 = var1 - var12
   var1 += var10
-  var0 = var0 - (var9 * Direction)
   // if Equal var8 0 || Equal var8 1 || Equal var18 1
   //   DrawDebugRectOutline var0 var1 var11 var12 255 0 0 136
   // endif
@@ -706,6 +735,7 @@ if var0 <= var11 && var1 <= var12
   Seek callMove
   Jump
 endif
+var7 = 0
 Return
 
 label callMove

@@ -29,7 +29,7 @@ if !(Equal XDistBackEdge XDistFrontEdge)
   ODmgXWeight /= 100
   ODmgXWeight *= ODamage
 
-  if ODmgXWeight > 60 && OYDistBackEdge > -5 && Equal OIsOnStage 1 && XDistLE 30
+  if ODmgXWeight > 60 && OYDistBackEdge < -5 && Equal OIsOnStage 1 && XDistLE 30
     moveVariant = mv_hc
     Call NAir
   elif Equal Direction OPos

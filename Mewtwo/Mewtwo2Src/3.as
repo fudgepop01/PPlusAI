@@ -49,10 +49,10 @@ if Equal OIsOnStage 1
 elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge > 50 && !(Equal CurrAction hex(0x79))
   movePart = hex(0xFF)
   Call RecoveryHub
-elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge < -50 && !(Equal CurrAction hex(0x79))
+elif !(CanJump) && tempVar > 40 && Equal IsOnStage 0
   movePart = hex(0xFF)
   Call RecoveryHub
-elif LevelValue <= LV5 || !(CanJump)
+elif LevelValue <= LV5
   movePart = hex(0xFF)
   Call RecoveryHub
 endif

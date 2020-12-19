@@ -11,7 +11,7 @@ lastScript = hex(0x8102)
 
 label
 
-if !(Equal CurrAction hex(0x120))
+if !(Equal CurrAction hex(0x120)) && CanJump
   if Equal AirGroundState 1
     if CurrAction <= hex(0x09)
       Button X

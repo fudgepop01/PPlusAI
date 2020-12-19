@@ -63,9 +63,7 @@ if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
   endif
   // until hitstun is 0
   if Equal FramesHitstun 0
-    if Equal AirGroundState 1
-      Stick -1
-    endif
+    {HITSTUN_ENDS}
     Seek begin
     Return
   endif
@@ -159,6 +157,8 @@ if Equal isGoingOffstage 0 && YDistBackEdge > -15 && Equal CurrAction hex(0x33) 
   if CanJump && Rnd < 0.5 && LevelValue >= LV8
     Button X
     Return
+  else
+    {L_CANCEL}
   endif
 endif
 
@@ -215,6 +215,27 @@ if Equal AirGroundState 1
     Return
   endif
 endif
+
+// GetIsTeammateCloser waitTeamFlag
+// if Equal waitTeamFlag 1
+//   if XDistLE 60 && XDistFrontEdge > shortEdgeRange && XDistBackEdge < -shortEdgeRange
+//     globTempVar = OPos * -1
+//     if Equal Direction globTempVar && XDistFrontEdge > shortEdgeRange
+//       Stick 1
+//     elif !(Equal Direction globTempVar) && XDistBackEdge < -shortEdgeRange
+//       Stick -1
+//     endif
+//   endif
+//   if !(XDistLE 100)
+//     if Equal Direction OPos && XDistFrontEdge > shortEdgeRange
+//       Stick 1
+//     elif !(Equal Direction OPos) && XDistBackEdge < -shortEdgeRange
+//       Stick -1
+//     endif
+//   endif
+//   Seek _main
+//   Return
+// endif
 
 moveVariant = 0
 movePart = 0
@@ -291,10 +312,15 @@ if Equal isEarlyRoll 0
     #let oDangerYMin = var4
     #let oDangerYMax = var5
 
-    #let injected = var2
+    #let injected = var7
+    injected = hex(0xFF)
     SAFE_INJECT_1 injected
 
-    if LevelValue >= LV7 && Equal waitTeamFlag 0
+    if LevelValue >= LV6 && Equal waitTeamFlag 0 && Equal injected 0 && !(SamePlane) && TopNY < OTopNY && Equal OAirGroundState 1
+      {O_ON_PLAT_ABOVE}
+    endif 
+
+    if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 1
       if oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25)
         if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && !(Equal ODirection OPos)
           movePart = 1
@@ -315,7 +341,7 @@ if Equal isEarlyRoll 0
     defenseMul = Damage - ODamage
     defenseMul /= 200
 
-    if LevelValue >= LV5 && Equal waitTeamFlag 0
+    if LevelValue >= LV5 && Equal waitTeamFlag 0 && injected <= 2
       #let tempVar = var0
       #let tempVar2 = var1
       #let defenseChance = var2
@@ -336,7 +362,7 @@ if Equal isEarlyRoll 0
       endif
     endif
 
-    if LevelValue >= LV7 && Equal waitTeamFlag 0
+    if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 2
       #let fakeChance = var2
       fakeChance = defenseMul * 0.1
       Abs fakeChance
@@ -345,7 +371,7 @@ if Equal isEarlyRoll 0
       endif
     endif
 
-    if Equal waitTeamFlag 0
+    if Equal waitTeamFlag 0 && injected <= 3
       #let defenseChance = var2
       defenseChance = defenseMul * 0.1
       if Rnd < defenseMul || Rnd < 0.05 || Equal injected 3

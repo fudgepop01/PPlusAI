@@ -9,7 +9,24 @@ unk 0x00000
 // str "#full_f"
 // str "#edge_range"
 
-Call AIHub
+var17 = Rnd * 20
+
+if Equal AirGroundState 1 && Rnd < 0.5
+  Button X
+endif
+Seek
+Return
+label 
+if Equal AirGroundState 1 && !(Equal CurrAction 10)
+  Button R
+elif Equal CurrAction 10
+  Button X
+else
+  Call AIHub
+endif
+if FrameGE var17
+  Call AIHub
+endif
 Return
 Return
 

@@ -2,6 +2,11 @@
 #endsnippet
 
 #snippet MOVE_SPECIFIC_COMBOS
+  if Equal lastAttack valBAir
+    Goto bair
+    approachType = at_hover
+    Goto analyze
+  endif
 #endsnippet
 
 #snippet COMBO_OPTIONS
@@ -25,6 +30,9 @@
   elif globTempVar < 9
     Goto grab
   endif
+  if YDistBackEdge < -15
+    approachType = at_hover
+  endif
 #endsnippet
 
 #snippet KILL_OPTIONS
@@ -37,6 +45,9 @@
     Goto usmash
   elif globTempVar < 4
     Goto fair
+  endif
+  if YDistBackEdge < -15
+    approachType = at_hover
   endif
 #endsnippet
 
@@ -59,6 +70,9 @@
   elif globTempVar < 6
     Goto dair
   endif
+  if YDistBackEdge < -15
+    approachType = at_hover
+  endif
 #endsnippet
 
 #snippet JUGGLE_OPTIONS
@@ -71,5 +85,8 @@
     Goto fair
   elif globTempVar < 4
     Goto usmash
+  endif
+  if YDistBackEdge < -15
+    approachType = at_hover
   endif
 #endsnippet

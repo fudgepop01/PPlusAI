@@ -5,7 +5,7 @@ id 0x8004
 
 unk 0x0
 
-if FramesHitstun > 0
+if FramesHitstun > 0 || !(FrameGE 2)
   Return
 endif
 
@@ -18,7 +18,7 @@ endif
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(var0, var1, 15)
 
-if Equal isGoingOffstage 0
+if Equal isGoingOffstage 0 || Equal AirGroundState 1
   Call AIHub
 endif
 
@@ -76,10 +76,11 @@ if Equal OIsOnStage 0 && nearCliffX <= rw && nearCliffX >= -rw && nearCliffY >= 
 endif
 movePart = 0
 
+#let absNearCliffX = var0
 // makes tempVar into the distance from the ledge regardless of whether
 // the character is on the left or right of it
-tempVar = nearCliffX
-Abs tempVar
+absNearCliffX = nearCliffX
+Abs absNearCliffX
 
 tempVar2 = OXDistFrontEdge
 Abs tempVar2
@@ -103,60 +104,56 @@ else
   Goto upB
 endif
 
+#let yEdgeDistLimit = var0
+
+#let absNCX2 = var3
+
 // after this, tempVar1 will contain the vertical distance to the ledge
 // at which point to perform the next action
-if LevelValue >= LV6
+if LevelValue >= LV6 
   if Equal approachType at_edgeguard && TopNY > OTopNY && YDistBackEdge > 0
-    tempVar2 = tempVar
-    tempVar = -10
+    absNCX2 = absNearCliffX
+    yEdgeDistLimit = -maxYEdgeDistJumpNoUpB
   elif NoOneHanging
-    if Equal OIsOnStage 0 && tempVar2 < tempVar
-      tempVar2 = tempVar
-      tempVar = -30
+    if Equal OIsOnStage 0 && absNCX2 < absNearCliffX
+      absNCX2 = absNearCliffX
+      yEdgeDistLimit = -maxYEdgeDistWithJump + 20
     else
-      tempVar2 = tempVar
-      tempVar = -50
+      absNCX2 = absNearCliffX
+      yEdgeDistLimit = -maxYEdgeDistWithJump
     endif
   else
-    tempVar2 = tempVar
-    tempVar = -30
+    absNCX2 = absNearCliffX
+    yEdgeDistLimit = -maxYEdgeDistWithJump + 20
   endif
   if LevelValue <= LV8
-    tempVar = tempVar + Rnd * 20
+    yEdgeDistLimit = yEdgeDistLimit + Rnd * 20
   endif
 else
-  tempVar2 = tempVar
-  tempVar = 10
+  absNCX2 = absNearCliffX
+  yEdgeDistLimit = 10
 endif
 
 if CanJump
-  if globTempVar < 2 && nearCliffY >= -10 && Rnd < 0.3
+  #let distFromBottomBZ = var4
+  distFromBottomBZ = BBoundary - TopNY
+  if distFromBottomBZ > -10
     Seek handleJumpToStage
     Jump
-  elif nearCliffY <= tempVar && nearCliffY >= -30 && globTempVar < 20
+  elif absNCX2 < 20 && nearCliffY <= -maxYEdgeDistJumpNoUpB && Rnd < 0.3
     Seek handleJumpToStage
     Jump
-  elif nearCliffY < -rh && tempVar2 > 20
-    // if we're beyond 20 units away and under the vertical bounds
+  elif nearCliffY <= yEdgeDistLimit
     Seek handleJumpToStage
     Jump
-  elif nearCliffY < -40 && globTempVar < 5
-    // if we're directly under the ledge then clear the stick's input
-    // and jump
-    ClearStick
-    Seek handleJumpToStage
-    Jump
-  elif nearCliffY < -40
-    Seek handleJumpToStage
-    Jump
-  elif tempVar2 > rw
+  elif nearCliffY <= maxYEdgeDistJumpNoUpB && absNCX2 > 40
     Seek handleJumpToStage
     Jump
   endif
 endif
 
 
-if nearCliffY <= tempVar && FramesHitstun < 1
+if nearCliffY <= 20 && FramesHitstun < 1
   Goto upB
 endif
 Return
@@ -165,9 +162,9 @@ label upB
 if !(NoOneHanging)
   nearCliffY -= 25
   if nearCliffX > 0
-    nearCliffX -= 15
-  else
     nearCliffX += 15
+  else
+    nearCliffX -= 15
   endif
 endif
 Norm globTempVar nearCliffX nearCliffY
@@ -201,22 +198,6 @@ else
 endif
 Return
 
-// these two aren't super special because you really can't do much with
-// them once they're performed
-label handleDownB
-if !(Equal CurrSubaction DSpecialAir) && !(Equal CurrAction hex(0x10))
-  Call AIHub
-endif
-
-Return
-
-label handleSideB
-if !(Equal CurrSubaction SSpecialAir) && !(Equal CurrAction hex(0x10))
-  Call AIHub
-endif
-
-Return
-
 label handleUpB
 if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10))
   if Equal AirGroundState 1 || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F) || FramesHitstun > 0
@@ -233,9 +214,9 @@ if Equal CurrSubaction hex(0x1D9) || Equal CurrSubaction hex(0x1DA)
   if !(NoOneHanging)
     nearCliffY -= 25
     if nearCliffX > 0
-      nearCliffX -= 10
+      nearCliffX += 15
     else
-      nearCliffX += 10
+      nearCliffX -= 15
     endif
   endif
 
@@ -246,7 +227,15 @@ if Equal CurrSubaction hex(0x1D9) || Equal CurrSubaction hex(0x1DA)
   nearCliffX *= -1
   nearCliffY *= -1
 
-  AbsStick nearCliffX nearCliffY
+  if 0.1 < nearCliffX && nearCliffX < 0.25
+    AbsStick 0.3 nearCliffY
+  elif -0.25 < nearCliffX && nearCliffX < -0.1
+    AbsStick -0.3 nearCliffY
+  else
+    AbsStick nearCliffX nearCliffY
+  endif
+
+  
 else
   globTempVar = TopNX * -1
   AbsStick globTempVar
@@ -259,9 +248,15 @@ label
 if CanJump && CurrAction <= hex(0x10)
   Button X
 endif
-if nearCliffX > 0
+
+GetNearestCliff nearCliffX
+nearCliffX = TopNX - nearCliffX
+nearCliffX *= -1
+nearCliffY = nearCliffY - TopNY * -1
+
+if nearCliffX > 10
   AbsStick -1 0
-else
+elif nearCliffX < -10
   AbsStick 1 0
 endif
 

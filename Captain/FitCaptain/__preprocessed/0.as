@@ -58,9 +58,15 @@ if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   endif
   // until hitstun is 0
   if Equal FramesHitstun 0
-    if Equal AirGroundState 1
-      Stick -1
+  if Equal AirGroundState 1
+    Stick -1
+  elif Rnd < 0.3 && CanJump
+    Button X
+    if Rnd < 0.6
+      var18 = 0
+      Call DAir
     endif
+  endif
     Seek begin
     Return
   endif
@@ -177,6 +183,10 @@ if Equal var0 0 && YDistBackEdge > -15 && Equal CurrAction 51 && LevelValue >= 6
   if CanJump && Rnd < 0.5 && LevelValue >= 75
     Button X
     Return
+  else
+  var18 = 1
+  var19 = 2
+  Call Landing
   endif
 endif
 
@@ -234,6 +244,27 @@ if Equal AirGroundState 1
   endif
 endif
 
+// GetIsTeammateCloser var6
+// if Equal var6 1
+//   if XDistLE 60 && XDistFrontEdge > 10 && XDistBackEdge < -10
+//     var17 = OPos * -1
+//     if Equal Direction var17 && XDistFrontEdge > 10
+//       Stick 1
+//     elif !(Equal Direction var17) && XDistBackEdge < -10
+//       Stick -1
+//     endif
+//   endif
+//   if !(XDistLE 100)
+//     if Equal Direction OPos && XDistFrontEdge > 10
+//       Stick 1
+//     elif !(Equal Direction OPos) && XDistBackEdge < -10
+//       Stick -1
+//     endif
+//   endif
+//   Seek _main
+//   Return
+// endif
+
 var19 = 0
 var18 = 0
 var16 = -1
@@ -247,6 +278,7 @@ if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73
   else
     var2 = 25
   endif
+  var17 = Rnd
   label
   if !(XDistLE var2)
     // walk-up
@@ -258,13 +290,15 @@ if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73
   elif Equal AirGroundState 1
     // force crouch cancel
     Stick 0 (-1)
-    if Rnd < 0.1 || Equal CurrAction 10
-      Button X
-    elif Rnd < 0.05 && YDistBackEdge < -25
-      ClearStick
-      Stick -1 0
-    elif Rnd < 0.1
-      Button R
+    if var0 <= 20
+      if var17 < 0.3 && var20 >= 24641 && var20 <= 24655
+        Button X
+      elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 19
+        ClearStick
+        Stick -1 0
+      elif var17 >= 0.6
+        Button R
+      endif
     endif
   endif
   var4 = 0
@@ -373,9 +407,14 @@ if Equal var0 0
 
     RetrieveATKD var0 OCurrSubaction 1
 
-    SAFE_INJECT_1 var2
+    var7 = 255
+    SAFE_INJECT_1 var7
 
-    if LevelValue >= 60 && Equal var6 0
+    if LevelValue >= 48 && Equal var6 0 && Equal var7 0 && !(SamePlane) && TopNY < OTopNY && Equal OAirGroundState 1
+  Call UAir
+    endif 
+
+    if LevelValue >= 60 && Equal var6 0 && var7 <= 1
       if var1 < OAnimFrame || Equal OCurrAction 37
         if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && !(Equal ODirection OPos)
           var18 = 1
@@ -389,7 +428,7 @@ if Equal var0 0
   endif
       elif Rnd < 0.05 && !(Equal var21 32776)
         Call FakeOutHub
-      elif Equal var2 1
+      elif Equal var7 1
         Call FakeOutHub
       endif
     endif
@@ -399,7 +438,7 @@ if Equal var0 0
     var3 = Damage - ODamage
     var3 /= 200
 
-    if LevelValue >= 42 && Equal var6 0
+    if LevelValue >= 42 && Equal var6 0 && var7 <= 2
 
       var2 = var3 * 0.2
 
@@ -412,12 +451,12 @@ if Equal var0 0
           var16 = 2
         endif
         Call NeutralHub
-      elif Equal var2 2
+      elif Equal var7 2
         Call NeutralHub
       endif
     endif
 
-    if LevelValue >= 60 && Equal var6 0
+    if LevelValue >= 60 && Equal var6 0 && var7 <= 2
       var2 = var3 * 0.1
       Abs var2
       if Rnd < var2
@@ -425,9 +464,9 @@ if Equal var0 0
       endif
     endif
 
-    if Equal var6 0
+    if Equal var6 0 && var7 <= 3
       var2 = var3 * 0.1
-      if Rnd < var3 || Rnd < 0.05 || Equal var2 3
+      if Rnd < var3 || Rnd < 0.05 || Equal var7 3
         var16 = 2
   if OYDistBackEdge < -20
     Call UAir
@@ -470,7 +509,7 @@ if Equal var0 0
     endif
 
     if LevelValue >= 21
-  if OYDistBackEdge > -5
+  if OYDistBackEdge > -15
     var0 = Rnd * 105
     // LOGSTR 1836021248 1699964160 1811939328 0 0
     // LOGVAL var0
@@ -684,8 +723,10 @@ endif
       // LOGSTR 1852796416 1694498816 0 0 0
     endif
   endif
-  if OYDistBackEdge <= -5
-    if TopNY < OTopNY
+  if OYDistBackEdge <= -15
+    var17 = TopNY - OTopNY
+    Abs var17
+    if TopNY < OTopNY && var17 < 30
       Call UAir
     else
       var17 = TopNX - OTopNX
@@ -708,15 +749,7 @@ endif
       Seek callers
     endif
   elif True
-  if Rnd < 0.4
-    Call DAir
-  elif Rnd < 0.2
-    Call UAir
-  elif Rnd < 0.3
-    Call FAir
-  else
-    Call NAir
-  endif
+  Call DAir
   endif
 endif
 Return

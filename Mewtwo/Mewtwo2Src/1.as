@@ -8,7 +8,7 @@
 #endsnippet
 
 #snippet SKIP_DASHDANCE_CONDITIONS
-  elif Equal lastScript hex(0x8102) || Equal lastScript hex(0x8104)
+  elif Equal lastScript hex(0x8102) || Equal lastScript hex(0x8104) || XDistFrontEdge < shortEdgeRange || XDistBackEdge > -shortEdgeRange
 #endsnippet
 
 #snippet BEGINNING_CHECKS

@@ -19,11 +19,9 @@ if !(OAttacking)
 endif
 
 SetTimeout 50
-  var1 = Rnd * 10
   var0 = 21 - 0
-  var0 = var1 * var0 + 0
+  var0 = Rnd * var0 + 0
   if !(Equal var0 0)
-    var0 = var0 + Rnd * 5
     var0 = var0 + Rnd * (100 - LevelValue) / 6
   endif
   var1 = 0
@@ -33,11 +31,15 @@ SetTimeout 50
   endif
   if Equal var1 1 && OAttacking
     Seek
+    Jump
   elif var0 <= 0
     Seek
+    Jump
   endif
   var0 -= 1
   Return
+  label
+  SetFrame 0
   label begin
 if Equal IsOnStage 1
   Button R

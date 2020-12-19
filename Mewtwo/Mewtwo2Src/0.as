@@ -5,7 +5,37 @@
   endif
 #endsnippet
 
+#snippet HITSTUN_ENDS
+  if Equal AirGroundState 1
+    if Equal LevelValue LV9
+      movePart = 1
+      Call DTilt
+    else
+      Stick -1
+    endif
+  elif Rnd < 0.5
+    movePart = 0
+    if Rnd < 0.4 && CanJump
+      Button X
+      Stick 0 (-1)
+      Call NAir
+    else
+      Call NAir
+    endif      
+  endif
+#endsnippet
+
 #snippet TECH_CHASE_OPTIONS
+#endsnippet
+
+#snippet O_ON_PLAT_ABOVE
+  globTempVar = OTopNY - TopNY
+  if globTempVar < 30 && Rnd < 0.3
+    Call UTilt
+  else
+    approachType = at_hover
+    Call UAir
+  endif
 #endsnippet
 
 #snippet WHIFF_PUNISH_OPTIONS
@@ -78,26 +108,23 @@
       ODmgXWeight /= 100
       ODmgXWeight *= ODamage
 
-      if ODmgXWeight >= 112
+      if ODmgXWeight >= 80
         if moveSelection < 20
           Call Grab
-        elif moveSelection < 30
-          Call FTilt
         elif moveSelection < 45 && !(XDistLE 20)
           Call NSpecial
         elif moveSelection < 60
           Call DTilt
         elif moveSelection < 85
           approachType = at_hover
-          if !(ODistLE 40) && ODistLE 70
+          if !(ODistLE 40) && ODistLE 70 && Rnd < 0.5
             approachType = 0
           endif
           Call FAir
         else
           approachType = at_hover
           moveVariant = mv_hc
-          approachType = at_hover
-          if !(ODistLE 40) && ODistLE 70
+          if !(ODistLE 40) && ODistLE 70 && Rnd < 0.5
             approachType = 0
             moveVariant = 0
           endif
@@ -139,7 +166,9 @@
     endif
   endif
   if OYDistBackEdge <= -15
-    if TopNY < OTopNY
+    globTempVar = TopNY - OTopNY
+    Abs globTempVar
+    if TopNY < OTopNY && globTempVar < 30
       Call UTilt
     else
       globTempVar = TopNX - OTopNX
@@ -159,11 +188,13 @@
 
 #snippet HIGHUP_OPTIONS
   if Rnd < 0.4
-    Call DAir
+    Call NAir
   elif Rnd < 0.2
-    Call UAir
+    Call DAir
   elif Rnd < 0.3
     Call FAir
+  elif Rnd < 0.3
+    Call BAir
   else
     Call NAir
   endif

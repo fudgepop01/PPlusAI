@@ -83,8 +83,6 @@ if Equal movePart 0
   else
     Call AIHub
   endif
- // SAFE_INJECT_3 move_yOffset
- // SAFE_INJECT_4 move_yRange
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
   else

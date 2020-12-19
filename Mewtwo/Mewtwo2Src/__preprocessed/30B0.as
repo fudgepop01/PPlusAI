@@ -11,19 +11,10 @@ if !(Equal AirGroundState 1)
     Finish
 endif
 
-if !(OAttacking)
-  if FrameGE 21
-    Finish
-  endif
-  Return
-endif
-
 SetTimeout 50
-  var1 = Rnd * 10
   var0 = 21 - 0
-  var0 = var1 * var0 + 0
+  var0 = Rnd * var0 + 0
   if !(Equal var0 0)
-    var0 = var0 + Rnd * 5
     var0 = var0 + Rnd * (100 - LevelValue) / 6
   endif
   var1 = 0
@@ -33,18 +24,22 @@ SetTimeout 50
   endif
   if Equal var1 1 && OAttacking
     Seek
+    Jump
   elif var0 <= 0
     Seek
+    Jump
   endif
   var0 -= 1
   Return
+  label
+  SetFrame 0
   label begin
 
 if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 60
     SetFrame 0
     label
     Stick 0 (-1)
-    if NumFrames <= 20
+    if NumFrames >= 20
         Call AIHub
     elif FramesHitstun > 0
         Seek
@@ -52,6 +47,7 @@ if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun 
     endif
     Return
 endif
+label
 
 SetTimeout 15
 var0=100-LevelValue

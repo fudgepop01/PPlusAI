@@ -42,7 +42,7 @@ label
 
 // these work together to only dashdance if not in a tech-chase or combo situation
   if Equal OCurrAction 78 || Equal OCurrAction 80 || Equal OCurrAction 82 || Equal OCurrAction 96 || Equal OCurrAction 97
-  elif Equal var21 33026 || Equal var21 33028
+  elif Equal var21 33026 || Equal var21 33028 || XDistFrontEdge < 10 || XDistBackEdge > -10
 elif Equal var21 36608 || Equal var21 8288 || Equal var21 32770 || OYDistBackEdge < -20
 elif Equal var16 4 && Rnd < 0.3
 else
@@ -52,7 +52,7 @@ else
   label _dashdance
   if Equal CurrAction 10 || Equal CurrAction 22
     Return
-  elif InAir && YDistBackEdge > -5 && YDistBackEdge < 0
+  elif InAir && YDistBackEdge > -5 && YDistBackEdge < 0 && !(Equal XDistFrontEdge XDistBackEdge)
     if XDistBackEdge < -10
       Button R
       if ODistLE 30
@@ -88,7 +88,7 @@ else
   Return
   label _ddSubr
   SetFrame 0
-  if Equal Direction OPos && Rnd < 0.5
+  if Equal Direction OPos && Rnd < 0.5 && XDistFrontEdge > 10 && XDistBackEdge < -10
     Button X
   endif
   var0 = var0 - 1
@@ -159,6 +159,11 @@ if !(True)
     AbsStick var2
     Return
   elif var2 < 20
+    var17 = var9 + (var11 * 2)
+    var17 /= 2
+    if var17 > 1 && !(Equal Direction OPos)
+      Stick -0.5
+    endif
     if OYDistBackEdge > -50
       if OYDistBackEdge < 30
         Button X
@@ -185,32 +190,6 @@ if var20 > 24655
 endif
 
 var8 = (var14 - var13) + 1
-
-if Rnd < 0.05
-  if YDistFloor < 0.2 && var6 < 0 && !(SamePlane) && Equal AirGroundState 1
-    var17 = 3
-    Seek platformDrop
-    Jump
-  endif
-endif
-
-if !(True)
-  label platformDrop
-  ClearStick
-  if CurrAction <= 5 && !(Equal CurrAction 3) || Equal CurrAction 17
-    AbsStick 0 (-1)
-  endif
-
-  var17 -= 1
-
-  if var17 <= 0
-    Seek
-  else
-    Seek platformDrop
-  endif
-  Return
-endif
-label
 
 if !(Equal YSpeed 0)
   Seek LOOP_DIST_CHECK
@@ -291,18 +270,20 @@ if !(True)
   var17 = var17 - (OTopNY - TopNY)
   var6 = var6 - var17
   var5 += TopNX
-  var5 = var5 - (var11 * Direction)
+  var17 = var9 + (var11 * 2)
+  var17 /= 2
+  if var17 <= -1
+    var5 = var5 - (var11 * OPos * -1)
+    var5 = var5 - (var9 * OPos * -1)
+  else
+    var5 = var5 - (var11 * Direction)
+    var5 = var5 - (var9 * Direction)
+  endif
   var6 += TopNY
-  // var17 = YDistBackEdge
-  // if var10 > -2 && var20 >= 24641 && var20 <= 24655
-  //   var6 = var6 + var10 + 2 - var3 - OHurtboxSize
-  // endif
-  // var6 -= TopNY
   var17 = var3 * 2
   var6 -= var17
   var6 = var6 - var12
   var6 += var10
-  var5 = var5 - (var9 * Direction)
   // if Equal var8 0 || Equal var8 1 || Equal var18 1
   //   DrawDebugRectOutline var5 var6 var11 var12 255 0 0 136
   // endif
@@ -366,12 +347,17 @@ if !(True)
       Jump
     endif
   endif
+
     if var0 <= var11
+      var2 = 0
       Goto XDistCheckPassed
       if Equal var2 1
         var2 = 0
         Seek CallAttacks
         Jump
+      elif Equal var2 2
+        Seek BEGIN_MAIN
+        Return
       endif
       var17 = TopNY - OTopNY
       Abs var17
@@ -379,11 +365,15 @@ if !(True)
         Call Unk3020
       endif
     elif var2 <= var11
+      var2 = 0
       Goto XDistCheckPassed
       if Equal var2 1
         var2 = 0
         Seek CallAttacks
         Jump
+      elif Equal var2 2
+        Seek BEGIN_MAIN
+        Return
       endif
     endif
     if CanJump && YDistBackEdge > 80
@@ -415,8 +405,7 @@ if !(Equal CurrSubaction JumpSquat)
     var2 = 65535
   endif
   // if we want to perform an aerial, jump with respect to the
-  // var13 (that's a really poor name for it tbh lol)
-  // to attempt to get there by the time the move's hitbox is out
+  // var13 to attempt to get there by the time the move's hitbox is out
   var17 = var5 + (TotalXSpeed * var13 * -1)
   var2 = var5 + (XSpeed * var13)
   Abs var17
@@ -429,6 +418,13 @@ if !(Equal CurrSubaction JumpSquat)
           Button X
         endif
       elif var6 <= 70
+        var17 = var9 + (var11 * 2)
+        var17 /= 2
+        label
+        if var17 <= -1 && Equal Direction OPos
+          Stick -1
+          Return
+        endif
         Button X
       endif
     elif var2 <= var11 && var20 >= 24641 && var20 <= 24655
@@ -437,6 +433,13 @@ if !(Equal CurrSubaction JumpSquat)
           Button X
         endif
       elif var6 <= 70
+        var17 = var9 + (var11 * 2)
+        var17 /= 2
+        label
+        if var17 <= -1 && Equal Direction OPos
+          Stick -1
+          Return
+        endif
         Button X
       endif
     elif Rnd <= 0.02 && var20 >= 24625 && var20 <= 24639 && XDistLE 80 100 && OFramesHitstun < 1
@@ -445,10 +448,7 @@ if !(Equal CurrSubaction JumpSquat)
     elif Rnd <= 0.02 && Equal var20 32776 && OFramesHitstun < 1
       Call mix_tomhawkJump
     endif
-  // elif CanJump && Rnd <= 0.01 && var20 >= 24641 && var20 <= 24655 && Equal IsOnStage 1 && TopNY > OTopNY && OFramesHitstun < 1
-  //   Call mix_doubleJump
-  // elif CanJump && Rnd <= 0.01 && Equal var20 32776 && TopNY > OTopNY && OFramesHitstun < 1
-  //   Call mix_doubleJump
+
 
   endif
 
@@ -466,6 +466,36 @@ if !(Equal CurrSubaction JumpSquat)
     label
   endif
 endif
+
+if !(SamePlane) && Rnd < 0.8
+  if Equal AirGroundState 1 && var6 < 0
+    var17 = 4
+    Seek platformDrop
+    Jump
+  endif
+endif
+
+if !(True)
+  label platformDrop
+  ClearStick
+  if CurrAction <= 5 && !(Equal CurrAction 3)
+    AbsStick 0 (-1)
+  elif Equal CurrAction 17
+    AbsStick 0 (-1)
+  else
+    Return
+  endif
+
+  var17 -= 1
+
+  if var17 <= 0
+    Seek
+  else
+    Seek platformDrop
+  endif
+  Return
+endif
+label
 
   GetNearestCliff var2
   var17 = var15
@@ -528,6 +558,10 @@ elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
   if Equal CurrAction 1 && LevelValue > 21 && 15 < var0
     ClearStick
   endif
+
+  if !(SamePlane) && var0 <= 15
+    Goto JumpIfInRange
+  endif
 else
   // otherwise...
   var17 = var5 / 15
@@ -589,10 +623,10 @@ label JumpIfInRange
     Stick 0 (-1)
     Call ChrSpecific2
   endif
-  if var17 > 15 && var17 < 70 && Equal AirGroundState 1 && CurrAction <= 9
+  if var17 > 13 && var17 < 70 && Equal AirGroundState 1 && CurrAction <= 9
     Button X
   endif
-  if var17 > 25 && var17 < 70 && Equal CurrSubaction JumpSquat
+  if var17 > 18 && var17 < 70 && Equal CurrSubaction JumpSquat
     Button X
   endif
   if var17 > 15 && var17 < 65 && Equal AirGroundState 2 && CanJump && Equal IsOnStage 1
@@ -673,11 +707,13 @@ if var1 <= var17
       var17 /= 2
       if var17 >= 1 && !(Equal Direction OPos)
         ClearStick
-        Stick (-0.5)
+        Stick (-1)
+        var2 = 2
         Return
       elif var17 <= -1 && Equal Direction OPos
         ClearStick
-        Stick (-0.5)
+        Stick (-1)
+        var2 = 2
         Return
       endif
       Button X
@@ -759,6 +795,10 @@ if var20 >= 24625 && var20 <= 24635
     else
       Button R
       AbsStick var17 (-1)
+    endif
+    if XDistBackEdge > -10 || XDistFrontEdge < 10
+      ClearStick
+      AbsStick 0 (-1)
     endif
     Return
   elif !(Equal AirGroundState 1)

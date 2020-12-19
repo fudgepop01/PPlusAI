@@ -1,7 +1,29 @@
 #snippet PRE_HOOKS
 #endsnippet
 
+#snippet HITSTUN_ENDS
+  if Equal AirGroundState 1
+    Stick -1
+  elif Rnd < 0.3 && CanJump
+    Button X
+    if Rnd < 0.6
+      movePart = 0
+      Call DAir
+    endif
+  endif
+#endsnippet
+
+#snippet L_CANCEL
+  var18 = 1
+  var19 = 2
+  Call Landing
+#endsnippet
+
 #snippet TECH_CHASE_OPTIONS
+#endsnippet
+
+#snippet O_ON_PLAT_ABOVE
+  Call UAir
 #endsnippet
 
 #snippet WHIFF_PUNISH_OPTIONS
@@ -42,7 +64,7 @@
 #endsnippet
 
 #snippet MAIN_OPTIONS
-  if OYDistBackEdge > -5
+  if OYDistBackEdge > -15
     moveSelection = Rnd * 105
     // LOGSTR str("moveSel")
     // LOGVAL moveSelection
@@ -126,8 +148,10 @@
       // LOGSTR str("none")
     endif
   endif
-  if OYDistBackEdge <= -5
-    if TopNY < OTopNY
+  if OYDistBackEdge <= -15
+    globTempVar = TopNY - OTopNY
+    Abs globTempVar
+    if TopNY < OTopNY && globTempVar < 30
       Call UAir
     else
       globTempVar = TopNX - OTopNX
@@ -145,13 +169,5 @@
 #endsnippet
 
 #snippet HIGHUP_OPTIONS
-  if Rnd < 0.4
-    Call DAir
-  elif Rnd < 0.2
-    Call UAir
-  elif Rnd < 0.3
-    Call FAir
-  else
-    Call NAir
-  endif
+  Call DAir
 #endsnippet

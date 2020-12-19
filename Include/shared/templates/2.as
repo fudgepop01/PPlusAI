@@ -19,6 +19,7 @@ OYDistSelf = OTopNY - TopNY
 {DEBUG_START}
 
 #let ODmgXWeight = var8
+#let comboLeniency = var7
 
 GET_WEIGHT_TABLE(var8, var0)
 
@@ -31,7 +32,7 @@ endif
 
 {MOVE_SPECIFIC_COMBOS}
 
-if OYDistBackEdge > -5 && Equal OCurrAction hex(0x49) && Rnd < 0.5
+if OYDistBackEdge > -5 && Equal OCurrAction hex(0x49) && Rnd < 0.7
   Seek techChase_wait
   Jump
 endif
@@ -57,25 +58,28 @@ globTempVar = OTopNX - (TopNX + nearCliffX)
 Abs nearCliffX
 Abs globTempVar
 
-
-if nearCliffX < globTempVar && Equal OIsOnStage 1 && OYDistBackEdge > -60
-  if ODmgXWeight < 80
+if globTempVar < nearCliffX && OYDistBackEdge > -60 && globTempVar < 20
+  testLimit = 10
+  label edgeguard
+  {EDGEGUARD_OPTIONS}
+  Seek edgeguard
+elif Equal OIsOnStage 1 && OYDistBackEdge > -90
+  if ODmgXWeight < killComboThreshold
     testLimit = 10
     label combo
     {COMBO_OPTIONS}
+    Seek combo
   else
     testLimit = 10
     label kill
     {KILL_OPTIONS}
+    Seek kill
   endif
-elif globTempVar < nearCliffX && OYDistBackEdge > -60
-  testLimit = 10
-  label edgeguard
-  {EDGEGUARD_OPTIONS}
 else
   testLimit = 10
   label juggle
   {JUGGLE_OPTIONS}
+  Seek juggle
 endif
 Goto analyze
 testLimit -= 1
@@ -83,6 +87,7 @@ if testLimit <= 0
   Seek NCombo
   Jump
 endif
+Jump
 Return
 
 label NCombo
@@ -161,7 +166,9 @@ Return
 
 label analyze
 
-if OFramesHitstun < move_hitFrame
+globTempVar = OFramesHitstun + comboLeniency
+if globTempVar < move_hitFrame
+  comboLeniency = 0
   Return
 endif
 
@@ -207,6 +214,7 @@ if targetXDistance <= move_xRange && targetYDistance <= move_yRange
   Seek callMove
   Jump
 endif
+comboLeniency = 0
 Return
 
 label callMove

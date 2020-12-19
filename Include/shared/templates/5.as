@@ -11,6 +11,9 @@ lastScript = hex(0x8005)
 #let tempVar = var1
 #let tempVar2 = var2
 
+globTempVar = move_xOffset + (move_xRange * 2)
+globTempVar /= 2
+
 tempVar = TopNX
 tempVar2 = OTopNX
 Abs tempVar
@@ -24,7 +27,6 @@ endif
 // LOGSTR str("actionType")
 // LOGVAL actionType
 // SAFE_INJECT_2 actionType
-actionType = 0.3
 label
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if actionType <= 0.2
@@ -60,11 +62,12 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       endif
       if Equal CurrAction hex(0x03)
         if Rnd < 0.1
-          if move_xOffset <= -3 && CurrAction < hex(0x09)
+          if globTempVar <= -1 && CurrAction < hex(0x09)
             Button X
           else
             ClearStick
-            Stick -1
+            AbsStick OPos
+            Return
           endif
         endif
       elif Equal CurrAction hex(0x07) || Equal CurrAction hex(0x06) 
@@ -95,13 +98,13 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
           Button X
         endif
       elif !(Equal CurrAction hex(0x0A))
-        if move_xOffset <= -3 && CurrAction <= hex(0x09)
+        if globTempVar <= -1 && CurrAction <= hex(0x09)
           Button X
         else
           Stick -1
         endif
       endif
-    elif move_xOffset <= -3
+    elif globTempVar <= -1
       if Equal OPos Direction
         Stick -0.5
       endif
@@ -114,7 +117,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
     endif
   else
   // approach
-    if move_xOffset <= -3
+    if globTempVar <= -1
       actionType = 0.85
       Return
     else

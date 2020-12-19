@@ -7,6 +7,10 @@ unk 0x0
 
 #let tempVar = var0
 
+if Equal XDistFrontEdge XDistBackEdge
+  Call RecoveryHub
+endif
+
 // sets up offsets to get to target position
 if Equal movePart 0
   RetrieveATKD var0 OCurrSubaction 1

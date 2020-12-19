@@ -11,13 +11,6 @@ if !(Equal AirGroundState 1)
     Finish
 endif
 
-if !(OAttacking)
-  if FrameGE 21
-    Finish
-  endif
-  Return
-endif
-
 SetTimeout 50
 DEFENSIVE_REACTION_TIME(var0, var1)
 
@@ -25,7 +18,7 @@ if Rnd < 0.5 && Equal LevelValue LV9 && Equal AirGroundState 1 && FramesHitstun 
     SetFrame 0
     label
     Stick 0 (-1)
-    if NumFrames <= 20
+    if NumFrames >= 20
         Call AIHub
     elif FramesHitstun > 0
         Seek
@@ -33,6 +26,7 @@ if Rnd < 0.5 && Equal LevelValue LV9 && Equal AirGroundState 1 && FramesHitstun 
     endif
     Return
 endif
+label
 
 SetTimeout 15
 var0=100-LevelValue
