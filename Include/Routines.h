@@ -2,6 +2,7 @@
 ///Seems to be doing nothing
 act Nothing : 0x0
 
+/// act_m_wait_init/act_m_wait
 act Unk10 : 0x10
 
 act Unk20 : 0x20
@@ -39,50 +40,80 @@ act GetBehind0 : 0x80
 
 //Ground attack routines
 
+// jab, grab (slot1); XDistLE 10
 act Unk1010 : 0x1010
+// fsmash (slot3); XDistLE 25
 act Unk1020 : 0x1020
+// utilt, usmash (slot4); XDistLE 15
 act Unk1030 : 0x1030
+// jab, grab (slot1); XDistLE 30 + 20*Rnd only if opponent "close" 
 act Unk1040 : 0x1040
+// wait until touching ground and can act for 10 frames; face the opponent; and attack with slot2 (NB, DB)
 act Unk1050 : 0x1050
 
+// usmash, upB (slot5) if opponent will fall into attack range in 30 frames (0.5s); else run to location
 /// NOTE: often called when opponent is high up and
 /// when opponent and self are on same plane
-/// NOTE: is effectively a noop in PM
 act Unk1060 : 0x1060
 
+/// id of 0x9070
+/// slots 17 (bair), 18 (uair), and 11 (nair)
+/// only relevant in captain, fox, ike, lucario, lucas, marth, ness, snake, yoshi
 act Unk1070 : 0x1070
+/// captain, fox, ike, lucario, lucas (overrides), marth, ness, yoshi
 act Unk1071 : 0x1071
+/// snake
 act Unk1072 : 0x1072
+/// captain
 act Unk1073 : 0x1073
 act Unk1074 : 0x1074
 act Unk1075 : 0x1075
+/// captain, ike, lucario
 act Unk1076 : 0x1076
+/// captain, ike
 act Unk1077 : 0x1077
 act Unk1078 : 0x1078
 
-/// follow opponent coming down
+/// follow opponent coming down and execute slot 17, 18, or 11
 act Unk1080 : 0x1080
-/// aggressively follow opponent coming down
+/// aggressively run to opponent coming down and execute slot8 (jab, usmash, grab, nair, fair, bair, uair)
 act Unk1090 : 0x1090
 
 ///Deals with intercepting the opponent's recovery
+/// act_a_meteo_aft
 act BlockRecovery : 0x10A0
 act BlockRecovery1 : 0x10A1
 act BlockRecovery2 : 0x10A2
 act BlockRecovery3 : 0x10A3
+/// DSmash (slot6) if idling -- something to hit an opponent behind them
 act Unk10D0 : 0x10D0
 ///Called when the opponent is hanging cliff
+/// act_a_meteo_aft
+/// act_a_ambush
 act InterceptCliff : 0x10F0
 
 ///Called after grabbing an opponent successfully
+/// Grab handler
 act Unk1120 : 0x1120
+/// common = rest frame
+/// | diddy = spam ftilt/utilt/rapid jab
+/// | donkey = jab when attacked
+/// | pikachu = walk up and ftilt
+/// | samus = jump when opponent jumps
+/// | sonic = stalk (like pika w/ no attack)
+/// | wolf = walk up DA / jab / tilt
+/// | yoshi = walk up DA / jab / tilt
 act Unk1130 : 0x1130
+/// jump up/offstage ==> edgeguard
 act Unk1140 : 0x1140
+/// force-called under a condition having something to do with AIPD def10
 act Unk1160 : 0x1160
+/// slot9 (undefined in common); if XDistLE AIPDFloat2 && XDistLE 10
 act Unk1170 : 0x1170
 
 //Recovery routines
 
+/// act_r_jump_aft_shot
 act JumpOnStage : 0x2010
 act JumpOnStage1 : 0x2011
 act JumpOnStage2 : 0x2012
@@ -93,10 +124,14 @@ act JumpOnStage6 : 0x2016
 act JumpOnStage7 : 0x2017
 act JumpOnStage8 : 0x2018
 act JumpOnStage9 : 0x2019
-/// sideb to ledge
+/// sideb to ledge if offstage, else run towards center
+/// only used with mario 
 act Unk2020 : 0x2020
-/// hard DI in/out
+/// jump in direction of ledge
+/// never used/called
 act Unk2030 : 0x2030
+
+/// act_r_jump_aft_shot
 act EdgeRecover : 0x2040
 act EdgeRecover1 : 0x2041
 act EdgeRecover2 : 0x2042
@@ -108,22 +143,33 @@ act EdgeRecover7 : 0x2047
 act EdgeRecover8 : 0x2048
 act EdgeRecover9 : 0x2049
 
+/// act_r_fall
 act OnGotDamaged : 0x2050
 act OnGotDamaged1 : 0x2051
 
 ///Ledge Hanging
+/// act_r_dfjump
 act LedgeHang : 0x2060
 
 ///Lying
 act Lying : 0x2070
 
-//Handlers of the opponent's attacks
+//Defensive Options
 
+/// act_d_wait_init/act_d_wait (action defensive wait?)
+/// | basic defensive wait
 act Unk3010 : 0x3010
+/// complex shield routine
 act Unk3020 : 0x3020
+/// act_d_wait_init/act_d_wait
+/// | complex defensive wait
 act Unk3030 : 0x3030
+/// act_d_wait_init/act_d_wait
+/// | mid-complex defensive wait
 act Unk3040 : 0x3040
+/// defensive while holding item plus other things ???
 act Unk3080 : 0x3080
+/// defensive while holding item ???
 act Unk3090 : 0x3090
 act Spotdodge : 0x30A0
 act DodgeWhenAttacked : 0x30B0
@@ -141,6 +187,8 @@ act FSmash : 0x6035
 act USmash : 0x6036
 act DSmash : 0x6037
 act NSpecial : 0x6038
+/// sheik has a special hardcoded handler for this for controlling the chain:
+/// act_c_g_blow_f_sheik
 act SSpecial : 0x6039
 act USpecial : 0x603A
 act DSpecial : 0x603B
@@ -249,7 +297,6 @@ act ATKBackD : 0x407D
 act ATKBackE : 0x407E
 act ATKBackF : 0x407F
 
-
 act ComboG0 : 0x5000
 act ComboG1 : 0x5001
 act ComboG2 : 0x5002
@@ -309,6 +356,8 @@ act FakeOutHub : 0x8008
 
 act mix_tomhawkJump : 0x8F00
 act mix_doubleJump : 0x8F01
+
+act DashAttack : 0x603E
 
 act ChrSpecific1 : 0x8101
 act ChrSpecific2 : 0x8102
@@ -455,15 +504,46 @@ act LvL9RE : 0x890E
 act LvL9RF : 0x890F
 
 // newly discovered
+/// act_m_stroll
 act Unk90 : 0x90
+/// act_a_goro
 act Unk1100 : 0x1100
+/// act_a_brk_wall global routine
+/// called when back to a wall? if no wall, goes to edge and sometimes dives off
 act Unk1150 : 0x1150
+/// act_d_wait_init/act_d_wait
+/// | complex defensive wait
 act Unk3050 : 0x3050
-act Unk601a : 0x601a
-act Unk6022 : 0x6022
-act Unk6023 : 0x6023
-act Unk6024 : 0x6024
-act Unk6025 : 0x6025
+/// act_d_air_sway
+act Unk3060 : 0x3060
 
-// get_c_req_id
-act Unk6026 : 0x6026
+act Unk6010 : 0x6010
+// 0x6011 = slot0
+// 0x6012 = slot1
+// 0x6013 = slot2
+// 0x6014 = slot3
+// 0x6015 = slot4
+// 0x6016 = slot5
+// 0x6017 = slot6
+// 0x6018 = slot7
+// 0x6019 = slot8
+// 0x601a = slot9
+// 0x601b = slot10
+// 0x601c = slot11
+// 0x601d = slot12
+// 0x601e = slot13
+// 0x601f = slot14
+// 0x6020 = slot15
+// 0x6021 = slot11
+// 0x6022 = slot12
+// 0x6023 = slot13
+// 0x6024 = slot14
+// 0x6025 = slot15
+// 0x6026 = slot16
+// 0x6027 = slot17
+// 0x6028 = slot18
+// 0x6029 = slot19
+// 0x602a = slot20
+// 0x602b = slot21
+// 0x602c = slot22
+// 0x602d = slot23

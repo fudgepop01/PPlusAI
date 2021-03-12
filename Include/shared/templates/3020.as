@@ -8,6 +8,10 @@ unk 0x00000
 
 //Strings
 
+if FramesHitstun > 0 || Equal CurrAction hex(0x45)
+    Call AIHub
+endif
+
 if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
     Finish
 endif

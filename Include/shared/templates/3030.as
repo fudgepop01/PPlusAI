@@ -6,14 +6,10 @@ id 0x3030
 unk 0x00000
 
 //Strings
-// str "#wait_f"
 
-if !(ODistLE 23)
-    Finish
-endif
-//____________________
-label
-if FrameGE 0 && !(FrameGE 1)
-    Finish
-endif
+LOGSTR str("============")
+LOGSTR str("=== 3030 ===")
+LOGSTR str("============")
+FORCED_SWITCH_CONDITIONS
+Call AIHub
 Return

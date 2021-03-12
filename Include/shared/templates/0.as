@@ -1,13 +1,15 @@
 #include <Definition_AIMain.h>
 //TrueID=0x0
 id 0x8000
-
-//Set Unknown
-unk 0x00000
+unk 0x0
 
 label begin
 
 {PRE_HOOKS}
+
+if Equal movePart mp_ATK
+  movePart = 0
+endif
 
 if Equal CurrAction hex(0x114) || Equal CurrAction hex(0x10)
   Call RecoveryHub
@@ -44,16 +46,20 @@ endif
 #let TechWindow = var2
 #let MeteorCancelWindow = var3
 #let tempVar = var4
+#let framesOnGround = var5
 
 // if in hitstun...
-if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
-  //...pick a random direction for the control stick
+if FramesHitstun > 0
   StickX = Rnd - 1
   StickY = Rnd - 1
   TechWindow = 1
   MeteorCancelWindow = Rnd * 5 + 15
-  // label to make this loop each frame...
+  framesOnGround = 0
+  // makes it loop from here each frame
   label
+endif
+
+if FramesHitstun > 1 && Equal CurrAction hex(0x45)
   if Equal IsOnStage 0 || Damage > 80
     // if offstage with high damage, switch to survival DI
     StickX = TopNX * -1
@@ -61,12 +67,11 @@ if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
   else
     AbsStick StickX StickY
   endif
-  // until hitstun is 0
-  if Equal FramesHitstun 0
-    {HITSTUN_ENDS}
-    Seek begin
-    Return
+  if Equal LevelValue LV8 && YDistBackEdge > -5 && Equal IsOnStage 1
+    ClearStick
+    AbsStick StickX (-1)
   endif
+  // until hitstun is 0
   if LevelValue >= LV7
     Goto _checkMeteorCancel
   endif
@@ -76,8 +81,34 @@ if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
   Return
 endif
 
-if FramesHitstun > 0 && Equal CurrAction hex(0x43) && LevelValue >= LV8
+if FramesHitstun > 1 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45) && LevelValue >= LV8
   Stick 0 (-1)
+  Return
+endif
+
+if FramesHitstun > 0 && CurrAction <= hex(0x10)
+  Seek
+  Jump
+elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
+  label
+  if Rnd < 0.2
+    Button R
+    Call Unk3020
+  endif
+  Seek
+  Jump
+elif Equal FramesHitstun 1 && LevelValue >= LV5
+  label
+  {HITSTUN_ENDS}
+  Seek begin
+  Return
+endif
+
+if CurrAction >= hex(0x11) && CurrAction <= hex(0x17)
+  framesOnGround += 1
+endif
+
+if FramesHitstun > 0 || FramesHitlag > 0
   Return
 endif
 Seek _main
@@ -142,7 +173,7 @@ label
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(isGoingOffstage, var1, 15)
 
-if Equal CurrAction hex(0x18)
+if Equal CurrAction hex(0x18) && !(Equal HitboxConnected 1)
   Seek _main
   Return
 endif
@@ -154,12 +185,7 @@ if Equal isGoingOffstage 2 && Equal AirGroundState 2
 endif
 
 if Equal isGoingOffstage 0 && YDistBackEdge > -15 && Equal CurrAction hex(0x33) && LevelValue >= LV7
-  if CanJump && Rnd < 0.5 && LevelValue >= LV8
-    Button X
-    Return
-  else
-    {L_CANCEL}
-  endif
+  {L_CANCEL}
 endif
 
 if MeteoChance && !(Equal isGoingOffstage 2)
@@ -195,14 +221,16 @@ endif
 // if we reach here then it's time to choose an attack to perform
 // if the opponent is in hitstun and we want to combo, we'll go to the
 // ComboHub (2.as)
-if Equal HitboxConnected 1 && !(Equal noCombo noComboVal) && LevelValue >= LV5
-  if Equal CurrAction hex(0x18)
-    Seek _main
-    Return
+if !(Equal noCombo noComboVal)
+  if Equal HitboxConnected 1 && LevelValue >= LV5
+    // if Equal CurrAction hex(0x18)
+    //   Seek _main
+    //   Return
+    // endif
+    Call ComboHub
+  elif OFramesHitstun > 0 && LevelValue >= LV5
+    Call ComboHub
   endif
-  Call ComboHub
-elif OFramesHitstun > 0 && LevelValue >= LV5
-  Call ComboHub
 endif
 
 ClearStick
@@ -242,7 +270,7 @@ movePart = 0
 hit_knockback = -1
 
 if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction hex(0x49)
-  TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 75 + 75, _afterTCS, _afterTCS)
+  TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 50 + 25, _afterTCS, _afterTCS)
 endif
 
 IS_EARLY_ROLL(var0, var1)
@@ -261,47 +289,50 @@ if Equal isEarlyRoll 0
     if moveSelection < 2
       Call Jab123
     elif moveSelection < 3
-      Call FTilt
+      Call DashAttack
     elif moveSelection < 4
-      Call UTilt
+      Call FTilt
     elif moveSelection < 5
-      Call DTilt
+      Call UTilt
     elif moveSelection < 6
-      Call FSmash
+      Call DTilt
     elif moveSelection < 7
-      Call USmash
+      Call FSmash
     elif moveSelection < 8
-      Call DSmash
+      Call USmash
     elif moveSelection < 9
-      Call NSpecial
+      Call DSmash
     elif moveSelection < 10
-      Call SSpecial
+      Call NSpecial
     elif moveSelection < 11
-      Call DSpecial
+      Call SSpecial
     elif moveSelection < 12
-      Call Grab
+      Call DSpecial
     elif moveSelection < 13
-      Call NAir
+      Call Grab
     elif moveSelection < 14
-      Call FAir
+      Call NAir
     elif moveSelection < 15
-      Call BAir
+      Call FAir
     elif moveSelection < 16
-      Call UAir
+      Call BAir
     elif moveSelection < 17
-      Call DAir
+      Call UAir
     elif moveSelection < 18
-      Call NSpecialAir
+      Call DAir
     elif moveSelection < 19
-      Call SSpecialAir
+      Call NSpecialAir
     elif moveSelection < 20
-      Call USpecialAir
+      Call SSpecialAir
     elif moveSelection < 21
+      Call USpecialAir
+    elif moveSelection < 22
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
+
     if OCurrAction >= hex(0x55) && OCurrAction <= hex(0x5D)
-      Call FSmash
+      {PUNISH_BROKEN_SHIELD}
     endif
 
     RetrieveATKD var0 OCurrSubaction 1
@@ -313,7 +344,7 @@ if Equal isEarlyRoll 0
     #let oDangerYMax = var5
 
     #let injected = var7
-    injected = hex(0xFF)
+    injected = 0
     SAFE_INJECT_1 injected
 
     if LevelValue >= LV6 && Equal waitTeamFlag 0 && Equal injected 0 && !(SamePlane) && TopNY < OTopNY && Equal OAirGroundState 1
@@ -346,14 +377,10 @@ if Equal isEarlyRoll 0
       #let tempVar2 = var1
       #let defenseChance = var2
 
-      defenseChance = defenseMul * 0.2
+      defenseChance = defenseMul * 0.1
 
-      tempVar = TopNX
-      tempVar2 = OTopNX
-      Abs tempVar
-      Abs tempVar2
-      if XDistLE 40 && Rnd < 0.15 && Equal AirGroundState 1 && tempVar2 < tempVar
-        if Rnd < defenseChance || Rnd < 0.1
+      if XDistLE 30 && Rnd < 0.4 && Equal AirGroundState 1
+        if Rnd < defenseChance || Rnd < 0.04
           approachType = at_defend
         endif
         Call NeutralHub
@@ -399,18 +426,42 @@ if Equal isEarlyRoll 0
       Jump
     endif
 
+    #let ODmgXWeight = var2
+    GET_WEIGHT_TABLE(ODmgXWeight, var1)
+
+    ODmgXWeight = ODmgXWeight - 200
+    ODmgXWeight *= -1
+    ODmgXWeight /= 100
+    ODmgXWeight *= ODamage
+
     if LevelValue >= LV3
       {MAIN_OPTIONS}
       moveSelection = Rnd * 5 + 12
       Seek callers
       Jump
     else
-      moveSelection = Rnd * 17
+      moveSelection = Rnd * 18
       Seek callers
     endif
   elif True
     {HIGHUP_OPTIONS}
   endif
 endif
+Return
+
+label comboStarters
+#let ODmgXWeight = var2
+{COMBO_STARTERS}
+Return
+
+label killMoves
+#let ODmgXWeight = var2
+{KILL_MOVES}
+Return
+
+label neutralMoves
+#let ODmgXWeight = var2
+approachType = at_throwOut
+{NEUTRAL_MOVES}
 Return
 Return

@@ -5,11 +5,11 @@ id 0x10A0
 //Set Unknown
 unk 0x00000
 
-if Equal lastScript hex(0x8001)
-  approachType = at_edgeguard
-  Call ApproachHub
-else
-  Call AIHub
-endif
+LOGSTR str("============")
+LOGSTR str("=== 10A0 ===")
+LOGSTR str("============")
+approachType = at_edgeguard
+FORCED_SWITCH_CONDITIONS
+Call AIHub
 Return
 Return

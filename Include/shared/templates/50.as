@@ -8,7 +8,7 @@ unk 0x00000
 //Strings
 
 if XDistFrontEdge <= 50 || XDistBackEdge <= 50
-    Finish
+    Goto _end
 endif
 var0=OPos
 var10=25
@@ -81,7 +81,7 @@ Return
 //____________________
 label _1
 if FrameGE var12
-    Finish
+    Goto _end
 endif
 if CalledAs SHopTowards || CalledAs SHopDJ
     Goto _3
@@ -101,16 +101,16 @@ elif CalledAs SHopAway
     AbsStick var0
     var0*=-1
     if FrameGE var13
-        Finish
+        Goto _end
     endif
 endif
 if FrameGE 10 && !(InAir)
-    Finish
+    Goto _end
 endif
 if Falling
     if ODistLE var10
         Call Unk1080
-        Finish
+        Goto _end
     elif !(OutOfStage) && !(XDistLE 30) && LevelValue > 30
         var23=LevelValue*LevelValue*0.01*var11
         var11=var23
@@ -127,7 +127,7 @@ if Falling
                 AtkDiceRoll slot16
                 if !(DiceRollResult Nothing)
                     Call
-                    Finish
+                    Goto _end
                 endif
             endif
         endif
@@ -182,5 +182,10 @@ else
         var0=-1
     endif
 endif
+Return
+
+label _end
+FORCED_SWITCH_CONDITIONS
+Call AIHub
 Return
 Return

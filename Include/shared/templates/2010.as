@@ -8,6 +8,9 @@ unk 0x0
 //Strings
 // str "#hi_base"
 
+LOGSTR str("============")
+LOGSTR str("=== 2010 ===")
+LOGSTR str("============")
 Call RecoveryHub
 Finish
 Return

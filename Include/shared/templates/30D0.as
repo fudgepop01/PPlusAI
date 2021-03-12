@@ -7,6 +7,9 @@ unk 0x00000
 
 //Strings
 
-{CONDITIONS}
+LOGSTR str("============")
+LOGSTR str("=== 30D0 ===")
+LOGSTR str("============")
+FORCED_SWITCH_CONDITIONS
 Call AIHub
 Return

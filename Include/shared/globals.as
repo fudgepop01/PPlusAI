@@ -19,6 +19,8 @@
 #const maxYEdgeDistWithJump = 9999.9999
 #const maxYEdgeDist = 9999.9999
 #const maxYEdgeDistJumpNoUpB = 9999.9999
+#const maxXEdgeDist = 9999.9999
+
 #const oWalkingDist = 9999.9999
 #const shortEdgeRange = 9999.9999
 #const edgeRange = 9999.9999
@@ -43,6 +45,9 @@
 
 #let globTempVar = var17
 
+// THIS IS TO BE USED IMMEDIATELY WITH SIMPLE OPERATIONS OTHERWISE SIDE EFFECTS MAY OCCUR
+#let immediateTempVar = var22
+
 // used when planning / executing moves
 #let move_xOffset = var9
 #let move_yOffset = var10
@@ -52,7 +57,6 @@
 #let move_lastHitFrame = var14
 #let move_IASA = var15
 
-
 // recorded after the move is executed / hits;
 // will not interfere with move position type
 #let hit_knockback = var16
@@ -61,6 +65,7 @@
 // used in various places to tell what part the routine should jump to
 // effectively used to communicate between scripts
 #let movePart = var18
+#const mp_ATK = 255
 // what variation of the move to use. Important when a move
 // has multiple or complex uses (such as grab)
 #let moveVariant = var19
@@ -80,21 +85,32 @@
 #const valFSmash = 24629
 #const valUSmash = 24630
 #const valDSmash = 24631
-#const valNSp = 24632
-#const valSSp = 24633
-#const valUSp = 24634
-#const valDSp = 24635
+#const valNSpecial = 24632
+#const valSSpecial = 24633
+#const valUSpecial = 24634
+#const valDSpecial = 24635
 #const valGrab = 24636
+#const valDA = 24638
 
 #const valNAir = 24641
 #const valFAir = 24642
 #const valBAir = 24643
 #const valUAir = 24644
 #const valDAir = 24645
-#const valNSpAir = 24646
-#const valSSpAir = 24647
-#const valUSpAir = 24648
-#const valDSpAir = 24649
+#const valNSpecialAir = 24646
+#const valSSpecialAir = 24647
+#const valUSpecialAir = 24648
+#const valDSpecialAir = 24649
+
+#const valGeneral = 25000
+
+#const gen_xOffset = -20
+#const gen_yOffset = 30
+#const gen_xRange = 20
+#const gen_yRange = 30
+#const gen_hitFrame = 1
+#const gen_lastHitFrame = 1
+#const gen_IASA = 1
 
 #let noCombo = var19
 #const noComboVal = 256
@@ -116,6 +132,7 @@
 #const at_edgeguard = 3
 #const at_throwOut = 4
 #const at_ledgeRefresh = 5
+#const at_combo = 6
 
 // AI values
 #const LV1 = 0
@@ -136,3 +153,172 @@
 #const mv_dthrow = 2
 #const mv_bthrow = 3
 #const mv_uthrow = 4
+
+// when I want to techchase using grab, i'll set move_variant to this value
+#const mv_techChase = 1
+
+// basic placeholder move values
+
+#const jab123_IASA = 0
+#const jab123_xOffset = 0
+#const jab123_yOffset = 0
+#const jab123_xRange = 0
+#const jab123_yRange = 0
+#const jab123_hitFrame = 0
+#const jab123_lastHitFrame = 0
+
+// dashattack
+#const DA_IASA = 0
+#const DA_xOffset = 0
+#const DA_yOffset = 0
+#const DA_xRange = 0
+#const DA_yRange = 0
+#const DA_hitFrame = 0
+#const DA_lastHitFrame = 0
+
+// ftilt
+#const ftilt_IASA = 0
+#const ftilt_xOffset = 0
+#const ftilt_yOffset = 0
+#const ftilt_xRange = 0
+#const ftilt_yRange = 0
+#const ftilt_hitFrame = 0
+#const ftilt_lastHitFrame = 0
+
+// utilt
+#const utilt_IASA = 0
+#const utilt_xOffset = 0
+#const utilt_yOffset = 0
+#const utilt_xRange = 0
+#const utilt_yRange = 0
+#const utilt_hitFrame = 0
+#const utilt_lastHitFrame = 0
+
+// dtilt
+#const dtilt_IASA = 0
+#const dtilt_xOffset = 0
+#const dtilt_yOffset = 0
+#const dtilt_xRange = 0
+#const dtilt_yRange = 0
+#const dtilt_hitFrame = 0
+#const dtilt_lastHitFrame = 0
+
+// fsmash
+#const fsmash_IASA = 0
+#const fsmash_xOffset = 0
+#const fsmash_yOffset = 0
+#const fsmash_xRange = 0
+#const fsmash_yRange = 0
+#const fsmash_hitFrame = 0
+#const fsmash_lastHitFrame = 0
+
+// usmash
+#const usmash_IASA = 0
+#const usmash_xOffset = 0
+#const usmash_yOffset = 0
+#const usmash_xRange = 0
+#const usmash_yRange = 0
+#const usmash_hitFrame = 0
+#const usmash_lastHitFrame = 0
+
+// dsmash
+#const dsmash_IASA = 0
+#const dsmash_xOffset = 0
+#const dsmash_yOffset = 0
+#const dsmash_xRange = 0
+#const dsmash_yRange = 0
+#const dsmash_hitFrame = 0
+#const dsmash_lastHitFrame = 0
+
+// noochB
+#const nspecial_IASA = 0
+#const nspecial_xOffset = 0
+#const nspecial_yOffset = 0
+#const nspecial_xRange = 0
+#const nspecial_yRange = 0
+#const nspecial_hitFrame = 0
+#const nspecial_lastHitFrame = 0
+
+#const nspecial_start_xRange = 0
+#const nspecial_start_yRange = 0
+#const nspecial_start_yOffset = 0
+
+// sideB
+#const sspecial_IASA = 0
+#const sspecial_xOffset = 0
+#const sspecial_yOffset = 0
+#const sspecial_xRange = 0
+#const sspecial_yRange = 0
+#const sspecial_hitFrame = 0
+#const sspecial_lastHitFrame = 0
+
+// upB
+#const uspecial_IASA = 0
+#const uspecial_xOffset = 0
+#const uspecial_yOffset = 0
+#const uspecial_xRange = 0
+#const uspecial_yRange = 0
+#const uspecial_hitFrame = 0
+#const uspecial_lastHitFrame = 0
+
+// downB
+#const dspecial_IASA = 0
+#const dspecial_xOffset = 0
+#const dspecial_yOffset = 0
+#const dspecial_xRange = 0
+#const dspecial_yRange = 0
+#const dspecial_hitFrame = 0
+#const dspecial_lastHitFrame = 0
+
+#const grab_IASA = 0
+#const grab_xOffset = 0
+#const grab_yOffset = 0
+#const grab_xRange = 0
+#const grab_yRange = 0
+#const grab_hitFrame = 0
+#const grab_lastHitFrame = 0
+
+// NAir
+#const nair_IASA = 0
+#const nair_xOffset = 0
+#const nair_yOffset = 0
+#const nair_xRange = 0
+#const nair_yRange = 0
+#const nair_hitFrame = 0
+#const nair_lastHitFrame = 0
+
+// FAir
+#const fair_IASA = 0
+#const fair_xOffset = 0
+#const fair_yOffset = 0
+#const fair_xRange = 0
+#const fair_yRange = 0
+#const fair_hitFrame = 0
+#const fair_lastHitFrame = 0
+
+// BAir
+#const bair_IASA = 0
+#const bair_xOffset = 0
+#const bair_yOffset = 0
+#const bair_xRange = 0
+#const bair_yRange = 0
+#const bair_hitFrame = 0
+#const bair_lastHitFrame = 0
+
+// UAir
+#const uair_IASA = 0
+#const uair_xOffset = 0
+#const uair_yOffset = 0
+#const uair_xRange = 0
+#const uair_yRange = 0
+#const uair_hitFrame = 0
+#const uair_lastHitFrame = 0
+
+// DAir
+#const dair_IASA = 0
+#const dair_xOffset = 0
+#const dair_yOffset = 0
+#const dair_xRange = 0
+#const dair_yRange = 0
+#const dair_hitFrame = 0
+#const dair_lastHitFrame = 0

@@ -8,6 +8,10 @@ unk 0x00000
 //Strings
 
 lastScript = hex(0x1090)
+LOGSTR str("============")
+LOGSTR str("=== 1090 ===")
+LOGSTR str("============")
+FORCED_SWITCH_CONDITIONS
 Call AIHub
 Finish
 Return

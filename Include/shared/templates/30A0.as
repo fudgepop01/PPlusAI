@@ -8,7 +8,8 @@ id 0x30A0
 unk 0x0
 
 if !(Equal AirGroundState 1)
-    Finish
+  FORCED_SWITCH_CONDITIONS
+  Call AIHub
 endif
 
 if !(OAttacking)

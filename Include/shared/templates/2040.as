@@ -7,7 +7,10 @@ unk 0x00000
 
 //Strings
 
-
+LOGSTR str("============")
+LOGSTR str("=== 2040 ===")
+LOGSTR str("============")
+FORCED_SWITCH_CONDITIONS
 Call AIHub
 Return
 Return

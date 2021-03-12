@@ -5,31 +5,37 @@ id 0x8006
 
 unk 0x0
 
-var0 = Rnd * 60 + 20
+// if InAir && Equal IsOnStage 1
+//   Call AIHub
+// endif
 
-label
-if InAir && Equal IsOnStage 1
-  Stick 0 (-1)
-  Button R
+if InAir
   Call AIHub
 endif
 
-if !(XDistLE 40) || Equal IsOnStage 0
-  if Equal approachType at_defend
-    Button R
+if XDistLE 30
+  globTempVar = OPos * -1
+  if Equal AirGroundState 1
+    if Equal approachType at_defend
+      Button R
+      AbsStick globTempVar
+    elif XDistFrontEdge > edgeRange
+      AbsStick globTempVar
+    else
+      Button X
+      AbsStick OPos
+    endif
   endif
+
+  if Rnd < 0.05
+    Call AIHub
+  endif
+else
   Call AIHub
 endif
 
 if Equal CurrAction hex(0x01)
   ClearStick
-elif !(Equal Direction OPos) && XDistFrontEdge > edgeRange
-  Stick 1
-elif XDistBackEdge < -edgeRange
-  Stick -1
-elif CurrAction <= hex(0x09)
-  Button X
 endif
-
 Return
 Return

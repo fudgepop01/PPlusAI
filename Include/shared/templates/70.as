@@ -8,9 +8,9 @@ unk 0x0
 //Strings
 
 if DistFrontEdge < 25 || !(ODistLE 60) || InAir
-    Finish
+    Goto _end
 elif DistBackEdge < 25 || !(ODistLE 60) || InAir
-    Finish
+    Goto _end
 endif
 //____________________
 label
@@ -22,6 +22,12 @@ if FrameGE 4 && !(FrameGE 5)
     Stick OPos (-1)
 endif
 if FrameGE 10
-    Finish
+    Goto _end
 endif
+Return
+
+label _end
+FORCED_SWITCH_CONDITIONS
+Call AIHub
+Return
 Return

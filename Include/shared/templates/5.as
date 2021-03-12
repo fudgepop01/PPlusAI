@@ -26,7 +26,7 @@ else
 endif
 // LOGSTR str("actionType")
 // LOGVAL actionType
-// SAFE_INJECT_2 actionType
+SAFE_INJECT_2 actionType
 label
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if actionType <= 0.2
@@ -52,7 +52,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       endif
     endif
   elif actionType <= 0.55
-  // dash away aerial
+    // dash away aerial
     if XDistFrontEdge > edgeRange && XDistBackEdge < -edgeRange
       tempVar = OPos * -1
       AbsStick tempVar
@@ -61,8 +61,8 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
         Return
       endif
       if Equal CurrAction hex(0x03)
-        if Rnd < 0.1
-          if globTempVar <= -1 && CurrAction < hex(0x09)
+        if Rnd < 0.5
+          if globTempVar <= 0 && CurrAction < hex(0x09)
             Button X
           else
             ClearStick
@@ -75,7 +75,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
           Button X
         endif
       elif Equal CurrAction hex(0x04)
-        actionType = 0.1
+        actionType = 0
         Return
       endif
     elif !(InAir)
@@ -87,8 +87,8 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       endif
     endif
   elif actionType <= 0.85
-  // aerial in-place
-    if XDistFrontEdge > 20 && XDistBackEdge < -20 && !(InAir)
+    // aerial in-place
+    if XDistFrontEdge > edgeRange && XDistBackEdge < -edgeRange && !(InAir)
       if XSpeed > 0.4 || XSpeed < -0.4
         ClearStick
         Return
@@ -98,15 +98,15 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
           Button X
         endif
       elif !(Equal CurrAction hex(0x0A))
-        if globTempVar <= -1 && CurrAction <= hex(0x09)
+        if globTempVar <= 0 && CurrAction <= hex(0x09)
           Button X
         else
           Stick -1
         endif
       endif
-    elif globTempVar <= -1
+    elif globTempVar <= 0
       if Equal OPos Direction
-        Stick -0.5
+        Stick -1
       endif
       if !(Equal OPos Direction) && Idling && !(Equal CurrAction hex(0xA))
         Button X
@@ -117,7 +117,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
     endif
   else
   // approach
-    if globTempVar <= -1
+    if globTempVar <= 0
       actionType = 0.85
       Return
     else
@@ -159,6 +159,8 @@ ClearStick
 movePart = 1
 if Equal lastAttack hex(0x6031)
   Call Jab123
+elif Equal lastAttack valDA
+  Call DashAttack
 elif Equal lastAttack hex(0x6032)
   Call FTilt
 elif Equal lastAttack hex(0x6033)

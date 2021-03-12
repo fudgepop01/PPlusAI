@@ -7,10 +7,10 @@ unk 0x00000
 
 //Strings
 
-if Equal lastScript hex(0x8001)
-  Call ApproachHub
-else
-  Call AIHub
-endif
+LOGSTR str("============")
+LOGSTR str("=== 3060 ===")
+LOGSTR str("============")
+FORCED_SWITCH_CONDITIONS
+Call AIHub
 Return
 Return

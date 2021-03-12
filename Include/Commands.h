@@ -109,8 +109,8 @@ cmd Call : 0x1B @AIID
 ///This command saves previous location and you can return there using Return
 cmd Goto : 0x1C ID
 
-///Gets relative coordinate of nearest cliff from current location
-cmd GetNearestCliffR : 0x1D variable
+///Gets the next best "return goal" as calculated by the game
+cmd GetReturnGoal : 0x1D variable
 
 ///Calculates absolute value and restore it
 cmd Abs : 0x1E variable

@@ -40,7 +40,7 @@ elif Equal AirGroundState 2
     Button X
     AbsStick tempVar
     Call AIHub
-  elif XDistFrontEdge > shortEdgeRange
+  elif XDistFrontEdge > shortEdgeRange && XDistBackEdge < -shortEdgeRange && Equal IsOnStage 1
     AbsStick tempVar (-1)
     Button R
     Call AIHub
@@ -75,7 +75,7 @@ Return
 
 label crouchCancelPunish
 #let timer = var0
-timer = Rnd * 20 + 10
+timer = Rnd * 20
 label
 Stick 0 (-1)
 if FramesHitstun > 0 || timer <= 0

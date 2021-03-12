@@ -75,6 +75,9 @@ req NormCharDistLE : 0x1016
 ///If the opponent is attacking, returns true.
 req OAttacking : 0x1017
 
+///If the opponent is using the attack with the value specified, returns true.
+req OAttacking : 0x1017 val
+
 ///If the nearest edge hangs no character, returns true.
 req NoOneHanging : 0x1018
 
