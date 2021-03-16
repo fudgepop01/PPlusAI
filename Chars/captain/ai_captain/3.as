@@ -30,6 +30,8 @@ if Equal lastScript hex(0x8001) && XDistLE 20 && OYDistBackEdge < 0 && Equal mov
   Call ApproachHub
 endif
 
+lastScript = hex(0x8003)
+
 SetVec nearCliffX Zero
 GetNearestCliff nearCliffX
 

@@ -23,6 +23,8 @@ if Equal var21 32769 && XDistLE 20 && OYDistBackEdge < 0 && Equal var18 0 && OFr
   Call ApproachHub
 endif
 
+var21 = 32771
+
 SetVec var1 Zero
 GetNearestCliff var1
 

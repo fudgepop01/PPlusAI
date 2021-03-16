@@ -46,6 +46,17 @@
   label
 #endsnippet
 
+#snippet GROUND_HITSTUN_MOVES
+  if LevelValue >= LV7
+    movePart = 1
+    $refreshMoves()
+    $filterMoveHitFrame(9)
+    $excludeMovesOrigin(fair|dair|nair|bair|uair)
+    $excludeMovesNamed(fthrow|bthrow|dthrow|uthrow)
+    $output(Call)
+  endif
+#endsnippet
+
 #snippet COMBO_STARTERS
 $refreshMoves()
 $filterMoveHitFrame(10)

@@ -83,10 +83,10 @@
 
 #snippet COMBO_STARTERS
 $refreshMoves()
-$filterMoveHitFrame(10)
+$filterMoveHitFrame(20)
 $filterMoveEndlag(25)
-$excludeMovesOrigin(sspecial)
-$outputWithKnockbackThresholds(50, 110, Call)
+$excludeMovesOrigin(sspecial|uair)
+$outputWithKnockbackThresholds(100, 290, Call)
 #endsnippet
 
 #snippet KILL_MOVES
@@ -94,15 +94,15 @@ $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
 $excludeMovesOrigin(sspecial)
-$outputWithKnockbackThresholds(130, 300, Call)
+$outputWithKnockbackThresholds(250, 400, Call)
 #endsnippet
 
 #snippet NEUTRAL_MOVES
 $refreshMoves()
-$filterMoveHitFrame(10)
+$filterMoveHitFrame(20)
 $filterMoveEndlag(20)
 $filterMoveXMinMax(4, 20)
-$excludeMovesOrigin(sspecial)
+$excludeMovesOrigin(sspecial|uair)
 $output(Call)
 #endsnippet
 

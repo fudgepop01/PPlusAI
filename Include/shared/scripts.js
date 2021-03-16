@@ -317,9 +317,13 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
     return true;
   });
 
-  CurrMoves.sort((a, b) => a.minDmg - b.minDmg);
+  CurrMoves.sort((a, b) => b.minDmg - a.minDmg);
 
   // let grabWasOutput = false;
+  out(`immediateTempVar = 0.3`);
+  out(`if !(SamePlane) || OYDistBackEdge < -10`)
+  out(`immediateTempVar = 0.15`)
+  out(`endif`)
   for (const {origin, moveName, moveVariant, minDmg, maxDmg} of CurrMoves) {
     // if (origin === "Grab") {
     //   if (grabWasOutput) continue;
@@ -328,9 +332,9 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
     let conditional = "True";
     if (minDmg > 0) conditional += ` && ${minDmg} <= ODmgXWeight`;
     if (maxDmg < 500) conditional += ` && ODmgXWeight <= ${maxDmg}`;
-    let append = "&& Rnd < 0.3";
+    let append = `&& Rnd < ${(origin.endsWith('air')) ? 'immediateTempVar' : '0.3'}`;
     if (origin === "Grab") {
-      append = `&& Rnd < 0.1 && OCurrAction <= hex(0x45)`;
+      append = `&& Rnd < 0.12 && OCurrAction <= hex(0x45)`;
     }
     out(`if ${conditional} ${append}`);
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);

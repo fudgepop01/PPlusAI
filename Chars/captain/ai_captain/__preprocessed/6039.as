@@ -13,7 +13,7 @@ if Equal var18 0
   var20 = 24633
   var9 = 3
   var10 = 0
-  var11 = 15
+  var11 = 14
   var12 = 8
   var13 = 26
   var14 = 26 // just a dummy

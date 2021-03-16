@@ -161,6 +161,7 @@ if Equal var18 255
   Jump
 endif
 var18 = 0
+var16 = 0
 
 var1 = OTopNY - TopNY
 
@@ -217,7 +218,7 @@ LOGSTR 1398030592 1381236736 0 0 0
   // //   Goto dair
   // //   var7 = 2
   // endif
-  if OFramesHitstun < 5 && Rnd < 0.5
+  if OFramesHitstun < 15 && Rnd < 0.5 && YDistBackEdge > -10 && OYDistBackEdge > -15
     Call Grab
   endif
 
@@ -343,32 +344,44 @@ if var17 < var0 && var3 < 70 && var17 < 20
   endif
   Seek edgeguard
 elif Equal OIsOnStage 1 && var3 < 80
-  var6 = 30
+  if Equal LevelValue 100 
+    var6 = 50
+  else
+    var6 = 40
+  endif
   LOGSTR 1668246784 1651441664 0 0 0
   label combo
   var1 = 1
   Seek killOptions
   Jump 
   label kill_end
-  Goto analyze
-  Goto clear
-  Seek comboOptions
-  Jump
-  label combo_end
+  if var6 < 20
+    Goto analyze
+    Goto clear
+    Seek comboOptions
+    Jump
+    label combo_end
+  endif
   Seek combo
-else
-  var6 = 30
+elif True
+  if Equal LevelValue 100 
+    var6 = 50
+  else
+    var6 = 40
+  endif
   LOGSTR 1786078976 1735156992 0 0 0
   label juggle
   var1 = 2
   Seek killOptions
   Jump 
   label kill_high_end
-  Goto analyze
-  Goto clear
-  Seek juggleOptions
-  Jump
-  label juggle_end
+  if var6 < 25
+    Goto analyze
+    Goto clear
+    Seek juggleOptions
+    Jump
+    label juggle_end
+  endif
   Seek juggle
 endif
 Goto analyze
@@ -396,46 +409,56 @@ Return
 
 label comboOptions
 LOGVAL var8
-if True && var8 <= 30 && Rnd < 0.3
-Goto sspecial
+var22 = 0.3
+if !(SamePlane) || OYDistBackEdge < -10
+var22 = 0.15
 endif
-if True && var8 <= 29 && Rnd < 0.3
-Goto dair
-endif
-if True && var8 <= 33 && Rnd < 0.3
-Goto usmash
-endif
-if True && var8 <= 77 && Rnd < 0.3
-var19 = 1
-Goto nair
-Goto app_nair
-endif
-if True && var8 <= 77 && Rnd < 0.3
-var19 = 2
-Goto nair
-Goto nairhit2
-endif
-if True && var8 <= 35 && Rnd < 0.3
-Goto fair
-endif
-if True && 9 <= var8 && var8 <= 54 && Rnd < 0.3
-Goto bair
-endif
-if True && 19 <= var8 && var8 <= 131 && Rnd < 0.3
+if True && 86 <= var8 && Rnd < 0.3
 var19 = 1
 Goto fair
 Goto fair_weak
 endif
-if True && 21 <= var8 && var8 <= 68 && Rnd < 0.3
-Goto uair
-endif
-if True && 26 <= var8 && var8 <= 97 && Rnd < 0.3
-Goto jab123
-endif
-if True && 39 <= var8 && var8 <= 103 && Rnd < 0.3
+if True && 77 <= var8 && var8 <= 332 && Rnd < 0.3
 var19 = 1
 Goto uair
 Goto uair_tipman
+endif
+if True && 68 <= var8 && var8 <= 354 && Rnd < 0.3
+Goto jab123
+endif
+if True && 60 <= var8 && var8 <= 280 && Rnd < 0.3
+Goto ftilt
+endif
+if True && 49 <= var8 && var8 <= 240 && Rnd < 0.3
+Goto uair
+endif
+if True && 46 <= var8 && var8 <= 363 && Rnd < 0.3
+var19 = 1
+Goto nair
+Goto app_nair
+endif
+if True && 46 <= var8 && var8 <= 363 && Rnd < 0.3
+var19 = 2
+Goto nair
+Goto nairhit2
+endif
+if True && 36 <= var8 && var8 <= 214 && Rnd < 0.3
+Goto bair
+endif
+if True && 21 <= var8 && var8 <= 259 && Rnd < 0.3
+Goto utilt
+endif
+if True && 20 <= var8 && var8 <= 163 && Rnd < 0.3
+Goto fair
+endif
+if True && 18 <= var8 && var8 <= 169 && Rnd < 0.3
+Goto usmash
+endif
+if True && 13 <= var8 && var8 <= 172 && Rnd < 0.3
+Goto dair
+endif
+if True && var8 <= 387 && Rnd < 0.3
+Goto sspecial
 endif
 Seek combo_end
 Jump
@@ -443,7 +466,7 @@ Return
 
 label juggleOptions
 LOGVAL var8
-var17 = Rnd * 5
+var17 = Rnd * 6
 if var17 < 1
 Goto dtilt
 elif 1 < var17 && var17 < 2
@@ -451,10 +474,14 @@ Goto usmash
 elif 2 < var17 && var17 < 3
 Goto sspecial
 elif 3 < var17 && var17 < 4
+var19 = 3
+Goto grab
+Goto dthrow
+elif 4 < var17 && var17 < 5
 var19 = 5
 Goto grab
 Goto uthrow
-elif 4 < var17 && var17 < 5
+elif 5 < var17 && var17 < 6
 Goto nair
 endif
 Seek juggle_end
@@ -462,78 +489,82 @@ Jump
 Return
 
 label killOptions
-if True && 42 <= var8 && var8 <= 152 && Rnd < 0.3
-Goto fsmash
+var22 = 0.3
+if !(SamePlane) || OYDistBackEdge < -10
+var22 = 0.15
 endif
-if True && 45 <= var8 && var8 <= 180 && Rnd < 0.3
-Goto dair
-endif
-if True && 49 <= var8 && var8 <= 177 && Rnd < 0.3
-Goto usmash
-endif
-if True && 49 <= var8 && var8 <= 170 && Rnd < 0.3
-Goto fair
-endif
-if True && 68 <= var8 && var8 <= 271 && Rnd < 0.3
-Goto utilt
-endif
-if True && 70 <= var8 && var8 <= 407 && Rnd < 0.3
-Goto sspecial
-endif
-if True && 71 <= var8 && var8 <= 223 && Rnd < 0.3
-Goto bair
-endif
-if True && 87 <= var8 && var8 <= 249 && Rnd < 0.3
-Goto uair
-endif
-if True && 104 <= var8 && var8 <= 291 && Rnd < 0.3
-Goto ftilt
-endif
-if True && 109 <= var8 && var8 <= 379 && Rnd < 0.3
-var19 = 1
-Goto nair
-Goto app_nair
-endif
-if True && 109 <= var8 && var8 <= 379 && Rnd < 0.3
-var19 = 2
-Goto nair
-Goto nairhit2
-endif
-if True && 110 <= var8 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 5
+if True && 457 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 3
 Goto grab
-Goto uthrow
+Goto dthrow
 endif
-if True && 115 <= var8 && var8 <= 347 && Rnd < 0.3
-Goto dtilt
-endif
-if True && 126 <= var8 && var8 <= 368 && Rnd < 0.3
-Goto jab123
-endif
-if True && 128 <= var8 && var8 <= 345 && Rnd < 0.3
-var19 = 1
-Goto uair
-Goto uair_tipman
-endif
-if True && 138 <= var8 && var8 <= 449 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 4
-Goto grab
-Goto bthrow
-endif
-if True && 147 <= var8 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 2
-Goto grab
-Goto fthrow
-endif
-if True && 176 <= var8 && Rnd < 0.3
+if True && 287 <= var8 && Rnd < 0.3
 var19 = 1
 Goto fair
 Goto fair_weak
 endif
-if True && 223 <= var8 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 3
+if True && 261 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 2
 Goto grab
-Goto dthrow
+Goto fthrow
+endif
+if True && 246 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 5
+Goto grab
+Goto uthrow
+endif
+if True && 229 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 4
+Goto grab
+Goto bthrow
+endif
+if True && 197 <= var8 && Rnd < 0.3
+Goto jab123
+endif
+if True && 192 <= var8 && var8 <= 473 && Rnd < 0.3
+var19 = 1
+Goto uair
+Goto uair_tipman
+endif
+if True && 189 <= var8 && Rnd < 0.3
+var19 = 1
+Goto nair
+Goto app_nair
+endif
+if True && 189 <= var8 && Rnd < 0.3
+var19 = 2
+Goto nair
+Goto nairhit2
+endif
+if True && 183 <= var8 && var8 <= 483 && Rnd < 0.3
+Goto dtilt
+endif
+if True && 169 <= var8 && Rnd < 0.3
+Goto sspecial
+endif
+if True && 159 <= var8 && var8 <= 400 && Rnd < 0.3
+Goto ftilt
+endif
+if True && 135 <= var8 && var8 <= 344 && Rnd < 0.3
+Goto uair
+endif
+if True && 128 <= var8 && var8 <= 390 && Rnd < 0.3
+Goto utilt
+endif
+if True && 116 <= var8 && var8 <= 313 && Rnd < 0.3
+Goto bair
+endif
+if True && 86 <= var8 && var8 <= 253 && Rnd < 0.3
+Goto usmash
+endif
+if True && 85 <= var8 && var8 <= 242 && Rnd < 0.3
+Goto fair
+endif
+if True && 85 <= var8 && var8 <= 259 && Rnd < 0.3
+Goto dair
+endif
+if True && 74 <= var8 && var8 <= 217 && Rnd < 0.3
+Goto fsmash
 endif
 if Equal var1 1 
   Seek kill_end
@@ -556,6 +587,28 @@ var12 = 2
 var13 = 3
 var14 = 5
 Return
+label ftilt
+LOGSTR 1718905088 1819541504 0 0 0
+var20 = 24626
+var15 = 30
+var9 = 1
+var10 = -9
+var11 = 9
+var12 = 3
+var13 = 9
+var14 = 11
+Return
+label utilt
+LOGSTR 1970563328 1819541504 0 0 0
+var20 = 24627
+var15 = 38
+var9 = 1
+var10 = 2
+var11 = 7
+var12 = 13
+var13 = 17
+var14 = 22
+Return
 label usmash
 LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24630
@@ -573,7 +626,7 @@ var20 = 24633
 var15 = 26
 var9 = 3
 var10 = 0
-var11 = 15
+var11 = 14
 var12 = 8
 var13 = 26
 var14 = 26 // just a dummy
@@ -680,30 +733,11 @@ var12 = 4
 var13 = 7
 var14 = 8
 Return
+label dthrow
+LOGSTR 1685350400 1919907584 0 0 0
+Return
 label uthrow
 LOGSTR 1970563072 1919907584 0 0 0
-Return
-label ftilt
-LOGSTR 1718905088 1819541504 0 0 0
-var20 = 24626
-var15 = 30
-var9 = 1
-var10 = -9
-var11 = 9
-var12 = 3
-var13 = 9
-var14 = 11
-Return
-label utilt
-LOGSTR 1970563328 1819541504 0 0 0
-var20 = 24627
-var15 = 38
-var9 = 1
-var10 = 2
-var11 = 7
-var12 = 13
-var13 = 17
-var14 = 22
 Return
 label fsmash
 LOGSTR 1718840576 1634953216 0 0 0
@@ -719,9 +753,6 @@ Return
 label fthrow
 LOGSTR 1718904832 1919907584 0 0 0
 Return
-label dthrow
-LOGSTR 1685350400 1919907584 0 0 0
-Return
 label bthrow
 LOGSTR 1651795968 1919907584 0 0 0
 Return
@@ -733,12 +764,12 @@ var13 = -1
 Return
 
 label TBD
-  LOGSTR 1734700544 0 0 0 0
+  // LOGSTR 1734700544 0 0 0 0
   var20 = 25000
-  var9 = -20
-  var10 = 30
-  var11 = 20
-  var12 = 30
+  var9 = -30
+  var10 = 40
+  var11 = 30
+  var12 = 40
   var13 = 1
   var14 = 1
   var15 = 1
@@ -766,6 +797,26 @@ endif
 var4 = 0
 
 var5 = var13
+  if var20 >= 24625 && var20 <= 24631
+    if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
+      var4 = 4
+    elif Equal AirGroundState 2
+      var4 = 0
+    else
+      var4 = 0
+    endif
+  elif var20 >= 24641 && var20 <= 24655
+    var4 = 0
+    if Equal AirGroundState 1
+      var4 = 4
+    endif
+  elif Equal var20 25000
+    var4 = OFramesHitstun 
+  endif
+  
+  if var4 < 1
+    var4 = 1
+  endif
   SAFE_INJECT_4 var9
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
@@ -801,16 +852,178 @@ var5 = var13
   var22 = var1 - OSCDBottom
   var17 += var22
   var17 += TopNY
-  // estimate target position separately
+  // estimate target position separately  
   var22 = var5 + var4
-  var22 /= 2
+  var4 = 0
+  if !(CalledAs ComboHub) // because this involves a label
+    // calculate Opponent change in 0.13 (used later)
+if OIsCharOf Bowser
+  var4 = 113
+  var4 = 0.13
+elif OIsCharOf Falcon
+  var4 = 104
+  var4 = 0.13
+elif OIsCharOf Lizardon // Charizard
+  var4 = 106
+  var4 = 0.105
+elif OIsCharOf Diddy
+  var4 = 85
+  var4 = 0.12
+elif OIsCharOf Donkey
+  var4 = 109
+  var4 = 0.1
+elif OIsCharOf Falco
+  var4 = 80
+  var4 = 0.17
+elif OIsCharOf Fox
+  var4 = 75
+  var4 = 0.23
+  // 2.8
+elif OIsCharOf Gamewatch
+  var4 = 75
+  var4 = 0.095
+elif OIsCharOf Ganondorf
+  var4 = 109
+  var4 = 0.13
+// GIGA BOWSER WOULD GO HERE
+// elif OIsCharOf Bowser
+//   var4 = 113
+//   var4 = 0.13
+elif OIsCharOf Nana || OIsCharOf Popo
+  var4 = 88
+  var4 = 0.1
+elif OIsCharOf Ike
+  var4 = 100
+  var4 = 0.103
+elif OIsCharOf Fushigisou // Ivysaur
+  var4 = 85
+  var4 = 0.075
+elif OIsCharOf Purin // Jigglypuff
+  var4 = 62
+  var4 = 0.064
+elif OIsCharOf DDD // King Dedede
+  var4 = 107
+  var4 = 0.095
+elif OIsCharOf Kirby
+  var4 = 74
+  var4 = 0.08
+elif OIsCharOf Knuckles
+  var4 = 90
+  var4 = 0.14
+elif OIsCharOf Link
+  var4 = 104
+  var4 = 0.11
+elif OIsCharOf Lucario
+  var4 = 94
+  var4 = 0.125
+elif OIsCharOf Lucas
+  var4 = 80
+  var4 = 0.125
+elif OIsCharOf Luigi
+  var4 = 100
+  var4 = 0.069 // nice
+  // 1.6
+elif OIsCharOf Mario
+  var4 = 100
+  var4 = 0.095 // 1.7
+elif OIsCharOf Marth
+  var4 = 87
+  var4 = 0.085
+elif OIsCharOf Metaknight
+  var4 = 79
+  var4 = 0.11
+elif OIsCharOf Mewtwo
+  var4 = 90
+  var4 = 0.082
+elif OIsCharOf Ness
+  var4 = 94
+  var4 = 0.09
+elif OIsCharOf Pikmin // Olimar
+  var4 = 90
+  var4 = 0.09
+elif OIsCharOf Peach
+  var4 = 90
+  var4 = 0.08
+elif OIsCharOf Pikachu
+  var4 = 80
+  var4 = 0.11
+elif OIsCharOf Pit
+  var4 = 80
+  var4 = 0.095
+elif OIsCharOf Robot // ROB
+  var4 = 104
+  var4 = 0.09
+elif OIsCharOf Roy
+  var4 = 85
+  var4 = 0.114
+elif OIsCharOf Samus
+  var4 = 110
+  var4 = 0.66
+elif OIsCharOf Shiek
+  var4 = 90
+  var4 = 0.12
+elif OIsCharOf Snake
+  var4 = 105
+  var4 = 0.098
+elif OIsCharOf Sonic
+  var4 = 82
+  var4 = 0.122
+elif OIsCharOf Zenigame // Squirtle
+  var4 = 85
+  var4 = 0.126
+elif OIsCharOf Toonlink
+  var4 = 85
+  var4 = 0.11
+elif OIsCharOf Wario
+  var4 = 102
+  var4 = 0.112
+// WARIO MAN GOES HERE
+// elif OIsCharOf Bowser
+//   var4 = 113
+//   var4 = 0.13
+elif OIsCharOf Wolf
+  var4 = 85
+  var4 = 0.16
+elif OIsCharOf Yoshi
+  var4 = 108
+  var4 = 0.093
+elif OIsCharOf Zelda
+  var4 = 90
+  var4 = 0.073
+elif OIsCharOf ZSS // Zero Suit Samus
+  var4 = 85
+  var4 = 0.135
+endif
+  var22 = var5
+  var0 = 0
+  var1 = OCharYSpeed + OKBYSpeed
+  var1 *= -1
+  Seek _MID_CALC_O_GRAV
+  Jump
+  if !(True)
+    label _MID_CALC_O_GRAV
+    var0 += var1
+    var22 -= 1
+    var1 += var4 // 0.13
+    if var1 > OMaxFallSpeed
+      var1 = OMaxFallSpeed
+    endif
+    if var22 < 1
+      Seek
+    else
+      Seek _MID_CALC_O_GRAV
+    endif
+    Jump
+  endif
+  label
+    var4 = var0
+  endif
   EstOYCoord var1 var22
-  var22 *= 2
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  if OCurrAction <= 21
-    var22 /= 3
-  endif
+  // if OCurrAction <= 21
+  //   var22 /= 3
+  // endif
   EstOXCoord var0 var22
   var1 = var1 - (OSCDBottom - OTopNY)
   // var0 = estimated target x position
@@ -819,23 +1032,26 @@ var5 = var13
   // var17 = estimated own y position
   // var22 = temporary variable
   // correct if estimated y positions go beyond ground level
-  // self
-  var22 = YDistBackEdge + TopNY
-  if var17 < var22 && Equal IsOnStage 1
-    if Equal var4 1 && var20 >= 24641 && var20 <= 24645 && InAir
-      Call AIHub
-    endif 
-    var22 -= var17
-    var17 += var22
-  endif
   // target
   var22 = OYDistBackEdge + OTopNY
   if var1 < var22 && Equal OIsOnStage 1
     var22 -= var1
     var1 += var22
+    var17 -= var22
   elif Equal OCurrAction 70 || Equal OCurrAction 74 || Equal OCurrAction 84 || Equal OCurrAction 85
     var22 -= var1
     var1 += var22
+  elif Equal OAirGroundState 1
+    var17 -= var4
+  endif
+  // self (dependent on target)
+  var22 = YDistBackEdge + TopNY
+  if var17 < var22 && Equal IsOnStage 1
+    // if CalledAs ApproachHub && Equal var4 1 && var20 >= 24641 && var20 <= 24645 && InAir
+    //   Call AIHub
+    // endif 
+    var22 -= var17
+    var17 += var22
   endif
   // if !(CalledAs ComboHub)
   //   if Equal var4 1 || Equal var18 1
@@ -851,28 +1067,48 @@ var5 = var13
   var1 = var17 - var1
   // adjust for the move parameters
   if !(InAir)
-    var0 = var0 - (var11 * OPos)
-    var0 = var0 - (var9 * OPos)
+    var17 = var9 + (var11 * 2)
+    var17 /= 2
+    if var17 <= 0
+      var0 = var0 + (var9 * OPos)
+    else 
+      var0 = var0 - (var11 * OPos)
+      var0 = var0 - (var9 * OPos)
+    endif 
   else
     var0 = var0 - (var11 * Direction)
     var0 = var0 - (var9 * Direction)
   endif
+  var1 += var10
+  var1 -= var12
+  var22 = AirTime + var5
+  if var22 > 10 && var20 >= 24640
+    var1 += 5
+  endif
+  // // adjust for opponent position (aim towards nearest blastzone)
+  // if OTopNX > 0
+  //   var0 += var11
+  // else
+  //   var0 -= var11
+  // endif
   // account for target height
   var22 = 0
   SAFE_INJECT_D var22
-  var17 = OSCDBottom + OHurtboxSize
-  var2 = TopNY - var10 + var12 + var22
+  var17 = OSCDBottom + OHurtboxSize // top of target
+  var2 = TopNY - var10 + var12 + var22 // center of move detection
   if var2 >= var17 
-    // above
-    var2 = OHurtboxSize * -1
+    // self is above
+    var2 = OHurtboxSize
   elif var2 <= OSCDBottom 
-    // below
-    var2 = 0
+    // self is below
+    var2 = 0 // OHurtboxSize * -1
   else 
-    // middle
-    var2 = OHurtboxSize - (var17 - var2)
+    // self is between
+    var17 -= var2
+    var2 = OHurtboxSize - var17
+    // var2 = var22
   endif
-  var2 += OHurtboxSize
+  // var2 *= -1
   var1 += var2
   // if !(CalledAs ComboHub)
   //   if Equal var4 1 || Equal var18 1
@@ -887,13 +1123,22 @@ var5 = var13
   //     var22 *= Direction
   //     var22 += TopNX
   //     var17 = TopNY - var10 + var12
-  //     DrawDebugRectOutline var22 var17 var11 var12 0 0 0 136
+  //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
   //     var17 += var2
+  //     if OTopNX > 0
+  //       var22 += var11
+  //     else
+  //       var22 -= var11
+  //     endif 
   //     DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
   //     var22 = OHurtboxSize / 2
   //     var17 = var22 + OSCDBottom
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
   //   endif
+  // endif
+  // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
+  //   var17 = var5 - var4
+  //   var0 = var0 + OXSpeed * var17 * -2
   // endif
   var2 = var11
   var3 = var12
@@ -902,9 +1147,9 @@ var5 = var13
   Abs var0
   Abs var1
   if Equal AirGroundState 1
-    var2 = var2 + var5 * 2.3 / 2
+    var2 = var2 + var5 * 2.3
   else
-    var2 = var2 + var5 * XSpeed / 2
+    var2 = var2 + var5 * XSpeed
   endif
   if NumJumps > 0
     if var20 >= 24641 && var20 <= 24655 || Equal var20 25000 
@@ -926,6 +1171,26 @@ var5 = var13
   endif
 
 var5 = var14
+  if var20 >= 24625 && var20 <= 24631
+    if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
+      var4 = 4
+    elif Equal AirGroundState 2
+      var4 = 0
+    else
+      var4 = 0
+    endif
+  elif var20 >= 24641 && var20 <= 24655
+    var4 = 0
+    if Equal AirGroundState 1
+      var4 = 4
+    endif
+  elif Equal var20 25000
+    var4 = OFramesHitstun 
+  endif
+  
+  if var4 < 1
+    var4 = 1
+  endif
   SAFE_INJECT_4 var9
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
@@ -961,16 +1226,178 @@ var5 = var14
   var22 = var1 - OSCDBottom
   var17 += var22
   var17 += TopNY
-  // estimate target position separately
+  // estimate target position separately  
   var22 = var5 + var4
-  var22 /= 2
+  var4 = 0
+  if !(CalledAs ComboHub) // because this involves a label
+    // calculate Opponent change in 0.13 (used later)
+if OIsCharOf Bowser
+  var4 = 113
+  var4 = 0.13
+elif OIsCharOf Falcon
+  var4 = 104
+  var4 = 0.13
+elif OIsCharOf Lizardon // Charizard
+  var4 = 106
+  var4 = 0.105
+elif OIsCharOf Diddy
+  var4 = 85
+  var4 = 0.12
+elif OIsCharOf Donkey
+  var4 = 109
+  var4 = 0.1
+elif OIsCharOf Falco
+  var4 = 80
+  var4 = 0.17
+elif OIsCharOf Fox
+  var4 = 75
+  var4 = 0.23
+  // 2.8
+elif OIsCharOf Gamewatch
+  var4 = 75
+  var4 = 0.095
+elif OIsCharOf Ganondorf
+  var4 = 109
+  var4 = 0.13
+// GIGA BOWSER WOULD GO HERE
+// elif OIsCharOf Bowser
+//   var4 = 113
+//   var4 = 0.13
+elif OIsCharOf Nana || OIsCharOf Popo
+  var4 = 88
+  var4 = 0.1
+elif OIsCharOf Ike
+  var4 = 100
+  var4 = 0.103
+elif OIsCharOf Fushigisou // Ivysaur
+  var4 = 85
+  var4 = 0.075
+elif OIsCharOf Purin // Jigglypuff
+  var4 = 62
+  var4 = 0.064
+elif OIsCharOf DDD // King Dedede
+  var4 = 107
+  var4 = 0.095
+elif OIsCharOf Kirby
+  var4 = 74
+  var4 = 0.08
+elif OIsCharOf Knuckles
+  var4 = 90
+  var4 = 0.14
+elif OIsCharOf Link
+  var4 = 104
+  var4 = 0.11
+elif OIsCharOf Lucario
+  var4 = 94
+  var4 = 0.125
+elif OIsCharOf Lucas
+  var4 = 80
+  var4 = 0.125
+elif OIsCharOf Luigi
+  var4 = 100
+  var4 = 0.069 // nice
+  // 1.6
+elif OIsCharOf Mario
+  var4 = 100
+  var4 = 0.095 // 1.7
+elif OIsCharOf Marth
+  var4 = 87
+  var4 = 0.085
+elif OIsCharOf Metaknight
+  var4 = 79
+  var4 = 0.11
+elif OIsCharOf Mewtwo
+  var4 = 90
+  var4 = 0.082
+elif OIsCharOf Ness
+  var4 = 94
+  var4 = 0.09
+elif OIsCharOf Pikmin // Olimar
+  var4 = 90
+  var4 = 0.09
+elif OIsCharOf Peach
+  var4 = 90
+  var4 = 0.08
+elif OIsCharOf Pikachu
+  var4 = 80
+  var4 = 0.11
+elif OIsCharOf Pit
+  var4 = 80
+  var4 = 0.095
+elif OIsCharOf Robot // ROB
+  var4 = 104
+  var4 = 0.09
+elif OIsCharOf Roy
+  var4 = 85
+  var4 = 0.114
+elif OIsCharOf Samus
+  var4 = 110
+  var4 = 0.66
+elif OIsCharOf Shiek
+  var4 = 90
+  var4 = 0.12
+elif OIsCharOf Snake
+  var4 = 105
+  var4 = 0.098
+elif OIsCharOf Sonic
+  var4 = 82
+  var4 = 0.122
+elif OIsCharOf Zenigame // Squirtle
+  var4 = 85
+  var4 = 0.126
+elif OIsCharOf Toonlink
+  var4 = 85
+  var4 = 0.11
+elif OIsCharOf Wario
+  var4 = 102
+  var4 = 0.112
+// WARIO MAN GOES HERE
+// elif OIsCharOf Bowser
+//   var4 = 113
+//   var4 = 0.13
+elif OIsCharOf Wolf
+  var4 = 85
+  var4 = 0.16
+elif OIsCharOf Yoshi
+  var4 = 108
+  var4 = 0.093
+elif OIsCharOf Zelda
+  var4 = 90
+  var4 = 0.073
+elif OIsCharOf ZSS // Zero Suit Samus
+  var4 = 85
+  var4 = 0.135
+endif
+  var22 = var5
+  var0 = 0
+  var1 = OCharYSpeed + OKBYSpeed
+  var1 *= -1
+  Seek _MID_CALC_O_GRAV
+  Jump
+  if !(True)
+    label _MID_CALC_O_GRAV
+    var0 += var1
+    var22 -= 1
+    var1 += var4 // 0.13
+    if var1 > OMaxFallSpeed
+      var1 = OMaxFallSpeed
+    endif
+    if var22 < 1
+      Seek
+    else
+      Seek _MID_CALC_O_GRAV
+    endif
+    Jump
+  endif
+  label
+    var4 = var0
+  endif
   EstOYCoord var1 var22
-  var22 *= 2
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  if OCurrAction <= 21
-    var22 /= 3
-  endif
+  // if OCurrAction <= 21
+  //   var22 /= 3
+  // endif
   EstOXCoord var0 var22
   var1 = var1 - (OSCDBottom - OTopNY)
   // var0 = estimated target x position
@@ -979,23 +1406,26 @@ var5 = var14
   // var17 = estimated own y position
   // var22 = temporary variable
   // correct if estimated y positions go beyond ground level
-  // self
-  var22 = YDistBackEdge + TopNY
-  if var17 < var22 && Equal IsOnStage 1
-    if Equal var4 1 && var20 >= 24641 && var20 <= 24645 && InAir
-      Call AIHub
-    endif 
-    var22 -= var17
-    var17 += var22
-  endif
   // target
   var22 = OYDistBackEdge + OTopNY
   if var1 < var22 && Equal OIsOnStage 1
     var22 -= var1
     var1 += var22
+    var17 -= var22
   elif Equal OCurrAction 70 || Equal OCurrAction 74 || Equal OCurrAction 84 || Equal OCurrAction 85
     var22 -= var1
     var1 += var22
+  elif Equal OAirGroundState 1
+    var17 -= var4
+  endif
+  // self (dependent on target)
+  var22 = YDistBackEdge + TopNY
+  if var17 < var22 && Equal IsOnStage 1
+    // if CalledAs ApproachHub && Equal var4 1 && var20 >= 24641 && var20 <= 24645 && InAir
+    //   Call AIHub
+    // endif 
+    var22 -= var17
+    var17 += var22
   endif
   // if !(CalledAs ComboHub)
   //   if Equal var4 1 || Equal var18 1
@@ -1011,28 +1441,48 @@ var5 = var14
   var1 = var17 - var1
   // adjust for the move parameters
   if !(InAir)
-    var0 = var0 - (var11 * OPos)
-    var0 = var0 - (var9 * OPos)
+    var17 = var9 + (var11 * 2)
+    var17 /= 2
+    if var17 <= 0
+      var0 = var0 + (var9 * OPos)
+    else 
+      var0 = var0 - (var11 * OPos)
+      var0 = var0 - (var9 * OPos)
+    endif 
   else
     var0 = var0 - (var11 * Direction)
     var0 = var0 - (var9 * Direction)
   endif
+  var1 += var10
+  var1 -= var12
+  var22 = AirTime + var5
+  if var22 > 10 && var20 >= 24640
+    var1 += 5
+  endif
+  // // adjust for opponent position (aim towards nearest blastzone)
+  // if OTopNX > 0
+  //   var0 += var11
+  // else
+  //   var0 -= var11
+  // endif
   // account for target height
   var22 = 0
   SAFE_INJECT_D var22
-  var17 = OSCDBottom + OHurtboxSize
-  var2 = TopNY - var10 + var12 + var22
+  var17 = OSCDBottom + OHurtboxSize // top of target
+  var2 = TopNY - var10 + var12 + var22 // center of move detection
   if var2 >= var17 
-    // above
-    var2 = OHurtboxSize * -1
+    // self is above
+    var2 = OHurtboxSize
   elif var2 <= OSCDBottom 
-    // below
-    var2 = 0
+    // self is below
+    var2 = 0 // OHurtboxSize * -1
   else 
-    // middle
-    var2 = OHurtboxSize - (var17 - var2)
+    // self is between
+    var17 -= var2
+    var2 = OHurtboxSize - var17
+    // var2 = var22
   endif
-  var2 += OHurtboxSize
+  // var2 *= -1
   var1 += var2
   // if !(CalledAs ComboHub)
   //   if Equal var4 1 || Equal var18 1
@@ -1047,13 +1497,22 @@ var5 = var14
   //     var22 *= Direction
   //     var22 += TopNX
   //     var17 = TopNY - var10 + var12
-  //     DrawDebugRectOutline var22 var17 var11 var12 0 0 0 136
+  //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
   //     var17 += var2
+  //     if OTopNX > 0
+  //       var22 += var11
+  //     else
+  //       var22 -= var11
+  //     endif 
   //     DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
   //     var22 = OHurtboxSize / 2
   //     var17 = var22 + OSCDBottom
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
   //   endif
+  // endif
+  // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
+  //   var17 = var5 - var4
+  //   var0 = var0 + OXSpeed * var17 * -2
   // endif
   var2 = var11
   var3 = var12
@@ -1062,9 +1521,9 @@ var5 = var14
   Abs var0
   Abs var1
   if Equal AirGroundState 1
-    var2 = var2 + var5 * 2.3 / 2
+    var2 = var2 + var5 * 2.3
   else
-    var2 = var2 + var5 * XSpeed / 2
+    var2 = var2 + var5 * XSpeed
   endif
   if NumJumps > 0
     if var20 >= 24641 && var20 <= 24655 || Equal var20 25000 
@@ -1091,6 +1550,26 @@ if !(Equal var18 255)
 endif
 
 var5 = OFramesHitstun
+  if var20 >= 24625 && var20 <= 24631
+    if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
+      var4 = 4
+    elif Equal AirGroundState 2
+      var4 = 0
+    else
+      var4 = 0
+    endif
+  elif var20 >= 24641 && var20 <= 24655
+    var4 = 0
+    if Equal AirGroundState 1
+      var4 = 4
+    endif
+  elif Equal var20 25000
+    var4 = OFramesHitstun 
+  endif
+  
+  if var4 < 1
+    var4 = 1
+  endif
   SAFE_INJECT_4 var9
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
@@ -1126,16 +1605,178 @@ var5 = OFramesHitstun
   var22 = var1 - OSCDBottom
   var17 += var22
   var17 += TopNY
-  // estimate target position separately
+  // estimate target position separately  
   var22 = var5 + var4
-  var22 /= 2
+  var4 = 0
+  if !(CalledAs ComboHub) // because this involves a label
+    // calculate Opponent change in 0.13 (used later)
+if OIsCharOf Bowser
+  var4 = 113
+  var4 = 0.13
+elif OIsCharOf Falcon
+  var4 = 104
+  var4 = 0.13
+elif OIsCharOf Lizardon // Charizard
+  var4 = 106
+  var4 = 0.105
+elif OIsCharOf Diddy
+  var4 = 85
+  var4 = 0.12
+elif OIsCharOf Donkey
+  var4 = 109
+  var4 = 0.1
+elif OIsCharOf Falco
+  var4 = 80
+  var4 = 0.17
+elif OIsCharOf Fox
+  var4 = 75
+  var4 = 0.23
+  // 2.8
+elif OIsCharOf Gamewatch
+  var4 = 75
+  var4 = 0.095
+elif OIsCharOf Ganondorf
+  var4 = 109
+  var4 = 0.13
+// GIGA BOWSER WOULD GO HERE
+// elif OIsCharOf Bowser
+//   var4 = 113
+//   var4 = 0.13
+elif OIsCharOf Nana || OIsCharOf Popo
+  var4 = 88
+  var4 = 0.1
+elif OIsCharOf Ike
+  var4 = 100
+  var4 = 0.103
+elif OIsCharOf Fushigisou // Ivysaur
+  var4 = 85
+  var4 = 0.075
+elif OIsCharOf Purin // Jigglypuff
+  var4 = 62
+  var4 = 0.064
+elif OIsCharOf DDD // King Dedede
+  var4 = 107
+  var4 = 0.095
+elif OIsCharOf Kirby
+  var4 = 74
+  var4 = 0.08
+elif OIsCharOf Knuckles
+  var4 = 90
+  var4 = 0.14
+elif OIsCharOf Link
+  var4 = 104
+  var4 = 0.11
+elif OIsCharOf Lucario
+  var4 = 94
+  var4 = 0.125
+elif OIsCharOf Lucas
+  var4 = 80
+  var4 = 0.125
+elif OIsCharOf Luigi
+  var4 = 100
+  var4 = 0.069 // nice
+  // 1.6
+elif OIsCharOf Mario
+  var4 = 100
+  var4 = 0.095 // 1.7
+elif OIsCharOf Marth
+  var4 = 87
+  var4 = 0.085
+elif OIsCharOf Metaknight
+  var4 = 79
+  var4 = 0.11
+elif OIsCharOf Mewtwo
+  var4 = 90
+  var4 = 0.082
+elif OIsCharOf Ness
+  var4 = 94
+  var4 = 0.09
+elif OIsCharOf Pikmin // Olimar
+  var4 = 90
+  var4 = 0.09
+elif OIsCharOf Peach
+  var4 = 90
+  var4 = 0.08
+elif OIsCharOf Pikachu
+  var4 = 80
+  var4 = 0.11
+elif OIsCharOf Pit
+  var4 = 80
+  var4 = 0.095
+elif OIsCharOf Robot // ROB
+  var4 = 104
+  var4 = 0.09
+elif OIsCharOf Roy
+  var4 = 85
+  var4 = 0.114
+elif OIsCharOf Samus
+  var4 = 110
+  var4 = 0.66
+elif OIsCharOf Shiek
+  var4 = 90
+  var4 = 0.12
+elif OIsCharOf Snake
+  var4 = 105
+  var4 = 0.098
+elif OIsCharOf Sonic
+  var4 = 82
+  var4 = 0.122
+elif OIsCharOf Zenigame // Squirtle
+  var4 = 85
+  var4 = 0.126
+elif OIsCharOf Toonlink
+  var4 = 85
+  var4 = 0.11
+elif OIsCharOf Wario
+  var4 = 102
+  var4 = 0.112
+// WARIO MAN GOES HERE
+// elif OIsCharOf Bowser
+//   var4 = 113
+//   var4 = 0.13
+elif OIsCharOf Wolf
+  var4 = 85
+  var4 = 0.16
+elif OIsCharOf Yoshi
+  var4 = 108
+  var4 = 0.093
+elif OIsCharOf Zelda
+  var4 = 90
+  var4 = 0.073
+elif OIsCharOf ZSS // Zero Suit Samus
+  var4 = 85
+  var4 = 0.135
+endif
+  var22 = var5
+  var0 = 0
+  var1 = OCharYSpeed + OKBYSpeed
+  var1 *= -1
+  Seek _MID_CALC_O_GRAV
+  Jump
+  if !(True)
+    label _MID_CALC_O_GRAV
+    var0 += var1
+    var22 -= 1
+    var1 += var4 // 0.13
+    if var1 > OMaxFallSpeed
+      var1 = OMaxFallSpeed
+    endif
+    if var22 < 1
+      Seek
+    else
+      Seek _MID_CALC_O_GRAV
+    endif
+    Jump
+  endif
+  label
+    var4 = var0
+  endif
   EstOYCoord var1 var22
-  var22 *= 2
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  if OCurrAction <= 21
-    var22 /= 3
-  endif
+  // if OCurrAction <= 21
+  //   var22 /= 3
+  // endif
   EstOXCoord var0 var22
   var1 = var1 - (OSCDBottom - OTopNY)
   // var0 = estimated target x position
@@ -1144,23 +1785,26 @@ var5 = OFramesHitstun
   // var17 = estimated own y position
   // var22 = temporary variable
   // correct if estimated y positions go beyond ground level
-  // self
-  var22 = YDistBackEdge + TopNY
-  if var17 < var22 && Equal IsOnStage 1
-    if Equal var4 1 && var20 >= 24641 && var20 <= 24645 && InAir
-      Call AIHub
-    endif 
-    var22 -= var17
-    var17 += var22
-  endif
   // target
   var22 = OYDistBackEdge + OTopNY
   if var1 < var22 && Equal OIsOnStage 1
     var22 -= var1
     var1 += var22
+    var17 -= var22
   elif Equal OCurrAction 70 || Equal OCurrAction 74 || Equal OCurrAction 84 || Equal OCurrAction 85
     var22 -= var1
     var1 += var22
+  elif Equal OAirGroundState 1
+    var17 -= var4
+  endif
+  // self (dependent on target)
+  var22 = YDistBackEdge + TopNY
+  if var17 < var22 && Equal IsOnStage 1
+    // if CalledAs ApproachHub && Equal var4 1 && var20 >= 24641 && var20 <= 24645 && InAir
+    //   Call AIHub
+    // endif 
+    var22 -= var17
+    var17 += var22
   endif
   // if !(CalledAs ComboHub)
   //   if Equal var4 1 || Equal var18 1
@@ -1176,28 +1820,48 @@ var5 = OFramesHitstun
   var1 = var17 - var1
   // adjust for the move parameters
   if !(InAir)
-    var0 = var0 - (var11 * OPos)
-    var0 = var0 - (var9 * OPos)
+    var17 = var9 + (var11 * 2)
+    var17 /= 2
+    if var17 <= 0
+      var0 = var0 + (var9 * OPos)
+    else 
+      var0 = var0 - (var11 * OPos)
+      var0 = var0 - (var9 * OPos)
+    endif 
   else
     var0 = var0 - (var11 * Direction)
     var0 = var0 - (var9 * Direction)
   endif
+  var1 += var10
+  var1 -= var12
+  var22 = AirTime + var5
+  if var22 > 10 && var20 >= 24640
+    var1 += 5
+  endif
+  // // adjust for opponent position (aim towards nearest blastzone)
+  // if OTopNX > 0
+  //   var0 += var11
+  // else
+  //   var0 -= var11
+  // endif
   // account for target height
   var22 = 0
   SAFE_INJECT_D var22
-  var17 = OSCDBottom + OHurtboxSize
-  var2 = TopNY - var10 + var12 + var22
+  var17 = OSCDBottom + OHurtboxSize // top of target
+  var2 = TopNY - var10 + var12 + var22 // center of move detection
   if var2 >= var17 
-    // above
-    var2 = OHurtboxSize * -1
+    // self is above
+    var2 = OHurtboxSize
   elif var2 <= OSCDBottom 
-    // below
-    var2 = 0
+    // self is below
+    var2 = 0 // OHurtboxSize * -1
   else 
-    // middle
-    var2 = OHurtboxSize - (var17 - var2)
+    // self is between
+    var17 -= var2
+    var2 = OHurtboxSize - var17
+    // var2 = var22
   endif
-  var2 += OHurtboxSize
+  // var2 *= -1
   var1 += var2
   // if !(CalledAs ComboHub)
   //   if Equal var4 1 || Equal var18 1
@@ -1212,13 +1876,22 @@ var5 = OFramesHitstun
   //     var22 *= Direction
   //     var22 += TopNX
   //     var17 = TopNY - var10 + var12
-  //     DrawDebugRectOutline var22 var17 var11 var12 0 0 0 136
+  //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
   //     var17 += var2
+  //     if OTopNX > 0
+  //       var22 += var11
+  //     else
+  //       var22 -= var11
+  //     endif 
   //     DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
   //     var22 = OHurtboxSize / 2
   //     var17 = var22 + OSCDBottom
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
   //   endif
+  // endif
+  // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
+  //   var17 = var5 - var4
+  //   var0 = var0 + OXSpeed * var17 * -2
   // endif
   var2 = var11
   var3 = var12
@@ -1227,9 +1900,9 @@ var5 = OFramesHitstun
   Abs var0
   Abs var1
   if Equal AirGroundState 1
-    var2 = var2 + var5 * 2.3 / 2
+    var2 = var2 + var5 * 2.3
   else
-    var2 = var2 + var5 * XSpeed / 2
+    var2 = var2 + var5 * XSpeed
   endif
   if NumJumps > 0
     if var20 >= 24641 && var20 <= 24655 || Equal var20 25000 
@@ -1262,7 +1935,9 @@ endif
 if Equal var18 255
   var18 = 0
 endif
-var16 = 6
+if Equal var16 0 
+  var16 = 6
+endif
 if Equal var20 24625
   Call Jab123
 elif Equal var20 24638

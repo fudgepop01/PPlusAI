@@ -95,6 +95,7 @@ elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
     Button R
     Call Unk3020
   endif
+  {GROUND_HITSTUN_MOVES}
   Seek
   Jump
 elif Equal FramesHitstun 1 && LevelValue >= LV5
@@ -265,6 +266,7 @@ endif
 //   Return
 // endif
 
+approachType = 0
 moveVariant = 0
 movePart = 0
 hit_knockback = -1
@@ -286,6 +288,7 @@ if Equal isEarlyRoll 0
   // this, we place a label here to jump to
   label callers
   if moveSelection >= 1
+    lastScript = hex(0x8000)
     if moveSelection < 2
       Call Jab123
     elif moveSelection < 3
@@ -366,7 +369,7 @@ if Equal isEarlyRoll 0
       endif
     endif
 
-    lastScript = -1
+    lastScript = hex(0x8000)
 
     #let defenseMul = var3
     defenseMul = Damage - ODamage

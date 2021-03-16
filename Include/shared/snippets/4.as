@@ -1,3 +1,19 @@
+#snippet SFALL_ACTIONS
+  if Equal CurrAction hex(0x10) 
+#endsnippet
+#snippet USPECIAL_ACTIONS
+  elif Equal CurrAction hex(0x114)
+#endsnippet
+#snippet NSPECIAL_ACTIONS
+  elif Equal CurrAction hex(0x112)
+#endsnippet
+#snippet SSPECIAL_ACTIONS
+  elif Equal CurrAction hex(0x113)
+#endsnippet
+#snippet DSPECIAL_ACTIONS
+  elif Equal CurrAction hex(0x115)
+#endsnippet
+
 #snippet DEFAULT_RECOVERY_CHECKS
   if nearCliffY > 0
     {ABOVE_LEDGE}
@@ -113,6 +129,13 @@
 ////// FOR USE IN FUNCTIONS //////
 
 #snippet COMMON_RECOVERY_BASE
-  globTempVar = nearCliffX * -1
-  AbsStick globTempVar
+  
+  if Equal isBelowStage 0 && nearCliffY > 0
+    GetRndPointOnStage nearCliffX
+    globTempVar = nearCliffX - TopNX
+    AbsStick globTempVar
+  else
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
+  endif
 #endsnippet

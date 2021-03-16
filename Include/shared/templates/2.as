@@ -27,6 +27,7 @@ if Equal movePart mp_ATK
   Jump
 endif
 movePart = 0
+approachType = 0
 
 #let OYDistSelf = var1
 OYDistSelf = OTopNY - TopNY
@@ -85,32 +86,44 @@ if globTempVar < nearCliffX && OYDistSelf < 70 && globTempVar < 20
   {EDGEGUARD_OPTIONS}
   Seek edgeguard
 elif Equal OIsOnStage 1 && OYDistSelf < 80
-  testLimit = 30
+  if Equal LevelValue LV9 
+    testLimit = 50
+  else
+    testLimit = 40
+  endif
   LOGSTR str("combo")
   label combo
   action = 1
   Seek killOptions
   Jump 
   label kill_end
-  Goto analyze
-  Goto clear
-  Seek comboOptions
-  Jump
-  label combo_end
+  if testLimit < 20
+    Goto analyze
+    Goto clear
+    Seek comboOptions
+    Jump
+    label combo_end
+  endif
   Seek combo
-else
-  testLimit = 30
+elif True
+  if Equal LevelValue LV9 
+    testLimit = 50
+  else
+    testLimit = 40
+  endif
   LOGSTR str("juggle")
   label juggle
   action = 2
   Seek killOptions
   Jump 
   label kill_high_end
-  Goto analyze
-  Goto clear
-  Seek juggleOptions
-  Jump
-  label juggle_end
+  if testLimit < 25
+    Goto analyze
+    Goto clear
+    Seek juggleOptions
+    Jump
+    label juggle_end
+  endif
   Seek juggle
 endif
 Goto analyze
@@ -224,7 +237,9 @@ endif
 if Equal movePart mp_ATK
   movePart = 0
 endif
-approachType = at_combo
+if Equal approachType 0 
+  approachType = at_combo
+endif
 if Equal lastAttack valJab123
   Call Jab123
 elif Equal lastAttack valDA

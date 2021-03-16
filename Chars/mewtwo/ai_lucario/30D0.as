@@ -1,11 +1,5 @@
-#include <Definition_AIMain.h>
-//TrueID=0x30D0
-id 0x30D0
-
-//Set Unknown
-unk 0x20000
-
-//Strings
-
-Call Nothing
-Return
+#snippet CONDITIONS
+    if InAir && Equal lastScript hex(0x8104)
+        Call ApproachHub
+    endif
+#endsnippet

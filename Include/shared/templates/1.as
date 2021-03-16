@@ -11,12 +11,21 @@ movePart = 0
 
 {DEBUG_SKIP}
 
+if NoOpponent
+  Return
+endif
+
 if FramesHitstun > 0 || Equal move_xRange 0
   Call AIHub
 endif
 
 if !(Equal lastScript hex(0x8F01)) && !(Equal lastScript hex(0x8F00)) && !(Equal lastScript hex(0x8001))
   MESS_MOVE_PARAMS
+
+  if Equal approachType at_edgeguard && lastAttack < hex(0x6040)
+    move_xRange *= 1.1
+    move_yOffset = move_yOffset + (move_yRange * 1.5)
+  endif 
 endif
 // this is used to detect when the target x position has passed through falcon, such as when changing direction or something
 #let prevTargetXDistance = var7
@@ -108,7 +117,7 @@ if !(True)
       Stick -0.5
     endif
     if OYDistBackEdge > -50
-      if OYDistBackEdge < 30
+      if OYDistBackEdge < 40 && lastAttack >= hex(0x6040)
         Button X
       endif
       Seek edgeguardMovementComplete
@@ -138,7 +147,11 @@ if lastAttack > hex(0x604F)
   move_lastHitFrame = move_hitFrame
 endif
 
-loopTempVar = (move_lastHitFrame - move_hitFrame) + 1
+loopTempVar = 0 //(move_lastHitFrame - move_hitFrame) + 1
+
+if loopTempVar < 1
+  loopTempVar = 1
+endif
 
 if !(Equal YSpeed 0)
   Seek LOOP_DIST_CHECK
@@ -151,27 +164,7 @@ label LOOP_DIST_EXIT
 if !(True)
   label LOOP_DIST_CHECK
   // clacs distance to the target
-  if lastAttack >= valJab123 && lastAttack <= valDSmash
-    if Equal AirGroundState 1 && Equal CurrAction hex(0x03) && !(Equal lastAttack hex(0x603C)) && !(Equal lastAttack hex(0x6036))
-      var4 = jumpSquatFrames
-    elif Equal AirGroundState 2
-      var4 = 0
-    else
-      var4 = 0
-    endif
-  elif lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
-    var4 = 0
-    if Equal AirGroundState 1
-      var4 = jumpSquatFrames
-    endif
-  elif Equal lastAttack valGeneral
-    var4 = OFramesHitstun 
-  endif
-  
-  var0 = 0
-  SAFE_INJECT_E var0
-  var4 += var0
-  CALC_TARGET_DISTANCES(var5, var6, loopTempVar, var3, var4, move_hitFrame + loopTempVar, _oCalc, _sCalc)
+  CALC_TARGET_DISTANCES(var5, var6, loopTempVar, var3, var4, move_hitFrame, _oCalc, _sCalc)
 
   // targetXDistance and targetYDistance come from the macro
   absTargetXDistance = targetXDistance
@@ -299,10 +292,10 @@ if !(Equal CurrSubaction JumpSquat)
       else
         ClearStick 0
       endif
-    elif Rnd <= 0.02 && lastAttack >= valJab123 && lastAttack <= valDSmash && XDistLE 80 100 && !(Equal approachType at_combo)
+    elif Rnd <= 0.02 && lastAttack >= valJab123 && lastAttack <= valDSmash && XDistLE 80 100 && !(Equal approachType at_combo) && !(Equal approachType at_edgeguard)
       // randomly perform tomhawk stuff if using a grounded move and not comboing
       Call mix_tomhawkJump
-    elif Rnd <= 0.02 && Equal lastAttack hex(0x8008) && !(Equal approachType at_combo)
+    elif Rnd <= 0.02 && Equal lastAttack hex(0x8008) && !(Equal approachType at_combo) && !(Equal approachType at_edgeguard)
       Call mix_tomhawkJump
     endif
   {MIX_DOUBLEJUMP_SECTION}
@@ -372,8 +365,8 @@ GOING_OFFSTAGE(var2, var3, move_IASA)
 GetNearestCliff nearCliffX
 nearCliffX = TopNX - nearCliffX
 
-if nearCliffX > 50 || nearCliffX < -50
-  if Equal isGoingOffstage 2
+if nearCliffX > 50 || nearCliffX < -50 
+  if Equal isGoingOffstage 2 && !(Equal approachType at_edgeguard)
     movePart = 0
     Call RecoveryHub
   endif
@@ -408,9 +401,55 @@ elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
     ClearStick
   endif
 
-  if !(SamePlane) && absTargetXDistance <= oWalkingDist
+  if !(SamePlane) && absTargetXDistance <= oWalkingDist && !(Equal CurrSubaction JumpSquat)
     Goto JumpIfInRange
   endif
+elif Equal CurrSubaction JumpSquat
+  tempVar = targetXDistance
+  if absTargetXDistance <= 1
+    ClearStick
+  elif absTargetXDistance <= oWalkingDist
+    if CurrAction < hex(0x03) || CurrAction > hex(0x04)
+      ClearStick
+      if targetXDistance > 0
+        AbsStick 0.6
+      else
+        AbsStick -0.6
+      endif
+    else
+      AbsStick tempVar
+    endif
+  else
+    AbsStick tempVar
+  endif
+
+  // adjusts the trajectory of the jump if the
+  // target is moving
+  nearCliffX -= TopNX
+  tempVar = OXSpeed * 2
+  if OXSpeed > calloutSpeed
+    ClearStick 0
+    AbsStick tempVar 0
+  elif OXSpeed < -calloutSpeed
+    ClearStick 0
+    AbsStick tempVar 0
+  endif
+
+  if nearCliffX >= -edgeRange && nearCliffX <= edgeRange
+    if nearCliffX > 0
+      ClearStick 0
+      if XSpeed > 0.1
+        AbsStick -1
+      endif
+    elif nearCliffX < 0
+      ClearStick 0
+      if XSpeed < -0.1
+        AbsStick 1
+      endif
+    endif
+  endif
+
+  Goto JumpIfInRange
 else
   // otherwise...
   tempVar = targetXDistance / oWalkingDist
@@ -426,34 +465,6 @@ else
     tempVar /= 2
   endif
   AbsStick tempVar
-
-  // adjusts the trajectory of the jump if the
-  // target is moving
-  nearCliffX -= TopNX
-  if Equal CurrSubaction JumpSquat
-    tempVar = OXSpeed * 2
-    if OXSpeed > calloutSpeed
-      ClearStick 0
-      AbsStick tempVar 0
-    elif OXSpeed < -calloutSpeed
-      ClearStick 0
-      AbsStick tempVar 0
-    endif
-
-    if nearCliffX >= -edgeRange && nearCliffX <= edgeRange
-      if nearCliffX > 0
-        ClearStick 0
-        if XSpeed > 0.1
-          AbsStick -1
-        endif
-      elif nearCliffX < 0
-        ClearStick 0
-        if XSpeed < -0.1
-          AbsStick 1
-        endif
-      endif
-    endif
-  endif
 
   if !(Equal isGoingOffstage 0) && !(Equal approachType at_edgeguard)
     ClearStick 0
@@ -493,7 +504,7 @@ tempVar = HurtboxSize
 // if targetYDistance < tempVar && Equal AirGroundState 1 && Equal YSpeed 0 && !(Equal CurrAction hex(0x0A))
 //   tempVar = hex(0xFFFF)
 // else
-  tempVar = move_yRange + (OHurtboxSize / 2)
+  tempVar = move_yRange //+ (OHurtboxSize / 2)
 // endif
 if absTargetYDistance <= tempVar
   #let approxDist = var4
@@ -530,9 +541,11 @@ if absTargetYDistance <= tempVar
       Return
     elif CanJump && Equal isGoingOffstage 2 && approxDist < -maxYEdgeDistWithJump
       moveVariant = 0
+      approachType = 0
       Call AIHub
     elif !CanJump && Equal isGoingOffstage 2 && approxDist < -maxYEdgeDist
       moveVariant = 0
+      approachType = 0
       Call AIHub
     {ADDITIONAL_YDIST_CHECKS}
     else
@@ -613,6 +626,8 @@ if lastAttack >= valJab123 && lastAttack <= valDSmash
 elif Equal CurrSubaction JumpSquat
   Return
 elif lastAttack >= hex(0x6040) && lastAttack <= hex(0x604F) && Equal AirGroundState 1
+  globTempVar = move_xOffset + (move_xRange * 2)
+  globTempVar /= 2
   if globTempVar > 0 && !(Equal Direction OPos)
     ClearStick
     Stick (-0.7)
@@ -626,6 +641,22 @@ elif lastAttack >= hex(0x6040) && lastAttack <= hex(0x604F) && Equal AirGroundSt
     Button X
   endif
   Return
+endif
+// BReversing
+if lastAttack >= valNSpecial && lastAttack <= valDSpecial
+  globTempVar = move_xOffset + (move_xRange * 2)
+  globTempVar /= 2
+  if globTempVar > 0 && !(Equal Direction OPos)
+    ClearStick
+    Stick (-0.7)
+  elif globTempVar <= 0 && Equal Direction OPos
+    ClearStick
+    Stick (-0.7)
+  else
+    immediateTempVar = OPos * 0.7
+    ClearStick
+    AbsStick immediateTempVar
+  endif
 endif
 
 // sets movePart to 1 so we know to actually perform the move instead

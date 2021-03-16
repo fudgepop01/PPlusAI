@@ -54,6 +54,9 @@ label
 Goto shieldStunCheck
 if !(Idling) && !(Dashing)
     if FrameGE 1 && !(FrameGE 3)
+        if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+            Finish
+        endif
         Button R
     endif
     Return
@@ -83,6 +86,9 @@ Return
 //____________________
 label
 Goto shieldStunCheck
+if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+    Finish
+endif
 Button R
 if FrameGE var10
     var12=Rnd
@@ -123,6 +129,9 @@ Return
 //____________________
 label _0
 Goto shieldStunCheck
+if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+    Finish
+endif
 Button R
 if FrameGE 3
     Stick 1
@@ -151,6 +160,9 @@ Return
 //____________________
 label _2
 Button R
+if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+    Finish
+endif
 if FrameGE 2
     Button A
     if FrameGE 2
@@ -165,6 +177,9 @@ Return
 //____________________
 label _3
 Goto shieldStunCheck
+if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+    Finish
+endif
 Button R
 Return
 

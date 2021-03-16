@@ -11,6 +11,8 @@ unk 0x0
 //     Call EdgeguardHub
 // endif
 
+approachType = at_attack
+
 // we're unable to actually break out of this routine during the ledgejump
 // actions, so I need to force the character to move to the target here
 if CurrAction >= hex(0x79) && CurrAction <= hex(0x7B)
@@ -69,6 +71,7 @@ if absOCloseness < 35 && Equal Direction OPos
         Seek ledgedash
         Jump
     elif rndChoice < 0.7 && LevelValue >= LV7
+            LOGSTR str("refresh")
         approachType = at_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
@@ -81,6 +84,7 @@ elif absOCloseness > 35 && Equal OPos Direction
         Seek ledgedash
         Jump
     elif rndChoice < 0.8
+            LOGSTR str("refresh")
         approachType = at_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
@@ -131,6 +135,7 @@ elif absOCloseness < 50 && !(Equal OPos Direction)
             SetFrame 0
         endif
         if Equal NumFrames 1
+            LOGSTR str("refresh")
             approachType = at_ledgeRefresh
             Stick 0 (-1)
             Call AIHub

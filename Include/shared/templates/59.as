@@ -24,7 +24,8 @@ elif Equal moveMode 2
 else
   var0 = 0
 endif
-AbsStick var0
+AbsStick var0 (-0.6)
+
 
 if YSpeed < 0 && YDistBackEdge > -5 && Equal CurrAction hex(0x33) && AnimFrame < move_IASA && FramesSinceShield > 7 && LevelValue >= LV7
   Button R

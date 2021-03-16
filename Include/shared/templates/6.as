@@ -21,8 +21,11 @@ if XDistLE 30
       AbsStick globTempVar
     elif XDistFrontEdge > edgeRange
       AbsStick globTempVar
-    else
+    elif Rnd < 0.5
       Button X
+      AbsStick OPos
+    else
+      Button R
       AbsStick OPos
     endif
   endif

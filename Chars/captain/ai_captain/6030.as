@@ -33,7 +33,10 @@ if Equal movePart 0
   else
     Call ApproachHub
   endif
-else
+elif True
+  if !(Equal AirGroundState 1)
+    Call AIHub
+  endif
   ClearStick
   if CalledAs FTilt
     move_IASA = ftilt_IASA

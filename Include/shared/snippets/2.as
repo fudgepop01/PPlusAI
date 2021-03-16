@@ -12,9 +12,9 @@
   Abs targetYDistance
 
   if Equal AirGroundState 1
-    calcMoveXRange = calcMoveXRange + frameToCalc * dashRunTermVel / 2
+    calcMoveXRange = calcMoveXRange + frameToCalc * dashRunTermVel
   else
-    calcMoveXRange = calcMoveXRange + frameToCalc * XSpeed / 2
+    calcMoveXRange = calcMoveXRange + frameToCalc * XSpeed
   endif
 
   if NumJumps > 0
@@ -42,17 +42,17 @@
 
 #snippet COMBO_OPTIONS
   $refreshMoves()
-  $filterMoveEndlag(15)
-  $outputWithKnockbackThresholds(60, 110, Goto)
+  $filterMoveEndlag(20)
+  $outputWithKnockbackThresholds(90, 290, Goto)
 #endsnippet
 
 #snippet JUGGLE_OPTIONS
   $refreshMoves()
-  $filterMoveAngle(70, 100)
+  $filterMoveAngle(60, 120)
   $output(Goto)
 #endsnippet
 
 #snippet KILL_OPTIONS
   $refreshMoves()
-  $outputWithKnockbackThresholds(130, 300, Goto)
+  $outputWithKnockbackThresholds(180, 400, Goto)
 #endsnippet

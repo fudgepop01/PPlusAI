@@ -20,6 +20,7 @@
 #const maxYEdgeDist = 9999.9999
 #const maxYEdgeDistJumpNoUpB = 9999.9999
 #const maxXEdgeDist = 9999.9999
+#const minXEdgeDist = 15
 
 #const oWalkingDist = 9999.9999
 #const shortEdgeRange = 9999.9999
@@ -104,10 +105,10 @@
 
 #const valGeneral = 25000
 
-#const gen_xOffset = -20
-#const gen_yOffset = 30
-#const gen_xRange = 20
-#const gen_yRange = 30
+#const gen_xOffset = -30
+#const gen_yOffset = 40
+#const gen_xRange = 30
+#const gen_yRange = 40
 #const gen_hitFrame = 1
 #const gen_lastHitFrame = 1
 #const gen_IASA = 1
@@ -123,6 +124,7 @@
 #const utaunt = 1
 #const staunt = 2
 #const dtaunt = 3
+
 
 // controls the approach the AI uses. It's okay because MOVES shouldn't care
 // about what script was called previously - only what move they are.
@@ -149,10 +151,10 @@
 // where it's used IMMEDIATELY before being modified
 #let shouldFastFall = var2
 
-#const mv_fthrow = 1
-#const mv_dthrow = 2
-#const mv_bthrow = 3
-#const mv_uthrow = 4
+#const mv_fthrow = 2
+#const mv_dthrow = 3
+#const mv_bthrow = 4
+#const mv_uthrow = 5
 
 // when I want to techchase using grab, i'll set move_variant to this value
 #const mv_techChase = 1

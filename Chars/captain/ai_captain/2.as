@@ -47,7 +47,7 @@
   // //   Goto dair
   // //   comboLeniency = 2
   // endif
-  if OFramesHitstun < 5 && Rnd < 0.5
+  if OFramesHitstun < 15 && Rnd < 0.5 && YDistBackEdge > -10 && OYDistBackEdge > -15
     Call Grab
   endif
 #endsnippet

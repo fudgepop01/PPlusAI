@@ -11,6 +11,8 @@ unk 0x0
 //     Call EdgeguardHub
 // endif
 
+var16 = 1 // default
+
 // we're unable to actually break out of this routine during the ledgejump
 // actions, so I need to force the character to move to the target here
 if CurrAction >= 121 && CurrAction <= 123
@@ -65,6 +67,7 @@ if var1 < 35 && Equal Direction OPos
         Seek ledgedash
         Jump
     elif var2 < 0.7 && LevelValue >= 60
+            LOGSTR 1919247872 1919251200 1744830464 0 0
         var16 = 5
         Stick 0 (-1)
         Call AIHub
@@ -77,6 +80,7 @@ elif var1 > 35 && Equal OPos Direction
         Seek ledgedash
         Jump
     elif var2 < 0.8
+            LOGSTR 1919247872 1919251200 1744830464 0 0
         var16 = 5
         Stick 0 (-1)
         Call AIHub
@@ -127,6 +131,7 @@ elif var1 < 50 && !(Equal OPos Direction)
             SetFrame 0
         endif
         if Equal NumFrames 1
+            LOGSTR 1919247872 1919251200 1744830464 0 0
             var16 = 5
             Stick 0 (-1)
             Call AIHub

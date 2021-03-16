@@ -89,6 +89,17 @@ elif FramesHitstun > 0 && var5 > 3 && LevelValue >= 42
     Button R
     Call Unk3020
   endif
+  if LevelValue >= 60
+    var18 = 1
+var17 = Rnd * 3
+if var17 < 1
+Call Jab123
+elif 1 < var17 && var17 < 2
+Call FTilt
+elif 2 < var17 && var17 < 3
+Call Grab
+endif
+  endif
   Seek
   Jump
 elif Equal FramesHitstun 1 && LevelValue >= 42
@@ -297,6 +308,7 @@ endif
 //   Return
 // endif
 
+var16 = 0
 var19 = 0
 var18 = 0
 var16 = -1
@@ -391,6 +403,7 @@ if Equal var0 0
   // this, we place a label here to jump to
   label callers
   if var0 >= 1
+    var21 = 32768
     if var0 < 2
       Call Jab123
     elif var0 < 3
@@ -468,7 +481,7 @@ if Equal var0 0
       endif
     endif
 
-    var21 = -1
+    var21 = 32768
 
     var3 = Damage - ODamage
     var3 /= 200
@@ -767,120 +780,149 @@ endif
 Return
 
 label comboStarters
-if True && var2 <= 130 && Rnd < 0.1 && OCurrAction <= 69
+var22 = 0.3
+if !(SamePlane) || OYDistBackEdge < -10
+var22 = 0.15
+endif
+if True && 109 <= var2 && Rnd < 0.3
+var19 = 1
+Call FAir
+endif
+if True && 83 <= var2 && var2 <= 354 && Rnd < 0.3
+Call Jab123
+endif
+if True && 83 <= var2 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 3
 Call Grab
 endif
-if True && var2 <= 56 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 5
-Call Grab
-endif
-if True && var2 <= 102 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 2
-Call Grab
-endif
-if True && var2 <= 77 && Rnd < 0.3
-var19 = 1
-Call NAir
-endif
-if True && var2 <= 101 && Rnd < 0.1 && OCurrAction <= 69
+if True && 83 <= var2 && var2 <= 431 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 4
 Call Grab
 endif
-if True && Rnd < 0.3
-Call NAir
+if True && 79 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 2
+Call Grab
 endif
-if True && var2 <= 54 && Rnd < 0.3
-Call BAir
-endif
-if True && 7 <= var2 && var2 <= 88 && Rnd < 0.3
+if True && 75 <= var2 && var2 <= 333 && Rnd < 0.3
 Call DTilt
 endif
-if True && 11 <= var2 && var2 <= 97 && Rnd < 0.3
-Call Jab123
-endif
-if True && 11 <= var2 && var2 <= 68 && Rnd < 0.3
-Call UAir
-endif
-if True && 16 <= var2 && var2 <= 82 && Rnd < 0.3
+if True && 71 <= var2 && var2 <= 280 && Rnd < 0.3
 Call FTilt
+endif
+if True && 62 <= var2 && var2 <= 363 && Rnd < 0.3
+var19 = 1
+Call NAir
+endif
+if True && 62 <= var2 && var2 <= 363 && Rnd < 0.3
+var19 = 2
+Call NAir
+endif
+if True && 45 <= var2 && var2 <= 214 && Rnd < 0.3
+Call BAir
+endif
+if True && 32 <= var2 && var2 <= 259 && Rnd < 0.3
+Call UTilt
+endif
+if True && 28 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 5
+Call Grab
+endif
+if True && 28 <= var2 && var2 <= 163 && Rnd < 0.3
+Call FAir
+endif
+if True && 21 <= var2 && var2 <= 172 && Rnd < 0.3
+Call DAir
 endif
 Return
 
 label killMoves
 // $filterMoveEndlag(20)
-if True && 42 <= var2 && var2 <= 152 && Rnd < 0.3
-Call FSmash
+var22 = 0.3
+if !(SamePlane) || OYDistBackEdge < -10
+var22 = 0.15
 endif
-if True && 45 <= var2 && var2 <= 180 && Rnd < 0.3
-Call DAir
+if True && 783 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 3
+Call Grab
 endif
-if True && 49 <= var2 && var2 <= 170 && Rnd < 0.3
+if True && 443 <= var2 && Rnd < 0.3
+var19 = 1
 Call FAir
 endif
-if True && 68 <= var2 && var2 <= 271 && Rnd < 0.3
-Call UTilt
-endif
-if True && 71 <= var2 && var2 <= 223 && Rnd < 0.3
-Call BAir
-endif
-if True && 87 <= var2 && var2 <= 249 && Rnd < 0.3
-Call UAir
-endif
-if True && 104 <= var2 && var2 <= 291 && Rnd < 0.3
-Call FTilt
-endif
-if True && 109 <= var2 && var2 <= 379 && Rnd < 0.3
-var19 = 1
-Call NAir
-endif
-if True && 109 <= var2 && var2 <= 379 && Rnd < 0.3
-var19 = 2
-Call NAir
-endif
-if True && 110 <= var2 && Rnd < 0.1 && OCurrAction <= 69
+if True && 436 <= var2 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 5
 Call Grab
 endif
-if True && 115 <= var2 && var2 <= 347 && Rnd < 0.3
-Call DTilt
-endif
-if True && 126 <= var2 && var2 <= 368 && Rnd < 0.3
-Call Jab123
-endif
-if True && 128 <= var2 && var2 <= 345 && Rnd < 0.3
-var19 = 1
-Call UAir
-endif
-if True && 138 <= var2 && var2 <= 449 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 4
-Call Grab
-endif
-if True && 147 <= var2 && Rnd < 0.1 && OCurrAction <= 69
+if True && 419 <= var2 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 2
 Call Grab
 endif
-if True && 176 <= var2 && Rnd < 0.3
+if True && 357 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+var19 = 4
+Call Grab
+endif
+if True && 300 <= var2 && Rnd < 0.3
 var19 = 1
+Call NAir
+endif
+if True && 300 <= var2 && Rnd < 0.3
+var19 = 2
+Call NAir
+endif
+if True && 297 <= var2 && Rnd < 0.3
+Call Jab123
+endif
+if True && 281 <= var2 && var2 <= 473 && Rnd < 0.3
+var19 = 1
+Call UAir
+endif
+if True && 279 <= var2 && var2 <= 483 && Rnd < 0.3
+Call DTilt
+endif
+if True && 236 <= var2 && var2 <= 400 && Rnd < 0.3
+Call FTilt
+endif
+if True && 211 <= var2 && var2 <= 390 && Rnd < 0.3
+Call UTilt
+endif
+if True && 202 <= var2 && var2 <= 344 && Rnd < 0.3
+Call UAir
+endif
+if True && 179 <= var2 && var2 <= 313 && Rnd < 0.3
+Call BAir
+endif
+if True && 140 <= var2 && var2 <= 259 && Rnd < 0.3
+Call DAir
+endif
+if True && 135 <= var2 && var2 <= 242 && Rnd < 0.3
 Call FAir
 endif
-if True && 223 <= var2 && Rnd < 0.1 && OCurrAction <= 69
-var19 = 3
-Call Grab
+if True && 120 <= var2 && var2 <= 217 && Rnd < 0.3
+Call FSmash
 endif
 Return
 
 label neutralMoves
 var16 = 4
-var17 = Rnd * 4
+var17 = Rnd * 8
 if var17 < 1
 Call Jab123
 elif 1 < var17 && var17 < 2
 Call FTilt
 elif 2 < var17 && var17 < 3
-Call NAir
+Call UTilt
 elif 3 < var17 && var17 < 4
-Call UAir
+Call NAir
+elif 4 < var17 && var17 < 5
+var19 = 2
+Call NAir
+elif 5 < var17 && var17 < 6
+Call FAir
+elif 6 < var17 && var17 < 7
+var19 = 1
+Call FAir
+elif 7 < var17 && var17 < 8
+Call DAir
 endif
 Return
 Return

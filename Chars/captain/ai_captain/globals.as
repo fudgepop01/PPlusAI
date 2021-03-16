@@ -182,21 +182,13 @@
 #const sspecial_IASA = 26
 #const sspecial_xOffset = 3
 #const sspecial_yOffset = 0
-#const sspecial_xRange = 15
+#const sspecial_xRange = 14
 #const sspecial_yRange = 8
 #const sspecial_hitFrame = 26
 #const sspecial_lastHitFrame = 26 // just a dummy
 #const sspecial_damage_info = SSpecial|7|78|80|90
 
 // grab
-// "mv" stands for "move variant" - it's just a naming convention
-// these are the variations of "grab" so I know exactly what throw
-// was used
-#const mv_fthrow = 2
-#const mv_dthrow = 3
-#const mv_bthrow = 4
-#const mv_uthrow = 5
-
 // when I want to techchase using grab, i'll set move_variant to this value
 #const mv_techChase = 1
 

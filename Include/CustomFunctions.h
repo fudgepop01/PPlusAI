@@ -194,13 +194,13 @@ func OArticleYSpeed : 0x50
 
 // C++ INJECTIONS START HERE
 
-///self-explanatory
-func PlayerNum : 0x51
-func OPlayerNum : 0x151
-
 ///returns the "mode" that the AI is in
-func AIMD : 0x52
-func OAIMD : 0x152
+func AIMD : 0x51
+func OAIMD : 0x151
+
+///self-explanatory
+func PlayerNum : 0x52
+func OPlayerNum : 0x152
 
 /// how many times the current action appears in the
 /// stale-move queue

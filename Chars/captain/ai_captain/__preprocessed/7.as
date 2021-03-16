@@ -15,7 +15,7 @@ else
 endif
 label
 
-if Equal var1 1 && XDistLE 15
+if Equal var1 1 && XDistLE 15 && Rnd < 0.7
   Button R
   if Equal CurrAction 27
     Button A|R
@@ -23,7 +23,41 @@ if Equal var1 1 && XDistLE 15
     Call Grab
   endif
   Return
+elif Equal var1 1 || Rnd < 0.2
+  Button R
+  if Equal CurrAction 27
+    var17 = Rnd * 4
+    if var17 < 1
+      Button X
+      Seek jumpHandler
+      Return
+    elif var17 < 2
+      AbsStick OPos
+    elif var17 < 3
+      var17 = OPos * -1
+      AbsStick var17
+    else
+      AbsStick 0 (-1)
+    endif
+    Call AIHub
+  endif
+  Return
 endif
+
+  GetNearestCliff var17
+  var17 = TopNX - var17
+  var17 *= -1
+  var22 *= -1
+  var22 = var22 - (TopNY * -1)
+var22 = var17
+Abs var22
+if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.2
+  Button R
+  var17 *= -1
+  AbsStick var17
+  Return
+endif
+
 if Equal CurrAction 29
   if Equal OPos Direction && XDistLE 15 && Rnd < 0.3 && AnimFrame > 3
     var1 = 1

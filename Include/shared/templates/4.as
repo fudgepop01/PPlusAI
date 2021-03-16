@@ -17,8 +17,9 @@ endif
 
 #let hasTriedToUpB = var8
 #let jumpingTimer = var6
-hasTriedToUpB = 0
 jumpingTimer = 0
+label
+hasTriedToUpB = 0
 label
 #let isBelowStage = var7
 
@@ -35,17 +36,17 @@ globTempVar = rawReturnX - rawCX
 isBelowStage = 0
 if globTempVar < 10 && globTempVar > -10
   if globTempVar < 0
-    nearCliffXOffset = -3
+    nearCliffXOffset = 5
   else
-    nearCliffXOffset = 3
+    nearCliffXOffset = -5
   endif
 elif rawReturnX < TopNX && TopNX < rawCX
 elif rawCX < TopNX && TopNX < rawReturnX  
 elif TopNY < rawReturnY
   if globTempVar < 0
-    nearCliffXOffset = -10
-  else
     nearCliffXOffset = 10
+  else
+    nearCliffXOffset = -10
   endif
   isBelowStage = 1
 endif
@@ -58,20 +59,34 @@ endif
 NEAREST_CLIFF(nearCliffX, nearCliffY)
 
 nearCliffX += nearCliffXOffset
+if Rnd < 0.05
+  nearCliffY -= 20
+endif
 
-if Equal CurrAction hex(0x10)
+if !(NoOneHanging)
+  nearCliffY -= 20 
+endif
+
+if Equal approachType at_ledgeRefresh
+  if nearCliffY < -40
+    Button X
+  endif
+  Return
+endif
+
+{SFALL_ACTIONS}
   Goto handleSFall
   Return
-elif Equal CurrAction hex(0x114)
+{USPECIAL_ACTIONS}
   Goto handleUSpecial
   Return
-elif Equal CurrAction hex(0x112)
+{NSPECIAL_ACTIONS}
   Goto handleNSpecial
   Return
-elif Equal CurrAction hex(0x113)
+{SSPECIAL_ACTIONS}
   Goto handleSSpecial
   Return
-elif Equal CurrAction hex(0x115)
+{DSPECIAL_ACTIONS}
   Goto handleDSpecial
   Return
 endif
@@ -123,6 +138,7 @@ endif
 globTempVar = nearCliffX
 Abs globTempVar
 immediateTempVar = TopNY - BBoundary
+
 if immediateTempVar < 10
   if NumJumps > 0
     Button X
@@ -130,7 +146,13 @@ if immediateTempVar < 10
     Stick 0 0.7
     Button B
   endif
-elif nearCliffY > -maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0
+elif nearCliffY > maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0 && NumJumps > 0
+  GetRndPointOnStage nearCliffX
+  globTempVar = nearCliffX - TopNX
+  AbsStick globTempVar
+  Button X
+  jumpingTimer = 30
+elif nearCliffY < -maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0 && NumJumps > 0
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
@@ -139,11 +161,27 @@ elif nearCliffY > -maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0
 elif nearCliffY < -maxYEdgeDistWithJump && NumJumps > 0
   Button X
   jumpingTimer = 30
-elif nearCliffY < -maxYEdgeDist && globTempVar < maxXEdgeDist && Equal hasTriedToUpB 0
+elif nearCliffY < -maxYEdgeDist && Equal hasTriedToUpB 0
+  ClearStick
   Stick 0 0.7
   Button B
   hasTriedToUpB = 1
+elif globTempVar > maxXEdgeDist && Equal hasTriedToUpB 0 && Equal NumJumps 0
+  ClearStick
+  Stick 0 0.7
+  Button B
+  hasTriedToUpB = 1
+elif nearCliffY > -15 && Equal isBelowStage 0 && globTempVar < minXEdgeDist && Equal hasTriedToUpB 0 && NumJumps > 0
+  GetRndPointOnStage nearCliffX
+  globTempVar = nearCliffX - TopNX
+  AbsStick globTempVar
+  Button X
+  jumpingTimer = 30
 endif
+Return
+
+label willOEdgehog
+  
 Return
 
 
@@ -156,6 +194,7 @@ label handleSSpecial
 Return
 
 label handleUSpecial
+  hasTriedToUpB = 0
   {USPECIAL}
 Return
 

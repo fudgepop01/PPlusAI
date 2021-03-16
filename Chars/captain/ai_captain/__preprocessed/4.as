@@ -15,8 +15,9 @@ endif
 
 // {PREREQ_CHECKS}
 
-var8 = 0
 var6 = 0
+label
+var8 = 0
 label
 
 // detects if below stage
@@ -28,17 +29,17 @@ var17 = var1 - var0
 var7 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
-    var2 = -3
+    var2 = 5
   else
-    var2 = 3
+    var2 = -5
   endif
 elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
 elif TopNY < var2
   if var17 < 0
-    var2 = -10
-  else
     var2 = 10
+  else
+    var2 = -10
   endif
   var7 = 1
 endif
@@ -53,20 +54,34 @@ endif
   var1 = var1 - (TopNY * -1)
 
 var0 += var2
+if Rnd < 0.05
+  var1 -= 20
+endif
 
-if Equal CurrAction 16
+if !(NoOneHanging)
+  var1 -= 20 
+endif
+
+if Equal var16 5
+  if var1 < -40
+    Button X
+  endif
+  Return
+endif
+
+  if Equal CurrAction 16 
   Goto handleSFall
   Return
-elif Equal CurrAction 276
+  elif Equal CurrAction 276
   Goto handleUSpecial
   Return
-elif Equal CurrAction 274
+  elif Equal CurrAction 274
   Goto handleNSpecial
   Return
-elif Equal CurrAction 275
+  elif Equal CurrAction 275
   Goto handleSSpecial
   Return
-elif Equal CurrAction 277
+  elif Equal CurrAction 277
   Goto handleDSpecial
   Return
 endif
@@ -141,6 +156,7 @@ endif
 var17 = var0
 Abs var17
 var22 = TopNY - BBoundary
+
 if var22 < 10
   if NumJumps > 0
     Button X
@@ -148,7 +164,13 @@ if var22 < 10
     Stick 0 0.7
     Button B
   endif
-elif var1 > -25 && Rnd < 0.1 && Equal var7 0
+elif var1 > 25 && Rnd < 0.1 && Equal var7 0 && NumJumps > 0
+  GetRndPointOnStage var0
+  var17 = var0 - TopNX
+  AbsStick var17
+  Button X
+  var6 = 30
+elif var1 < -25 && Rnd < 0.1 && Equal var7 0 && NumJumps > 0
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
@@ -157,11 +179,27 @@ elif var1 > -25 && Rnd < 0.1 && Equal var7 0
 elif var1 < -70 && NumJumps > 0
   Button X
   var6 = 30
-elif var1 < -50 && var17 < 60 && Equal var8 0
+elif var1 < -50 && Equal var8 0
+  ClearStick
   Stick 0 0.7
   Button B
   var8 = 1
+elif var17 > 60 && Equal var8 0 && Equal NumJumps 0
+  ClearStick
+  Stick 0 0.7
+  Button B
+  var8 = 1
+elif var1 > -15 && Equal var7 0 && var17 < 15 && Equal var8 0 && NumJumps > 0
+  GetRndPointOnStage var0
+  var17 = var0 - TopNX
+  AbsStick var17
+  Button X
+  var6 = 30
 endif
+Return
+
+label willOEdgehog
+  
 Return
 
 
@@ -176,11 +214,19 @@ label handleSSpecial
 Return
 
 label handleUSpecial
+  var8 = 0
   if !(Equal CurrSubaction 470) && !(Equal CurrSubaction 471)
     Call AIHub
   endif
-  var17 = var0 * -1
-  AbsStick var17
+  
+  if Equal var7 0 && var1 > 0
+    GetRndPointOnStage var0
+    var17 = var0 - TopNX
+    AbsStick var17
+  else
+    var17 = var0 * -1
+    AbsStick var17
+  endif
 Return
 
 label handleDSpecial
