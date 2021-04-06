@@ -23,6 +23,7 @@
 #const minXEdgeDist = 15
 
 #const oWalkingDist = 9999.9999
+#const oJumpingDist = 50
 #const shortEdgeRange = 9999.9999
 #const edgeRange = 9999.9999
 #const calloutSpeed = 9999.9999
@@ -43,6 +44,7 @@
 
 #const minBaseReactionTime = 9999.9999
 #const maxBaseReactionTime = 9999.9999
+#const hitboxSizeMultiplier = 0.0
 
 #let globTempVar = var17
 
@@ -91,7 +93,7 @@
 #const valUSpecial = 24634
 #const valDSpecial = 24635
 #const valGrab = 24636
-#const valDA = 24638
+#const valDashAttack = 24638
 
 #const valNAir = 24641
 #const valFAir = 24642
@@ -105,10 +107,10 @@
 
 #const valGeneral = 25000
 
-#const gen_xOffset = -30
-#const gen_yOffset = 40
-#const gen_xRange = 30
-#const gen_yRange = 40
+#const gen_xOffset = -50
+#const gen_yOffset = 60
+#const gen_xRange = 50
+#const gen_yRange = 60
 #const gen_hitFrame = 1
 #const gen_lastHitFrame = 1
 #const gen_IASA = 1
@@ -135,6 +137,7 @@
 #const at_throwOut = 4
 #const at_ledgeRefresh = 5
 #const at_combo = 6
+#const at_OFF_LEDGE = 7
 
 // AI values
 #const LV1 = 0

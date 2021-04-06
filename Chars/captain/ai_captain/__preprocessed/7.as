@@ -7,15 +7,16 @@ unk 0x0
 
 var1 = 0
 if LevelValue >= 60
-  var2 = 1 + 3
+  var2 = -0.5 + 5.5
 elif LevelValue >= 21
   var2 = 40
 else
   var2 = 0 // will not grab OOS
 endif
 label
+Cmd30
 
-if Equal var1 1 && XDistLE 15 && Rnd < 0.7
+if Equal var1 1 && XDistLE 15 && Rnd < 0.5
   Button R
   if Equal CurrAction 27
     Button A|R
@@ -23,17 +24,17 @@ if Equal var1 1 && XDistLE 15 && Rnd < 0.7
     Call Grab
   endif
   Return
-elif Equal var1 1 || Rnd < 0.2
+elif Equal var1 1 || Rnd < 0.04
   Button R
   if Equal CurrAction 27
-    var17 = Rnd * 4
-    if var17 < 1
+    var17 = Rnd * 100
+    if var17 < 70
       Button X
       Seek jumpHandler
       Return
-    elif var17 < 2
+    elif var17 < 80
       AbsStick OPos
-    elif var17 < 3
+    elif var17 < 90
       var17 = OPos * -1
       AbsStick var17
     else
@@ -51,7 +52,7 @@ endif
   var22 = var22 - (TopNY * -1)
 var22 = var17
 Abs var22
-if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.2
+if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.05
   Button R
   var17 *= -1
   AbsStick var17
@@ -78,23 +79,26 @@ endif
 Return
 
 label jumpHandler
+Cmd30
 var0 = OXSpeed
 Abs var0
 var1 = OXSpeed * OPos
-if SamePlane && var1 < 0 && var0 > 0.2
-  if XDistLE 20
+if SamePlane && var1 < 0 && var0 > 0.2 && InAir
+  var18 = 1
+  if XDistLE 40
     Call DAir
-  elif !(Equal OPos Direction) && XDistLE 40
+  elif !(Equal OPos Direction) && XDistLE 60
     Call BAir
-  elif XDistLE 40
+  elif XDistLE 60
     Call NAir
   endif
-elif Rnd < 0.3
-  if XDistLE 20
+elif Rnd < 0.4 && InAir
+  var18 = 1
+  if XDistLE 40
     Call DAir
-  elif !(Equal OPos Direction) && XDistLE 40
+  elif !(Equal OPos Direction) && XDistLE 60
     Call BAir
-  elif XDistLE 40
+  elif XDistLE 60
     Call NAir
   endif
 endif

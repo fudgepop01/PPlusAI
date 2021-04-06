@@ -1,33 +1,21 @@
-#include <Definition_AIMain.h>
-//TrueID=0x2060
-id 0x2060
+#snippet OFFENSIVE_ONSTAGE_MOVES
+    if rndChoice < 0.1
+        Call USpecial
+    elif rndChoice < 0.35
+        Call DAir
+    else
+        Call FAir
+    endif
+#endsnippet
 
-//Set Unknown
-unk 0x0
+#snippet EDGEGUARD_ABOVE_MOVES
+    Call BAir
+#endsnippet
 
-//Strings
-
-var0=Rnd
-if XDistFrontEdge >= 0
-    var20=1
-elif XDistFrontEdge <= 0
-    var20=-1
-endif
-if var0 < 0.2
-    Button X
-    Finish
-elif var0 < 0.4
-    Button A
-    Finish
-elif var0 < 0.6
-    Stick 1
-    Finish
-elif var0 < 0.8
-    Stick (-1)
-    Finish
-else
-    Button R
-    Stick var20 (-0.5)
-    Finish
-endif
-Return
+#snippet EDGEGUARD_BELOW_MOVES
+    if OYDistBackEdge > 35
+        Call DAir
+    else
+        Call BAir
+    endif
+#endsnippet

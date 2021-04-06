@@ -13,8 +13,8 @@ if Equal var18 0
   var20 = 24633
   var9 = 3
   var10 = 0
-  var11 = 14
-  var12 = 8
+  var11 = 10
+  var12 = 5
   var13 = 26
   var14 = 26 // just a dummy
   Call ApproachHub
@@ -28,6 +28,7 @@ endif
 Return
 
 label ExecuteAttack
+Cmd30
 if CurrAction <= 9 || !(Equal AirGroundState 1)
   Call AIHub
 endif

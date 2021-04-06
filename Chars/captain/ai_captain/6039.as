@@ -28,6 +28,7 @@ endif
 Return
 
 label ExecuteAttack
+Cmd30
 if CurrAction <= hex(0x09) || !(Equal AirGroundState 1)
   Call AIHub
 endif

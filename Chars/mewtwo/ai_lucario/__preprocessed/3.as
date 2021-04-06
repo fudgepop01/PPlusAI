@@ -7,9 +7,13 @@ unk 0x0
 
 // LOGSTR 1667329024 1818584064 0 0 0
 
-if FramesHitstun > 0
+if Equal var21 4384
+  Call ComboHub
+elif FramesHitstun > 0
+  Call AIHub
   Return
 endif
+
 
 
 // I don't know why this is necessary but I hate the fact that
@@ -18,10 +22,14 @@ if Equal CurrAction 276
   Call RecoveryHub
 endif
 
-if Equal var21 32769 && XDistLE 20 && OYDistBackEdge < 0 && Equal var18 0 && OFramesHitstun > 0
+var17 = OTotalXSpeed
+Abs var17
+if Equal var21 32769 && XDistLE 20 && OYDistBackEdge < 0 && Equal var18 0 && OFramesHitstun > 0 && var17 > 4
   var16 = 3
   Call ApproachHub
 endif
+
+var21 = 32771
 
 SetVec var1 Zero
 GetNearestCliff var1
@@ -42,7 +50,7 @@ if Equal OIsOnStage 1
 elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge > 50 && !(Equal CurrAction 121)
   var18 = 255
   Call RecoveryHub
-elif !(CanJump) && var0 > 40 && Equal IsOnStage 0
+elif Equal IsOnStage 0 && YSpeed < 0.15 && YDistFrontEdge < -50 && !(Equal CurrAction 121)
   var18 = 255
   Call RecoveryHub
 elif LevelValue <= 42
@@ -57,9 +65,6 @@ else
   if Equal IsOnStage 0
     var3 += 1
   endif
-  if Damage < 60 && var3 > 7
-    var3 = 7
-  endif
 endif
 // SAFE_INJECT_2 var3
 // LOGVAL var3
@@ -71,7 +76,7 @@ endif
 SetVec var1 Zero
 GetNearestCliff var1
 
-// DrawDebugRectOutline var1 var2 50 50 255 0 0 136
+// DrawDebugRectOutline var1 var2 50 25 255 0 0 136
 var1 = TopNX - var1
 var1 *= -1
 var2 *= -1
@@ -85,7 +90,7 @@ Abs var4
 // LOGSTR 1986097664 855638016 0 0 0
 // LOGVAL var3
 
-if Damage < 130 && var2 < -50
+if Damage < 130 && var2 < -25
   var18 = 255
   var16 = 3
   Call RecoveryHub
@@ -95,18 +100,24 @@ if var4 < 20 && OYDistFrontEdge > -10 && LevelValue >= 60
   var18 = 0
   var16 = 3
   if !(Equal OPos Direction)
+  Call BAir
     Call BAir
   else
+  if Rnd < 0.5
+    Call DAir
+  else
+    Call FAir
+  endif
     Call DAir
   endif
 endif
 
 // #let OConsecutiveLedgeGrabs = var5
 // GetLaBasic var0 79 1
-if var3 <= 3 && LevelValue >= 48 && NoOneHanging && var4 > 10
+if var3 <= 5 && LevelValue >= 48 && NoOneHanging && var4 > 10
   Goto WDBackGrabLedge
   Return
-elif Equal IsOnStage 1 && var3 <= 7 && OYDistBackEdge > 30
+elif Equal IsOnStage 1 && var3 <= 5 && OYDistBackEdge > 30 && !(True)
   var18 = 0
   var16 = 3
   if OYDistBackEdge < 0
@@ -119,24 +130,20 @@ elif Equal IsOnStage 1 && var3 <= 7 && OYDistBackEdge > 30
     Call FSmash
   endif
 elif var3 <= 9 && OYDistFrontEdge < -30 && LevelValue >= 42 && var4 > 5
-  if var1 < 50 && var1 > -50 && var2 > -50
+  if var1 < 50 && var1 > -50 && var2 > -25
     var18 = 0
-    if Equal AirGroundState 1
-      var16 = 3
-      Call UAir
-    elif !(Equal OPos Direction)
-      var16 = 3
-      Call BAir
-    elif OTopNY > TopNY
-      var16 = 3
-      Call UAir
-    elif YSpeed > 0.15
-      var16 = 3
-      Call UAir
-    else
-      var16 = 3
-      Call UAir
-    endif
+    var16 = 3
+  if Equal AirGroundState 1
+    Call UAir
+  elif !(Equal OPos Direction)
+    Call BAir
+  elif OTopNY > TopNY
+    Call UAir
+  elif YSpeed > 0.15
+    Call UAir
+  else
+    Call UAir
+  endif
   else
     var18 = 255
     Call RecoveryHub
@@ -149,17 +156,17 @@ elif True
   if Equal AirGroundState 1 && Idling
     var3 = Rnd * 3
 
-    Button X
-    var16 = 3
-    var18 = 0
-    var0 = OTopNY - TopNY
-    if var0 > 30 && var0 < 120 && !(XDistLE 30)
-      Call UAir
-    elif var0 > 40 && var0 < 120
-      Call UAir
-    else
-      Call UAir
-    endif
+  Button X
+  var16 = 3
+  var18 = 0
+  var0 = OTopNY - TopNY
+  if var0 > 30 && var0 < 120 && !(XDistLE 30)
+    Call UAir
+  elif var0 > 40 && var0 < 120
+    Call UAir
+  else
+    Call UAir
+  endif
     Return
   endif
 endif
@@ -181,7 +188,10 @@ if !(Equal AirGroundState 3)
         var0 *= -0.04
         Stick var0 (-0.75)
       elif var0 > 0 && !(Equal CurrAction 10) && Equal IsOnStage 1
-        Button X
+        if CurrAction >= 22 && CurrAction <= 25
+        else
+          Button X
+        endif
       endif
     else
       var0 = OPos*0.8

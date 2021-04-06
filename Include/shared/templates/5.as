@@ -5,6 +5,7 @@ id 0x8005
 
 unk 0x0
 
+Cmd30
 lastScript = hex(0x8005)
 
 #let actionType = var0
@@ -159,7 +160,7 @@ ClearStick
 movePart = 1
 if Equal lastAttack hex(0x6031)
   Call Jab123
-elif Equal lastAttack valDA
+elif Equal lastAttack valDashAttack
   Call DashAttack
 elif Equal lastAttack hex(0x6032)
   Call FTilt

@@ -1,9 +1,10 @@
 #snippet OFFENSIVE_OPTIONS
-  if XDistLE 20
+  movePart = 1
+  if XDistLE 40
     Call DAir
-  elif !(Equal OPos Direction) && XDistLE 40
+  elif !(Equal OPos Direction) && XDistLE 60
     Call BAir
-  elif XDistLE 40
+  elif XDistLE 60
     Call NAir
   endif
 #endsnippet

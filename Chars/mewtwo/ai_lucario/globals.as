@@ -17,6 +17,7 @@
 #const jumpSquatFrames = 5
 #const jumpXInitVel = 0.9
 #const jumpYInitVel = 2.382
+#const jumpYInitVelShort = 1.482
 #const jumpXGroundMult = 0.7
 #const fastFallSpeed = 2.3
 #const gravity = 0.082
@@ -24,8 +25,8 @@
 #const shieldSize = 8.64
 
 #const maxYEdgeDistWithJump = 80
-#const maxYEdgeDist = 60
-#const maxYEdgeDistJumpNoUpB = 40
+#const maxYEdgeDist = 45
+#const maxYEdgeDistJumpNoUpB = 30
 #const maxXEdgeDist = 60
 
 #const oWalkingDist = 15
@@ -33,11 +34,11 @@
 #const edgeRange = 25
 #const calloutSpeed = 0.3
 
-#const jumpIfOWithin = 70
-#const SHIfOBeyond = 13
-#const FHIfOBeyond = 18
-#const DJIfOWithin = 65
-#const DJIfOBeyond = 15
+#const jumpIfOWithin = 60
+#const SHIfOBeyond = 7
+#const FHIfOBeyond = 25
+#const DJIfOWithin = 35
+#const DJIfOBeyond = 23
 
 #const techChaseCloseDist = 10
 #const techChaseFarDist = 25

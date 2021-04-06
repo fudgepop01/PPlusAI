@@ -5,6 +5,8 @@ id 0x8008
 
 unk 0x0
 
+Cmd30
+
 
 if Equal XDistFrontEdge XDistBackEdge
   Call RecoveryHub

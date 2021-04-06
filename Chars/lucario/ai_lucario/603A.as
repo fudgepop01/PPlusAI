@@ -3,60 +3,60 @@
 id 0x603A
 
 //Set Unknown
-unk 0x90000
+unk 0x0
 
-//Strings
 
-var0=1
-var1=0.7
-SetVec var2 Zero
-if Rnd < 0.5
-    var0+=0.5
+lastAttack = hex(0x603A)
+move_xOffset = uspecial_xOffset
+move_yOffset = uspecial_yOffset
+move_xRange = uspecial_xRange
+move_yRange = uspecial_yRange
+move_hitFrame = uspecial_hitFrame
+move_lastHitFrame = uspecial_lastHitFrame
+move_IASA = uspecial_IASA
+
+Button B
+Stick 0 0.7
+SetFrame 0
+hit_knockback = -1
+Seek ExecuteAttack
+Return
+
+label ExecuteAttack
+var1 = 0
+#let targetXDistance = var5
+#let targetYDistance = var6
+#let targetOverallDist = var7
+EST_O_COORDS(targetXDistance, targetYDistance, 4)
+
+Norm targetOverallDist targetXDistance targetYDistance
+targetXDistance /= targetOverallDist
+targetYDistance /= targetOverallDist
+targetXDistance *= -1
+targetYDistance *= -1
+AbsStick targetXDistance targetYDistance
+
+RECORD_HIT_KNOCKBACK
+
+if Equal HitboxConnected 1 || Equal NumFrames 38
+  label
+  Button A
+  if Equal CurrSubaction hex(0x1E)
+    SetFrame 0
+    Seek CancelAttack
+  endif
+  Return
 endif
-var4=var0+Func12+3
-//____________________
-label _0
-var5=var1
-if !(FrameGE var0)
-    var5*=NumFrames
-    var5/=var0
-endif
-Stick 0 var5
-if FrameGE var0
-    Button B
-    Seek
+
+if CurrAction <= hex(0x09) || Equal HitboxConnected 1
+  Call AIHub
 endif
 Return
-//____________________
-label
-if FrameGE 2
-    if Falling || Idling
-        Finish
-    endif
-    if FrameGE 60
-        Finish
-    endif
-endif
-EstOPosVecR var2 var3 0.3
-Norm var7 var2 var3
-if var7 > 1
-    var8=var2*Direction
-    if var8 > 0
-        if DistFrontEdge < 80
-            var8=Rnd*(-0.25)
-            Stick var8 1
-            Return
-        endif
-    elif DistBackEdge < 80
-        var8=Rnd*0.25
-        Stick var8 1
-        Return
-    endif
-    var2/=var7
-    var3/=var7
-    AbsStick var2 var3
-else
-    AbsStick 0 1
-endif
+
+label CancelAttack
+  if FrameGE 10
+    isImmediateCombo = immediate
+    Call ComboHub
+  endif
 Return
 Return

@@ -5,6 +5,18 @@ id 0x8004
 
 unk 0x0
 
+if YDistBackEdge < 1 && YDistBackEdge > -1 
+  Call AIHub
+endif
+
+label
+
+if !(Equal XDistBackEdge XDistFrontEdge)
+  Call AIHub
+endif
+if Equal var16 7
+  Call LedgeHang
+endif
 if FramesHitstun > 0
   Return
 endif
@@ -19,6 +31,7 @@ var6 = 0
 label
 var8 = 0
 label
+Cmd30
 
 // detects if below stage
 
@@ -69,10 +82,13 @@ if Equal var16 5
   Return
 endif
 
+LOGSTR 1633907712 796090624 1668546560 0 0
+LOGVAL CurrAction
+LOGVAL CurrSubaction
   if Equal CurrAction 16 
   Goto handleSFall
   Return
-  elif Equal CurrAction 276
+    elif Equal CurrAction 276 || Equal CurrAction 281 || Equal CurrAction 282
   Goto handleUSpecial
   Return
   elif Equal CurrAction 274
@@ -125,11 +141,11 @@ elif Equal CurrAction 51 && AnimFrame <= var15
 endif
 
 if CanJump && NumJumps > 0
-  var2 = -70
+  var2 = -60
 elif !(CanJump)
   var2 = -25
 else
-  var2 = -50
+  var2 = -48
 endif
 
 var17 = var2 * -1
@@ -164,27 +180,34 @@ if var22 < 10
     Stick 0 0.7
     Button B
   endif
-elif var1 > 25 && Rnd < 0.1 && Equal var7 0 && NumJumps > 0
+elif var1 > 25 && Rnd < 0.03 && Equal var7 0 && NumJumps > 0
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
   Button X
   var6 = 30
-elif var1 < -25 && Rnd < 0.1 && Equal var7 0 && NumJumps > 0
+elif var1 < -25 && Rnd < 0.03 && Equal var7 0 && NumJumps > 0
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
   Button X
   var6 = 30
-elif var1 < -70 && NumJumps > 0
+elif var1 < -60 && NumJumps > 0
   Button X
   var6 = 30
-elif var1 < -50 && Equal var8 0
-  ClearStick
-  Stick 0 0.7
-  Button B
-  var8 = 1
-elif var17 > 60 && Equal var8 0 && Equal NumJumps 0
+elif var1 < -48
+  if var17 > 60
+    Button X
+    var6 = 30
+  elif Equal var8 0
+    ClearStick
+    Stick 0 0.7
+    Button B
+    var8 = 1
+  endif
+  Return
+endif
+if var17 > 60 && Equal var8 0 && Equal NumJumps 0
   ClearStick
   Stick 0 0.7
   Button B

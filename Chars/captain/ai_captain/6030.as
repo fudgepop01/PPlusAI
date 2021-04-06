@@ -65,8 +65,9 @@ endif
 Return
 
 label ExecuteAttack
+Cmd30
 var1 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame, _oCalc, _sCalc)
 
 RECORD_HIT_KNOCKBACK
 

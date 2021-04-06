@@ -17,8 +17,9 @@ else
   grabRange = 0 // will not grab OOS
 endif
 label
+Cmd30
 
-if Equal grabOOS 1 && XDistLE 15 && Rnd < 0.7
+if Equal grabOOS 1 && XDistLE 15 && Rnd < 0.5
   Button R
   if Equal CurrAction hex(0x1B)
     Button A|R
@@ -26,17 +27,17 @@ if Equal grabOOS 1 && XDistLE 15 && Rnd < 0.7
     Call Grab
   endif
   Return
-elif Equal grabOOS 1 || Rnd < 0.2
+elif Equal grabOOS 1 || Rnd < 0.04
   Button R
   if Equal CurrAction hex(0x1B)
-    globTempVar = Rnd * 4
-    if globTempVar < 1
+    globTempVar = Rnd * 100
+    if globTempVar < 70
       Button X
       Seek jumpHandler
       Return
-    elif globTempVar < 2
+    elif globTempVar < 80
       AbsStick OPos
-    elif globTempVar < 3
+    elif globTempVar < 90
       globTempVar = OPos * -1
       AbsStick globTempVar
     else
@@ -50,7 +51,7 @@ endif
 NEAREST_CLIFF(globTempVar, immediateTempVar)
 immediateTempVar = globTempVar
 Abs immediateTempVar
-if immediateTempVar < 25 && Equal IsOnStage 1 && Rnd < 0.2
+if immediateTempVar < 25 && Equal IsOnStage 1 && Rnd < 0.05
   Button R
   globTempVar *= -1
   AbsStick globTempVar
@@ -77,14 +78,15 @@ endif
 Return
 
 label jumpHandler
+Cmd30
 #let absOXSpeed = var0
 #let OTowardsOrAway = var1
 absOXSpeed = OXSpeed
 Abs absOXSpeed
 OTowardsOrAway = OXSpeed * OPos
-if SamePlane && OTowardsOrAway < 0 && absOXSpeed > 0.2
+if SamePlane && OTowardsOrAway < 0 && absOXSpeed > 0.2 && InAir
   {OFFENSIVE_OPTIONS}
-elif Rnd < 0.3
+elif Rnd < 0.4 && InAir
   {OFFENSIVE_OPTIONS}
 endif
 

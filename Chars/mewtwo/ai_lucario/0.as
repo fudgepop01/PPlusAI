@@ -21,7 +21,10 @@
       Call NAir
     else
       Call NAir
-    endif      
+    endif    
+  else
+    Seek Hitstun_End
+    Return  
   endif
 #endsnippet
 

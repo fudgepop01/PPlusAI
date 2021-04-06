@@ -25,6 +25,11 @@ if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
   Call OOSHub
 endif
 
+if Equal CurrAction hex(0x49) || Equal globTempVar strv("BAD")
+  Seek Hitstun_End
+  Jump
+endif
+
 if Equal LevelValue LV9
   if CurrAction >= hex(0x1E) && CurrAction <= hex(0x20)
     Stick 0 (-1)
@@ -50,6 +55,7 @@ endif
 
 // if in hitstun...
 if FramesHitstun > 0
+  lastScript = hex(0x8000)
   StickX = Rnd - 1
   StickY = Rnd - 1
   TechWindow = 1
@@ -57,6 +63,7 @@ if FramesHitstun > 0
   framesOnGround = 0
   // makes it loop from here each frame
   label
+  Cmd30
 endif
 
 if FramesHitstun > 1 && Equal CurrAction hex(0x45)
@@ -82,7 +89,8 @@ if FramesHitstun > 1 && Equal CurrAction hex(0x45)
 endif
 
 if FramesHitstun > 1 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45) && LevelValue >= LV8
-  Stick 0 (-1)
+  globTempVar = OPos * -1
+  Stick globTempVar (-1)
   Return
 endif
 
@@ -100,6 +108,19 @@ elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
   Jump
 elif Equal FramesHitstun 1 && LevelValue >= LV5
   label
+  #let isGoingOffstage = var0
+  GOING_OFFSTAGE(isGoingOffstage, var1, 15)
+  if !(Equal isGoingOffstage 0)
+    Seek begin
+    Return
+  endif
+
+  var0 = Damage / 100
+  var0 *= 0.75
+  if Rnd < var0
+    Button R
+    Call OOSHub
+  endif
   {HITSTUN_ENDS}
   Seek begin
   Return
@@ -171,6 +192,7 @@ waitTeamFlag = 0
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
+Cmd30
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(isGoingOffstage, var1, 15)
 
@@ -183,6 +205,31 @@ endif
 if Equal isGoingOffstage 2 && Equal AirGroundState 2
   movePart = 0
   Call RecoveryHub
+endif
+
+if !(True)
+  label Hitstun_End
+  if YDistBackEdge > -25 || LevelValue <= LV5
+    Seek _main
+    Return
+  endif
+  label
+  if !(Equal AirGroundState 1) && Rnd <= 0.95 && !(Equal XDistFrontEdge XDistBackEdge) && YDistBackEdge < -50
+    #let rndX = var2
+    #let rndY = var3
+    GetRndPointOnStage rndX
+    if Rnd < 0.03 && CanJump
+      Button X
+    endif
+    rndX = TopNX - rndX
+    AbsStick rndX // the stick X var
+    if YDistBackEdge > -3 && Rnd < 0.4 && Equal CurrAction hex(0x49)
+      Button R
+    endif
+    Return
+  endif
+  Seek _main
+  Return
 endif
 
 if Equal isGoingOffstage 0 && YDistBackEdge > -15 && Equal CurrAction hex(0x33) && LevelValue >= LV7
@@ -284,6 +331,7 @@ if Equal isEarlyRoll 0
 
   moveSelection = 0
   SAFE_INJECT_0 moveSelection
+  SAFE_INJECT_1 moveVariant
   // because we don't want to set the moveSelection again if we revisit
   // this, we place a label here to jump to
   label callers
@@ -333,6 +381,10 @@ if Equal isEarlyRoll 0
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
+
+    if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1C) && Rnd < 0.7 && XDistLE 25
+      Call Grab
+    endif
 
     if OCurrAction >= hex(0x55) && OCurrAction <= hex(0x5D)
       {PUNISH_BROKEN_SHIELD}
@@ -453,6 +505,7 @@ endif
 Return
 
 label comboStarters
+
 #let ODmgXWeight = var2
 {COMBO_STARTERS}
 Return

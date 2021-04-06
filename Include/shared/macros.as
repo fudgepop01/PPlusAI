@@ -9,10 +9,13 @@
 // I can use targetXDistance. you'll see this in 1.as
 
 #macro CALC_TARGET_DISTANCES(out1, out2, index, calcVar, gravVar, frameCount, lab1, lab2)
+  // this prevents it from auto-attacking.
+  // this issue persisted for... 9 months
+  Cmd30
   #let gv = {gravVar}
   if lastAttack >= valJab123 && lastAttack <= valDSmash
     if Equal AirGroundState 1 && Equal CurrAction hex(0x03) && !(Equal lastAttack hex(0x603C)) && !(Equal lastAttack hex(0x6036))
-      gv = jumpSquatFrames
+      gv = 0
     elif Equal AirGroundState 2
       gv = 0
     else
@@ -21,7 +24,7 @@
   elif lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
     gv = 0
     if Equal AirGroundState 1
-      gv = jumpSquatFrames
+      gv = 0
     endif
   elif Equal lastAttack valGeneral
     gv = OFramesHitstun 
@@ -33,6 +36,10 @@
     index = 1
   endif
 
+  SAFE_WRITE_4 move_xOffset
+  SAFE_WRITE_5 move_yOffset
+  SAFE_WRITE_6 move_xRange
+  SAFE_WRITE_7 move_yRange  
   SAFE_INJECT_4 move_xOffset
   SAFE_INJECT_5 move_yOffset
   SAFE_INJECT_6 move_xRange
@@ -67,17 +74,32 @@
   localTemp += TopNX
   globTempVar += TopNY
 
+  // invert them because sometimes that happens
+  // if tempTargetY > globTempVar && TopNY < OTopNY
+  //   immediateTempVar = globTempVar
+  //   globTempVar = tempTargetY
+  //   tempTargetY = immediateTempVar
+  // elif tempTargetY < globTempVar && TopNY > OTopNY
+  //   immediateTempVar = globTempVar
+  //   globTempVar = tempTargetY
+  //   tempTargetY = immediateTempVar
+  // endif 
+  // if tempTargetX > localTemp && TopNX > OTopNX
+  //   immediateTempVar = localTemp
+  //   localTemp = tempTargetX
+  //   tempTargetX = immediateTempVar
+  // elif tempTargetX < localTemp && TopNX < OTopNX
+  //   immediateTempVar = localTemp
+  //   localTemp = tempTargetX
+  //   tempTargetX = immediateTempVar
+  // endif
+  // no need to do this for the X axis (trust me i've tried)
+
   localTemp -= OTopNX
   localTemp *= -2
   immediateTempVar = tempTargetX - OTopNX
   localTemp += immediateTempVar
   localTemp += TopNX
-
-  globTempVar -= OSCDBottom
-  globTempVar *= -2
-  immediateTempVar = tempTargetY - OSCDBottom
-  globTempVar += immediateTempVar
-  globTempVar += TopNY
 
   // estimate target position separately  
 
@@ -87,19 +109,41 @@
 
   gv = 0
   if !(CalledAs ComboHub) // because this involves a label
+    LOG_MOVE
+
+    // calculate own Y coord because I can't figure out the !@$% EstOPosVecR thing
+    CALC_SELF_Y_CHANGE_GRAVITY(targetY, gv, {frameCount}, _MID_CALC_GRAV)
+    globTempVar = TopNY - targetY
+
     // calculate Opponent change in gravity (used later)
     GET_WEIGHT_TABLE(gv, gv) // at this point gv is useless and can be overwritten
 
-    O_CALC_SELF_Y_CHANGE_GRAVITY(targetX, targetY, gv, {frameCount}, _MID_CALC_O_GRAV)
+    O_CALC_SELF_Y_CHANGE_GRAVITY(targetX, targetY, gv, {frameCount} + gv, _MID_CALC_O_GRAV)
+
     gv = targetX
   endif
 
-  EstOYCoord targetY immediateTempVar
+  // it's awful, I know, but i'm all out of variables and this was the only way lol
+  immediateTempVar = {frameCount} 
+  if lastAttack >= valJab123 && lastAttack <= valDSmash
+    if Equal AirGroundState 1 && Equal CurrAction hex(0x03) && !(Equal lastAttack hex(0x603C)) && !(Equal lastAttack hex(0x6036))
+      immediateTempVar += 0
+    endif
+  elif lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+    if Equal AirGroundState 1
+      immediateTempVar += 0 
+    endif
+  elif Equal lastAttack valGeneral
+    immediateTempVar += OFramesHitstun 
+  endif
+
+  EstOYCoord targetY 0
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  // if OCurrAction <= hex(0x15)
-  //   immediateTempVar /= 3
-  // endif
+  immediateTempVar = 0
+  if OCurrAction <= hex(0x9) && lastAttack < valNAir
+    immediateTempVar = -5
+  endif
   EstOXCoord targetX immediateTempVar
   targetY = targetY - (OSCDBottom - OTopNY)
 
@@ -109,23 +153,32 @@
   // globTempVar = estimated own y position
   // immediateTempVar = temporary variable
 
+  POSITION_CALC_OVERRIDES
+
   // correct if estimated y positions go beyond ground level
   // target
+  // globTempVar += immediateTempVar
+  // globTempVar -= gv
+  // if gv > 0 && Equal OAirGroundState 2
+  //   globTempVar -= gv
+  // endif
+  // immediateTempVar = OTopNY - gv
+  // DrawDebugLine OTopNX OTopNY OTopNX immediateTempVar color(0xFF0000DD)
+
   immediateTempVar = OYDistBackEdge + OTopNY
   if targetY < immediateTempVar && Equal OIsOnStage 1
     immediateTempVar -= targetY
     targetY += immediateTempVar
-    globTempVar -= immediateTempVar
   elif Equal OCurrAction hex(0x46) || Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x54) || Equal OCurrAction hex(0x55)
     immediateTempVar -= targetY
     targetY += immediateTempVar
   elif Equal OAirGroundState 1
-    globTempVar -= gv
+    // globTempVar -= gv
   endif
 
   // self (dependent on target)
   immediateTempVar = YDistBackEdge + TopNY
-  if globTempVar < immediateTempVar && Equal IsOnStage 1
+  if globTempVar < immediateTempVar && Equal IsOnStage 1 && Equal AirGroundState 1
     // if CalledAs ApproachHub && Equal index 1 && lastAttack >= valNAir && lastAttack <= valDAir && InAir
     //   Call AIHub
     // endif 
@@ -142,42 +195,82 @@
   //   endif
   // endif
 
+  // adjust for move parameters
+  if lastAttack >= valNAir && lastAttack <= valDAir
+    if Equal AirGroundState 2
+      globTempVar -= move_yOffset
+      globTempVar += move_yRange
+    endif
+  else
+    globTempVar -= move_yOffset
+    globTempVar += move_yRange
+  endif
+  // adjust for the move parameters
+  if !(InAir)
+    immediateTempVar = move_xOffset + (move_xRange * 2)
+    immediateTempVar /= 2
+    if immediateTempVar <= 0
+      localTemp = localTemp - (move_xOffset * OPos)
+    else 
+      localTemp = localTemp + (move_xRange * OPos)
+      localTemp = localTemp + (move_xOffset * OPos)
+    endif 
+  else
+    localTemp = localTemp + (move_xRange * Direction)
+    localTemp = localTemp + (move_xOffset * Direction)
+  endif
+
+  if Equal SCDBottom TopNY && lastAttack >= hex(0x6040)
+    globTempVar += 5
+  endif
+
+  if Equal AirGroundState 2
+    immediateTempVar = OHurtboxSize / 2
+    globTempVar -= immediateTempVar
+  endif
+  
+  // if !(CalledAs ComboHub)
+  //   if Equal index 1 || Equal movePart 1
+  //     // self
+  //     DrawDebugRectOutline localTemp globTempVar move_xRange move_yRange color(0xFFBB0088)
+  //   endif
+  // endif
+
   // calculate difference between the two
   #let targetXDistance = {out1}
   #let targetYDistance = {out2}
   
   targetXDistance = localTemp - targetX
-  targetYDistance = globTempVar - targetY
+  targetYDistance = targetY - globTempVar
 
-  // adjust for the move parameters
-  if !(InAir)
-    globTempVar = move_xOffset + (move_xRange * 2)
-    globTempVar /= 2
-    if globTempVar <= 0
-      targetXDistance = targetXDistance + (move_xOffset * OPos)
-    else 
-      targetXDistance = targetXDistance - (move_xRange * OPos)
-      targetXDistance = targetXDistance - (move_xOffset * OPos)
-    endif 
-  else
-    targetXDistance = targetXDistance - (move_xRange * Direction)
-    targetXDistance = targetXDistance - (move_xOffset * Direction)
+  // adjust for opponent position (aim towards nearest blastzone)
+  if !(Equal lastAttack hex(0x8008)) && !(Equal lastAttack valGeneral)
+    globTempVar = LBoundary - (TopNX + targetXDistance) 
+    immediateTempVar = 0
+    if globTempVar < 90 && Equal Direction (-1)
+      globTempVar = hitboxSizeMultiplier + 1
+      globTempVar = move_xRange * (1/globTempVar)
+      globTempVar /= 2
+      immediateTempVar += globTempVar
+    endif
+    globTempVar = RBoundary - (TopNX + targetXDistance)
+    if globTempVar > -90 && Equal Direction 1
+      globTempVar = hitboxSizeMultiplier + 1
+      globTempVar = move_xRange * (1/globTempVar)
+      globTempVar /= 2
+      immediateTempVar -= globTempVar
+    endif
+    targetXDistance += immediateTempVar
+
+    if Equal immediateTempVar 0
+      immediateTempVar = OPos * Direction
+      globTempVar = hitboxSizeMultiplier + 1
+      globTempVar = move_xRange * (1/globTempVar)
+      immediateTempVar *= globTempVar
+      immediateTempVar /= 2
+      targetXDistance -= immediateTempVar
+    endif
   endif
-  targetYDistance += move_yOffset
-  targetYDistance -= move_yRange
-
-  immediateTempVar = AirTime + {frameCount}
-
-  if immediateTempVar > 10 && lastAttack >= hex(0x6040)
-    targetYDistance += 5
-  endif
-
-  // // adjust for opponent position (aim towards nearest blastzone)
-  // if OTopNX > 0
-  //   targetXDistance += move_xRange
-  // else
-  //   targetXDistance -= move_xRange
-  // endif
 
   // account for target height
   immediateTempVar = 0
@@ -207,6 +300,16 @@
   //     targetXDistance -= TopNX
   //     targetYDistance -= TopNY
 
+  //     globTempVar = hitboxSizeMultiplier + 1
+  //     globTempVar = move_xRange * (1/globTempVar)
+  //     move_xRange = globTempVar
+  //     move_xOffset = move_xOffset + globTempVar * hitboxSizeMultiplier
+
+  //     globTempVar = hitboxSizeMultiplier + 1
+  //     globTempVar = move_yRange * (1/globTempVar)
+  //     move_yRange = globTempVar
+  //     move_yOffset = move_yOffset - globTempVar * hitboxSizeMultiplier
+
   //     globTempVar = TopNY - move_yOffset + move_yRange + immediateTempVar
   //     DrawDebugRectOutline TopNX globTempVar 10 0 color(0x00FFFF88)
 
@@ -216,22 +319,94 @@
   //     globTempVar = TopNY - move_yOffset + move_yRange
   //     DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0x88888888)
   //     globTempVar += localTemp
-  //     if OTopNX > 0
-  //       immediateTempVar += move_xRange
-  //     else
-  //       immediateTempVar -= move_xRange
-  //     endif 
+  //     // if OTopNX > 0
+  //     //   immediateTempVar += move_xRange
+  //     // else
+  //     //   immediateTempVar -= move_xRange
+  //     // endif 
   //     DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0xFFFFFF88)
 
   //     immediateTempVar = OHurtboxSize / 2
   //     globTempVar = immediateTempVar + OSCDBottom
   //     DrawDebugRectOutline OTopNX globTempVar 5 immediateTempVar color(0xFFFF00DD)
+      
+  //     globTempVar = move_xRange * hitboxSizeMultiplier
+  //     move_xOffset -= globTempVar
+  //     move_xRange = move_xRange + globTempVar
+  //     globTempVar = move_yRange * hitboxSizeMultiplier
+  //     move_yOffset += globTempVar
+  //     move_yRange = move_yRange + globTempVar
   //   endif
   // endif
 
   // if !(CalledAs ComboHub) && LevelValue >= LV7 && !(Equal approachType at_combo) 
   //   globTempVar = {frameCount} - index
   //   targetXDistance = targetXDistance + OXSpeed * globTempVar * -2
+  // endif
+#endmacro
+
+#macro EST_O_COORDS(out1, out2, frameCount)
+  #let targetX = {out1}
+  #let targetY = {out2}
+  targetX = 0
+  targetY = 0
+  immediateTempVar = {frameCount}
+  EstOYCoord targetY immediateTempVar
+  // if the opponent is in an actionable state, lower the estimate of
+  // their x offset to prevent dashdancing from setting it off when very far away
+  if OCurrAction <= hex(0x9) && lastAttack < valNAir
+    immediateTempVar /= 3
+  endif
+  EstOXCoord targetX immediateTempVar
+  targetY = targetY - (OSCDBottom - OTopNY)
+
+  // correct if estimated y positions go beyond ground level
+  // target
+  immediateTempVar = OYDistBackEdge + OTopNY
+  if targetY < immediateTempVar && Equal OIsOnStage 1
+    immediateTempVar -= targetY
+    targetY += immediateTempVar
+  elif Equal OCurrAction hex(0x46) || Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x54) || Equal OCurrAction hex(0x55)
+    targetY += immediateTempVar
+  endif
+
+  // DrawDebugRectOutline targetX targetY 5 5 color(0x88FF88DD)
+
+#endmacro
+
+#macro POSITION_CALC_OVERRIDES()
+#endmacro
+
+// to make AIs less accurate with their moves the lower their level gets
+#macro MESS_MOVE_PARAMS()
+  if LevelValue <= LV7
+    globTempVar = (100 - LevelValue) / 3
+    move_xOffset = move_xOffset + (Rnd * globTempVar * 2) - (globTempVar)
+    move_yOffset = move_yOffset + (Rnd * globTempVar * 2) - (globTempVar)
+
+    globTempVar = (100 - LevelValue) / 5
+    move_xRange = move_xRange + (Rnd * globTempVar)
+    move_yRange = move_yRange + (Rnd * globTempVar)
+
+    globTempVar = (100 - LevelValue) / 15
+    move_hitFrame = move_hitFrame + (Rnd * globTempVar) - (globTempVar / 2)
+
+    globTempVar = (100 - LevelValue) / 25
+    move_IASA = move_IASA + (Rnd * globTempVar)
+  else
+    // globTempVar = move_hitFrame * 0.5
+    // move_xOffset = move_xOffset - globTempVar
+    // move_xRange = move_xRange + globTempVar * 2
+    // move_yOffset = move_yOffset - globTempVar
+    // move_yRange = move_yRange + globTempVar * 2
+  endif
+  // if !(Equal lastScript hex(0x8002)) 
+    globTempVar = move_xRange * hitboxSizeMultiplier
+    move_xOffset -= globTempVar
+    move_xRange = move_xRange + globTempVar
+    globTempVar = move_yRange * hitboxSizeMultiplier
+    move_yOffset += globTempVar
+    move_yRange = move_yRange + globTempVar
   // endif
 #endmacro
 
@@ -283,7 +458,7 @@
   //   targetXDistance -= TopNX
   // endif
 
-  globTempVar = estimate - TopNY - canHit
+  globTempVar = TopNY - estimate + canHit
   // LOGSTR str("~~ var8 ~~")
   // LOGVAL var8
   // LOGVAL TopNY
@@ -291,7 +466,12 @@
   // LOGVAL estimate
   // LOGVAL canHit
   // LOGVAL globTempVar
+
   immediateTempVar = YDistBackEdge + 10
+  // LOGSTR str("~~~~~~~~~~")
+  // LOGVAL immediateTempVar
+  // LOGVAL canHit
+
   if globTempVar <= move_yRange && globTempVar > 0 && !(canHit < immediateTempVar)
     canHit = 1
     // canHit = 0
@@ -308,7 +488,11 @@
   immediateTempVar = {frameCount}
 
   accumulator = 0
-  tracker = YSpeed * -1
+  if Equal CurrSubaction JumpSquat
+    tracker = -jumpYInitVelShort
+  else
+    tracker = YSpeed * -1
+  endif
   Seek {lName}
   Jump
   if !(True)
@@ -337,15 +521,23 @@
   #let distTracker = {throwAwayVar2}
 
   globTempVar = {frameCount} //+ 3
+  distTracker = 0
+
+  // LOGSTR str("=======")
+  // LOGVAL globTempVar
+  calculator = YSpeed
+  // LOGVAL calculator
 
   if YSpeed > 0
-    calculator = YSpeed
-
     label {lName}
 
-    calculator -= gravity
     distTracker += calculator
+    calculator -= gravity
     globTempVar -= 1
+    
+    // LOGSTR str("------")
+    // LOGVAL globTempVar
+    // LOGVAL distTracker
 
     if calculator <= 0 || globTempVar <= 0
       Seek
@@ -359,6 +551,10 @@
   if Equal AirGroundState 2
     globTempVar = globTempVar * fastFallSpeed
     accumulator = distTracker - globTempVar
+    // LOGSTR str("~~~~~~~")
+    // LOGVAL accumulator
+    // globTempVar = TopNY + accumulator
+    // LOGVAL globTempVar
   else
     accumulator = 0
   endif
@@ -461,37 +657,6 @@
   endif
 #endmacro
 
-// to make AIs less accurate with their moves the lower their level gets
-#macro MESS_MOVE_PARAMS()
-  if LevelValue <= LV7
-    globTempVar = (100 - LevelValue) / 3
-    move_xOffset = move_xOffset + (Rnd * globTempVar * 2) - (globTempVar)
-    move_yOffset = move_yOffset + (Rnd * globTempVar * 2) - (globTempVar)
-
-    globTempVar = (100 - LevelValue) / 5
-    move_xRange = move_xRange + (Rnd * globTempVar)
-    move_yRange = move_yRange + (Rnd * globTempVar)
-
-    globTempVar = (100 - LevelValue) / 15
-    move_hitFrame = move_hitFrame + (Rnd * globTempVar) - (globTempVar / 2)
-
-    globTempVar = (100 - LevelValue) / 25
-    move_IASA = move_IASA + (Rnd * globTempVar)
-  else
-    // globTempVar = move_hitFrame * 0.5
-    // move_xOffset = move_xOffset - globTempVar
-    // move_xRange = move_xRange + globTempVar * 2
-    // move_yOffset = move_yOffset - globTempVar
-    // move_yRange = move_yRange + globTempVar * 2
-  endif
-  globTempVar = move_xRange * 0.75
-  move_xOffset -= globTempVar
-  move_xRange = move_xRange + globTempVar
-  globTempVar = move_yRange * 0.75
-  move_yOffset += globTempVar
-  move_yRange = move_yRange + globTempVar
-#endmacro
-
 #macro DEFENSIVE_REACTION_TIME(tempVar1, tempVar2)
   #let delay = {tempVar1}
   #let tActionFreq = {tempVar2}
@@ -528,10 +693,21 @@
 // ranges
 #macro JUMP_IF_IN_RANGES(tempVar)
   #let targetYDistance = {tempVar}
-  globTempVar = targetYDistance
+  EstOYCoord globTempVar move_lastHitFrame
+  globTempVar -= TopNY
+  // globTempVar += OHurtboxSize
   if MeteoChance && Equal IsOnStage 0 && YSpeed < 0.01 && globTempVar > DJIfOBeyond && globTempVar < DJIfOWithin
     Button X
   endif
+
+  // immediateTempVar = jumpIfOWithin + TopNY
+  // DrawDebugLine TopNX TopNY TopNX immediateTempVar color(0xFF000055)
+  // immediateTempVar = globTempVar + TopNY
+  // DrawDebugLine TopNX TopNY TopNX immediateTempVar color(0x00000099)
+  // immediateTempVar = SHIfOBeyond + TopNY
+  // DrawDebugLine TopNX TopNY TopNX immediateTempVar color(0x00FF0055)
+  // immediateTempVar = FHIfOBeyond + TopNY
+  // DrawDebugLine TopNX TopNY TopNX immediateTempVar color(0x0000FF55)  
 
   if globTempVar > SHIfOBeyond && globTempVar < jumpIfOWithin && Equal AirGroundState 1 && CurrAction <= 9
     Button X
@@ -541,8 +717,33 @@
     Button X
   endif
 
-  if globTempVar > DJIfOBeyond && globTempVar < DJIfOWithin && Equal AirGroundState 2 && CanJump && Equal IsOnStage 1 && YSpeed < 0.1
-    Button X
+  if Equal AirGroundState 2 && YDistBackEdge < -1
+    // globTempVar -= gravChangeDist
+    // immediateTempVar = TopNY + globTempVar
+    // DrawDebugLine TopNX TopNY TopNX immediateTempVar color(0x00FFFFDD)
+    if globTempVar > DJIfOBeyond && globTempVar < DJIfOWithin && CanJump && Equal IsOnStage 1
+      Button X
+    endif
+
+    // globTempVar = TopNX + 5
+    // immediateTempVar = TopNY + DJIfOBeyond
+    // DrawDebugLine globTempVar TopNY globTempVar immediateTempVar color(0xFFFF00DD)
+
+    // globTempVar = TopNX + 10
+    // immediateTempVar = TopNY + DJIfOWithin
+    // DrawDebugLine globTempVar TopNY globTempVar immediateTempVar color(0xFFFF00DD)
+  // elif Equal AirGroundState 1
+  //   globTempVar = TopNX
+  //   immediateTempVar = TopNY + SHIfOBeyond
+  //   DrawDebugLine globTempVar TopNY globTempVar immediateTempVar color(0xFFFF00DD)
+
+  //   globTempVar = TopNX + 5
+  //   immediateTempVar = TopNY + FHIfOBeyond
+  //   DrawDebugLine globTempVar TopNY globTempVar immediateTempVar color(0xFFFF00DD)
+
+  //   globTempVar = TopNX + 10
+  //   immediateTempVar = TopNY + jumpIfOWithin
+  //   DrawDebugLine globTempVar TopNY globTempVar immediateTempVar color(0xFFFF00DD)
   endif
 #endmacro
 
@@ -621,11 +822,51 @@ endif
   amount = (120 - LevelValue) / 100
   amount = (Rnd * dashCountMax) - dashCountMax * amount
   frameCount = (Rnd * 10) + dashDanceMinFrames
+
+
+  globTempVar = OXSpeed * 3
+  Abs globTempVar
+  globTempVar += 20
+  if XDistLE globTempVar
+    Seek _dashdanceEnd
+    Jump
+  endif
+  
   label _dashdance
-  if Equal CurrAction hex(0x0A) || Equal CurrAction hex(0x16)
+  Cmd30
+  
+  if OAttacking && OAnimFrame >= 5 && Rnd <= 0.03
+    amount = 0
+  elif OCurrAction >= hex(0x3B) && OCurrAction <= hex(0x52)
+    amount = 0
+  elif OCurrAction >= hex(0x18) && OCurrAction <= hex(0x19)
+    amount = 0
+  elif OCurrAction >= hex(0x60) && OCurrAction <= hex(0x71)
+    amount = 0
+  elif OYDistBackEdge < -40 && OYSpeed > 0.1 && Rnd <= 0.1
+    amount = 0
+  elif XDistFrontEdge < 20 && XDistBackEdge > -20
+    amount = 0
+  elif Equal amount 100 && NumFrames >= 5
+    Button X 
+    amount = 0
+  endif
+  globTempVar = OXSpeed * 3
+  Abs globTempVar
+  globTempVar += 20
+  if Equal CurrAction hex(0x0A)
+    Return
+  elif Equal CurrAction hex(0x16) && AnimFrame < 4
     Return
   elif InAir && YDistBackEdge > -5 && YDistBackEdge < 0 && !(Equal XDistFrontEdge XDistBackEdge)
     if XDistBackEdge < -shortEdgeRange && XDistFrontEdge > shortEdgeRange
+      if ODistLE shortEdgeRange
+        if Rnd < 0.2
+          amount = 100
+        else
+          amount = 0
+        endif
+      endif
       Button R
       if ODistLE 30
         Stick -1 (-1)
@@ -645,10 +886,29 @@ endif
       ClearStick
     elif Rnd < 0.7 && Equal CurrAction hex(0x03) && !(XDistFrontEdge <= 10)
       Return
-    elif XDistFrontEdge <= 10 || ODistLE 15
+    elif XDistFrontEdge <= 10
       SetFrame 0
       Stick (-1)
       amount -= 1
+      if Rnd < 0.05 && !(Equal Direction OPos)
+        amount = 100
+      endif
+    elif ODistLE globTempVar && CurrAction <= hex(0x03)
+      if Equal Direction OPos && Rnd < DDWaveDash && XDistFrontEdge > shortEdgeRange && XDistBackEdge < -shortEdgeRange
+        if Rnd < 0.3
+          Button R
+          AbsStick OPos 0
+          Call OOSHub
+        endif
+        if Rnd < 0.03
+          amount = 100
+        endif
+      else
+        SetFrame 0
+        immediateTempVar = OPos * -1
+        AbsStick immediateTempVar
+        amount -= 0.1
+      endif
     else
       Stick 1
     endif
@@ -865,5 +1125,57 @@ endif
 #macro FORCED_SWITCH_CONDITIONS()
   if Equal lastScript hex(0x8001)
     Call ApproachHub
+  endif
+#endmacro
+
+#macro LOG_MOVE()
+  if Equal lastAttack valJab123
+    LOGSTR str("Jab123")
+  elif Equal lastAttack valDashAttack
+    LOGSTR str("DashAttack")
+  elif Equal lastAttack valFTilt
+    LOGSTR str("FTilt")
+  elif Equal lastAttack valUTilt
+    LOGSTR str("UTilt")
+  elif Equal lastAttack valDTilt
+    LOGSTR str("DTilt")
+  elif Equal lastAttack valFSmash
+    LOGSTR str("FSmash")
+  elif Equal lastAttack valUSmash
+    LOGSTR str("USmash")
+  elif Equal lastAttack valDSmash
+    LOGSTR str("DSmash")
+  elif Equal lastAttack valNSpecial
+    LOGSTR str("NSpecial")
+  elif Equal lastAttack valSSpecial
+    LOGSTR str("SSpecial")
+  elif Equal lastAttack valUSpecial
+    LOGSTR str("USpecial")
+  elif Equal lastAttack valDSpecial
+    LOGSTR str("DSpecial")
+  elif Equal lastAttack valGrab
+    LOGSTR str("Grab")
+  elif Equal lastAttack valNAir
+    LOGSTR str("NAir")
+  elif Equal lastAttack valFAir
+    LOGSTR str("FAir")
+  elif Equal lastAttack valBAir
+    LOGSTR str("BAir")
+  elif Equal lastAttack valUAir
+    LOGSTR str("UAir")
+  elif Equal lastAttack valDAir
+    LOGSTR str("DAir")
+  elif Equal lastAttack valNSpecialAir
+    LOGSTR str("NSpecialAir")
+  elif Equal lastAttack valSSpecialAir
+    LOGSTR str("SSpecialAir")
+  elif Equal lastAttack valUSpecialAir
+    LOGSTR str("USpecialAir")
+  elif Equal lastAttack valDSpecialAir
+    LOGSTR str("DSpecialAir")
+  elif Equal lastAttack hex(0x8008)
+    LOGSTR str("FakeOutHub")
+  elif Equal lastAttack valGeneral
+    LOGSTR str("ComboHub")
   endif
 #endmacro

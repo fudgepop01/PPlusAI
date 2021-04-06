@@ -1,12 +1,3 @@
-#snippet DEBUG_SKIP
-  globTempVar = 0
-  SAFE_INJECT_2 globTempVar
-  if !(Equal globTempVar 0)
-    Seek CallAttacks
-    Jump
-  endif
-#endsnippet
-
 #snippet SKIP_DASHDANCE_CONDITIONS
 #endsnippet
 

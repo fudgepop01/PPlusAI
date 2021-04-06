@@ -28,6 +28,11 @@ if CurrAction >= 26 && CurrAction <= 29
   Call OOSHub
 endif
 
+if Equal CurrAction 73 || Equal var17 1111573504
+  Seek Hitstun_End
+  Jump
+endif
+
 if Equal LevelValue 100
   if CurrAction >= 30 && CurrAction <= 32
     Stick 0 (-1)
@@ -47,6 +52,7 @@ endif
 
 // if in hitstun...
 if FramesHitstun > 0
+  var21 = 32768
   var0 = Rnd - 1
   var1 = Rnd - 1
   var2 = 1
@@ -54,6 +60,7 @@ if FramesHitstun > 0
   var5 = 0
   // makes it loop from here each frame
   label
+  Cmd30
 endif
 
 if FramesHitstun > 1 && Equal CurrAction 69
@@ -79,7 +86,8 @@ if FramesHitstun > 1 && Equal CurrAction 69
 endif
 
 if FramesHitstun > 1 && CurrAction >= 67 && CurrAction <= 69 && LevelValue >= 75
-  Stick 0 (-1)
+  var17 = OPos * -1
+  Stick var17 (-1)
   Return
 endif
 
@@ -109,6 +117,43 @@ endif
   Jump
 elif Equal FramesHitstun 1 && LevelValue >= 42
   label
+  GetNearestCliff var0
+  var17 = 15
+  var1 = XSpeed * var17
+  var1 += TopNX
+  if var0 < 0
+    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
+      var0 -= var1
+      if var0 >= 0
+        var0 = 1
+      endif
+    endif
+  elif var0 > 0
+    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
+      var0 -= var1
+      if var0 <= 0
+        var0 = -1
+      endif
+    endif
+  endif
+  if !(Equal var0 1) && !(Equal var0 -1)
+    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
+      var0 = 2
+    else
+      var0 = 0
+    endif
+  endif
+  if !(Equal var0 0)
+    Seek begin
+    Return
+  endif
+
+  var0 = Damage / 100
+  var0 *= 0.75
+  if Rnd < var0
+    Button R
+    Call OOSHub
+  endif
   if Equal AirGroundState 1
     if Equal LevelValue 100
       var18 = 1
@@ -124,7 +169,10 @@ elif Equal FramesHitstun 1 && LevelValue >= 42
       Call NAir
     else
       Call NAir
-    endif      
+    endif    
+  else
+    Seek Hitstun_End
+    Return  
   endif
   Seek begin
   Return
@@ -195,6 +243,7 @@ var6 = 0
 // for efficiency, we just use a label here so we don't need to call the
 // stuff above every frame we're in here
 label
+Cmd30
   GetNearestCliff var0
   var17 = 15
   var1 = XSpeed * var17
@@ -233,13 +282,36 @@ if Equal var0 2 && Equal AirGroundState 2
   Call RecoveryHub
 endif
 
+if !(True)
+  label Hitstun_End
+  if YDistBackEdge > -25 || LevelValue <= 42
+    Seek _main
+    Return
+  endif
+  label
+  if !(Equal AirGroundState 1) && Rnd <= 0.95 && !(Equal XDistFrontEdge XDistBackEdge) && YDistBackEdge < -50
+    GetRndPointOnStage var2
+    if Rnd < 0.03 && CanJump
+      Button X
+    endif
+    var2 = TopNX - var2
+    AbsStick var2 // the stick X var
+    if YDistBackEdge > -3 && Rnd < 0.4 && Equal CurrAction 73
+      Button R
+    endif
+    Return
+  endif
+  Seek _main
+  Return
+endif
+
 if Equal var0 0 && YDistBackEdge > -15 && Equal CurrAction 51 && LevelValue >= 60
   if CanJump && Rnd < 0.3 && LevelValue >= 75
     Button X
     Return
   elif True
-    var18 = 1
-    var19 = 2
+    var18 = 1 // var2
+    var19 = 2 // moveMode
     Call Landing
   endif
 endif
@@ -412,6 +484,7 @@ if Equal var0 0
 
   var0 = 0
   SAFE_INJECT_0 var0
+  SAFE_INJECT_1 var19
   // because we don't want to set the var0 again if we revisit
   // this, we place a label here to jump to
   label callers
@@ -461,6 +534,10 @@ if Equal var0 0
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
+
+    if OCurrAction >= 26 && OCurrAction <= 28 && Rnd < 0.7 && XDistLE 25
+      Call Grab
+    endif
 
     if OCurrAction >= 85 && OCurrAction <= 93
 //       {PUNISH_BROKEN_SHIELD}
@@ -721,17 +798,9 @@ endif
 
     if LevelValue >= 21
   if OYDistBackEdge > -15
-  var3 = 3
-  label _startCombo
-  Goto comboStarters
-  var3 -= 1
-  if var3 <= 0
-    Seek
-  else
-    Seek _startCombo
+  if Rnd < 0.2
+    Call Grab
   endif
-  Jump
-  label
   var3 = 3
   label _kill
   Goto killMoves
@@ -740,6 +809,17 @@ endif
     Seek
   else
     Seek _kill
+  endif
+  Jump
+  label
+  var3 = 3
+  label _startCombo
+  Goto comboStarters
+  var3 -= 1
+  if var3 <= 0
+    Seek
+  else
+    Seek _startCombo
   endif
   Jump
   label
@@ -798,6 +878,7 @@ endif
 Return
 
 label comboStarters
+
 if Rnd < 0.8
   var19 = 1
   var16 = 255

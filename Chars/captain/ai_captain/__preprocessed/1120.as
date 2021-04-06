@@ -7,6 +7,8 @@ id 0x1120
 //Set Unknown
 unk 0x0
 
+var21 = 4384
+
 if ODamage > 100
   var0 = 4
 elif ODamage > 80

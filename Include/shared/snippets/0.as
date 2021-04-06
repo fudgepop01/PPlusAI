@@ -3,25 +3,18 @@
     Button X
     Return
   elif True
-    var18 = 1
-    var19 = 2
+    var18 = 1 // shouldFastFall
+    var19 = 2 // moveMode
     Call Landing
   endif
 #endsnippet
 
 #snippet DECISION_TREE
   #let tries = var3
-  tries = 3
-  label _startCombo
-  Goto comboStarters
-  tries -= 1
-  if tries <= 0
-    Seek
-  else
-    Seek _startCombo
+  if Rnd < 0.2
+    Call Grab
   endif
-  Jump
-  label
+
   tries = 3
   label _kill
   Goto killMoves
@@ -30,6 +23,17 @@
     Seek
   else
     Seek _kill
+  endif
+  Jump
+  label
+  tries = 3
+  label _startCombo
+  Goto comboStarters
+  tries -= 1
+  if tries <= 0
+    Seek
+  else
+    Seek _startCombo
   endif
   Jump
   label

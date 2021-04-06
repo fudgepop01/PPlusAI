@@ -1,11 +1,14 @@
 #snippet CTD
-  CALC_TARGET_DISTANCES(var0, var1, var4, var2, var4, frameToCalc, _dummy, _dummy)
+  EST_O_COORDS(var0, var1, frameToCalc)
+
+  var0 -= TopNX
+  var1 = TopNY - var1
 
   #let calcMoveXRange = var2
   #let calcMoveYRange = var3
 
-  calcMoveXRange = move_xRange
-  calcMoveYRange = move_yRange
+  calcMoveXRange = move_xRange * (1 + hitboxSizeMultiplier)
+  calcMoveYRange = move_yRange * (1 + hitboxSizeMultiplier)
   calcMoveXRange *= 2
   calcMoveYRange *= 2
   Abs targetXDistance
@@ -42,7 +45,7 @@
 
 #snippet COMBO_OPTIONS
   $refreshMoves()
-  $filterMoveEndlag(20)
+  $filterMoveEndlag(30)
   $outputWithKnockbackThresholds(90, 290, Goto)
 #endsnippet
 
@@ -54,5 +57,10 @@
 
 #snippet KILL_OPTIONS
   $refreshMoves()
+  $filterMoveAngle(0, 180)
   $outputWithKnockbackThresholds(180, 400, Goto)
+#endsnippet
+
+#snippet MOVE_GENERATION
+  $generateMovesUsed()
 #endsnippet

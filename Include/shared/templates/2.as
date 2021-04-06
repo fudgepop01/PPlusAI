@@ -78,21 +78,21 @@ Abs nearCliffX
 Abs globTempVar
 
 Goto clear
-if globTempVar < nearCliffX && OYDistSelf < 70 && globTempVar < 20
+if globTempVar < nearCliffX && OYDistSelf < 70 && globTempVar < 20 && Equal OXDistBackEdge OXDistFrontEdge
   testLimit = 10
-  LOGSTR str("edgeguard")
   label edgeguard
+  LOGSTR str("edgeguard")
   approachType = at_edgeguard
   {EDGEGUARD_OPTIONS}
   Seek edgeguard
-elif Equal OIsOnStage 1 && OYDistSelf < 80
+elif Equal OIsOnStage 1 && OYDistSelf < 65 && Rnd < 0.8 && ODmgXWeight > 20
   if Equal LevelValue LV9 
     testLimit = 50
   else
     testLimit = 40
   endif
-  LOGSTR str("combo")
   label combo
+  LOGSTR str("combo")
   action = 1
   Seek killOptions
   Jump 
@@ -111,8 +111,8 @@ elif True
   else
     testLimit = 40
   endif
-  LOGSTR str("juggle")
   label juggle
+  LOGSTR str("juggle")
   action = 2
   Seek killOptions
   Jump 
@@ -131,7 +131,10 @@ testLimit -= 1
 if testLimit <= 0
   Seek NCombo
 endif
-comboLeniency = 2
+comboLeniency = 8
+if Equal movePart mp_ATK
+  comboLeniency = 15
+endif
 LOGSTR str("=====")
 Goto clear
 Jump
@@ -175,7 +178,7 @@ endif
 Jump
 Return
 
-$generateMovesUsed()
+{MOVE_GENERATION}
 
 label clear
 move_xRange = 0
@@ -199,7 +202,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if !(InAir)
     move_hitFrame += jumpSquatFrames
   endif
-elif lastAttack <= valDSmash || Equal lastAttack valGrab || Equal lastAttack valDA
+elif lastAttack <= valDSmash || Equal lastAttack valGrab || Equal lastAttack valDashAttack
   if OYDistSelf > 20
     comboLeniency = 0
     Return
@@ -225,6 +228,8 @@ endif
 frameToCalc = OFramesHitstun
 {CTD}
 
+{EXTRA_ANALYSIS}
+
 comboLeniency = 0
 Return
 
@@ -242,7 +247,7 @@ if Equal approachType 0
 endif
 if Equal lastAttack valJab123
   Call Jab123
-elif Equal lastAttack valDA
+elif Equal lastAttack valDashAttack
   Call DashAttack
 elif Equal lastAttack valFTilt
   Call FTilt

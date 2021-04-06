@@ -7,6 +7,17 @@ unk 0x0
 
 //Strings
 
+Cmd30
+if Equal var16 7
+    Seek getupOptions
+    Jump
+endif
+if Equal var21 32768
+    if FramesHitstun > 0 || Equal CurrAction 73
+        Call AIHub
+    endif
+endif
+
 // if Equal AIMD 2
 //     Call EdgeguardHub
 // endif
@@ -37,6 +48,7 @@ label getupOptions
 var0 = OTopNX - TopNX
 var1 = var0
 Abs var1
+LOGVAL var1
 
 var2 = Rnd
 if var1 < 35 && Equal Direction OPos
@@ -48,26 +60,28 @@ if var1 < 35 && Equal Direction OPos
             endif
             if Equal NumFrames 1
                 Stick -1
+                var16 = 7
             endif
         else
             Stick 1
             Button X
             var18 = 1
             var2 = Rnd
-            if var2 < 0.4
-                Call UAir
-            elif var2 < 0.8
-                Call NAir
-            else
-                Call DAir
-            endif
+            var16 = 5
+    if var2 < 0.4
+        Call UAir
+    elif var2 < 0.8
+        Call NAir
+    else
+        Call DAir
+    endif
         endif
         Return
     elif var2 < 0.4 && LevelValue >= 60 // ledgedash
         Seek ledgedash
         Jump
     elif var2 < 0.7 && LevelValue >= 60
-            LOGSTR 1919247872 1919251200 1744830464 0 0
+        LOGSTR 1919247872 1919251200 1744830464 0 0
         var16 = 5
         Stick 0 (-1)
         Call AIHub
@@ -76,7 +90,7 @@ if var1 < 35 && Equal Direction OPos
         Finish
     endif
 elif var1 > 35 && Equal OPos Direction
-    if var2 < 0.6 && LevelValue >= 75 // ledgedash
+    if var2 < 0.4 && LevelValue >= 75 // ledgedash
         Seek ledgedash
         Jump
     elif var2 < 0.8
@@ -88,19 +102,19 @@ elif var1 > 35 && Equal OPos Direction
         Button X
         Call AIHub
     endif
-elif var1 < 50 && OYDistBackEdge < -15
+elif var1 < 50 && OYDistBackEdge > 15
     if Equal CurrAction 117
         if NumFrames > 1
             SetFrame 0
         endif
         if Equal NumFrames 1
             Button X
-            Call BAir
+    Call BAir
             Finish
         endif
         Return
     endif
-elif var1 < 70 && Rnd < 0.1 && !(Equal OPos Direction)
+elif var1 < 70 && Rnd < 0.25 && !(Equal OPos Direction) && OYDistBackEdge < 35
     label
     if Equal CurrAction 117
         if NumFrames > 1
@@ -108,23 +122,24 @@ elif var1 < 70 && Rnd < 0.1 && !(Equal OPos Direction)
         endif
         if Equal NumFrames 1
             Stick -1
+            var16 = 7
         endif
         Return
     elif YSpeed <= 0
         if Equal NumFrames 2
             var16 = 3
-            if OYDistBackEdge < 10
-                var19 = 1
-                Call UAir
-            elif OYDistBackEdge > 50
-                Call DAir
-            else
-                Call BAir
-            endif
+    if OYDistBackEdge < 10
+        var19 = 1
+        Call UAir
+    elif OYDistBackEdge > 50
+        Call DAir
+    else
+        Call BAir
+    endif
         endif
         Return
     endif
-elif var1 < 50 && !(Equal OPos Direction)
+elif var1 < 50 && !(Equal OPos Direction) && OYDistBackEdge < 35
     label
     if Equal CurrAction 117 && var1 > 30
         if NumFrames > 1
@@ -142,6 +157,24 @@ elif var1 < 50 && !(Equal OPos Direction)
         Seek getupOptions
     endif
     Return
+else
+    var0 = Rnd * 25 + 10
+    label
+    var0 -= 1
+    if OYDistBackEdge < 35 && var1 < 50
+        Button R
+    endif
+    if var0 < 0
+        if Rnd < 0.25
+            Seek getupOptions
+        else
+            LOGSTR 1919247872 1919251200 1744830464 0 0
+            var16 = 5
+            Stick 0 (-1)
+            Call AIHub
+        endif
+    endif
+    Return
 endif
 
 if !(True)
@@ -154,10 +187,11 @@ if !(True)
         endif
         if Equal NumFrames 1
             Stick -1
+            var16 = 7
         endif
     else
         Stick 1
-        if YDistBackEdge > 5
+        if YDistBackEdge > 4
             Button X
         else
             Button R

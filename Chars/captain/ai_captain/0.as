@@ -4,12 +4,13 @@
 #snippet HITSTUN_ENDS
   if Equal AirGroundState 1
     Stick -1
-  elif Rnd < 0.3 && CanJump
+  elif Rnd < 0.2 && CanJump
     Button X
-    if Rnd < 0.6
-      movePart = 0
-      Call DAir
-    endif
+    movePart = 0
+    Call DAir
+  else
+    Seek Hitstun_End
+    Return
   endif
 #endsnippet
 
@@ -51,17 +52,21 @@
 #endsnippet
 
 #snippet ADDITIONAL_PREMAIN_OPTIONS
-  if !(XDistLE 20) && LevelValue >= LV7 && Rnd < 0.7
+  if LevelValue >= LV7 && Rnd < 0.2
     approachType = at_throwOut
-    Call NAir
+    if XDistLE 10
+      Call Jab123
+    else
+      Call NAir
+    endif
   endif
 #endsnippet
 
 #snippet MAIN_OPTIONS
-  if OYDistBackEdge > -15
+  if OYDistBackEdge > -45
     {DECISION_TREE}
   endif
-  if OYDistBackEdge <= -15
+  if OYDistBackEdge <= -45
     globTempVar = TopNY - OTopNY
     Abs globTempVar
     if TopNY < OTopNY && globTempVar < 30
@@ -98,10 +103,14 @@ $outputWithKnockbackThresholds(250, 400, Call)
 #endsnippet
 
 #snippet NEUTRAL_MOVES
+if ODistLE 20
+  movePart = 1
+endif
+
 $refreshMoves()
 $filterMoveHitFrame(20)
 $filterMoveEndlag(20)
-$filterMoveXMinMax(4, 20)
+$filterMoveXMinMax(0, 20)
 $excludeMovesOrigin(sspecial|uair)
 $output(Call)
 #endsnippet

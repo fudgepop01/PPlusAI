@@ -29,5 +29,6 @@ unk 0x0
 //     Stick 1
 //   endif
 // endif
+Call AIHub
 Return
 Return

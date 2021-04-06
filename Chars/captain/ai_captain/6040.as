@@ -55,8 +55,9 @@ endif
 Return
 
 label ExecuteAttack
+Cmd30
 var1 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - frameCounter, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame, _oCalc, _sCalc)
 
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(var0, var1, move_IASA - frameCounter)
@@ -72,6 +73,8 @@ ClearStick
 if YSpeed <= 0 && Equal IsOnStage 1 && Equal shouldFastFall 1 && Equal isGoingOffstage 0
   LOGSTR str("should_FF")
   Stick 0 (-1)
+else
+  Stick 0 0.5
 endif
 
 if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)

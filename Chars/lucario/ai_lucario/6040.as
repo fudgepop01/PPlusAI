@@ -3,101 +3,109 @@
 id 0x6040
 
 //Set Unknown
-unk 0x50000
+unk 0x00000
 
 //Strings
 
-if CurrAction >= 73 && CurrAction < 74
-    Call OnGotDamaged
-endif
-if CurrAction >= 51 && CurrAction < 52
-    Button R
-endif
-var0=0
-var1=3+Func12
-var2=-1
-//____________________
-label
-if CalledAs FAir
-    Stick 1
-elif CalledAs BAir
-    Stick (-1)
-elif CalledAs SSpecialAir
-    AbsStick OPos
-elif CalledAs UAir || CalledAs USpecialAir
-    Stick 0 1
-elif CalledAs DAir || CalledAs DSpecialAir
-    Stick 0 (-0.6)
-endif
-if var0 < 1
-    if CalledAs NSpecialAir || CalledAs SSpecialAir || CalledAs USpecialAir || CalledAs DSpecialAir
-        Button B
-    else
-        Button A
-        if FrameGE 3 && !(OutOfStage)
-            Stick 0 (-1)
-        endif
-    endif
-    var0=Func13
-    if var2 < 0 && LevelValue > 55
-        if IsCharOf Robot && CalledAs NSpecialAir
-            var2=1
-            Stick 0 (-1)
-            if var1 < 4
-                var1+=4
-            endif
-        endif
-    endif
+#let frameCounter = var3
+
+// sets up offsets to get to target position
+if Equal movePart 0
+  if CalledAs NAir
+    $generateDefinedVariants(NAir)
+  elif CalledAs FAir
+    $generateDefinedVariants(FAir)
+  elif CalledAs BAir
+    $generateDefinedVariants(BAir)
+  elif CalledAs UAir
+    $generateDefinedVariants(UAir)
+  elif CalledAs DAir
+    $generateDefinedVariants(DAir)
+  else
+    Call AIHub
+  endif
+  if Equal approachType at_defend && OFramesHitstun < 1
+    Call DefendHub
+  else
+    Call ApproachHub
+  endif
+elif Equal AirGroundState 2 && Equal movePart 1
+  ClearStick
+  move_IASA = nair_IASA
+  if CalledAs FAir
+    lastAttack = valFAir
+    move_IASA = fair_IASA
+    Stick (0.5) 0
+  elif CalledAs BAir
+    lastAttack = valBAir
+    move_IASA = bair_IASA
+    Stick (-0.5) 0
+  elif CalledAs UAir
+    lastAttack = valUAir
+    move_IASA = uair_IASA
+    Stick 0 (0.5)
+  elif CalledAs DAir
+    lastAttack = valDAir
+    move_IASA = dair_IASA
+    Stick 0 (-0.5)
+  endif
+  Button A
+  frameCounter = 0
+  hit_knockback = -1
+  Seek ExecuteAttack
 else
-    var0-=1
-endif
-if var2 > 0
-    if var2 > 1
-        Goto _0
-    else
-        var2+=1
-    endif
-endif
-if FrameGE var1
-    if var2 > 0
-        Seek
-    elif !(OutOfStage)
-        Call Unk1080
-    endif
-    Finish
+  Call AIHub
 endif
 Return
-//____________________
-label
-if FrameGE 4
-    Finish
-endif
-Goto _0
-Return
-//____________________
-label _0
-var3=HurtboxSize*0.6+YCoord
-if OYCoord > var3
-    Stick 0 0.6
-else
-    var4=OHurtboxSize+OYCoord
-    if var4 < var3
-        Stick 0 (-0.6)
-    else
-        var3=HurtboxSize+YCoord+2
-        if var4 > var3
-            Stick 0 0.6
-        endif
+
+label ExecuteAttack
+var1 = 0
+CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
+
+#let isGoingOffstage = var0
+GOING_OFFSTAGE(var0, var1, move_IASA - NumFrames)
+
+if Equal AirGroundState 1 || frameCounter >= move_IASA || Equal HitboxConnected 1
+  if CalledAs DAir
+    if frameCounter >= 11 || Equal moveVariant mv_dair_weak
+      Call AIHub
     endif
+  else
+    Call AIHub
+  endif
+endif
+
+RECORD_HIT_KNOCKBACK
+
+ClearStick
+
+if YSpeed <= 0 && Equal IsOnStage 1 && Equal shouldFastFall 1 && Equal isGoingOffstage 0
+  Stick 0 (-1)
+endif
+
+if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)
+  AbsStick isGoingOffstage
+elif True
+  if targetXDistance < 0
+    AbsStick -1 0
+  else
+    AbsStick 1 0
+  endif
+endif
+
+Abs targetXDistance
+Abs targetYDistance
+Seek ExecuteAttack
+frameCounter += 1
+if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
+  var19 = 2
+  var18 = 1
+  if targetXDistance <= move_xRange && targetYDistance <= move_yRange && Equal hit_knockback hex(0xFFFFFF)
+    Return
+  elif !(Equal isGoingOffstage 0)
+    Return
+  endif
+  Call Landing
 endif
 Return
-var5=0
-//____________________
-label _1
-if var5 < 1
-    Button R
-    var5=1
-else
-    var5=0
-endif
 Return

@@ -40,8 +40,9 @@ endif
 Return
 
 label executeAttack
+Cmd30
 var1 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame - NumFrames, _oCalc, _sCalc)
 
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(var0, var1, move_IASA - NumFrames)

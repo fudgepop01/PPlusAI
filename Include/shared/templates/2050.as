@@ -8,6 +8,7 @@ unk 0x0
 
 //Strings
 
+Cmd30
 Call AIHub
 Return
 Return

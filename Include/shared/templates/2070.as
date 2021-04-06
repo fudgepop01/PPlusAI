@@ -1,5 +1,4 @@
 // "LYING DOWN" ROUTINE
-// the AI is FORCED into this routine when in a knockdown state
 #include <Definition_AIMain.h>
 //TrueID=0x2070
 id 0x2070
@@ -9,32 +8,30 @@ unk 0x00000
 
 //Strings
 
-if InAir || FramesHitstun > 0 || CurrAction <= hex(0x20)
+Cmd30
+
+#let timer = var0
+timer = Rnd * 80 + 10
+label
+if Equal CurrAction hex(0x4D)
+    if timer <= 0 || ODistLE 15
+        var0 = Rnd * 4
+        if var0 > 3
+            Button A
+        elif var0 > 2
+            Button R
+        elif var0 > 1
+            AbsStick 1 0
+        else
+            AbsStick (-1) 0
+        endif
+    endif
+    if ODistLE 25 && timer < 60 && Rnd <= 0.02
+        Button A
+    endif
+    timer -= 1
+else
     Call AIHub
 endif
-
-var0=Rnd
-var10=0
-if var10 > 0
-    var10=0
-    Return
-endif
-//____________________
-label _0
-if var0 < 0.5 && fXClose
-    Button A
-    Finish
-elif var0 < 0.25 && !(var0 >= 0.25)
-    Stick 0 1
-    Finish
-elif var0 > 0.25 && !(var0 >= 0.5)
-    Stick 1
-    Finish
-elif var0 > 0.5 && !(var0 >= 0.75)
-    Stick (-1)
-    Finish
-elif var0 > 0.75
-    Seek _0
-    Finish
-endif
+Return
 Return

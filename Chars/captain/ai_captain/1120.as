@@ -7,6 +7,8 @@ id 0x1120
 //Set Unknown
 unk 0x0
 
+lastScript = hex(0x1120)
+
 #let pummelCount = var0
 if ODamage > 100
   pummelCount = 4

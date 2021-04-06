@@ -15,6 +15,9 @@ export const clearMovesUsed = () => {
 export const generateMovesUsed = () => {
   clearOut();
   const moves = moveUsageTracker.values();
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
   for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src} of moves) {
     const mn = moveName.toLowerCase();
     out("");
@@ -31,6 +34,30 @@ export const generateMovesUsed = () => {
     out("Return")
   }
   return _out;
+}
+
+export const generateAllMovesGoto = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
+  for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src} of moves) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`label ${mn}`)
+    out(`LOGSTR str("${moveName}")`);
+    if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
+    if (IASA_src.startsWith(mn)) out(`move_IASA = ${IASA_src}`)
+    if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
+    if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
+    if (xRange_src.startsWith(mn)) out(`move_xRange = ${xRange_src}`)
+    if (yRange_src.startsWith(mn)) out(`move_yRange = ${yRange_src}`)
+    if (hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${hitFrame_src}`)
+    if (lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${lastHitFrame_src}`)
+    out("Return")
+  }
+  return _out; 
 }
 
 let _moveData = undefined;
@@ -195,7 +222,7 @@ const outputRandMove = (moves, context) => {
       out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1}`);
     }
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
-    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
+    out(context === "Goto" ? `Goto ${moveName.toLowerCase()}` : `Call ${origin}`);
     if (context === "Goto" && moveVariant !== 0) {
       out(`Goto ${moveName.toLowerCase()}`);
     }
@@ -208,7 +235,7 @@ const outputRandMove = (moves, context) => {
 
 export const pickRandMove = (options, context) => {
   clearOut();
-  const possibilities = options.split("|");
+  const possibilities = options.split("|").map(opt => opt.toLowerCase());
   const moveList = Object.values(getMoveData()).filter(({moveName}) => {
     return possibilities.includes(moveName);
   })
@@ -250,14 +277,14 @@ export const filterMoveHitFrame = (max) => {
 export const filterMoveXMinMax = (min, max) => {
   min = parseFloat(min);
   max = parseFloat(max);
-  CurrMoves = CurrMoves.filter(({xOffset, xRange}) => min <= (xOffset + xRange * 2) && (xOffset + xRange * 2) <= max);
+  CurrMoves = CurrMoves.filter(({xOffset, xRange}) => min <= (xOffset + xRange) && (xOffset + xRange) <= max);
   return '';
 }
 
 export const filterMoveYMinMax = (min, max) => {
   min = parseFloat(min);
   max = parseFloat(max);
-  CurrMoves = CurrMoves.filter(({yOffset, yRange}) => min <= (yOffset + yRange * 2) && (yOffset + yRange * 2) <= max);
+  CurrMoves = CurrMoves.filter(({yOffset, yRange}) => min <= (yOffset + yRange) && (yOffset + yRange) <= max);
   return '';
 }
 
@@ -305,7 +332,6 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
   clearOut();
   if (!CurrMoves[0]) return '';
   if (context === "Goto") updateTrackedMoves(CurrMoves);
-
   min = parseFloat(min);
   max = parseFloat(max);
   CurrMoves = CurrMoves.filter((m) => {
@@ -338,7 +364,7 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
     }
     out(`if ${conditional} ${append}`);
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
-    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
+    out(context === "Goto" ? `Goto ${moveName.toLowerCase()}` : `Call ${origin}`);
     if (context === "Goto" && moveVariant !== 0) {
       out(`Goto ${moveName.toLowerCase()}`);
     }

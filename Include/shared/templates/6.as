@@ -5,6 +5,7 @@ id 0x8006
 
 unk 0x0
 
+Cmd30
 // if InAir && Equal IsOnStage 1
 //   Call AIHub
 // endif

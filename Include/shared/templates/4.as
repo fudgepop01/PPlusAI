@@ -5,6 +5,18 @@ id 0x8004
 
 unk 0x0
 
+if YDistBackEdge < 1 && YDistBackEdge > -1 
+  Call AIHub
+endif
+
+label
+
+if !(Equal XDistBackEdge XDistFrontEdge)
+  Call AIHub
+endif
+if Equal approachType at_OFF_LEDGE
+  Call LedgeHang
+endif
 if FramesHitstun > 0
   Return
 endif
@@ -21,6 +33,7 @@ jumpingTimer = 0
 label
 hasTriedToUpB = 0
 label
+Cmd30
 #let isBelowStage = var7
 
 // detects if below stage
@@ -74,6 +87,9 @@ if Equal approachType at_ledgeRefresh
   Return
 endif
 
+LOGSTR str("act/sact")
+LOGVAL CurrAction
+LOGVAL CurrSubaction
 {SFALL_ACTIONS}
   Goto handleSFall
   Return
@@ -146,13 +162,13 @@ if immediateTempVar < 10
     Stick 0 0.7
     Button B
   endif
-elif nearCliffY > maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0 && NumJumps > 0
+elif nearCliffY > maxYEdgeDistJumpNoUpB && Rnd < 0.03 && Equal isBelowStage 0 && NumJumps > 0
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
   Button X
   jumpingTimer = 30
-elif nearCliffY < -maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0 && NumJumps > 0
+elif nearCliffY < -maxYEdgeDistJumpNoUpB && Rnd < 0.03 && Equal isBelowStage 0 && NumJumps > 0
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
@@ -161,12 +177,19 @@ elif nearCliffY < -maxYEdgeDistJumpNoUpB && Rnd < 0.1 && Equal isBelowStage 0 &&
 elif nearCliffY < -maxYEdgeDistWithJump && NumJumps > 0
   Button X
   jumpingTimer = 30
-elif nearCliffY < -maxYEdgeDist && Equal hasTriedToUpB 0
-  ClearStick
-  Stick 0 0.7
-  Button B
-  hasTriedToUpB = 1
-elif globTempVar > maxXEdgeDist && Equal hasTriedToUpB 0 && Equal NumJumps 0
+elif nearCliffY < -maxYEdgeDist
+  if globTempVar > maxXEdgeDist
+    Button X
+    jumpingTimer = 30
+  elif Equal hasTriedToUpB 0
+    ClearStick
+    Stick 0 0.7
+    Button B
+    hasTriedToUpB = 1
+  endif
+  Return
+endif
+if globTempVar > maxXEdgeDist && Equal hasTriedToUpB 0 && Equal NumJumps 0
   ClearStick
   Stick 0 0.7
   Button B

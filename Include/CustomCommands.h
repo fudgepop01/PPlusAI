@@ -47,6 +47,24 @@ cmd ClearButton : 0x43
 
 //DEBUGGING CODES
 
+/// injects custom values into the debugger if it's active
+cmd SAFE_WRITE_0 : 0xB0 variable
+cmd SAFE_WRITE_1 : 0xB1 variable
+cmd SAFE_WRITE_2 : 0xB2 variable
+cmd SAFE_WRITE_3 : 0xB3 variable
+cmd SAFE_WRITE_4 : 0xB4 variable
+cmd SAFE_WRITE_5 : 0xB5 variable
+cmd SAFE_WRITE_6 : 0xB6 variable
+cmd SAFE_WRITE_7 : 0xB7 variable
+cmd SAFE_WRITE_8 : 0xB8 variable
+cmd SAFE_WRITE_9 : 0xB9 variable
+cmd SAFE_WRITE_A : 0xBA variable
+cmd SAFE_WRITE_B : 0xBB variable
+cmd SAFE_WRITE_C : 0xBC variable
+cmd SAFE_WRITE_D : 0xBD variable
+cmd SAFE_WRITE_E : 0xBE variable
+cmd SAFE_WRITE_F : 0xBF variable
+
 /// injects custom values if the debugger is an active code
 /// otherwise leaves the variable untouched
 cmd SAFE_INJECT_0 : 0xC0 variable

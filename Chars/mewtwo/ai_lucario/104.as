@@ -21,7 +21,7 @@ endif
 var3 = 1
 var8 = 1
 
-CALC_TARGET_DISTANCES(var0, var1, var8, var2, var3, move_hitFrame + 19, _oCalc, _sCalc)
+EST_O_COORDS(targetXDistance, targetYDistance, move_hitFrame + 19)
 
 label
 #let cancelFrameCount = var2

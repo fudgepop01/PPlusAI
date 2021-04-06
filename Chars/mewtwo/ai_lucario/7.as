@@ -1,9 +1,9 @@
 #snippet OFFENSIVE_OPTIONS
-  if XDistLE 20
+  if XDistLE 25
     Call DAir
-  elif !(Equal OPos Direction) && XDistLE 40
+  elif !(Equal OPos Direction) && XDistLE 50
     Call BAir
-  elif XDistLE 40
+  elif XDistLE 50
     Call NAir
   endif
 #endsnippet

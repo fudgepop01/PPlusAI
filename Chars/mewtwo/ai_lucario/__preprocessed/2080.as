@@ -1,33 +1,41 @@
-// "NOONE AROUND" ROUTINE
-// the AI is FORCED into this routine when there is no target
+// "LYING DOWN" ROUTINE
+// the AI is FORCED into this routine when in a knockdown state
 #include <Definition_AIMain.h>
-//TrueID=0x2080
-id 0x2080
+//TrueID=0x2070
+id 0x2070
 
 //Set Unknown
-unk 0x0
+unk 0x00000
 
-// if Equal IsOnStage 0
-//   var18 = 255
-//   Call RecoveryHub
-// endif
-// if !(NoOpponent)
-//   Call AIHub
-// endif
-// if LevelValue >= 48 && LevelValue < 100
-//   if Equal CurrAction 0 && XDistFrontEdge <= 4
-//     Stick (-1)
-//   elif XDistFrontEdge < 15 && Equal AirGroundState 1 && XDistFrontEdge > 4
-//     Taunt 1
-//   elif XDistBackEdge >= -20 && XDistBackEdge <= -17 && Equal CurrAction 3
-//     Stick (-1)
-//   elif Equal CurrAction 125
-//     Stick (-1)
-//   elif Equal CurrAction 1 || XDistFrontEdge <= 3
-//     ClearStick
-//   else
-//     Stick 1
-//   endif
-// endif
+//Strings
+
+if InAir || FramesHitstun > 0 || CurrAction <= 32
+    Call AIHub
+endif
+
+var0=Rnd
+var10=0
+if var10 > 0
+    var10=0
+    Return
+endif
+//____________________
+label _0
+if var0 < 0.5 && fXClose
+    Button A
+    Finish
+elif var0 < 0.25 && !(var0 >= 0.25)
+    Stick 0 1
+    Finish
+elif var0 > 0.25 && !(var0 >= 0.5)
+    Stick 1
+    Finish
+elif var0 > 0.5 && !(var0 >= 0.75)
+    Stick (-1)
+    Finish
+elif var0 > 0.75
+    Seek _0
+    Finish
+endif
 Return
-Return
+
