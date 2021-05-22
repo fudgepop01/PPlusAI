@@ -24,9 +24,11 @@ endif
 
 var17 = OTotalXSpeed
 Abs var17
-if Equal var21 32769 && XDistLE 20 && OYDistBackEdge < 0 && Equal var18 0 && OFramesHitstun > 0 && var17 > 4
-  var16 = 3
+if Equal var21 32769 && XDistLE 30 && var5 < 10 && Equal var18 0 && OFramesHitstun > 0 && var17 < 4
+  // var16 = 3
   Call ApproachHub
+// elif Equal var21 32769 && Equal var18 0
+//   Call ApproachHub
 endif
 
 var21 = 32771
@@ -42,6 +44,9 @@ var0 = var1
 Abs var0
 var4 = OXDistFrontEdge
 Abs var4
+var17 = OFramesHitstun / 60
+EstOYCoord var5 var17
+var5 = var2 - var5
 
 // if it's not worth going for an edgeguard, don't bother
 if Equal OIsOnStage 1
@@ -58,7 +63,7 @@ elif LevelValue <= 42
   Call RecoveryHub
 endif
 
-if OYDistFrontEdge > -10 && var4 > 45 && var0 > 5
+if var5 > -10 && var4 > 45 && var0 > 5
   var3 = 1
 else
   var3 = Rnd * 9
@@ -87,8 +92,8 @@ Abs var0
 var4 = OXDistFrontEdge
 Abs var4
 
-// LOGSTR 1986097664 855638016 0 0 0
-// LOGVAL var3
+LOGSTR 1986097664 855638016 0 0 0
+LOGVAL var3
 
 if Damage < 130 && var2 < -25
   var18 = 255
@@ -96,7 +101,7 @@ if Damage < 130 && var2 < -25
   Call RecoveryHub
 endif
 
-if var4 < 20 && OYDistFrontEdge > -10 && LevelValue >= 60
+if var4 < 20 && var5 > -10 && LevelValue >= 60
   var18 = 0
   var16 = 3
   if !(Equal OPos Direction)
@@ -115,9 +120,10 @@ endif
 // #let OConsecutiveLedgeGrabs = var5
 // GetLaBasic var0 79 1
 if var3 <= 5 && LevelValue >= 48 && NoOneHanging && var4 > 10
+  var18 = 255
   Goto WDBackGrabLedge
   Return
-elif Equal IsOnStage 1 && var3 <= 5 && OYDistBackEdge > 30 && !(True)
+elif Equal IsOnStage 1 && var3 <= 5 && var5 > 30 && !(True)
   var18 = 0
   var16 = 3
   if OYDistBackEdge < 0
@@ -129,7 +135,7 @@ elif Equal IsOnStage 1 && var3 <= 5 && OYDistBackEdge > 30 && !(True)
   else
     Call FSmash
   endif
-elif var3 <= 9 && OYDistFrontEdge < -30 && LevelValue >= 42 && var4 > 5
+elif var3 <= 9 && var5 < -30 && LevelValue >= 42 && var4 > 5
   if var1 < 50 && var1 > -50 && var2 > -25
     var18 = 0
     var16 = 3
@@ -183,9 +189,12 @@ if !(Equal AirGroundState 3)
       if var0 < -5
         Stick -1
         Return
-      elif InAir && var0 > 2.5 && Equal IsOnStage 1
+      elif YDistBackEdge > -1 && InAir && var0 > 2.5 && Equal IsOnStage 1
         Button R
         var0 *= -0.04
+        if var0 > -0.3
+          var0 = -0.3
+        endif
         Stick var0 (-0.75)
       elif var0 > 0 && !(Equal CurrAction 10) && Equal IsOnStage 1
         if CurrAction >= 22 && CurrAction <= 25
@@ -201,7 +210,7 @@ if !(Equal AirGroundState 3)
     var18 = 255
     Call RecoveryHub
   endif
-// elif var4 < 10 && OYDistFrontEdge < 10
+// elif var4 < 10 && var5 < 10
 //   Button R
 //   Call AIHub
 endif

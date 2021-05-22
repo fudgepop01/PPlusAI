@@ -5,6 +5,8 @@ id 0x6031
 //Set Unknown
 unk 0x0
 
+Cmd30
+
 if Equal movePart 0
   // LOGSTR str("jab")
   lastAttack = hex(0x6031)

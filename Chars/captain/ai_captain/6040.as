@@ -6,21 +6,22 @@ id 0x6040
 unk 0x00000
 
 //Strings
+Cmd30
 
 #let frameCounter = var3
 
 // sets up offsets to get to target position
 if Equal movePart 0
   if CalledAs NAir
-    $generateDefinedVariants(NAir)
+    Goto nair
   elif CalledAs FAir
-    $generateDefinedVariants(FAir)
+    Goto fair
   elif CalledAs BAir
-    $generateDefinedVariants(BAir)
+    Goto bair
   elif CalledAs UAir
-    $generateDefinedVariants(UAir)
+    Goto uair
   elif CalledAs DAir
-    $generateDefinedVariants(DAir)
+    Goto dair
   else
     Call AIHub
   endif
@@ -31,17 +32,22 @@ if Equal movePart 0
   endif
 elif Equal AirGroundState 2 && Equal movePart 1
   ClearStick
+  Goto nair
   move_IASA = nair_IASA
   if CalledAs FAir
+    Goto fair
     move_IASA = fair_IASA
     Stick (0.5) 0
   elif CalledAs BAir
+    Goto bair
     move_IASA = bair_IASA
     Stick (-0.5) 0
   elif CalledAs UAir
+    Goto uair
     move_IASA = uair_IASA
     Stick 0 (0.5)
   elif CalledAs DAir
+    Goto dair
     move_IASA = dair_IASA
     Stick 0 (-0.5)
   endif
@@ -57,12 +63,12 @@ Return
 label ExecuteAttack
 Cmd30
 var1 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - frameCounter, _oCalc, _sCalc)
 
 #let isGoingOffstage = var0
 GOING_OFFSTAGE(var0, var1, move_IASA - frameCounter)
 
-if Equal AirGroundState 1 || frameCounter >= move_IASA
+if Equal AirGroundState 1 || frameCounter >= move_IASA || FramesHitstun > 0
   Call AIHub
 endif
 
@@ -79,7 +85,7 @@ endif
 
 if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)
   AbsStick isGoingOffstage
-elif True
+elif !(Equal approachType at_throwOut)
   if targetXDistance < 0
     AbsStick -1 0
   else
@@ -102,5 +108,27 @@ if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1 
   var18 = 1
   Call Landing
 endif
+Return
+
+label nair
+$generateDefinedVariants(NAir)
+Return 
+
+label fair
+$generateDefinedVariants(FAir)
+Return 
+
+label bair
+$generateDefinedVariants(BAir)
+Return
+
+label uair
+$generateDefinedVariants(UAir)
+Return 
+
+label dair
+$generateDefinedVariants(DAir)
+Return
+
 Return
 Return

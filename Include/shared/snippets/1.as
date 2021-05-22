@@ -1,8 +1,14 @@
 #snippet FASTFALL_CHECK
-  if Equal AirGroundState 2 && absTargetXDistance <= move_xRange && LevelValue >= LV8 && YDistBackEdge < -2
-    COULD_HIT_WITH_FASTFALL(var2, var3, var4, var6, move_lastHitFrame - 2, _ffCalc)
-    // var1 = targetYDistance
-    // Abs var1
+  immediateTempVar = move_xRange * 2
+  if Equal AirGroundState 2 && absTargetXDistance <= immediateTempVar && LevelValue >= LV8 && !(Equal XDistBackEdge XDistFrontEdge) 
+    COULD_HIT_WITH_FASTFALL(var2, var3, var4, var6, move_hitFrame + (move_lastHitFrame - move_hitFrame) / 2, _ffCalc)
+    if Equal shouldFastFall 1
+      LOGSTR str("FASTFALL")
+      Seek CallAttacks
+      Jump
+    endif
+    
+    COULD_HIT_WITH_FASTFALL(var2, var3, var4, var6, move_hitFrame, _ffCalc2)
     if Equal shouldFastFall 1
       LOGSTR str("FASTFALL")
       Seek CallAttacks

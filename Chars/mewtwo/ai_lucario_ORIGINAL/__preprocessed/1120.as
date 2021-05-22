@@ -7,13 +7,13 @@ id 0x1120
 //Set Unknown
 unk 0x0
 
-if ODamage > 100
+if ODamage > 160
   var0 = 4
-elif ODamage > 80
+elif ODamage > 120
   var0 = 3
-elif ODamage > 60
+elif ODamage > 80
   var0 = 2
-elif ODamage > 30
+elif ODamage > 40
   var0 = 1
 else
   var0 = 0

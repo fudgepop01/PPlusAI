@@ -12,6 +12,10 @@ unk 0x0
 ClearStick
 var21 = 32770
 
+if Equal CurrAction 4
+  Stick 1
+endif
+
 
 if OIsCharOf Bowser
   var8 = 113
@@ -156,7 +160,7 @@ var8 *= -1
 var8 /= 100
 var8 *= ODamage
 
-if Equal var18 255
+if Equal var18 255 || Equal var16 9
   Seek contCombo
   Jump
 endif
@@ -173,6 +177,15 @@ endif
 
 LOGSTR 1398030592 1381236736 0 0 0
 
+  if Equal var20 24636 && Rnd < 0.35
+    if Equal var19 3
+      var19 = 1
+      Call Grab
+    elif Equal var19 5 && var8 < 30
+      var19 = 1
+      Call Grab
+    endif
+  endif
   // if Equal var20 24636
   //   // LOGSTR 1735549440 1131241984 1862270976 0 0
   //   if Equal var19 5
@@ -218,7 +231,7 @@ LOGSTR 1398030592 1381236736 0 0 0
   // //   Goto dair
   // //   var7 = 2
   // endif
-  if OFramesHitstun < 15 && Rnd < 0.5 && YDistBackEdge > -10 && OYDistBackEdge > -15
+  if OFramesHitstun > 10 && Rnd < 0.5 && YDistBackEdge > -10 && OYDistBackEdge > -15
     Call Grab
   endif
 
@@ -239,9 +252,9 @@ label techChase_wait
   var0 = Rnd * 60
   var1 = 0
   if Damage < 80
-    var2 = 10
+    var2 = 20
   else
-    var2 = 25
+    var2 = 40
   endif
   var17 = Rnd
   label
@@ -322,26 +335,16 @@ if var17 < var0 && var3 < 70 && var17 < 20 && Equal OXDistBackEdge OXDistFrontEd
   label edgeguard
   LOGSTR 1701078784 1701278976 1634886656 0 0
   var16 = 3
-  var17 = Rnd * 8
-  if var17 < 1
-    Goto ftilt
-  elif var17 < 2
-    Goto utilt
-  elif var17 < 3
-    Goto fsmash
-  elif var17 < 4
-    Goto dtilt
-  elif var17 < 5
-    Goto nair
-  elif var17 < 6
-    Goto fair
-    var7 = 5
-  elif var17 < 7
-    Goto uair
-    var7 = 10
-  elif var17 < 8
-    Goto dair
-  endif
+var17 = Rnd * 4
+if var17 < 1 && OYDistBackEdge > -10 
+Goto nair
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
+Goto fair
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
+Goto uair
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
+Goto dair
+endif
   Seek edgeguard
 elif Equal OIsOnStage 1 && var3 < 65 && Rnd < 0.8 && var8 > 20
   if Equal LevelValue 100 
@@ -412,76 +415,40 @@ Return
 
 label comboOptions
 LOGVAL var8
-var22 = 0.3
-if !(SamePlane) || OYDistBackEdge < -10
-var22 = 0.15
-endif
-if True && 86 <= var8 && Rnd < 0.3
+if True && 52 <= var8 && var8 <= 281 && Rnd < 0.40
 var19 = 1
-Goto fair_weak
-Goto fair_weak
-endif
-if True && 77 <= var8 && var8 <= 332 && Rnd < 0.3
-var19 = 1
-Goto uair_tipman
+Goto uair
 Goto uair_tipman
 endif
-if True && 68 <= var8 && var8 <= 354 && Rnd < 0.3
-Goto jab123
+if True && 42 <= var8 && var8 <= 443 && Rnd < 0.30
+var19 = 1
+Goto fair
+Goto fair_weak
 endif
-if True && 64 <= var8 && var8 <= 431 && Rnd < 0.12 && OCurrAction <= 69
-var19 = 4
-Goto bthrow
-Goto bthrow
-endif
-if True && 61 <= var8 && var8 <= 333 && Rnd < 0.3
-Goto dtilt
-endif
-if True && 60 <= var8 && var8 <= 280 && Rnd < 0.3
+if True && 38 <= var8 && var8 <= 236 && Rnd < 0.30
 Goto ftilt
 endif
-if True && 56 <= var8 && Rnd < 0.12 && OCurrAction <= 69
-var19 = 2
-Goto fthrow
-Goto fthrow
+if True && 34 <= var8 && var8 <= 279 && Rnd < 0.35
+Goto dtilt
 endif
-if True && 49 <= var8 && var8 <= 240 && Rnd < 0.3
+if True && 30 <= var8 && var8 <= 202 && Rnd < 0.30
 Goto uair
 endif
-if True && 46 <= var8 && var8 <= 363 && Rnd < 0.3
-var19 = 2
-Goto nairhit2
-Goto nairhit2
-endif
-if True && 36 <= var8 && Rnd < 0.12 && OCurrAction <= 69
-var19 = 3
-Goto dthrow
-Goto dthrow
-endif
-if True && 36 <= var8 && var8 <= 214 && Rnd < 0.3
+if True && 18 <= var8 && var8 <= 179 && Rnd < 0.30
 Goto bair
 endif
-if True && 21 <= var8 && var8 <= 259 && Rnd < 0.3
-Goto utilt
+if True && 14 <= var8 && var8 <= 300 && Rnd < 0.30
+var19 = 2
+Goto nair
+Goto nairhit2
 endif
-if True && 20 <= var8 && var8 <= 163 && Rnd < 0.3
+if True && 6 <= var8 && var8 <= 135 && Rnd < 0.40
 Goto fair
 endif
-if True && 18 <= var8 && var8 <= 169 && Rnd < 0.3
-Goto usmash
-endif
-if True && 16 <= var8 && var8 <= 146 && Rnd < 0.3
-Goto fsmash
-endif
-if True && 13 <= var8 && var8 <= 172 && Rnd < 0.3
+if True && var8 <= 140 && Rnd < 0.30
 Goto dair
 endif
-if True && 1 <= var8 && Rnd < 0.12 && OCurrAction <= 69
-var19 = 5
-Goto uthrow
-Goto uthrow
-endif
-if True && var8 <= 387 && Rnd < 0.3
+if True && var8 <= 308 && Rnd < 0.45
 Goto sspecial
 endif
 Seek combo_end
@@ -491,95 +458,93 @@ Return
 label juggleOptions
 LOGVAL var8
 var17 = Rnd * 6
-if var17 < 1
-Goto dtilt
-elif 1 < var17 && var17 < 2
+if var17 < 1 && OYDistBackEdge > -10 
 Goto usmash
-elif 2 < var17 && var17 < 3
-Goto sspecial
-elif 3 < var17 && var17 < 4
-var19 = 3
-Goto dthrow
-Goto dthrow
-elif 4 < var17 && var17 < 5
-var19 = 5
-Goto uthrow
-Goto uthrow
-elif 5 < var17 && var17 < 6
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
 Goto nair
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
+var19 = 1
+Goto app_nair
+Goto app_nair
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
+var19 = 2
+Goto nairhit2
+Goto nairhit2
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 
+var19 = 1
+Goto fair_weak
+Goto fair_weak
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 
+Goto uair
 endif
 Seek juggle_end
 Jump
 Return
 
 label killOptions
-var22 = 0.3
-if !(SamePlane) || OYDistBackEdge < -10
-var22 = 0.15
-endif
-if True && 457 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+if True && 410 <= var8 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 3
-Goto dthrow
+Goto grab
 Goto dthrow
 endif
-if True && 287 <= var8 && Rnd < 0.3
+if True && 265 <= var8 && Rnd < 0.30
 var19 = 1
-Goto fair_weak
+Goto fair
 Goto fair_weak
 endif
-if True && 261 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+if True && 238 <= var8 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 2
-Goto fthrow
+Goto grab
 Goto fthrow
 endif
-if True && 246 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+if True && 219 <= var8 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 5
-Goto uthrow
+Goto grab
 Goto uthrow
 endif
-if True && 229 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+if True && 211 <= var8 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 4
-Goto bthrow
+Goto grab
 Goto bthrow
 endif
-if True && 197 <= var8 && Rnd < 0.3
+if True && 183 <= var8 && Rnd < 0.30
 Goto jab123
 endif
-if True && 192 <= var8 && var8 <= 473 && Rnd < 0.3
+if True && 179 <= var8 && var8 <= 473 && Rnd < 0.40
 var19 = 1
-Goto uair_tipman
+Goto uair
 Goto uair_tipman
 endif
-if True && 189 <= var8 && Rnd < 0.3
+if True && 173 <= var8 && Rnd < 0.30
 var19 = 2
-Goto nairhit2
+Goto nair
 Goto nairhit2
 endif
-if True && 183 <= var8 && var8 <= 483 && Rnd < 0.3
+if True && 170 <= var8 && var8 <= 483 && Rnd < 0.35
 Goto dtilt
 endif
-if True && 169 <= var8 && Rnd < 0.3
+if True && 149 <= var8 && Rnd < 0.45
 Goto sspecial
 endif
-if True && 159 <= var8 && var8 <= 400 && Rnd < 0.3
+if True && 148 <= var8 && var8 <= 400 && Rnd < 0.30
 Goto ftilt
 endif
-if True && 135 <= var8 && var8 <= 344 && Rnd < 0.3
+if True && 125 <= var8 && var8 <= 344 && Rnd < 0.30
 Goto uair
 endif
-if True && 128 <= var8 && var8 <= 390 && Rnd < 0.3
+if True && 116 <= var8 && var8 <= 390 && Rnd < 0.30
 Goto utilt
 endif
-if True && 116 <= var8 && var8 <= 313 && Rnd < 0.3
+if True && 107 <= var8 && var8 <= 313 && Rnd < 0.30
 Goto bair
 endif
-if True && 86 <= var8 && var8 <= 253 && Rnd < 0.3
+if True && 79 <= var8 && var8 <= 253 && Rnd < 0.45
 Goto usmash
 endif
-if True && 85 <= var8 && var8 <= 242 && Rnd < 0.3
+if True && 78 <= var8 && var8 <= 242 && Rnd < 0.40
 Goto fair
 endif
-if True && 74 <= var8 && var8 <= 217 && Rnd < 0.3
+if True && 68 <= var8 && var8 <= 217 && Rnd < 0.30
 Goto fsmash
 endif
 if Equal var1 1 
@@ -592,16 +557,49 @@ endif
 Jump
 Return
 
-label jab123
-LOGSTR 1784766976 825373440 0 0 0
-var20 = 24625
-var15 = 14
+label nair
+LOGSTR 1851877632 1912602624 0 0 0
+var20 = 24641
+var15 = 45
+var9 = -3.2
+var10 = -3
+var11 = 10
+var12 = 5
+var13 = 7
+var14 = 12
+Return
+label fair
+LOGSTR 1717659904 1912602624 0 0 0
+var20 = 24642
+var15 = 36
 var9 = 1
-var10 = -9
-var11 = 8
-var12 = 2
-var13 = 3
-var14 = 5
+var10 = -1.450
+var11 = 5.3
+var12 = 5
+var13 = 14
+var14 = 16
+Return
+label uair
+LOGSTR 1969318144 1912602624 0 0 0
+var20 = 24644
+var15 = 30
+var9 = -3
+var10 = -3.4
+var11 = 9.6
+var12 = 11
+var13 = 6
+var14 = 10
+Return
+label dair
+LOGSTR 1684105472 1912602624 0 0 0
+var20 = 24645
+var15 = 38
+var9 = -4
+var10 = 10
+var11 = 5
+var12 = 12
+var13 = 16
+var14 = 20
 Return
 label ftilt
 LOGSTR 1718905088 1819541504 0 0 0
@@ -614,17 +612,6 @@ var12 = 3.7
 var13 = 9
 var14 = 11
 Return
-label utilt
-LOGSTR 1970563328 1819541504 0 0 0
-var20 = 24627
-var15 = 38
-var9 = 1
-var10 = 3.5
-var11 = 7
-var12 = 15
-var13 = 17
-var14 = 22
-Return
 label dtilt
 LOGSTR 1685350656 1819541504 0 0 0
 var20 = 24628
@@ -636,91 +623,24 @@ var12 = 4
 var13 = 10
 var14 = 15
 Return
-label fsmash
-LOGSTR 1718840576 1634953216 0 0 0
-var20 = 24629
-var15 = 49
-var9 = 1
-var10 = -7
-var11 = 11
-var12 = 3
-var13 = 19
-var14 = 21
-Return
-label usmash
-LOGSTR 1970498816 1634953216 0 0 0
-var20 = 24630
-var15 = 41
-var9 = -1
-var10 = -3
-var11 = 4.3
-var12 = 13
-var13 = 22
-var14 = 29
-Return
 label sspecial
 LOGSTR 1936945152 1701013760 1634467840 0 0
 var20 = 24633
 var15 = 26
 var9 = 3
 var10 = 0
-var11 = 10
+var11 = 8
 var12 = 5
 var13 = 26
 var14 = 26 // just a dummy
 Return
-label grab
-LOGSTR 1735549184 1644167168 0 0 0
-var20 = 24636
-var15 = 32
-var9 = -0.5
-var10 = -6
-var11 = 5.5
-var12 = 4
-var13 = 7
-var14 = 8
-Return
-label fthrow
-LOGSTR 1718904832 1919907584 0 0 0
-Return
-label dthrow
-LOGSTR 1685350400 1919907584 0 0 0
-Return
-label bthrow
-LOGSTR 1651795968 1919907584 0 0 0
-Return
-label uthrow
-LOGSTR 1970563072 1919907584 0 0 0
-Return
-label nair
-LOGSTR 1851877632 1912602624 0 0 0
-var20 = 24641
-var15 = 45
-var9 = -3.2
-var10 = -3
-var11 = 10
-var12 = 5
-var13 = 7
-var14 = 29
-Return
 label app_nair
 LOGSTR 1634758656 1601069312 1769078784 0 0
 var10 = -3
-var11 = 25
+var11 = 10
 Return
 label nairhit2
 LOGSTR 1851877632 1917348096 1949433856 0 0
-Return
-label fair
-LOGSTR 1717659904 1912602624 0 0 0
-var20 = 24642
-var15 = 36
-var9 = 1
-var10 = -1.450
-var11 = 5.3
-var12 = 5
-var13 = 14
-var14 = 16
 Return
 label fair_weak
 LOGSTR 1717659904 1918859008 1700883200 0 0
@@ -738,17 +658,6 @@ var12 = 6
 var13 = 10
 var14 = 17
 Return
-label uair
-LOGSTR 1969318144 1912602624 0 0 0
-var20 = 24644
-var15 = 30
-var9 = -3
-var10 = -4.45
-var11 = 9.6
-var12 = 11
-var13 = 6
-var14 = 10
-Return
 label uair_tipman
 LOGSTR 1969318144 1918858240 1768975616 1634598912 0
 var9 = -8
@@ -758,16 +667,72 @@ var12 = 8
 var13 = 11
 var14 = 13
 Return
-label dair
-LOGSTR 1684105472 1912602624 0 0 0
-var20 = 24645
+label usmash
+LOGSTR 1970498816 1634953216 0 0 0
+var20 = 24630
+var15 = 41
+var9 = -1
+var10 = -3
+var11 = 4.3
+var12 = 13
+var13 = 22
+var14 = 29
+Return
+label jab123
+LOGSTR 1784766976 825373440 0 0 0
+var20 = 24625
+var15 = 14
+var9 = 1
+var10 = -9
+var11 = 8
+var12 = 2
+var13 = 3
+var14 = 5
+Return
+label utilt
+LOGSTR 1970563328 1819541504 0 0 0
+var20 = 24627
 var15 = 38
-var9 = -4
-var10 = 10
-var11 = 5
-var12 = 12
-var13 = 16
-var14 = 20
+var9 = 1
+var10 = 3.5
+var11 = 7
+var12 = 15
+var13 = 17
+var14 = 22
+Return
+label fsmash
+LOGSTR 1718840576 1634953216 0 0 0
+var20 = 24629
+var15 = 49
+var9 = 1
+var10 = -7
+var11 = 11
+var12 = 3
+var13 = 19
+var14 = 21
+Return
+label grab
+LOGSTR 1735549184 1644167168 0 0 0
+var20 = 24636
+var15 = 32
+var9 = -0.75
+var10 = -6
+var11 = 5.5
+var12 = 4
+var13 = 7
+var14 = 8
+Return
+label fthrow
+LOGSTR 1718904832 1919907584 0 0 0
+Return
+label dthrow
+LOGSTR 1685350400 1919907584 0 0 0
+Return
+label bthrow
+LOGSTR 1651795968 1919907584 0 0 0
+Return
+label uthrow
+LOGSTR 1970563072 1919907584 0 0 0
 Return
 
 label clear
@@ -790,11 +755,18 @@ Return
 
 label analyze
 
-var17 = OFramesHitstun + var7
-if var17 < var13 || Equal var13 -1
+if Equal var20 25000
+  Return
+elif 24625 <= var20 && var20 <= 24638 && OYDistBackEdge < -40 && OTotalYSpeed > -0.5
   var7 = 0
   Return
 endif
+
+// var17 = OFramesHitstun + var7
+// if var17 < var13 || Equal var13 -1
+//   var7 = 0
+//   Return
+// endif
 
 if var20 >= 24641 && var20 <= 24655
   if !(InAir)

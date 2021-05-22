@@ -126,13 +126,13 @@ export const generateDefinedVariants = (moveName) => {
     if (m.moveVariant !== 0) out(`if Equal moveVariant mv_${m.moveName}`)
     
     const mn = m.moveName.toLowerCase();
-    if (m.IASA_src.startsWith(mn)) out(`move_IASA = ${m.IASA_src}`)
-    if (m.xOffset_src.startsWith(mn)) out(`move_xOffset = ${m.xOffset_src}`)
-    if (m.yOffset_src.startsWith(mn)) out(`move_yOffset = ${m.yOffset_src}`)
-    if (m.xRange_src.startsWith(mn)) out(`move_xRange = ${m.xRange_src}`)
-    if (m.yRange_src.startsWith(mn)) out(`move_yRange = ${m.yRange_src}`)
-    if (m.hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${m.hitFrame_src}`)
-    if (m.lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${m.lastHitFrame_src}`)
+    if (m.IASA_src.toLowerCase().startsWith(mn)) out(`move_IASA = ${m.IASA_src}`)
+    if (m.xOffset_src.toLowerCase().startsWith(mn)) out(`move_xOffset = ${m.xOffset_src}`)
+    if (m.yOffset_src.toLowerCase().startsWith(mn)) out(`move_yOffset = ${m.yOffset_src}`)
+    if (m.xRange_src.toLowerCase().startsWith(mn)) out(`move_xRange = ${m.xRange_src}`)
+    if (m.yRange_src.toLowerCase().startsWith(mn)) out(`move_yRange = ${m.yRange_src}`)
+    if (m.hitFrame_src.toLowerCase().startsWith(mn)) out(`move_hitFrame = ${m.hitFrame_src}`)
+    if (m.lastHitFrame_src.toLowerCase().startsWith(mn)) out(`move_lastHitFrame = ${m.lastHitFrame_src}`)
 
     if (m.moveVariant !== 0) out(`endif`)
   }
@@ -213,13 +213,16 @@ const minKnockbackDamage = (desiredKnockback, atkDmg, bkb, kbg, isWeightDependen
 }
 
 const outputRandMove = (moves, context) => {
+  
   if (context === "Goto") updateTrackedMoves(moves);
-  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+  for (const [idx, {origin, moveName, moveVariant, yOffset}] of moves.entries()) {
+    let append = "";
+    if (origin.endsWith("air") && yOffset <= -2) append += `&& OYDistBackEdge < -15`;
     if (idx === 0) {
       out(`globTempVar = Rnd * ${moves.length}`);
-      out(`if globTempVar < 1`)
+      out(`if globTempVar < 1 ${!(origin.endsWith("air")) ? "&& OYDistBackEdge > -10" : ""} ${append}`)
     } else {
-      out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1}`);
+      out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1} ${!(origin.endsWith("air")) ? "&& YDistBackEdge > -10" : ""} ${append}`);
     }
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
     out(context === "Goto" ? `Goto ${moveName.toLowerCase()}` : `Call ${origin}`);
@@ -335,7 +338,9 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
   min = parseFloat(min);
   max = parseFloat(max);
   CurrMoves = CurrMoves.filter((m) => {
-    const minDmg = minKnockbackDamage(min, m.dmg, m.bkb, m.kbg, m.isWeightDependent);
+    let minKb = m.bkb
+    if (m.angle >= 250 && m.angle <= 290) minKb *= 2;
+    const minDmg = minKnockbackDamage(min, m.dmg, minKb, m.kbg, m.isWeightDependent);
     if (minDmg >= 1000) return false;
     const maxDmg = minKnockbackDamage(max, m.dmg, m.bkb, m.kbg, m.isWeightDependent);
     m.minDmg = minDmg;
@@ -346,25 +351,33 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
   CurrMoves.sort((a, b) => b.minDmg - a.minDmg);
 
   // let grabWasOutput = false;
-  out(`immediateTempVar = 0.3`);
-  out(`if !(SamePlane) || OYDistBackEdge < -10`)
-  out(`immediateTempVar = 0.15`)
-  out(`endif`)
-  for (const {origin, moveName, moveVariant, minDmg, maxDmg} of CurrMoves) {
+  // out(`immediateTempVar = 0.3`);
+  // out(`if !(SamePlane) || YDistBackEdge < -10`)
+  // out(`immediateTempVar = 0.1`)
+  // out(`endif`)
+  for (const {origin, moveName, moveVariant, minDmg, maxDmg, yOffset, angle} of CurrMoves) {
     // if (origin === "Grab") {
     //   if (grabWasOutput) continue;
     //   else grabWasOutput = true;
     // }
+    let bias = 0;
+    if (80 <= angle && angle <= 100) bias = 0.15;
+    else if (75 <= angle && angle <= 105) bias = 0.1;
+    else if (70 <= angle && angle <= 110) bias = 0.05;
+    else if (0 <= angle && angle <= 20) bias = 0.15;
+    else if (0 <= angle && angle <= 45) bias = 0.1;
+
     let conditional = "True";
     if (minDmg > 0) conditional += ` && ${minDmg} <= ODmgXWeight`;
     if (maxDmg < 500) conditional += ` && ODmgXWeight <= ${maxDmg}`;
-    let append = `&& Rnd < ${(origin.endsWith('air')) ? 'immediateTempVar' : '0.3'}`;
+    let append = `&& Rnd < ${(0.3 + bias).toFixed(2)}`;
     if (origin === "Grab") {
       append = `&& Rnd < 0.12 && OCurrAction <= hex(0x45)`;
     }
+    if (origin.endsWith("air") && yOffset <= -2) append += ` && OYDistBackEdge < -15`;
     out(`if ${conditional} ${append}`);
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
-    out(context === "Goto" ? `Goto ${moveName.toLowerCase()}` : `Call ${origin}`);
+    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
     if (context === "Goto" && moveVariant !== 0) {
       out(`Goto ${moveName.toLowerCase()}`);
     }

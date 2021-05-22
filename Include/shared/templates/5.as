@@ -6,6 +6,10 @@ id 0x8005
 unk 0x0
 
 Cmd30
+if OutOfStage
+  Call RecoveryHub
+endif
+
 lastScript = hex(0x8005)
 
 #let actionType = var0
@@ -13,7 +17,6 @@ lastScript = hex(0x8005)
 #let tempVar2 = var2
 
 globTempVar = move_xOffset + (move_xRange * 2)
-globTempVar /= 2
 
 tempVar = TopNX
 tempVar2 = OTopNX
@@ -28,6 +31,16 @@ endif
 // LOGSTR str("actionType")
 // LOGVAL actionType
 SAFE_INJECT_2 actionType
+if XDistLE 20
+  label
+  Button X
+  globTempVar = OPos * -1
+  AbsStick globTempVar
+  if InAir
+    Call AIHub
+  endif
+  Return
+endif
 label
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if actionType <= 0.2
@@ -109,7 +122,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       if Equal OPos Direction
         Stick -1
       endif
-      if !(Equal OPos Direction) && Idling && !(Equal CurrAction hex(0xA))
+      if !(Equal OPos Direction) && !(Equal CurrAction hex(0xA)) && CurrAction <= hex(0x02)
         Button X
       endif
     else

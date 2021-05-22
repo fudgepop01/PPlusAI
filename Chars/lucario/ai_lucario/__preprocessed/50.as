@@ -185,7 +185,9 @@ endif
 Return
 
 label _end
-  if Equal var21 32769
+  if OAttacking && Equal AirGroundState 1
+    Call Unk3020
+  elif Equal var21 32769
     Call ApproachHub
   endif
 Call AIHub

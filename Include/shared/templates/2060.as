@@ -9,7 +9,7 @@ unk 0x0
 
 Cmd30
 if Equal approachType at_OFF_LEDGE
-    Seek getupOptions
+    Seek _OL
     Jump
 endif
 if Equal lastScript hex(0x8000)
@@ -28,6 +28,7 @@ approachType = at_attack
 // actions, so I need to force the character to move to the target here
 if CurrAction >= hex(0x79) && CurrAction <= hex(0x7B)
     AbsStick OPos
+    approachType = at_edgeguard
     Call ApproachHub
 elif Equal AirGroundState 2 && Equal lastScript hex(0x8001) && !(MeteoChance)
     lastScript = hex(0x2060)
@@ -42,6 +43,13 @@ AbsOXDistFrontEdge = OXDistFrontEdge
 Abs AbsOXDistFrontEdge
 
 if !(Equal CurrAction hex(0x75))
+    if !(OutOfStage) && !(Equal CurrAction hex(0x74))
+        Call AIHub
+    endif 
+    if Equal AirGroundState 2
+        Seek
+        Jump
+    endif
     Return
 endif
 
@@ -52,12 +60,16 @@ oCloseness = OTopNX - TopNX
 absOCloseness = oCloseness
 Abs absOCloseness
 LOGVAL absOCloseness
+LOGVAL OYDistBackEdge
+movePart = 0
 
 #let rndChoice = var2
 rndChoice = Rnd
+label _OL
 if absOCloseness < 35 && Equal Direction OPos
     if rndChoice < 0.3 && LevelValue >= LV4 // offensive option
-        label
+        label _OL1
+        LOGSTR str("OL1")
         if Equal CurrAction hex(0x75)
             if NumFrames > 1
                 SetFrame 0
@@ -79,7 +91,13 @@ if absOCloseness < 35 && Equal Direction OPos
         Seek ledgedash
         Jump
     elif rndChoice < 0.7 && LevelValue >= LV7
-        LOGSTR str("refresh")
+        label
+        if Equal CurrAction hex(0x75)
+            Seek
+            Jump
+        endif
+        Return
+        label
         approachType = at_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
@@ -92,7 +110,6 @@ elif absOCloseness > 35 && Equal OPos Direction
         Seek ledgedash
         Jump
     elif rndChoice < 0.8
-            LOGSTR str("refresh")
         approachType = at_ledgeRefresh
         Stick 0 (-1)
         Call AIHub
@@ -100,34 +117,37 @@ elif absOCloseness > 35 && Equal OPos Direction
         Button X
         Call AIHub
     endif
-elif absOCloseness < 50 && OYDistBackEdge > 15
+elif absOCloseness < 50 && OYDistBackEdge < -15
     if Equal CurrAction hex(0x75)
         if NumFrames > 1
             SetFrame 0
         endif
         if Equal NumFrames 1
             Button X
+            approachType = at_edgeguard
+            movePart = 1
             {EDGEGUARD_ABOVE_MOVES}
             Finish
         endif
         Return
     endif
-elif absOCloseness < 70 && Rnd < 0.25 && !(Equal OPos Direction) && OYDistBackEdge < 35
-    label
+elif absOCloseness < 70 && Rnd < 0.35 && !(Equal OPos Direction) && OYDistBackEdge > -10
+    label _OL2
+    LOGSTR str("OL2")
     if Equal CurrAction hex(0x75)
         if NumFrames > 1
             SetFrame 0
         endif
         if Equal NumFrames 1
             Stick -1
-            approachType = at_OFF_LEDGE
+            Seek
+            Jump
         endif
         Return
-    elif YSpeed <= 0
-        if Equal NumFrames 2
-            approachType = at_edgeguard
-            {EDGEGUARD_BELOW_MOVES}
-        endif
+    elif True
+        label
+        approachType = at_edgeguard
+        {EDGEGUARD_BELOW_MOVES}
         Return
     endif
 elif absOCloseness < 50 && !(Equal OPos Direction) && OYDistBackEdge < 35
@@ -137,7 +157,6 @@ elif absOCloseness < 50 && !(Equal OPos Direction) && OYDistBackEdge < 35
             SetFrame 0
         endif
         if Equal NumFrames 1
-            LOGSTR str("refresh")
             approachType = at_ledgeRefresh
             Stick 0 (-1)
             Call AIHub
@@ -160,7 +179,6 @@ else
         if Rnd < 0.25
             Seek getupOptions
         else
-            LOGSTR str("refresh")
             approachType = at_ledgeRefresh
             Stick 0 (-1)
             Call AIHub
@@ -182,8 +200,8 @@ if !(True)
             approachType = at_OFF_LEDGE
         endif
     else
-        Stick 1
-        if YDistBackEdge > 4
+        Stick 1 (-0.3)
+        if YDistBackEdge >= 2
             Button X
         else
             Button R
@@ -193,22 +211,36 @@ if !(True)
     Return
 endif
 
+if Equal approachType at_OFF_LEDGE && Equal AirGroundState 2
+    LOGSTR str("here")
+    globTempVar = Rnd
+    LOGVAL globTempVar
+    if globTempVar < 1
+        Seek _OL1
+    elif globTempVar < 2
+        Seek _OL2
+    else
+        Seek ledgedash
+    endif
+    Jump
+endif
+
 // OTHERWISE
 
-#let rndVal = var1
-rndVal=Rnd
-if rndVal < 0.2
-    Button X
-elif rndVal < 0.4
-    Button A
-elif rndVal < 0.6
-    Stick 1
-elif rndVal < 0.8
-    Stick (-1)
-else
-    // Button R
-    Stick (-1) (-0.5)
-endif
+// #let rndVal = var1
+// rndVal=Rnd
+// if rndVal < 0.2
+//     Button X
+// elif rndVal < 0.4
+//     Button A
+// elif rndVal < 0.6
+//     Stick 1
+// elif rndVal < 0.8
+//     Stick (-1)
+// else
+//     // Button R
+//     Stick (-1) (-0.5)
+// endif
 // SetAIMD 2 hex(0x8000)
 Return
 Return

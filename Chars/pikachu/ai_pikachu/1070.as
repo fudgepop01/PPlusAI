@@ -3,20 +3,33 @@
 id 0x9070
 
 //Set Unknown
-unk 0xD0000
+unk 0x00000
 
 //Strings
+
+#let v0 = var0
+#let v1 = var1
+#let v2 = var2
+#let v9 = var3
+#let v10 = var4
+#let v11 = var5
+#let v12 = var6
+#let v13 = var7
+#let v14 = var8
+#let v15 = var9
+#let v16 = var10
+#let v17 = var11
 
 if XDistFrontEdge <= 50 || XDistBackEdge <= 50
     Finish
 endif
 var0=OPos
-SetVec var1 Zero
+SetVec var10 Zero
 if CalledAs Unk1071 || CalledAs Unk1073 || CalledAs Unk1076 || CalledAs Unk1077
-    var3=Rnd*20+8
-    var4=var3
+    var12=Rnd*20+8
+    var13=var12
 else
-    var4=1000
+    var13=1000
 endif
 if InAir
     Seek _2
@@ -30,8 +43,8 @@ if !(Idling) && !(Dashing)
 endif
 SetTimeout 120
 if CalledAs Unk1077 || CalledAs Unk1078
-    var3=OPos*Direction
-    if var3 > 0
+    var12=OPos*Direction
+    if var12 > 0
         Stick (-0.5)
         Seek _0
         Return
@@ -43,17 +56,17 @@ Return
 //____________________
 label
 if CalledAs Unk1075 || CalledAs Unk1076
-    var5=Rnd*16+8
-    var6=Rnd-0.5
-    var7=var6+2
+    var14=Rnd*16+8
+    var15=Rnd-0.5
+    var16=var15+2
     var0*=-3
     Seek _1
 elif CalledAs Unk1077 || CalledAs Unk1078
     var0*=-3
     Seek _1
 else
-    var3=OPos*Direction
-    if var3 < 0
+    var12=OPos*Direction
+    if var12 < 0
         Seek
     else
         Seek _1
@@ -64,10 +77,10 @@ Jump
 Return
 //____________________
 label
-var8=OPos
+var17=OPos
 var0*=0.6
 AbsStick var0
-var8=OPos
+var17=OPos
 Seek
 Return
 //____________________
@@ -78,7 +91,7 @@ endif
 Return
 //____________________
 label _1
-if FrameGE var4
+if FrameGE var13
     Seek
     Return
 endif
@@ -103,7 +116,7 @@ elif CalledAs Unk1076
     var0*=-1
     AbsStick var0
     var0*=-1
-    if FrameGE var5
+    if FrameGE var14
         Seek
         Return
     endif
@@ -116,7 +129,7 @@ if CalledAs Unk1071 || CalledAs Unk1073 || CalledAs Unk1077
         Button X
     endif
 elif CalledAs Unk1076
-    if FrameGE var6 && !(FrameGE var7)
+    if FrameGE var15 && !(FrameGE var16)
         Button X
     endif
 else
@@ -134,50 +147,50 @@ if !(Falling)
     endif
     Return
 endif
-EstOPosVecR var1 var2 0.3
-var1*=Direction
+EstOPosVecR var10 var11 0.3
+var10*=Direction
 if ODamage > 80
-    var3=(ODamage-80)*0.005
-    if var3 > 0.5
-        var3=0.5
+    var12=(ODamage-80)*0.005
+    if var12 > 0.5
+        var12=0.5
     endif
-    if Rnd < var3
-        SetVec var11 var1
-        Abs var11
-        Abs var12
-        if var11 > var12
+    if Rnd < var12
+        SetVec var1 var10
+        Abs var1
+        Abs var2
+        if var1 > var2
             AtkDiceRoll slot17
         else
             AtkDiceRoll slot18
         endif
         if !(DiceRollResult Nothing)
             if DiceRollResult FAir
-                if var1 > 0
-                    Call 
+                if var10 > 0
+                    Call
                 endif
             elif DiceRollResult BAir
-                if var1 < 0
-                    Call 
+                if var10 < 0
+                    Call
                 endif
             elif DiceRollResult UAir || DiceRollResult USpecialAir
-                if var2 > 0
-                    Call 
+                if var11 > 0
+                    Call
                 endif
             elif DiceRollResult DAir || DiceRollResult DSpecialAir
-                if var2 < 0
-                    Call 
+                if var11 < 0
+                    Call
                 endif
             else
-                Call 
+                Call
             endif
         endif
     endif
 endif
-if var2 > 26
+if var11 > 26
     Call slot14
-elif var1 < -12
+elif var10 < -12
     Call slot13
-elif var1 > 16
+elif var10 > 16
     Call slot12
 else
     Call slot11

@@ -23,6 +23,9 @@ var8 = 1
 
 EST_O_COORDS(targetXDistance, targetYDistance, move_hitFrame + 19)
 
+targetXDistance -= TopNX
+targetYDistance -= TopNY
+
 label
 #let cancelFrameCount = var2
 

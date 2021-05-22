@@ -80,6 +80,10 @@
       Call BAir
     endif
   endif
+
+  if !(ODistLE 25) && Rnd < 0.6
+    Call NSpecial
+  endif
 #endsnippet
 
 #snippet MAIN_OPTIONS
@@ -129,7 +133,7 @@ if ODistLE 20
   movePart = 1
 endif
 
-$pickRandMove(dair|fair|dashattack|bair|dtilt|utilt, Call)
+$pickRandMove(fair|dashattack|dtilt, Call)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

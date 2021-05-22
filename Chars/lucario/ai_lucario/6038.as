@@ -44,10 +44,8 @@ label aurabomb
 Return
 
 label setup
-#let timer = var1
-timer = 20 + Rnd * 60
 if CurrSubaction >= hex(0x1D0) && CurrSubaction <= hex(0x1D3)
-  Seek ExecuteAttack
+  Seek ExecuteSetup
   Return
 elif CurrAction <= hex(0x09)
   Call AIHub
@@ -57,6 +55,9 @@ if !(Equal OPos Direction)
 endif
 Return
 
+label ExecuteSetup
+#let timer = var1
+timer = 50 + Rnd * 100
 label ExecuteAttack
 if !(Equal AirGroundState 1) && Equal XDistFrontEdge XDistBackEdge && CurrSubaction >= hex(0x1D0) && CurrSubaction <= hex(0x1D3)
   Button R
@@ -71,7 +72,7 @@ loopTempVar = 20
 Seek 
 Jump
 if !(True)
-  label
+  label _chk
   #let targetXDist = var5
   #let targetYDist = var6
 
@@ -85,6 +86,9 @@ if !(True)
   loopTempVar -= 5
   if loopTempVar <= 0
     Seek
+    Jump
+  else
+    Seek _chk
     Jump
   endif
   Return
@@ -101,6 +105,11 @@ if ODistLE 30
   else
     Stick -1 0
   endif
+endif
+timer -= 1
+if timer <= 0
+  Button R
+  Call AIHub
 endif
 timer -= 1
 if timer <= 0

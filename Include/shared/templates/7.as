@@ -19,7 +19,16 @@ endif
 label
 Cmd30
 
-if Equal grabOOS 1 && XDistLE 15 && Rnd < 0.5
+LOGSTR str("Dist")
+globTempVar = TopNX - OTopNX
+Abs globTempVar
+LOGVAL globTempVar
+
+if OAttacking && OAnimFrame < 20 && XDistLE 50
+  Button R
+endif
+
+if Equal grabOOS 1 && XDistLE 20 && Equal OPos Direction
   Button R
   if Equal CurrAction hex(0x1B)
     Button A|R
@@ -27,7 +36,7 @@ if Equal grabOOS 1 && XDistLE 15 && Rnd < 0.5
     Call Grab
   endif
   Return
-elif Equal grabOOS 1 || Rnd < 0.04
+elif Equal grabOOS 1 || Rnd <= 0.03
   Button R
   if Equal CurrAction hex(0x1B)
     globTempVar = Rnd * 100
@@ -35,7 +44,7 @@ elif Equal grabOOS 1 || Rnd < 0.04
       Button X
       Seek jumpHandler
       Return
-    elif globTempVar < 80
+    elif globTempVar < 80 && XDistFrontEdge > edgeRange
       AbsStick OPos
     elif globTempVar < 90
       globTempVar = OPos * -1
@@ -51,7 +60,7 @@ endif
 NEAREST_CLIFF(globTempVar, immediateTempVar)
 immediateTempVar = globTempVar
 Abs immediateTempVar
-if immediateTempVar < 25 && Equal IsOnStage 1 && Rnd < 0.05
+if immediateTempVar < 25 && Equal IsOnStage 1 && Rnd < 0.1
   Button R
   globTempVar *= -1
   AbsStick globTempVar
@@ -59,11 +68,11 @@ if immediateTempVar < 25 && Equal IsOnStage 1 && Rnd < 0.05
 endif
 
 if Equal CurrAction hex(0x1D)
-  if Equal OPos Direction && XDistLE 15 && Rnd < 0.3 && AnimFrame > 3
+  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
     grabOOS = 1
   endif
   tempVar = OPos * 0.6 * -1
-  Stick tempVar
+  AbsStick tempVar
   Return
 endif
 if Equal CurrAction hex(0x1C)
@@ -83,6 +92,8 @@ Cmd30
 #let OTowardsOrAway = var1
 absOXSpeed = OXSpeed
 Abs absOXSpeed
+globTempVar = OPos * 0.4
+AbsStick globTempVar
 OTowardsOrAway = OXSpeed * OPos
 if SamePlane && OTowardsOrAway < 0 && absOXSpeed > 0.2 && InAir
   {OFFENSIVE_OPTIONS}
@@ -91,14 +102,11 @@ elif Rnd < 0.4 && InAir
 endif
 
 if InAir
-  if Equal OPos Direction
-    if XDistBackEdge < -shortEdgeRange
-      globTempVar = OPos * -1
-      AbsStick globTempVar (-1)
-    endif
-  elif XDistFrontEdge > shortEdgeRange
+  if XDistBackEdge < -shortEdgeRange
     globTempVar = OPos * -1
     AbsStick globTempVar (-1)
+  elif XDistFrontEdge > shortEdgeRange && Rnd < 0.4
+    AbsStick OPos (-1)
   else
     AbsStick 0 (-1)
   endif

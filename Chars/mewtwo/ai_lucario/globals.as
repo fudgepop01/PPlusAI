@@ -47,6 +47,7 @@
 #const dashForceTurnFrame = 27
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.5
+#const DDMaxRange = 55
 
 #const minBaseReactionTime = 0
 #const maxBaseReactionTime = 21

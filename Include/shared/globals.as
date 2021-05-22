@@ -23,7 +23,7 @@
 #const minXEdgeDist = 15
 
 #const oWalkingDist = 9999.9999
-#const oJumpingDist = 50
+#const oJumpingDist = 15
 #const shortEdgeRange = 9999.9999
 #const edgeRange = 9999.9999
 #const calloutSpeed = 9999.9999
@@ -41,6 +41,7 @@
 #const dashForceTurnFrame = 9999.9999
 #const dashDanceMinFrames = 9999.9999
 #const DDWaveDash = 9999.9999
+#const DDMaxRange = 9999.9999
 
 #const minBaseReactionTime = 9999.9999
 #const maxBaseReactionTime = 9999.9999
@@ -138,6 +139,8 @@
 #const at_ledgeRefresh = 5
 #const at_combo = 6
 #const at_OFF_LEDGE = 7
+#const at_immediate = 8
+#const at_reroll = 9
 
 // AI values
 #const LV1 = 0

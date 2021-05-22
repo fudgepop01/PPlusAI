@@ -10,8 +10,7 @@ unk 0x0
 
 
 // sets up offsets to get to target position
-if Equal var18 0
-  if CalledAs Jab123
+if CalledAs Jab123
 var20 = 24625
 var15 = 19
 var9 = 0
@@ -20,7 +19,7 @@ var11 = 7.4
 var12 = 3.85
 var13 = 6
 var14 = 7
-  elif CalledAs DashAttack
+elif CalledAs DashAttack
 var20 = 24638
 var15 = 38
 var9 = -1
@@ -29,8 +28,8 @@ var11 = 8.4
 var12 = 3.85
 var13 = 6
 var14 = 15
-  elif CalledAs FTilt
-    // LOGSTR 1718905088 1819541504 0 0 0
+elif CalledAs FTilt
+  // LOGSTR 1718905088 1819541504 0 0 0
 var20 = 24626
 var15 = 27
 var9 = 1
@@ -39,8 +38,8 @@ var11 = 8.4
 var12 = 3.850
 var13 = 10
 var14 = 0
-  elif CalledAs UTilt
-    // LOGSTR 1970563328 1819541504 0 0 0
+elif CalledAs UTilt
+  // LOGSTR 1970563328 1819541504 0 0 0
 var20 = 24627
 var15 = 28
 var9 = -12
@@ -49,8 +48,8 @@ var11 = 12.4
 var12 = 12.85
 var13 = 5
 var14 = 14
-  elif CalledAs DTilt
-    // LOGSTR 1685350656 1819541504 0 0 0
+elif CalledAs DTilt
+  // LOGSTR 1685350656 1819541504 0 0 0
 var20 = 24628
 var15 = 26
 var9 = 1
@@ -59,8 +58,8 @@ var11 = 8.55
 var12 = 3.85
 var13 = 5
 var14 = 8
-  elif CalledAs FSmash
-    // LOGSTR 1718840576 1634953216 0 0 0
+elif CalledAs FSmash
+  // LOGSTR 1718840576 1634953216 0 0 0
 var20 = 24629
 var15 = 51
 var9 = 6
@@ -69,8 +68,8 @@ var11 = 10.55
 var12 = 6
 var13 = 20
 var14 = 24
-  elif CalledAs USmash
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs USmash
+  // LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24630
 var15 = 26
 var9 = 1
@@ -81,8 +80,8 @@ var13 = 11
 var14 = 24
 if Equal var19 1
 endif
-  elif CalledAs DSmash
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs DSmash
+  // LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24631
 var15 = 52
 var9 = -17
@@ -91,8 +90,8 @@ var11 = 16
 var12 = 4.6
 var13 = 13
 var14 = 18
-  elif CalledAs NSpecial
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs NSpecial
+  // LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24632
 var15 = 26
 var9 = 8
@@ -109,8 +108,8 @@ var20 = 24632
 var9 = 0
 var10 = 4
 var12 = 10
-  elif CalledAs SSpecial
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs SSpecial
+  // LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24633
 var15 = 58
 var9 = 0.5
@@ -121,11 +120,11 @@ var13 = 12
 var14 = 14
 if Equal var19 1
 endif
-  elif CalledAs USpecial
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs USpecial
+  // LOGSTR 1970498816 1634953216 0 0 0
 
-  elif CalledAs DSpecial
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs DSpecial
+  // LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24635
 var15 = 30
 var9 = 0
@@ -136,8 +135,8 @@ var13 = 10
 var14 = 10
 if Equal var19 1
 endif
-  elif CalledAs Grab
-    // LOGSTR 1970498816 1634953216 0 0 0
+elif CalledAs Grab
+  // LOGSTR 1970498816 1634953216 0 0 0
 var20 = 24636
 var15 = 31
 var9 = 1
@@ -154,88 +153,98 @@ if Equal var19 3
 endif
 if Equal var19 4
 endif
-  else
-    Call AIHub
-  endif
- // SAFE_INJECT_4 var9
- // SAFE_INJECT_5 var11
-  if Equal var16 2 && OFramesHitstun < 1
-    Call DefendHub
-  else
-    Call ApproachHub
-  endif
 else
-  ClearStick
-  if CalledAs Jab123
-    var15 = 19
-    var20 = 24625
-    Button A
-  elif CalledAs FTilt
-    var15 = 27
-    var20 = 24626
-    Stick (0.5) 0
-    Button A
-  elif CalledAs UTilt
-    var15 = 28
-    var20 = 24627
-    Stick 0 0.7
-    Button A
-  elif CalledAs DTilt
-    var15 = 26
-    var20 = 24628
-    Stick 0 (-0.7)
-    Button A
-  elif CalledAs FSmash
-    var15 = 51
-    var20 = 24629
-    Stick 1 0
-    Button A
-  elif CalledAs USmash
-    var15 = 26
-    var20 = 24630
-    Stick 0 1
-    Button A
-  elif CalledAs DSmash
-    var15 = 52
-    var20 = 24631
-    Stick 0 (-1)
-    Button A
-  elif CalledAs NSpecial
-    var15 = 26
-    var20 = 24632
-    Button B
-  elif CalledAs SSpecial
-    var15 = 58
-    var20 = 24633
-    Stick 1 0
-    Button B
-  elif CalledAs USpecial
-    var15 = 50
-    var20 = 24634
-    Stick 0 1
-    Button B
-  elif CalledAs DSpecial
-    var15 = 30
-    var20 = 24635
-    Stick 0 (-1)
-    Button B
-  elif CalledAs Grab
-    var15 = 31
-    var20 = 24636
-    Button R|A
-  elif CalledAs DashAttack
-    var15 = 38
-    var20 = 24638
-    Button A
-  endif
-  SetFrame 0
-  var16 = -1
-  Seek ExecuteAttack
+  Call AIHub
 endif
+
+if !(Equal var18 0)
+  Seek
+  Jump
+  Return
+endif
+
+if Equal var16 2 && OFramesHitstun < 1
+  Call DefendHub
+else
+  Call ApproachHub
+endif
+
+label
+ClearStick
+if CalledAs Jab123
+  var15 = 19
+  var20 = 24625
+  Button A
+elif CalledAs FTilt
+  var15 = 27
+  var20 = 24626
+  Stick (0.5) 0
+  Button A
+elif CalledAs UTilt
+  var15 = 28
+  var20 = 24627
+  Stick 0 0.7
+  Button A
+elif CalledAs DTilt
+  var15 = 26
+  var20 = 24628
+  Stick 0 (-0.7)
+  Button A
+elif CalledAs FSmash
+  var15 = 51
+  var20 = 24629
+  Stick 1 0
+  Button A
+elif CalledAs USmash
+  var15 = 26
+  var20 = 24630
+  Stick 0 1
+  Button A
+elif CalledAs DSmash
+  var15 = 52
+  var20 = 24631
+  Stick 0 (-1)
+  Button A
+elif CalledAs NSpecial
+  var15 = 26
+  var20 = 24632
+  Button B
+elif CalledAs SSpecial
+  var15 = 58
+  var20 = 24633
+  Stick 1 0
+  Button B
+elif CalledAs USpecial
+  var15 = 50
+  var20 = 24634
+  Stick 0 1
+  Button B
+elif CalledAs DSpecial
+  var15 = 30
+  var20 = 24635
+  Stick 0 (-1)
+  Button B
+elif CalledAs Grab
+  var15 = 31
+  var20 = 24636
+  Button R|A
+elif CalledAs DashAttack
+  var15 = 38
+  var20 = 24638
+  Button A
+endif
+LOGSTR 1886352128 1147237376 1627389952 0 0
+LOGVAL var11
+LOGVAL var12
+LOGVAL var9
+LOGVAL var10
+SetFrame 0
+var16 = -1
+Seek ExecuteAttack
 Return
 
 label ExecuteAttack
-var1 = 0
+var8 = 0
   // this prevents it from auto-attacking.
   // this issue persisted for... 9 months
   Cmd30
@@ -250,7 +259,7 @@ var1 = 0
   elif var20 >= 24641 && var20 <= 24655
     var1 = 0
     if Equal AirGroundState 1
-      var1 = 0
+      var1 = 3
     endif
   elif Equal var20 25000
     var1 = OFramesHitstun 
@@ -268,7 +277,7 @@ var1 = 0
   SAFE_INJECT_6 var11
   SAFE_INJECT_7 var12
   // calculate own estimated position
-  var17 = var13 - NumFrames + var1
+  var17 = 1 + var1
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
     var17 -= var13 
@@ -314,7 +323,7 @@ var1 = 0
   var0 += var22
   var0 += TopNX
   // estimate target position separately  
-  var22 = var13 - NumFrames + var1
+  var22 = 1 + var1
   var1 = 0
   if !(CalledAs ComboHub) // because this involves a label
   if Equal var20 24625
@@ -367,7 +376,7 @@ var1 = 0
     LOGSTR 1131375872 1651460096 1969356800 0 0
   endif
     // calculate own Y coord because I can't figure out the !@$% EstOPosVecR thing
-  var22 = var13 - NumFrames
+  var22 = 1
   var6 = 0
   if Equal CurrSubaction JumpSquat
     var1 = -1.95
@@ -533,7 +542,7 @@ elif OIsCharOf ZSS // Zero Suit Samus
   var1 = 85
   var1 = 0.135
 endif
-  var22 = var13 - NumFrames + var1
+  var22 = 1 + var1
   var5 = 0
   var6 = OCharYSpeed + OKBYSpeed
   var6 *= -1
@@ -558,24 +567,23 @@ endif
     var1 = var5
   endif
   // it's awful, I know, but i'm all out of variables and this was the only way lol
-  var22 = var13 - NumFrames 
+  var22 = 1 
   if var20 >= 24625 && var20 <= 24631
     if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
       var22 += 0
     endif
   elif var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1
-      var22 += 0 
+      var22 += 3
     endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
   endif
-  EstOYCoord var6 0
+  EstOYCoord var6 var22
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  var22 = 0
   if OCurrAction <= 9 && var20 < 24641
-    var22 = -5
+    var22 *= 0.3
   endif
   EstOXCoord var5 var22
   var6 = var6 - (OSCDBottom - OTopNY)
@@ -616,7 +624,7 @@ endif
     var17 += var22
   endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var0 var17 5 5 255 0 0 136
   //     // target
@@ -633,11 +641,13 @@ endif
     var17 -= var10
     var17 += var12
   endif
+  // var17 = var17 - OHurtboxSize * 0.5
+  
   // adjust for the move parameters
   if !(InAir)
     var22 = var9 + (var11 * 2)
     var22 /= 2
-    if var22 <= 0
+    if var22 <= 2
       var0 = var0 - (var9 * OPos)
     else 
       var0 = var0 + (var11 * OPos)
@@ -647,16 +657,16 @@ endif
     var0 = var0 + (var11 * Direction)
     var0 = var0 + (var9 * Direction)
   endif
-  if Equal SCDBottom TopNY && var20 >= 24640
-    var17 += 5
-  endif
-  if Equal AirGroundState 2
-    var22 = OHurtboxSize / 2
-    var17 -= var22
-  endif
+  // if !(Equal SCDBottom TopNY) && var20 >= 24640
+  //   var22 = SCDBottom - TopNY
+  //   var17 -= var22
+  // endif
+  // if Equal AirGroundState 2
+  //   var17 -= OHurtboxSize
+  // endif
   
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var0 var17 var11 var12 255 187 0 136
   //   endif
@@ -667,25 +677,25 @@ endif
   var6 = var6 - var17
   // adjust for opponent position (aim towards nearest blastzone)
   if !(Equal var20 32776) && !(Equal var20 25000)
-    var17 = LBoundary - (TopNX + var5) 
     var22 = 0
+    var17 = LBoundary - (TopNX + var5) 
     if var17 < 90 && Equal Direction (-1)
-      var17 = 0.8 + 1
+      var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var17 /= 2
       var22 += var17
     endif
     var17 = RBoundary - (TopNX + var5)
     if var17 > -90 && Equal Direction 1
-      var17 = 0.8 + 1
+      var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var17 /= 2
       var22 -= var17
     endif
     var5 += var22
     if Equal var22 0
-      var22 = OPos * Direction
-      var17 = 0.8 + 1
+      var22 = Direction
+      var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var22 *= var17
       var22 /= 2
@@ -696,44 +706,59 @@ endif
   var22 = 0
   SAFE_INJECT_D var22
   var17 = OSCDBottom + OHurtboxSize // top of target
-  var0 = TopNY - var10 + var12 + var22 // center of move detection
-  if var0 >= var17 
+  var0 = var6 * -1
+  if var0 >= OHurtboxSize
     // self is above
     var0 = OHurtboxSize
-  elif var0 <= OSCDBottom 
+  elif var0 <= 0 
     // self is below
     var0 = 0 // OHurtboxSize * -1
   else 
     // self is between
-    var17 -= var0
-    var0 = OHurtboxSize - var17
+    var17 = var0 - OHurtboxSize
+    // var0 -= var17
     // var0 = var22
   endif
-  // var0 *= -1
+  
+  // if Equal AirGroundState 2
+    
+  //   if Equal OAirGroundState 1
+  //     // var0 = var0 + OHurtboxSize * 0.5
+  //     var0 += OHurtboxSize
+  //   endif
+  // endif
   var6 += var0
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+    var6 = 0
+  endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     var5 += TopNX
   //     var6 += TopNY
   //     DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
   //     var5 -= TopNX
   //     var6 -= TopNY
-  //     var17 = 0.8 + 1
+  //     var17 = 0.0 + 1
   //     var17 = var11 * (1/var17)
   //     var11 = var17
-  //     var9 = var9 + var17 * 0.8
-  //     var17 = 0.8 + 1
+  //     var9 = var9 + var17 * 0.0
+  //     var17 = 0.0 + 1
   //     var17 = var12 * (1/var17)
   //     var12 = var17
-  //     var10 = var10 - var17 * 0.8
-  //     var17 = TopNY - var10 + var12 + var22
-  //     DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //     var10 = var10 - var17 * 0.0
+  //     // var17 = TopNY - var10 + var12 + var22
+  //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //     if CalledAs ApproachHub
+  //       var11 -= 3
+  //       var9 += 6
+  //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
   //     var22 += TopNX
   //     var17 = TopNY - var10 + var12
   //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
   //     var17 += var0
+      
   //     // if OTopNX > 0
   //     //   var22 += var11
   //     // else
@@ -744,18 +769,30 @@ endif
   //     var17 = var22 + OSCDBottom
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
-  //     var17 = var11 * 0.8
+  //     if CalledAs ApproachHub
+  //       var11 += 3
+  //       var9 -= 6
+  //     endif
+  //     var17 = var11 * 0.0
   //     var9 -= var17
   //     var11 = var11 + var17
-  //     var17 = var12 * 0.8
+  //     var17 = var12 * 0.0
   //     var10 += var17
   //     var12 = var12 + var17
   //   endif
   // endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
-  //   var17 = var13 - NumFrames - var8
+  //   var17 = 1 - var8
   //   var5 = var5 + OXSpeed * var17 * -2
   // endif
+
+if Equal var18 2
+  if var5 <= var11 && var6 <= var12
+  elif !(XDistLE 50)
+  else
+    Button A
+  endif
+endif
 
 if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
   var16 = OKBSpeed
@@ -763,7 +800,7 @@ endif
 
 if CalledAs USmash
   AbsStick OPos
-  if Equal NumFrames 4 && Equal var19 1
+  if Equal HitboxConnected 1 && NumFrames < 17 && Equal var19 1
     var18 = 1
     var19 = 1
     Button B
@@ -776,5 +813,6 @@ if Equal HitboxConnected 1
 elif FrameGE var15 || CurrAction <= 9 || !(Equal AirGroundState 1)
   Call AIHub
 endif
+Seek ExecuteAttack
 Return
 Return

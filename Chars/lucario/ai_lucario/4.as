@@ -9,7 +9,7 @@ if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10))
   endif
 endif
 
-GetReturnGoal nearCliffX
+GetNearestCliff nearCliffX
 nearCliffX = TopNX - nearCliffX
 nearCliffX *= -1
 nearCliffY = nearCliffY - TopNY * -1

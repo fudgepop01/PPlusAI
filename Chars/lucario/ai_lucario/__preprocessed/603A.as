@@ -46,11 +46,12 @@ var1 = 0
   endif
   // DrawDebugRectOutline var5 var6 5 5 136 255 136 221
 
+var5 -= TopNX
+var6 -= TopNY
+
 Norm var7 var5 var6
 var5 /= var7
 var6 /= var7
-var5 *= -1
-var6 *= -1
 AbsStick var5 var6
 
 if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0

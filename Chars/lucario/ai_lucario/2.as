@@ -2,6 +2,7 @@
 #endsnippet
 
 #snippet MOVE_SPECIFIC_COMBOS
+
   // if Equal lastAttack valGrab
   //   if Equal moveVariant mv_uthrow
   //     // if ODmgXWeight > 50
@@ -30,7 +31,6 @@
   //     endif
   //   endif
   // endif
-
 
   if !(Equal isImmediateCombo immediate) && Equal HitboxConnected 1
     LOGSTR str("cancel")
@@ -69,6 +69,7 @@
       label _smEntry
       incrementor = 8
       label _smashes
+      movePart = 2
       LOGVAL incrementor
       LOGSTR str("smashes")
       rndChoice = Rnd * 6
@@ -102,11 +103,12 @@
       incrementor = 10
       LOGVAL incrementor
       label _specials
+      movePart = 1
       moveVariant = 0
       rndChoice = Rnd * 18
       if rndChoice < 2
         Goto nspecial      
-      elif rndChoice < 6
+      elif rndChoice < 6 && XDistFrontEdge > edgeRange
         if Equal Direction 1 && OKBXSpeed > 0.7
           Call DSpecial
         elif Equal Direction -1 && OKBXSpeed < -0.7
@@ -165,40 +167,24 @@
 
 #snippet COMBO_OPTIONS
   $refreshMoves()
-  $filterMoveEndlag(20)
-  $outputWithKnockbackThresholds(70, 290, Goto)
-#endsnippet
-
-#snippet JUGGLE_OPTIONS
-  $refreshMoves()
-  $filterMoveAngle(60, 120)
-  $output(Goto)
+  $filterMoveEndlag(30)
+  $excludeMovesNotOrigin(bair|uair|fair|dashattack|dtilt|utilt|usmash)
+  $outputWithKnockbackThresholds(30, 180, Goto)
 #endsnippet
 
 #snippet KILL_OPTIONS
   $refreshMoves()
-  $filterMoveAngle(0, 180)
   $outputWithKnockbackThresholds(180, 400, Goto)
 #endsnippet
 
+#snippet JUGGLE_OPTIONS
+  $refreshMoves()
+  $excludeMovesNotOrigin(uair|usmash|utilt)
+  $output(Goto)
+#endsnippet
+
 #snippet EDGEGUARD_OPTIONS
-  globTempVar = Rnd * 7
-  if globTempVar < 1
-    Goto fair
-  elif globTempVar < 2
-    Goto dtilt
-  elif globTempVar < 3
-    Goto fsmash
-  elif globTempVar < 4
-    Goto dsmash
-  elif globTempVar < 5
-    Goto bair
-  elif globTempVar < 6
-    Goto dair
-  elif globTempVar < 7
-    Goto sspecial
-    moveVariant = mv_sspecial_spike
-  endif
+  $pickRandMove(nair|fair|dair|bair|dtilt|utilt|dsmash|sspecial, Goto)
 #endsnippet
 
 #snippet MOVE_GENERATION
@@ -207,7 +193,7 @@
 
 #snippet EXTRA_ANALYSIS
 if Equal movePart 1 
-  frameToCalc = 3
+  frameToCalc = move_hitFrame
   {CTD}
 endif
 #endsnippet

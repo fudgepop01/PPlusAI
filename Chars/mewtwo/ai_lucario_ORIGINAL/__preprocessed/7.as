@@ -14,8 +14,14 @@ else
   var2 = 0 // will not grab OOS
 endif
 label
+Cmd30
 
-if Equal var1 1 && XDistLE 15 && Rnd < 0.7
+LOGSTR 1147761408 1946157056 0 0 0
+var17 = TopNX - OTopNX
+Abs var17
+LOGVAL var17
+
+if Equal var1 1 && XDistLE 20 && Equal OPos Direction
   Button R
   if Equal CurrAction 27
     Button A|R
@@ -23,17 +29,17 @@ if Equal var1 1 && XDistLE 15 && Rnd < 0.7
     Call Grab
   endif
   Return
-elif Equal var1 1 || Rnd < 0.2
+elif Equal var1 1 || Rnd <= 0.03
   Button R
   if Equal CurrAction 27
-    var17 = Rnd * 4
-    if var17 < 1
+    var17 = Rnd * 100
+    if var17 < 70
       Button X
       Seek jumpHandler
       Return
-    elif var17 < 2
+    elif var17 < 80 && XDistFrontEdge > 9999.9999
       AbsStick OPos
-    elif var17 < 3
+    elif var17 < 90
       var17 = OPos * -1
       AbsStick var17
     else
@@ -51,7 +57,7 @@ endif
   var22 = var22 - (TopNY * -1)
 var22 = var17
 Abs var22
-if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.2
+if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.1
   Button R
   var17 *= -1
   AbsStick var17
@@ -59,11 +65,11 @@ if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.2
 endif
 
 if Equal CurrAction 29
-  if Equal OPos Direction && XDistLE 15 && Rnd < 0.3 && AnimFrame > 3
+  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
     var1 = 1
   endif
   var0 = OPos * 0.6 * -1
-  Stick var0
+  AbsStick var0
   Return
 endif
 if Equal CurrAction 28
@@ -78,24 +84,24 @@ endif
 Return
 
 label jumpHandler
+Cmd30
 var0 = OXSpeed
 Abs var0
+var17 = OPos * 0.4
+AbsStick var17
 var1 = OXSpeed * OPos
-if SamePlane && var1 < 0 && var0 > 0.2
+if SamePlane && var1 < 0 && var0 > 0.2 && InAir
 //   {OFFENSIVE_OPTIONS}
-elif Rnd < 0.3
+elif Rnd < 0.4 && InAir
 //   {OFFENSIVE_OPTIONS}
 endif
 
 if InAir
-  if Equal OPos Direction
-    if XDistBackEdge < -9999.9999
-      var17 = OPos * -1
-      AbsStick var17 (-1)
-    endif
-  elif XDistFrontEdge > 9999.9999
+  if XDistBackEdge < -9999.9999
     var17 = OPos * -1
     AbsStick var17 (-1)
+  elif XDistFrontEdge > 9999.9999 && Rnd < 0.4
+    AbsStick OPos (-1)
   else
     AbsStick 0 (-1)
   endif

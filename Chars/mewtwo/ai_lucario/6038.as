@@ -37,10 +37,12 @@ endif
 #let loopTempVar = var0
 loopTempVar = 20
 
-Seek 
-Jump
+if CurrSubaction >= hex(0x1D0) && CurrSubaction <= hex(0x1D3)  
+  Seek 
+  Jump
+endif
 if !(True)
-  label
+  label _chk
   #let targetXDist = var5
   #let targetYDist = var6
 
@@ -55,12 +57,15 @@ if !(True)
   if loopTempVar <= 0
     Seek
     Jump
+  else
+    Seek _chk
+    Jump
   endif
   Return
 endif
 label
 
-if ODistLE 25 && Equal Direction OPos
+if ODistLE 25
   if Rnd < 0.7
     Button B
   elif Rnd < 0.3

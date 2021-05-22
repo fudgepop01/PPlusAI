@@ -1,12 +1,12 @@
 #include <Definition_AIMain.h>
-//TrueID=0x1040
-id 0x1040
+//TrueID=0x30D0
+id 0x30D0
 
 //Set Unknown
-unk 0x00000
+unk 0x20000
 
 //Strings
 
-Call AIHub
+Call Nothing
 Return
-Return
+

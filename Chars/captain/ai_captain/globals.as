@@ -24,40 +24,35 @@
 #const weight = 104
 #const shieldSize = 9.6
 
-#const maxYEdgeDistWithJump = 60
-#const maxYEdgeDist = 48
+#const maxYEdgeDistWithJump = 69
+#const maxYEdgeDist = 57
 #const maxYEdgeDistJumpNoUpB = 25
 #const maxXEdgeDist = 60
 
 #const oWalkingDist = 20
-#const oJumpingDist = 50
+#const oJumpingDist = 15
 #const shortEdgeRange = 10
 #const edgeRange = 25
 #const calloutSpeed = 0.3
 
-#const jumpIfOWithin = 60
+#const jumpIfOWithin = 80
 #const SHIfOBeyond = 7
 #const FHIfOBeyond = 25
 #const DJIfOWithin = 35
 #const DJIfOBeyond = 23
 
-#const techChaseCloseDist = 10
-#const techChaseFarDist = 25
+#const techChaseCloseDist = 20
+#const techChaseFarDist = 40
 
-#const dashCountMax = 10
+#const dashCountMax = 15
 #const dashForceTurnFrame = 27
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.1
+#const DDMaxRange = 50
 
+// 0 through 21 if defensive things were consistent
 #const minBaseReactionTime = 0
 #const maxBaseReactionTime = 21
-
-#const killComboThreshold = 65
-
-#const neutral_xOffset = -10
-#const neutral_yOffset = 10
-#const neutral_xRange = 10
-#const neutral_yRange = 10
 
 #const techRollVulFrame = 21
 
@@ -184,7 +179,7 @@
 #const sspecial_IASA = 26
 #const sspecial_xOffset = 3
 #const sspecial_yOffset = 0
-#const sspecial_xRange = 10
+#const sspecial_xRange = 8
 #const sspecial_yRange = 5
 #const sspecial_hitFrame = 26
 #const sspecial_lastHitFrame = 26 // just a dummy
@@ -195,7 +190,7 @@
 #const mv_techChase = 1
 
 #const grab_IASA = 32
-#const grab_xOffset = -0.5
+#const grab_xOffset = -0.75
 #const grab_yOffset = -6
 #const grab_xRange = 5.5
 #const grab_yRange = 4
@@ -215,12 +210,12 @@
 #const nair_xRange = 10
 #const nair_yRange = 5
 #const nair_hitFrame = 7
-#const nair_lastHitFrame = 29
+#const nair_lastHitFrame = 12
 #const nair_damage_info = NAir|5|w40|100|78
 
 #const mv_app_nair = 1
 #const app_nair_yOffset = -3
-#const app_nair_xRange = 25
+#const app_nair_xRange = 10
 #const app_nair_damage_info = NAir|7|w40|100|361
 
 #const mv_nairHit2 = 2
@@ -257,7 +252,7 @@
 // UAir
 #const uair_IASA = 30
 #const uair_xOffset = -3
-#const uair_yOffset = -4.45
+#const uair_yOffset = -3.4
 #const uair_xRange = 9.6
 #const uair_yRange = 11
 #const uair_hitFrame = 6

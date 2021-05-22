@@ -2,6 +2,15 @@
 #endsnippet
 
 #snippet MOVE_SPECIFIC_COMBOS
+  if Equal lastAttack valGrab && Rnd < 0.35
+    if Equal moveVariant mv_dthrow
+      moveVariant = mv_techChase
+      Call Grab
+    elif Equal moveVariant mv_uthrow && ODmgXWeight < 30
+      moveVariant = mv_techChase
+      Call Grab
+    endif
+  endif
   // if Equal lastAttack valGrab
   //   // LOGSTR str("grbCmbo")
   //   if Equal moveVariant mv_uthrow
@@ -47,39 +56,31 @@
   // //   Goto dair
   // //   comboLeniency = 2
   // endif
-  if OFramesHitstun < 15 && Rnd < 0.5 && YDistBackEdge > -10 && OYDistBackEdge > -15
+  if OFramesHitstun > 10 && Rnd < 0.5 && YDistBackEdge > -10 && OYDistBackEdge > -15
     Call Grab
   endif
 #endsnippet
 
-// #snippet COMBO_OPTIONS
-// #endsnippet
+#snippet COMBO_OPTIONS
+  $refreshMoves()
+  $filterMoveEndlag(30)
+  $excludeMovesNotOrigin(nair|bair|dair|uair|fair|dtilt|ftilt|sspecial)
+  $outputWithKnockbackThresholds(70, 250, Goto)
+#endsnippet
 
-// #snippet KILL_OPTIONS
-// #endsnippet
+#snippet KILL_OPTIONS
+  $refreshMoves()
+  $excludeMovesOrigin(dair)
+  $outputWithKnockbackThresholds(170, 400, Goto)
+#endsnippet
 
-// #snippet JUGGLE_OPTIONS
-// #endsnippet
+#snippet JUGGLE_OPTIONS
+  $refreshMoves()
+  $excludeMovesNotOrigin(nair|uair|usmash|fair)
+  $excludeMovesNamed(uair_tipman|fair)
+  $output(Goto)
+#endsnippet
 
 #snippet EDGEGUARD_OPTIONS
-  globTempVar = Rnd * 8
-  if globTempVar < 1
-    Goto ftilt
-  elif globTempVar < 2
-    Goto utilt
-  elif globTempVar < 3
-    Goto fsmash
-  elif globTempVar < 4
-    Goto dtilt
-  elif globTempVar < 5
-    Goto nair
-  elif globTempVar < 6
-    Goto fair
-    comboLeniency = 5
-  elif globTempVar < 7
-    Goto uair
-    comboLeniency = 10
-  elif globTempVar < 8
-    Goto dair
-  endif
+  $pickRandMove(nair|fair|uair|dair, Goto)
 #endsnippet

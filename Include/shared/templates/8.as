@@ -9,12 +9,16 @@ Cmd30
 
 #let tempVar = var0
 
-if Equal XDistFrontEdge XDistBackEdge
+if Equal XDistFrontEdge XDistBackEdge && !(Equal AirGroundState 1)
   Call RecoveryHub
 endif
 
+if YDistBackEdge < -25 && YDistBackEdge > 1
+  Call AIHub
+endif
+
 // sets up offsets to get to target position
-if Equal movePart 0
+if Equal movePart 0 && !(XDistLE 15)
   RetrieveATKD var0 OCurrSubaction 1
   #let oDangerStart = var0
   #let oDangerEnd = var1
@@ -34,7 +38,7 @@ if Equal movePart 0
   endif
   move_yOffset = 0
   move_yRange = 50
-  move_hitFrame = Rnd * 20 + 5
+  move_hitFrame = Rnd * 3
   Call ApproachHub
 elif Equal AirGroundState 2
   tempVar = OPos * -1
@@ -49,9 +53,16 @@ elif Equal AirGroundState 2
   endif
   Call AIHub
 elif True
+  label
+  Cmd30
+
+  if FramesHitstun > 0 && Equal AirGroundState 1 && NumFrames < 4
+    Return
+  endif
+
   lastScript = hex(0x8008)
-  if !(Equal Direction OPos)
-    tempVar = OPos * 0.65
+  if !(Equal Direction OPos) && !(Equal CurrAction hex(0x06))
+    tempVar = OPos
     AbsStick tempVar
     Return
   endif
@@ -76,6 +87,7 @@ Return
 {ADDITIONAL_FAKEOUTS_ROUTINES}
 
 label crouchCancelPunish
+  Cmd30
 #let timer = var0
 timer = Rnd * 20
 label
@@ -88,6 +100,7 @@ timer -= 1
 Return
 
 label dashAway
+  Cmd30
 #let timer = var0
 if Equal Direction OPos
   Stick (-1) 0
@@ -102,13 +115,15 @@ Stick 1
 Return
 
 label wavedashBack
+  Cmd30
 if CurrAction > hex(0x09)
   Return
 endif
 Button X
 label
 if InAir
-  Stick (-1) (-1)
+  globTempVar = OPos * -1
+  Stick globTempVar (-1)
   Button R
   lastScript = hex(0x8008)
   Call AIHub
@@ -116,13 +131,22 @@ endif
 Return
 
 label offensiveShield
+Cmd30
 #let timer = var1
 #let shieldRemaining = var2
 timer = Rnd * 30 + 10
-tempVar = OPos * 0.5
-Stick OPos
+globTempVar = move_xOffset + 10
+if XDistLE globTempVar || XDistLE 15
+  Seek
+  Jump
+else
+  AbsStick OPos
+endif
+Return
 label
-Stick tempVar
+Cmd30
+tempVar = OPos * 0.5
+AbsStick tempVar
 Button R
 GetShieldRemain shieldRemaining
 if shieldRemaining < 10 || timer <= 0 || Equal CurrAction hex(0x1D)
@@ -132,6 +156,7 @@ timer -= 1
 Return
 
 label jumpOver
+Cmd30
 Button X
 if InAir
   Call AIHub

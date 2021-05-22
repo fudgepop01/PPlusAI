@@ -12,6 +12,10 @@ unk 0x0
 ClearStick
 var21 = 32770
 
+if Equal CurrAction 4
+  Stick 1
+endif
+
 
 if OIsCharOf Bowser
   var8 = 113
@@ -156,7 +160,7 @@ var8 *= -1
 var8 /= 100
 var8 *= ODamage
 
-if Equal var18 255
+if Equal var18 255 || Equal var16 9
   Seek contCombo
   Jump
 endif
@@ -370,36 +374,32 @@ Return
 
 label comboOptions
 LOGVAL var8
-var22 = 0.3
-if !(SamePlane) || OYDistBackEdge < -10
-var22 = 0.15
-endif
-if True && 64 <= var8 && var8 <= 268 && Rnd < 0.3
+if True && 64 <= var8 && var8 <= 268 && Rnd < 0.30
 Goto uair
 endif
-if True && 58 <= var8 && var8 <= 415 && Rnd < 0.3
+if True && 58 <= var8 && var8 <= 415 && Rnd < 0.45
 Goto dtilt
 endif
-if True && 49 <= var8 && var8 <= 269 && Rnd < 0.3
+if True && 49 <= var8 && var8 <= 269 && Rnd < 0.30
 Goto bair
 endif
-if True && 38 <= var8 && var8 <= 251 && Rnd < 0.3
+if True && 38 <= var8 && var8 <= 251 && Rnd < 0.40
 Goto utilt
 endif
-if True && 29 <= var8 && var8 <= 188 && Rnd < 0.3
-Goto dair
-endif
-if True && 22 <= var8 && var8 <= 184 && Rnd < 0.3
+if True && 22 <= var8 && var8 <= 184 && Rnd < 0.30
 Goto fsmash
 endif
-if True && 18 <= var8 && var8 <= 196 && Rnd < 0.3
+if True && 18 <= var8 && var8 <= 196 && Rnd < 0.45
 Goto fair
 endif
-if True && 17 <= var8 && var8 <= 163 && Rnd < 0.3
+if True && 17 <= var8 && var8 <= 163 && Rnd < 0.30
 Goto dsmash
 endif
-if True && 14 <= var8 && Rnd < 0.3
+if True && 14 <= var8 && Rnd < 0.30
 Goto nair
+endif
+if True && 13 <= var8 && var8 <= 188 && Rnd < 0.30
+Goto dair
 endif
   if YDistBackEdge < -15
     var16 = 255
@@ -411,29 +411,29 @@ Return
 label juggleOptions
 LOGVAL var8
 var17 = Rnd * 9
-if var17 < 1
+if var17 < 1 && OYDistBackEdge > -10 
 Goto jab123
-elif 1 < var17 && var17 < 2
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
 Goto utilt
-elif 2 < var17 && var17 < 3
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
 Goto dtilt
-elif 3 < var17 && var17 < 4
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
 Goto usmash
-elif 4 < var17 && var17 < 5
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 
 Goto sspecial
-elif 5 < var17 && var17 < 6
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 
 var19 = 2
 Goto fthrow
 Goto fthrow
-elif 6 < var17 && var17 < 7
+elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 
 var19 = 3
 Goto dthrow
 Goto dthrow
-elif 7 < var17 && var17 < 8
+elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 
 var19 = 5
 Goto uthrow
 Goto uthrow
-elif 8 < var17 && var17 < 9
+elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 
 Goto fair
 endif
   if YDistBackEdge < -15
@@ -444,64 +444,60 @@ Jump
 Return
 
 label killOptions
-var22 = 0.3
-if !(SamePlane) || OYDistBackEdge < -10
-var22 = 0.15
-endif
 if True && 555 <= var8 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 2
-Goto fthrow
+Goto grab
 Goto fthrow
 endif
 if True && 374 <= var8 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 3
-Goto dthrow
+Goto grab
 Goto dthrow
 endif
-if True && 282 <= var8 && Rnd < 0.3
+if True && 282 <= var8 && Rnd < 0.30
 Goto nair
 endif
-if True && 218 <= var8 && Rnd < 0.3
+if True && 218 <= var8 && Rnd < 0.45
 Goto dtilt
 endif
-if True && 185 <= var8 && Rnd < 0.3
+if True && 185 <= var8 && Rnd < 0.45
 Goto sspecial
 endif
-if True && 179 <= var8 && Rnd < 0.3
+if True && 179 <= var8 && Rnd < 0.30
 Goto ftilt
 endif
-if True && 156 <= var8 && var8 <= 381 && Rnd < 0.3
+if True && 156 <= var8 && var8 <= 381 && Rnd < 0.30
 Goto uair
 endif
-if True && 148 <= var8 && var8 <= 390 && Rnd < 0.3
+if True && 148 <= var8 && var8 <= 390 && Rnd < 0.30
 Goto bair
 endif
-if True && 134 <= var8 && var8 <= 368 && Rnd < 0.3
+if True && 134 <= var8 && var8 <= 368 && Rnd < 0.40
 Goto utilt
 endif
 if True && 123 <= var8 && var8 <= 425 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 4
-Goto bthrow
+Goto grab
 Goto bthrow
 endif
-if True && 112 <= var8 && var8 <= 334 && Rnd < 0.3
+if True && 112 <= var8 && var8 <= 334 && Rnd < 0.45
 Goto usmash
 endif
-if True && 100 <= var8 && var8 <= 275 && Rnd < 0.3
-Goto dair
-endif
-if True && 98 <= var8 && var8 <= 295 && Rnd < 0.3
+if True && 98 <= var8 && var8 <= 295 && Rnd < 0.45
 Goto fair
 endif
-if True && 95 <= var8 && var8 <= 273 && Rnd < 0.3
+if True && 95 <= var8 && var8 <= 273 && Rnd < 0.30
 Goto fsmash
 endif
 if True && 94 <= var8 && var8 <= 429 && Rnd < 0.12 && OCurrAction <= 69
 var19 = 5
-Goto uthrow
+Goto grab
 Goto uthrow
 endif
-if True && 83 <= var8 && var8 <= 243 && Rnd < 0.3
+if True && 85 <= var8 && var8 <= 275 && Rnd < 0.30
+Goto dair
+endif
+if True && 83 <= var8 && var8 <= 243 && Rnd < 0.30
 Goto dsmash
 endif
   if YDistBackEdge < -15
@@ -708,11 +704,18 @@ Return
 
 label analyze
 
-var17 = OFramesHitstun + var7
-if var17 < var13 || Equal var13 -1
+if Equal var20 25000
+  Return
+elif 24625 <= var20 && var20 <= 24638 && OYDistBackEdge < -40 && OTotalYSpeed > -0.5
   var7 = 0
   Return
 endif
+
+// var17 = OFramesHitstun + var7
+// if var17 < var13 || Equal var13 -1
+//   var7 = 0
+//   Return
+// endif
 
 if var20 >= 24641 && var20 <= 24655
   if !(InAir)

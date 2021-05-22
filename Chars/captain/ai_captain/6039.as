@@ -8,6 +8,7 @@ unk 0x0
 if Equal AirGroundState 2
   Call AIHub
 endif
+Cmd30
 
 if Equal movePart 0
   lastAttack = hex(0x6039)
@@ -29,7 +30,7 @@ Return
 
 label ExecuteAttack
 Cmd30
-if CurrAction <= hex(0x09) || !(Equal AirGroundState 1)
+if CurrAction <= hex(0x09) || !(Equal AirGroundState 1) || FramesHitstun > 0
   Call AIHub
 endif
 Return

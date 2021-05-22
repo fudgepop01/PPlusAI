@@ -29,11 +29,12 @@ var1 = 0
 #let targetOverallDist = var7
 EST_O_COORDS(targetXDistance, targetYDistance, 4)
 
+targetXDistance -= TopNX
+targetYDistance -= TopNY
+
 Norm targetOverallDist targetXDistance targetYDistance
 targetXDistance /= targetOverallDist
 targetYDistance /= targetOverallDist
-targetXDistance *= -1
-targetYDistance *= -1
 AbsStick targetXDistance targetYDistance
 
 RECORD_HIT_KNOCKBACK

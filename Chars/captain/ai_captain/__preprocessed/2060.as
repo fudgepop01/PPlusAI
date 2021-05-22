@@ -9,7 +9,7 @@ unk 0x0
 
 Cmd30
 if Equal var16 7
-    Seek getupOptions
+    Seek _OL
     Jump
 endif
 if Equal var21 32768
@@ -28,6 +28,7 @@ var16 = 1 // default
 // actions, so I need to force the character to move to the target here
 if CurrAction >= 121 && CurrAction <= 123
     AbsStick OPos
+    var16 = 3
     Call ApproachHub
 elif Equal AirGroundState 2 && Equal var21 32769 && !(MeteoChance)
     var21 = 8288
@@ -41,6 +42,13 @@ var0 = OXDistFrontEdge
 Abs var0
 
 if !(Equal CurrAction 117)
+    if !(OutOfStage) && !(Equal CurrAction 116)
+        Call AIHub
+    endif 
+    if Equal AirGroundState 2
+        Seek
+        Jump
+    endif
     Return
 endif
 
@@ -49,11 +57,15 @@ var0 = OTopNX - TopNX
 var1 = var0
 Abs var1
 LOGVAL var1
+LOGVAL OYDistBackEdge
+var18 = 0
 
 var2 = Rnd
+label _OL
 if var1 < 35 && Equal Direction OPos
     if var2 < 0.3 && LevelValue >= 31 // offensive option
-        label
+        label _OL1
+        LOGSTR 1330393344 0 0 0 0
         if Equal CurrAction 117
             if NumFrames > 1
                 SetFrame 0
@@ -81,7 +93,13 @@ if var1 < 35 && Equal Direction OPos
         Seek ledgedash
         Jump
     elif var2 < 0.7 && LevelValue >= 60
-        LOGSTR 1919247872 1919251200 1744830464 0 0
+        label
+        if Equal CurrAction 117
+            Seek
+            Jump
+        endif
+        Return
+        label
         var16 = 5
         Stick 0 (-1)
         Call AIHub
@@ -94,7 +112,6 @@ elif var1 > 35 && Equal OPos Direction
         Seek ledgedash
         Jump
     elif var2 < 0.8
-            LOGSTR 1919247872 1919251200 1744830464 0 0
         var16 = 5
         Stick 0 (-1)
         Call AIHub
@@ -102,32 +119,36 @@ elif var1 > 35 && Equal OPos Direction
         Button X
         Call AIHub
     endif
-elif var1 < 50 && OYDistBackEdge > 15
+elif var1 < 50 && OYDistBackEdge < -15
     if Equal CurrAction 117
         if NumFrames > 1
             SetFrame 0
         endif
         if Equal NumFrames 1
             Button X
+            var16 = 3
+            var18 = 1
     Call BAir
             Finish
         endif
         Return
     endif
-elif var1 < 70 && Rnd < 0.25 && !(Equal OPos Direction) && OYDistBackEdge < 35
-    label
+elif var1 < 70 && Rnd < 0.35 && !(Equal OPos Direction) && OYDistBackEdge > -10
+    label _OL2
+    LOGSTR 1330393600 0 0 0 0
     if Equal CurrAction 117
         if NumFrames > 1
             SetFrame 0
         endif
         if Equal NumFrames 1
             Stick -1
-            var16 = 7
+            Seek
+            Jump
         endif
         Return
-    elif YSpeed <= 0
-        if Equal NumFrames 2
-            var16 = 3
+    elif True
+        label
+        var16 = 3
     if OYDistBackEdge < 10
         var19 = 1
         Call UAir
@@ -136,7 +157,6 @@ elif var1 < 70 && Rnd < 0.25 && !(Equal OPos Direction) && OYDistBackEdge < 35
     else
         Call BAir
     endif
-        endif
         Return
     endif
 elif var1 < 50 && !(Equal OPos Direction) && OYDistBackEdge < 35
@@ -146,7 +166,6 @@ elif var1 < 50 && !(Equal OPos Direction) && OYDistBackEdge < 35
             SetFrame 0
         endif
         if Equal NumFrames 1
-            LOGSTR 1919247872 1919251200 1744830464 0 0
             var16 = 5
             Stick 0 (-1)
             Call AIHub
@@ -168,7 +187,6 @@ else
         if Rnd < 0.25
             Seek getupOptions
         else
-            LOGSTR 1919247872 1919251200 1744830464 0 0
             var16 = 5
             Stick 0 (-1)
             Call AIHub
@@ -190,8 +208,8 @@ if !(True)
             var16 = 7
         endif
     else
-        Stick 1
-        if YDistBackEdge > 4
+        Stick 1 (-0.3)
+        if YDistBackEdge >= 2
             Button X
         else
             Button R
@@ -201,21 +219,36 @@ if !(True)
     Return
 endif
 
+if Equal var16 7 && Equal AirGroundState 2
+    LOGSTR 1751478784 1694498816 0 0 0
+    var17 = Rnd
+    LOGVAL var17
+    if var17 < 1
+        Seek _OL1
+    elif var17 < 2
+        Seek _OL2
+    else
+        Seek ledgedash
+    endif
+    Jump
+endif
+
 // OTHERWISE
 
-var1=Rnd
-if var1 < 0.2
-    Button X
-elif var1 < 0.4
-    Button A
-elif var1 < 0.6
-    Stick 1
-elif var1 < 0.8
-    Stick (-1)
-else
-    // Button R
-    Stick (-1) (-0.5)
-endif
+// #let rndVal = var1
+// rndVal=Rnd
+// if rndVal < 0.2
+//     Button X
+// elif rndVal < 0.4
+//     Button A
+// elif rndVal < 0.6
+//     Stick 1
+// elif rndVal < 0.8
+//     Stick (-1)
+// else
+//     // Button R
+//     Stick (-1) (-0.5)
+// endif
 // SetAIMD 2 32768
 Return
 Return

@@ -8,13 +8,13 @@ id 0x1120
 unk 0x0
 
 #let pummelCount = var0
-if ODamage > 100
+if ODamage > 160
   pummelCount = 4
-elif ODamage > 80
+elif ODamage > 120
   pummelCount = 3
-elif ODamage > 60
+elif ODamage > 80
   pummelCount = 2
-elif ODamage > 30
+elif ODamage > 40
   pummelCount = 1
 else
   pummelCount = 0

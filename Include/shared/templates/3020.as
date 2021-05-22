@@ -61,7 +61,6 @@ if !(Idling) && !(Dashing)
     endif
     Return
 endif
-SetTimeout 120
 Seek
 Jump
 Return
@@ -186,6 +185,10 @@ Return
 label shieldStunCheck
 if Equal CurrAction hex(0x1D)
     Call OOSHub
+    Finish
+endif
+if XDistLE 25 && Rnd <= 0.3
+    Button R|A
     Finish
 endif
 Return

@@ -6,11 +6,14 @@ id 0x8005
 unk 0x0
 
 Cmd30
+if OutOfStage
+  Call RecoveryHub
+endif
+
 var21 = 32773
 
 
 var17 = var9 + (var11 * 2)
-var17 /= 2
 
 var1 = TopNX
 var2 = OTopNX
@@ -25,6 +28,16 @@ endif
 // LOGSTR 1986097664 805306368 0 0 0
 // LOGVAL var0
 SAFE_INJECT_2 var0
+if XDistLE 20
+  label
+  Button X
+  var17 = OPos * -1
+  AbsStick var17
+  if InAir
+    Call AIHub
+  endif
+  Return
+endif
 label
 if var20 >= 24641 && var20 <= 24655
   if var0 <= 0.2
@@ -106,7 +119,7 @@ if var20 >= 24641 && var20 <= 24655
       if Equal OPos Direction
         Stick -1
       endif
-      if !(Equal OPos Direction) && Idling && !(Equal CurrAction 10)
+      if !(Equal OPos Direction) && !(Equal CurrAction 10) && CurrAction <= 2
         Button X
       endif
     else

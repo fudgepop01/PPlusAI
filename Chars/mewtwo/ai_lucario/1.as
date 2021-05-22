@@ -14,16 +14,6 @@
 #snippet BEGINNING_CHECKS
 #endsnippet
 
-#snippet FASTFALL_CHECK
-  if Equal AirGroundState 2 && absTargetXDistance <= move_xRange && LevelValue >= LV8
-    COULD_HIT_WITH_FASTFALL(var2, var3, var4, var6, move_hitFrame + loopTempVar - 2, _ffCalc)
-    if Equal shouldFastFall 1
-      Seek CallAttacks
-      Jump
-    endif
-  endif
-#endsnippet
-
 #snippet MIX_DOUBLEJUMP_SECTION
 #endsnippet
 

@@ -7,21 +7,11 @@ id 0x6031
 //Set Unknown
 unk 0x0
 
+Cmd30
+
 
 if Equal var18 0
-  var9 = 1
-  var10 = -1.450
-  var11 = 5.3
-  var12 = 5
-  var13 = 14
-  var14 = 16
-  var15 = 36
-  var20 = 24642
-
-  if Equal var19 1
-    var13 = 17
-    var14 = 30
-  endif
+  Goto fair
 
   if Equal var16 2 && OFramesHitstun < 1
     Call DefendHub
@@ -29,16 +19,17 @@ if Equal var18 0
     Call ApproachHub
   endif
 elif True
+  Goto fair
   var15 = 36
   Stick 1 0
   Button A
   SetFrame 0
   var16 = -1
-  Seek executeAttack
+  Seek ExecuteAttack
 endif
 Return
 
-label executeAttack
+label ExecuteAttack
 Cmd30
 var1 = 0
   // this prevents it from auto-attacking.
@@ -55,7 +46,7 @@ var1 = 0
   elif var20 >= 24641 && var20 <= 24655
     var1 = 0
     if Equal AirGroundState 1
-      var1 = 0
+      var1 = 4
     endif
   elif Equal var20 25000
     var1 = OFramesHitstun 
@@ -73,7 +64,7 @@ var1 = 0
   SAFE_INJECT_6 var11
   SAFE_INJECT_7 var12
   // calculate own estimated position
-  var17 = var14 - NumFrames + var1
+  var17 = var13 - var3 + var1
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
     var17 -= var13 
@@ -119,7 +110,7 @@ var1 = 0
   var0 += var22
   var0 += TopNX
   // estimate target position separately  
-  var22 = var14 - NumFrames + var1
+  var22 = var13 - var3 + var1
   var1 = 0
   if !(CalledAs ComboHub) // because this involves a label
   if Equal var20 24625
@@ -172,7 +163,7 @@ var1 = 0
     LOGSTR 1131375872 1651460096 1969356800 0 0
   endif
     // calculate own Y coord because I can't figure out the !@$% EstOPosVecR thing
-  var22 = var14 - NumFrames
+  var22 = var13 - var3
   var6 = 0
   if Equal CurrSubaction JumpSquat
     var1 = -2.03
@@ -338,7 +329,7 @@ elif OIsCharOf ZSS // Zero Suit Samus
   var1 = 85
   var1 = 0.135
 endif
-  var22 = var14 - NumFrames + var1
+  var22 = var13 - var3 + var1
   var5 = 0
   var6 = OCharYSpeed + OKBYSpeed
   var6 *= -1
@@ -363,24 +354,23 @@ endif
     var1 = var5
   endif
   // it's awful, I know, but i'm all out of variables and this was the only way lol
-  var22 = var14 - NumFrames 
+  var22 = var13 - var3 
   if var20 >= 24625 && var20 <= 24631
     if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
       var22 += 0
     endif
   elif var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1
-      var22 += 0 
+      var22 += 4
     endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
   endif
-  EstOYCoord var6 0
+  EstOYCoord var6 var22
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  var22 = 0
   if OCurrAction <= 9 && var20 < 24641
-    var22 = -5
+    var22 *= 0.3
   endif
   EstOXCoord var5 var22
   var6 = var6 - (OSCDBottom - OTopNY)
@@ -418,7 +408,7 @@ endif
     var17 += var22
   endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var0 var17 5 5 255 0 0 136
   //     // target
@@ -435,11 +425,13 @@ endif
     var17 -= var10
     var17 += var12
   endif
+  // var17 = var17 - OHurtboxSize * 0.5
+  
   // adjust for the move parameters
   if !(InAir)
     var22 = var9 + (var11 * 2)
     var22 /= 2
-    if var22 <= 0
+    if var22 <= 2
       var0 = var0 - (var9 * OPos)
     else 
       var0 = var0 + (var11 * OPos)
@@ -449,16 +441,16 @@ endif
     var0 = var0 + (var11 * Direction)
     var0 = var0 + (var9 * Direction)
   endif
-  if Equal SCDBottom TopNY && var20 >= 24640
-    var17 += 5
-  endif
-  if Equal AirGroundState 2
-    var22 = OHurtboxSize / 2
-    var17 -= var22
-  endif
+  // if !(Equal SCDBottom TopNY) && var20 >= 24640
+  //   var22 = SCDBottom - TopNY
+  //   var17 -= var22
+  // endif
+  // if Equal AirGroundState 2
+  //   var17 -= OHurtboxSize
+  // endif
   
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var0 var17 var11 var12 255 187 0 136
   //   endif
@@ -469,8 +461,8 @@ endif
   var6 = var6 - var17
   // adjust for opponent position (aim towards nearest blastzone)
   if !(Equal var20 32776) && !(Equal var20 25000)
-    var17 = LBoundary - (TopNX + var5) 
     var22 = 0
+    var17 = LBoundary - (TopNX + var5) 
     if var17 < 90 && Equal Direction (-1)
       var17 = 0.0 + 1
       var17 = var11 * (1/var17)
@@ -486,7 +478,7 @@ endif
     endif
     var5 += var22
     if Equal var22 0
-      var22 = OPos * Direction
+      var22 = Direction
       var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var22 *= var17
@@ -498,23 +490,33 @@ endif
   var22 = 0
   SAFE_INJECT_D var22
   var17 = OSCDBottom + OHurtboxSize // top of target
-  var0 = TopNY - var10 + var12 + var22 // center of move detection
-  if var0 >= var17 
+  var0 = var6 * -1
+  if var0 >= OHurtboxSize
     // self is above
     var0 = OHurtboxSize
-  elif var0 <= OSCDBottom 
+  elif var0 <= 0 
     // self is below
     var0 = 0 // OHurtboxSize * -1
   else 
     // self is between
-    var17 -= var0
-    var0 = OHurtboxSize - var17
+    var17 = var0 - OHurtboxSize
+    // var0 -= var17
     // var0 = var22
   endif
-  // var0 *= -1
+  
+  // if Equal AirGroundState 2
+    
+  //   if Equal OAirGroundState 1
+  //     // var0 = var0 + OHurtboxSize * 0.5
+  //     var0 += OHurtboxSize
+  //   endif
+  // endif
   var6 += var0
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+    var6 = 0
+  endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     var5 += TopNX
   //     var6 += TopNY
   //     DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
@@ -528,14 +530,19 @@ endif
   //     var17 = var12 * (1/var17)
   //     var12 = var17
   //     var10 = var10 - var17 * 0.0
-  //     var17 = TopNY - var10 + var12 + var22
-  //     DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //     // var17 = TopNY - var10 + var12 + var22
+  //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //     if CalledAs ApproachHub
+  //       var11 -= 3
+  //       var9 += 6
+  //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
   //     var22 += TopNX
   //     var17 = TopNY - var10 + var12
   //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
   //     var17 += var0
+      
   //     // if OTopNX > 0
   //     //   var22 += var11
   //     // else
@@ -546,6 +553,10 @@ endif
   //     var17 = var22 + OSCDBottom
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
+  //     if CalledAs ApproachHub
+  //       var11 += 3
+  //       var9 -= 6
+  //     endif
   //     var17 = var11 * 0.0
   //     var9 -= var17
   //     var11 = var11 + var17
@@ -555,14 +566,14 @@ endif
   //   endif
   // endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
-  //   var17 = var14 - NumFrames - var8
+  //   var17 = var13 - var3 - var8
   //   var5 = var5 + OXSpeed * var17 * -2
   // endif
 
   GetNearestCliff var0
-  var17 = var15 - NumFrames
+  var17 = var15 - var3
   var1 = XSpeed * var17
-  var1 += TopNX
+  var0 -= TopNX
   if var0 < 0
     if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
       var0 -= var1
@@ -579,14 +590,14 @@ endif
     endif
   endif
   if !(Equal var0 1) && !(Equal var0 -1)
-    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
+    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
       var0 = 2
     else
       var0 = 0
     endif
   endif
 
-if Equal AirGroundState 1 || FrameGE var15
+if Equal AirGroundState 1 || FrameGE var15 || FramesHitstun > 0
   Call AIHub
 endif
 
@@ -604,7 +615,7 @@ endif
 
 if !(Equal var0 0) && !(Equal var0 2)
   AbsStick var0
-elif True
+elif !(Equal var16 4) && !(XDistLE 30)
   if var5 < 0
     AbsStick -1 0
   else
@@ -614,7 +625,7 @@ endif
 
 Abs var5
 Abs var6
-Seek executeAttack
+Seek ExecuteAttack
 var3 += 1
 if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
   var19 = 2
@@ -625,6 +636,21 @@ if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
     Return
   endif
   Call Landing
+endif
+Return
+
+label fair
+var20 = 24642
+var15 = 36
+var9 = 1
+var10 = -1.450
+var11 = 5.3
+var12 = 5
+var13 = 14
+var14 = 16
+if Equal var19 1
+var13 = 17
+var14 = 30
 endif
 Return
 Return

@@ -21,6 +21,10 @@ if var0 < 20
     Finish
 endif
 
+  if !(OAttacking) || Rnd <= 0.25 || OCurrActionFreq >= 4
+    Seek begin
+    Jump
+  endif
   var0 = 21 - 0
   var0 = Rnd * var0 + 0
   if !(Equal var0 0)
@@ -30,8 +34,17 @@ endif
   // var0 = var0 - (OCurrActionFreq * 4) 
   var1 = 0
   label
+  LOGSTR 1027423488 1025524736 1162223616 1027423488 1023410176
+  if FramesHitstun > 0
+    Call AIHub
+  endif
   if !(OAttacking)
     var1 = 1
+  endif
+  if Equal CurrAction 3
+    Stick 0.8
+  elif Equal CurrAction 4
+    Stick 0 (-1)
   endif
   if Equal var1 1 && OAttacking
     Seek
@@ -84,7 +97,6 @@ if !(Idling) && !(Dashing)
     endif
     Return
 endif
-SetTimeout 120
 Seek
 Jump
 Return
@@ -209,6 +221,10 @@ Return
 label shieldStunCheck
 if Equal CurrAction 29
     Call OOSHub
+    Finish
+endif
+if XDistLE 25 && Rnd <= 0.3
+    Button R|A
     Finish
 endif
 Return

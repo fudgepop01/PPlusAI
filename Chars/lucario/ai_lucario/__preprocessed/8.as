@@ -8,12 +8,16 @@ unk 0x0
 Cmd30
 
 
-if Equal XDistFrontEdge XDistBackEdge
+if Equal XDistFrontEdge XDistBackEdge && !(Equal AirGroundState 1)
   Call RecoveryHub
 endif
 
+if YDistBackEdge < -25 && YDistBackEdge > 1
+  Call AIHub
+endif
+
 // sets up offsets to get to target position
-if Equal var18 0
+if Equal var18 0 && !(XDistLE 15)
   RetrieveATKD var0 OCurrSubaction 1
 
   var21 = 32776
@@ -27,7 +31,7 @@ if Equal var18 0
   endif
   var10 = 0
   var12 = 50
-  var13 = Rnd * 20 + 5
+  var13 = Rnd * 3
   Call ApproachHub
 elif Equal AirGroundState 2
   var0 = OPos * -1
@@ -42,9 +46,16 @@ elif Equal AirGroundState 2
   endif
   Call AIHub
 elif True
+  label
+  Cmd30
+
+  if FramesHitstun > 0 && Equal AirGroundState 1 && NumFrames < 4
+    Return
+  endif
+
   var21 = 32776
-  if !(Equal Direction OPos)
-    var0 = OPos * 0.65
+  if !(Equal Direction OPos) && !(Equal CurrAction 6)
+    var0 = OPos
     AbsStick var0
     Return
   endif
@@ -69,6 +80,7 @@ Return
 
 
 label crouchCancelPunish
+  Cmd30
 var0 = Rnd * 20
 label
 Stick 0 (-1)
@@ -80,6 +92,7 @@ var0 -= 1
 Return
 
 label dashAway
+  Cmd30
 if Equal Direction OPos
   Stick (-1) 0
 endif
@@ -93,13 +106,15 @@ Stick 1
 Return
 
 label wavedashBack
+  Cmd30
 if CurrAction > 9
   Return
 endif
 Button X
 label
 if InAir
-  Stick (-1) (-1)
+  var17 = OPos * -1
+  Stick var17 (-1)
   Button R
   var21 = 32776
   Call AIHub
@@ -107,11 +122,20 @@ endif
 Return
 
 label offensiveShield
+Cmd30
 var1 = Rnd * 30 + 10
-var0 = OPos * 0.5
-Stick OPos
+var17 = var9 + 10
+if XDistLE var17 || XDistLE 15
+  Seek
+  Jump
+else
+  AbsStick OPos
+endif
+Return
 label
-Stick var0
+Cmd30
+var0 = OPos * 0.5
+AbsStick var0
 Button R
 GetShieldRemain var2
 if var2 < 10 || var1 <= 0 || Equal CurrAction 29
@@ -121,6 +145,7 @@ var1 -= 1
 Return
 
 label jumpOver
+Cmd30
 Button X
 if InAir
   Call AIHub

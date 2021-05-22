@@ -79,7 +79,7 @@
     Call NAir
   endif
 
-  if !(ODistLE 25) && Rnd < 0.3
+  if !(ODistLE 25) && Rnd < 0.7
     Call NSpecial
   endif
 #endsnippet

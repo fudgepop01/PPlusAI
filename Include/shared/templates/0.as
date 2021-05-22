@@ -7,7 +7,7 @@ label begin
 
 {PRE_HOOKS}
 
-if Equal movePart mp_ATK
+if Equal movePart mp_ATK || Equal movePart hex(0xFF)
   movePart = 0
 endif
 
@@ -23,6 +23,11 @@ endif
 
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
   Call OOSHub
+endif
+
+if Equal approachType at_reroll
+  Seek _reroll
+  Jump
 endif
 
 if Equal CurrAction hex(0x49) || Equal globTempVar strv("BAD")
@@ -54,24 +59,64 @@ endif
 #let framesOnGround = var5
 
 // if in hitstun...
-if FramesHitstun > 0
+if FramesHitstun > 0 || FramesHitlag > 0
+  label hitstunHandler
   lastScript = hex(0x8000)
-  StickX = Rnd - 1
+  if LevelValue >= LV7
+    StickX = Rnd * 2 * OPos * -1
+    if KBAngle > 90 && KBAngle < 170
+      StickX *= -1
+    endif  
+    if Rnd < 0.2
+      StickX *= -1
+    endif
+  else
+    StickX = (Rnd * 2) - 1
+  endif
   StickY = Rnd - 1
+  if Rnd < 0.2
+    StickY *= -1
+  endif
   TechWindow = 1
   MeteorCancelWindow = Rnd * 5 + 15
   framesOnGround = 0
   // makes it loop from here each frame
   label
   Cmd30
+
+  if FramesHitlag > 0 && Equal LevelValue LV9 
+    if Rnd < 0.75
+      globTempVar = OPos * -1
+      if XDistBackEdge > -shortEdgeRange
+        globTempVar = OPos
+      endif
+      immediateTempVar = Rnd * 2 - 1
+      AbsStick globTempVar immediateTempVar
+    endif
+    Return
+  endif
 endif
 
-if FramesHitstun > 1 && Equal CurrAction hex(0x45)
-  if Equal IsOnStage 0 || Damage > 80
+if FramesHitstun > 1 && CurrAction >= hex(0x44) && CurrAction <= hex(0x45) && Equal AirGroundState 2 
+  LOGSTR str("hitst")
+  LOGVAL KBAngle
+  if KBAngle >= 80 && KBAngle <= 100
+    LOGSTR str("cond1")
+    globTempVar = OPos * -1
+    if KBAngle > 90
+      globTempVar *= -1
+    endif
+    if Rnd < 0.2
+      globTempVar *= -1
+    endif
+    AbsStick globTempVar (-1)
+  elif Equal IsOnStage 0 || KBSpeed > 4
+    LOGSTR str("cond2")
     // if offstage with high damage, switch to survival DI
     StickX = TopNX * -1
     AbsStick StickX 1
   else
+    LOGSTR str("cond3")
     AbsStick StickX StickY
   endif
   if Equal LevelValue LV8 && YDistBackEdge > -5 && Equal IsOnStage 1
@@ -90,6 +135,9 @@ endif
 
 if FramesHitstun > 1 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45) && LevelValue >= LV8
   globTempVar = OPos * -1
+  if XDistBackEdge > -shortEdgeRange
+    globTempVar = OPos
+  endif
   Stick globTempVar (-1)
   Return
 endif
@@ -99,11 +147,14 @@ if FramesHitstun > 0 && CurrAction <= hex(0x10)
   Jump
 elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
   label
-  if Rnd < 0.2
-    Button R
-    Call Unk3020
+  var0 = Damage / 100
+  var0 *= 0.75
+  if Rnd < var0
+    movePart = 1
+    Call FakeOutHub
   endif
-  {GROUND_HITSTUN_MOVES}
+  
+  {HITSTUN_ENDS}
   Seek
   Jump
 elif Equal FramesHitstun 1 && LevelValue >= LV5
@@ -118,9 +169,9 @@ elif Equal FramesHitstun 1 && LevelValue >= LV5
   var0 = Damage / 100
   var0 *= 0.75
   if Rnd < var0
-    Button R
-    Call OOSHub
+    Call FakeOutHub
   endif
+
   {HITSTUN_ENDS}
   Seek begin
   Return
@@ -202,7 +253,7 @@ if Equal CurrAction hex(0x18) && !(Equal HitboxConnected 1)
 endif
 
 // where RecoveryHub (4.as) is called
-if Equal isGoingOffstage 2 && Equal AirGroundState 2
+if Equal isGoingOffstage 2 && !(Equal AirGroundState 1)
   movePart = 0
   Call RecoveryHub
 endif
@@ -245,6 +296,11 @@ endif
 // we hold the control stick in the opposite direction
 
 label
+if FramesHitstun > 1
+  Seek hitstunHandler
+  Jump
+  Return
+endif
 if !(Equal isGoingOffstage 0)
   if InAir || Equal CurrAction hex(0x03)
     var0 = XSpeed * -10
@@ -292,26 +348,26 @@ if Equal AirGroundState 1
   endif
 endif
 
-// GetIsTeammateCloser waitTeamFlag
-// if Equal waitTeamFlag 1
-//   if XDistLE 60 && XDistFrontEdge > shortEdgeRange && XDistBackEdge < -shortEdgeRange
-//     globTempVar = OPos * -1
-//     if Equal Direction globTempVar && XDistFrontEdge > shortEdgeRange
-//       Stick 1
-//     elif !(Equal Direction globTempVar) && XDistBackEdge < -shortEdgeRange
-//       Stick -1
-//     endif
-//   endif
-//   if !(XDistLE 100)
-//     if Equal Direction OPos && XDistFrontEdge > shortEdgeRange
-//       Stick 1
-//     elif !(Equal Direction OPos) && XDistBackEdge < -shortEdgeRange
-//       Stick -1
-//     endif
-//   endif
-//   Seek _main
-//   Return
-// endif
+GetIsTeammateCloser waitTeamFlag
+if Equal waitTeamFlag 1
+  if XDistLE 60 && XDistFrontEdge > shortEdgeRange && XDistBackEdge < -shortEdgeRange
+    globTempVar = OPos * -1
+    if Equal Direction globTempVar && XDistFrontEdge > shortEdgeRange
+      Stick 1
+    elif !(Equal Direction globTempVar) && XDistBackEdge < -shortEdgeRange
+      Stick -1
+    endif
+  endif
+  if !(XDistLE 100)
+    if Equal Direction OPos && XDistFrontEdge > shortEdgeRange
+      Stick 1
+    elif !(Equal Direction OPos) && XDistBackEdge < -shortEdgeRange
+      Stick -1
+    endif
+  endif
+  Seek _main
+  Return
+endif
 
 approachType = 0
 moveVariant = 0
@@ -401,22 +457,21 @@ if Equal isEarlyRoll 0
     #let injected = var7
     injected = 0
     SAFE_INJECT_1 injected
-
     if LevelValue >= LV6 && Equal waitTeamFlag 0 && Equal injected 0 && !(SamePlane) && TopNY < OTopNY && Equal OAirGroundState 1
       {O_ON_PLAT_ABOVE}
     endif 
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 1
-      if oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25)
-        if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && !(Equal ODirection OPos)
+      if Equal injected 1
+        Call FakeOutHub
+      elif oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25)
+        if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && XDistLE oDangerXMax
           movePart = 1
           Call FakeOutHub
         endif
       elif OAttacking && oDangerEnd > OAnimFrame && !(Equal oDangerStart -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= LV8 && !(Equal OCurrAction hex(0x1B))
         {WHIFF_PUNISH_OPTIONS}
-      elif Rnd < 0.05 && !(Equal lastScript hex(0x8008))
-        Call FakeOutHub
-      elif Equal injected 1
+      elif Rnd < 0.1 && !(Equal lastScript hex(0x8008)) 
         Call FakeOutHub
       endif
     endif
@@ -446,7 +501,7 @@ if Equal isEarlyRoll 0
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 2
       #let fakeChance = var2
-      fakeChance = defenseMul * 0.1
+      fakeChance = defenseMul * 0.10
       Abs fakeChance
       if Rnd < fakeChance
         Call FakeOutHub
@@ -505,8 +560,13 @@ endif
 Return
 
 label comboStarters
-
 #let ODmgXWeight = var2
+
+globTempVar = TopNY - OTopNY
+Abs globTempVar
+if ODistLE 8 && globTempVar < 20 && Equal AirGroundState 1
+  approachType = at_immediate
+endif
 {COMBO_STARTERS}
 Return
 
@@ -518,6 +578,51 @@ Return
 label neutralMoves
 #let ODmgXWeight = var2
 approachType = at_throwOut
+
+globTempVar = TopNY - OTopNY
+Abs globTempVar
+if ODistLE 8 && globTempVar < 20 && Equal AirGroundState 1
+  approachType = at_immediate
+endif
 {NEUTRAL_MOVES}
+Return
+
+label _reroll
+
+if Rnd <= 0.25
+  Seek _main 
+  Jump
+  Return
+endif
+
+#let tries = var0
+tries = 5
+if Equal Direction OPos
+  label rrFront
+  $refreshMoves()
+  $filterMoveXMinMax(-1, 20)
+  $output(Call)
+  if tries <= 0
+    Seek _main
+  else
+    Seek rrFront
+  endif
+  tries -= 1
+  Jump
+  Return
+elif True
+  label rrBack
+  $refreshMoves()
+  $filterMoveXMinMax(-20, 1)
+  $output(Call)
+  if tries <= 0
+    Seek _main
+  else
+    Seek rrBack
+  endif
+  tries -= 1
+  Jump
+  Return
+endif
 Return
 Return

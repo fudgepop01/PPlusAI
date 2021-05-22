@@ -37,5 +37,6 @@ endif
 if FrameGE move_IASA || CurrAction <= hex(0x09) || Equal HitboxConnected 1
   Call AIHub
 endif
+Seek ExecuteAttack
 Return
 Return

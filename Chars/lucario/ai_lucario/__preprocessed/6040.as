@@ -129,7 +129,7 @@ var1 = 0
   elif var20 >= 24641 && var20 <= 24655
     var1 = 0
     if Equal AirGroundState 1
-      var1 = 0
+      var1 = 3
     endif
   elif Equal var20 25000
     var1 = OFramesHitstun 
@@ -444,17 +444,16 @@ endif
     endif
   elif var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1
-      var22 += 0 
+      var22 += 3
     endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
   endif
-  EstOYCoord var6 0
+  EstOYCoord var6 var22
   // if the opponent is in an actionable state, lower the estimate of
   // their x offset to prevent dashdancing from setting it off when very far away
-  var22 = 0
   if OCurrAction <= 9 && var20 < 24641
-    var22 = -5
+    var22 *= 0.3
   endif
   EstOXCoord var5 var22
   var6 = var6 - (OSCDBottom - OTopNY)
@@ -495,7 +494,7 @@ endif
     var17 += var22
   endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var0 var17 5 5 255 0 0 136
   //     // target
@@ -512,11 +511,13 @@ endif
     var17 -= var10
     var17 += var12
   endif
+  // var17 = var17 - OHurtboxSize * 0.5
+  
   // adjust for the move parameters
   if !(InAir)
     var22 = var9 + (var11 * 2)
     var22 /= 2
-    if var22 <= 0
+    if var22 <= 2
       var0 = var0 - (var9 * OPos)
     else 
       var0 = var0 + (var11 * OPos)
@@ -526,16 +527,16 @@ endif
     var0 = var0 + (var11 * Direction)
     var0 = var0 + (var9 * Direction)
   endif
-  if Equal SCDBottom TopNY && var20 >= 24640
-    var17 += 5
-  endif
-  if Equal AirGroundState 2
-    var22 = OHurtboxSize / 2
-    var17 -= var22
-  endif
+  // if !(Equal SCDBottom TopNY) && var20 >= 24640
+  //   var22 = SCDBottom - TopNY
+  //   var17 -= var22
+  // endif
+  // if Equal AirGroundState 2
+  //   var17 -= OHurtboxSize
+  // endif
   
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var0 var17 var11 var12 255 187 0 136
   //   endif
@@ -546,25 +547,25 @@ endif
   var6 = var6 - var17
   // adjust for opponent position (aim towards nearest blastzone)
   if !(Equal var20 32776) && !(Equal var20 25000)
-    var17 = LBoundary - (TopNX + var5) 
     var22 = 0
+    var17 = LBoundary - (TopNX + var5) 
     if var17 < 90 && Equal Direction (-1)
-      var17 = 0.8 + 1
+      var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var17 /= 2
       var22 += var17
     endif
     var17 = RBoundary - (TopNX + var5)
     if var17 > -90 && Equal Direction 1
-      var17 = 0.8 + 1
+      var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var17 /= 2
       var22 -= var17
     endif
     var5 += var22
     if Equal var22 0
-      var22 = OPos * Direction
-      var17 = 0.8 + 1
+      var22 = Direction
+      var17 = 0.0 + 1
       var17 = var11 * (1/var17)
       var22 *= var17
       var22 /= 2
@@ -575,44 +576,59 @@ endif
   var22 = 0
   SAFE_INJECT_D var22
   var17 = OSCDBottom + OHurtboxSize // top of target
-  var0 = TopNY - var10 + var12 + var22 // center of move detection
-  if var0 >= var17 
+  var0 = var6 * -1
+  if var0 >= OHurtboxSize
     // self is above
     var0 = OHurtboxSize
-  elif var0 <= OSCDBottom 
+  elif var0 <= 0 
     // self is below
     var0 = 0 // OHurtboxSize * -1
   else 
     // self is between
-    var17 -= var0
-    var0 = OHurtboxSize - var17
+    var17 = var0 - OHurtboxSize
+    // var0 -= var17
     // var0 = var22
   endif
-  // var0 *= -1
+  
+  // if Equal AirGroundState 2
+    
+  //   if Equal OAirGroundState 1
+  //     // var0 = var0 + OHurtboxSize * 0.5
+  //     var0 += OHurtboxSize
+  //   endif
+  // endif
   var6 += var0
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+    var6 = 0
+  endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || Equal var18 1
+  //   if Equal var8 1 || var18 >= 1
   //     var5 += TopNX
   //     var6 += TopNY
   //     DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
   //     var5 -= TopNX
   //     var6 -= TopNY
-  //     var17 = 0.8 + 1
+  //     var17 = 0.0 + 1
   //     var17 = var11 * (1/var17)
   //     var11 = var17
-  //     var9 = var9 + var17 * 0.8
-  //     var17 = 0.8 + 1
+  //     var9 = var9 + var17 * 0.0
+  //     var17 = 0.0 + 1
   //     var17 = var12 * (1/var17)
   //     var12 = var17
-  //     var10 = var10 - var17 * 0.8
-  //     var17 = TopNY - var10 + var12 + var22
-  //     DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //     var10 = var10 - var17 * 0.0
+  //     // var17 = TopNY - var10 + var12 + var22
+  //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //     if CalledAs ApproachHub
+  //       var11 -= 3
+  //       var9 += 6
+  //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
   //     var22 += TopNX
   //     var17 = TopNY - var10 + var12
   //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
   //     var17 += var0
+      
   //     // if OTopNX > 0
   //     //   var22 += var11
   //     // else
@@ -623,10 +639,14 @@ endif
   //     var17 = var22 + OSCDBottom
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
-  //     var17 = var11 * 0.8
+  //     if CalledAs ApproachHub
+  //       var11 += 3
+  //       var9 -= 6
+  //     endif
+  //     var17 = var11 * 0.0
   //     var9 -= var17
   //     var11 = var11 + var17
-  //     var17 = var12 * 0.8
+  //     var17 = var12 * 0.0
   //     var10 += var17
   //     var12 = var12 + var17
   //   endif
@@ -639,7 +659,7 @@ endif
   GetNearestCliff var0
   var17 = var15 - NumFrames
   var1 = XSpeed * var17
-  var1 += TopNX
+  var0 -= TopNX
   if var0 < 0
     if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
       var0 -= var1
@@ -656,7 +676,7 @@ endif
     endif
   endif
   if !(Equal var0 1) && !(Equal var0 -1)
-    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
+    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
       var0 = 2
     else
       var0 = 0

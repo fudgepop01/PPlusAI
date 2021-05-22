@@ -5,9 +5,30 @@ id 0x8004
 
 unk 0x0
 
+var0 = 4
+label
+Cmd30
+if Equal AirGroundState 1 && Equal var21 32769
+  Call ApproachHub
+elif Equal var16 7
+elif Equal var21 32769 && MeteoChance && Equal var16 3
+  Call ApproachHub
+endif
+
+if !(Equal XDistFrontEdge XDistBackEdge)
+  Call AIHub
+endif
+if Equal var16 7
+  Call LedgeHang
+endif
 if FramesHitstun > 0
   Return
 endif
+var0 -= 1
+if var0 > 0
+  Return
+endif
+
 if Equal var18 255
   Seek
   Jump
@@ -19,6 +40,10 @@ var6 = 0
 label
 var8 = 0
 label
+if FramesHitstun > 0
+  Call AIHub
+endif
+Cmd30
 
 // detects if below stage
 
@@ -54,7 +79,9 @@ endif
   var1 = var1 - (TopNY * -1)
 
 var0 += var2
-if Rnd < 0.05
+if Rnd < 0.15 && LevelValue <= 75
+  var1 -= 20
+elif Rnd <= 0.03
   var1 -= 20
 endif
 
@@ -62,6 +89,9 @@ if !(NoOneHanging)
   var1 -= 20 
 endif
 
+if FramesHitstun > 0
+  Call AIHub
+endif
 if Equal var16 5
   if var1 < -40
     Button X
@@ -69,6 +99,9 @@ if Equal var16 5
   Return
 endif
 
+LOGSTR 1633907712 796090624 1668546560 0 0
+LOGVAL CurrAction
+LOGVAL CurrSubaction
   if Equal CurrAction 16 
   Goto handleSFall
   Return
@@ -89,7 +122,7 @@ endif
   GetNearestCliff var2
   var17 = 15
   var3 = XSpeed * var17
-  var3 += TopNX
+  var2 -= TopNX
   if var2 < 0
     if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
       var2 -= var3
@@ -106,7 +139,7 @@ endif
     endif
   endif
   if !(Equal var2 1) && !(Equal var2 -1)
-    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
+    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
       var2 = 2
     else
       var2 = 0
@@ -141,7 +174,6 @@ if Equal OIsOnStage 0 && var0 <= 9999.9999 && var0 >= -9999.9999 && var1 >= var1
   var18 = 0
   Call EdgeguardHub
 endif
-var18 = 0
 
 // drift towards goal
 var17 = var0 * -1
@@ -156,7 +188,6 @@ endif
 var17 = var0
 Abs var17
 var22 = TopNY - BBoundary
-
 if var22 < 10
   if NumJumps > 0
     Button X
@@ -164,32 +195,48 @@ if var22 < 10
     Stick 0 0.7
     Button B
   endif
-elif var1 > 9999.9999 && Rnd < 0.1 && Equal var7 0 && NumJumps > 0
+elif var1 > 9999.9999 && Rnd < 0.03 && Equal var7 0 && NumJumps > 0 && !(Equal var18 255)
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
   Button X
   var6 = 30
-elif var1 < -9999.9999 && Rnd < 0.1 && Equal var7 0 && NumJumps > 0
+elif var1 < -9999.9999 && Rnd < 0.03 && Equal var7 0 && NumJumps > 0 && !(Equal var18 255)
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
   Button X
   var6 = 30
-elif var1 < -9999.9999 && NumJumps > 0
+elif var1 < -9999.9999 && NumJumps > 0 && !(Equal var18 255)
   Button X
   var6 = 30
-elif var1 < -9999.9999 && Equal var8 0
+elif var1 < -9999.9999
+  if var17 > 9999.9999
+    GetRndPointOnStage var0
+    var17 = var0 - TopNX
+    AbsStick var17
+    Button X
+    var6 = 30
+  elif Equal var8 0
+    if YDistBackEdge < 0
+      Return
+    endif
+    ClearStick
+    Stick 0 0.7
+    Button B
+    var8 = 1
+  endif
+  Return
+endif
+if var17 > 9999.9999 && var1 > 0 && Equal var8 0 && Equal NumJumps 0
+  if YDistBackEdge < 0
+    Return
+  endif
   ClearStick
   Stick 0 0.7
   Button B
   var8 = 1
-elif var17 > 9999.9999 && Equal var8 0 && Equal NumJumps 0
-  ClearStick
-  Stick 0 0.7
-  Button B
-  var8 = 1
-elif var1 > -15 && Equal var7 0 && var17 < 15 && Equal var8 0 && NumJumps > 0
+elif var1 > -15 && Equal var7 0 && var17 < 15 && Equal var8 0 && NumJumps > 0 && !(Equal var18 255)
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17

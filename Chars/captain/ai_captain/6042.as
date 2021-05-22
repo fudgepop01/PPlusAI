@@ -7,22 +7,12 @@ id 0x6031
 //Set Unknown
 unk 0x0
 
+Cmd30
+
 #let frameCounter = var3
 
 if Equal movePart 0
-  move_xOffset = fair_xOffset
-  move_yOffset = fair_yOffset
-  move_xRange = fair_xRange
-  move_yRange = fair_yRange
-  move_hitFrame = fair_hitFrame
-  move_lastHitFrame = fair_lastHitFrame
-  move_IASA = fair_IASA
-  lastAttack = hex(0x6042)
-
-  if Equal moveVariant mv_fair_weak
-    move_hitFrame = fair_weak_hitFrame
-    move_lastHitFrame = fair_weak_lastHitFrame
-  endif
+  Goto fair
 
   if Equal approachType at_defend && OFramesHitstun < 1
     Call DefendHub
@@ -30,24 +20,25 @@ if Equal movePart 0
     Call ApproachHub
   endif
 elif True
+  Goto fair
   move_IASA = fair_IASA
   Stick 1 0
   Button A
   SetFrame 0
   hit_knockback = -1
-  Seek executeAttack
+  Seek ExecuteAttack
 endif
 Return
 
-label executeAttack
+label ExecuteAttack
 Cmd30
 var1 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame - NumFrames, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - frameCounter, _oCalc, _sCalc)
 
 #let isGoingOffstage = var0
-GOING_OFFSTAGE(var0, var1, move_IASA - NumFrames)
+GOING_OFFSTAGE(var0, var1, move_IASA - frameCounter)
 
-if Equal AirGroundState 1 || FrameGE move_IASA
+if Equal AirGroundState 1 || FrameGE move_IASA || FramesHitstun > 0
   Call AIHub
 endif
 
@@ -63,7 +54,7 @@ endif
 
 if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)
   AbsStick isGoingOffstage
-elif True
+elif !(Equal approachType at_throwOut) && !(XDistLE 30)
   if targetXDistance < 0
     AbsStick -1 0
   else
@@ -73,7 +64,7 @@ endif
 
 Abs targetXDistance
 Abs targetYDistance
-Seek executeAttack
+Seek ExecuteAttack
 frameCounter += 1
 if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
   var19 = 2
@@ -85,5 +76,9 @@ if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1
   endif
   Call Landing
 endif
+Return
+
+label fair
+$generateDefinedVariants(FAir)
 Return
 Return

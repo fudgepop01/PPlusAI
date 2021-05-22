@@ -88,30 +88,21 @@
 
 #snippet COMBO_STARTERS
 $refreshMoves()
-$filterMoveHitFrame(20)
-$filterMoveEndlag(25)
-$excludeMovesOrigin(sspecial|uair)
-$outputWithKnockbackThresholds(100, 290, Call)
+$excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
+$outputWithKnockbackThresholds(120, 290, Call)
 #endsnippet
 
 #snippet KILL_MOVES
 $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
-$excludeMovesOrigin(sspecial)
-$outputWithKnockbackThresholds(250, 400, Call)
+$excludeMovesOrigin(sspecial|utilt)
+$outputWithKnockbackThresholds(200, 400, Call)
 #endsnippet
 
 #snippet NEUTRAL_MOVES
-if ODistLE 20
-  movePart = 1
-endif
-
 $refreshMoves()
-$filterMoveHitFrame(20)
-$filterMoveEndlag(20)
-$filterMoveXMinMax(0, 20)
-$excludeMovesOrigin(sspecial|uair)
+$excludeMovesNotOrigin(fair|dair|nair|jab123|grab)
 $output(Call)
 #endsnippet
 

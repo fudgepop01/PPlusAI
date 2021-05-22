@@ -1,6 +1,6 @@
 #include <Definition_AIMain.h>
-//TrueID=0x1060
-id 0x1040
+//TrueID=0x1170
+id 0x1170
 
 //Set Unknown
 unk 0x00000

@@ -19,7 +19,12 @@ if FrameGE 0 && !(FrameGE 1)
 endif
 if FrameGE 4 && !(FrameGE 5)
     Button R
-    Stick OPos (-1)
+    if ODistLE 40
+        globTempVar = OPos * -1
+        AbsStick globTempVar (-1)
+    else
+        AbsStick OPos (-1)
+    endif
 endif
 if FrameGE 10
     Goto _end

@@ -10,7 +10,7 @@ var21 = 36608
   GetNearestCliff var0
   var17 = 4
   var1 = XSpeed * var17
-  var1 += TopNX
+  var0 -= TopNX
   if var0 < 0
     if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
       var0 -= var1
@@ -27,7 +27,7 @@ var21 = 36608
     endif
   endif
   if !(Equal var0 1) && !(Equal var0 -1)
-    if Equal DistBackEdge DistFrontEdge || Equal IsOnStage 0
+    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
       var0 = 2
     else
       var0 = 0

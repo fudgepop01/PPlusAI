@@ -12,6 +12,10 @@ $clearMovesUsed()
 ClearStick
 lastScript = hex(0x8002)
 
+if Equal CurrAction hex(0x04)
+  Stick 1
+endif
+
 #let ODmgXWeight = var8
 #let comboLeniency = var7
 
@@ -22,7 +26,7 @@ ODmgXWeight *= -1
 ODmgXWeight /= 100
 ODmgXWeight *= ODamage
 
-if Equal movePart mp_ATK
+if Equal movePart mp_ATK || Equal approachType at_reroll
   Seek contCombo
   Jump
 endif
@@ -192,11 +196,18 @@ Return
 
 label analyze
 
-globTempVar = OFramesHitstun + comboLeniency
-if globTempVar < move_hitFrame || Equal move_hitFrame -1
+if Equal lastAttack valGeneral
+  Return
+elif valJab123 <= lastAttack && lastAttack <= valDashAttack && OYDistBackEdge < -40 && OTotalYSpeed > -0.5
   comboLeniency = 0
   Return
 endif
+
+// globTempVar = OFramesHitstun + comboLeniency
+// if globTempVar < move_hitFrame || Equal move_hitFrame -1
+//   comboLeniency = 0
+//   Return
+// endif
 
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if !(InAir)

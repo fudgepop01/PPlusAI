@@ -41,6 +41,9 @@ var8 = 1
   endif
   // DrawDebugRectOutline var0 var1 5 5 136 255 136 221
 
+var0 -= TopNX
+var1 -= TopNY
+
 label
 
 if var20 >= 24625 && var20 <= 24639

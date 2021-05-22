@@ -10,7 +10,11 @@ unk 0x00000
 LOGSTR str("============")
 LOGSTR str("=== __80 ===")
 LOGSTR str("============")
-FORCED_SWITCH_CONDITIONS
+if OAttacking && Equal AirGroundState 1 && Rnd < 0.5
+    Call Reflect
+elif Equal lastScript hex(0x8001)
+    Call ApproachHub
+endif
 Call AIHub
 Finish
 Return

@@ -48,12 +48,13 @@
 #const dashForceTurnFrame = 27
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.2
+#const DDMaxRange = 45
 
 #const minBaseReactionTime = 0
 #const maxBaseReactionTime = 21
 
 #const killComboThreshold = 70
-#const hitboxSizeMultiplier = 0.8
+// #const hitboxSizeMultiplier = 0.8
 
 // AI "mode" values
 #const md_attack = 1
