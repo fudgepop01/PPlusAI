@@ -7,6 +7,11 @@ unk 0x0
 
 //Strings
 
+if Equal lastScript hex(0x2050) && !(Equal AirGroundState 3) && YDistBackEdge < 0
+    movePart = hex(0xFF)
+    Call OnGotDamaged
+endif
+
 Cmd30
 if Equal approachType at_OFF_LEDGE
     Seek _OL
@@ -201,7 +206,7 @@ if !(True)
         endif
     else
         Stick 1 (-0.3)
-        if YDistBackEdge >= 2
+        if YDistBackEdge >= -1
             Button X
         else
             Button R
@@ -212,7 +217,6 @@ if !(True)
 endif
 
 if Equal approachType at_OFF_LEDGE && Equal AirGroundState 2
-    LOGSTR str("here")
     globTempVar = Rnd
     LOGVAL globTempVar
     if globTempVar < 1

@@ -2,15 +2,15 @@
 #endsnippet
 
 #snippet MOVE_SPECIFIC_COMBOS
-  if Equal lastAttack valGrab && Rnd < 0.35
-    if Equal moveVariant mv_dthrow
-      moveVariant = mv_techChase
-      Call Grab
-    elif Equal moveVariant mv_uthrow && ODmgXWeight < 30
-      moveVariant = mv_techChase
-      Call Grab
-    endif
-  endif
+  // if Equal lastAttack valGrab && Rnd < 0.35
+  //   if Equal moveVariant mv_dthrow
+  //     moveVariant = mv_techChase
+  //     Call Grab
+  //   elif Equal moveVariant mv_uthrow && ODmgXWeight < 30
+  //     moveVariant = mv_techChase
+  //     Call Grab
+  //   endif
+  // endif
   // if Equal lastAttack valGrab
   //   // LOGSTR str("grbCmbo")
   //   if Equal moveVariant mv_uthrow

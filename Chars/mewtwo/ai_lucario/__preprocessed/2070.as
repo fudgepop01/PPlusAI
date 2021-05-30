@@ -10,10 +10,10 @@ unk 0x00000
 
 Cmd30
 
-var0 = Rnd * 80 + 10
+var0 = Rnd * 20 + 5
 label
 if Equal CurrAction 77
-    if var0 <= 0 || ODistLE 15
+    if var0 <= 0 || ODistLE 20
         var0 = Rnd * 4
         if var0 > 3
             Button A
@@ -25,7 +25,7 @@ if Equal CurrAction 77
             AbsStick (-1) 0
         endif
     endif
-    if ODistLE 25 && var0 < 60 && Rnd <= 0.02
+    if ODistLE 30 && Rnd <= 0.1
         Button A
     endif
     var0 -= 1

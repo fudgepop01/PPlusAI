@@ -11,6 +11,7 @@
   calcMoveYRange = move_yRange * (1 + hitboxSizeMultiplier)
   calcMoveXRange *= 2
   calcMoveYRange *= 2
+  immediateTempVar = targetYDistance
   Abs targetXDistance
   Abs targetYDistance
 
@@ -37,9 +38,13 @@
     // targetYDistance -= OTopNY
     // targetYDistance += TopNY
     // DrawDebugRectOutline targetXDistance targetYDistance calcMoveXRange calcMoveYRange color(0x0000FF88)
-
-    Seek callMove
-    Jump
+    // if OKBAngle >= 180 && OKBAngle <= 360
+      Seek callMove
+      Jump
+    // elif immediateTempVar > 0
+    //   Seek callMove
+    //   Jump
+    // endif
   endif
 #endsnippet
 

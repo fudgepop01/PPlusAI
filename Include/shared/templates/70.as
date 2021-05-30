@@ -7,6 +7,8 @@ unk 0x0
 
 //Strings
 
+TRACK_O_HITSTUN_OPTION
+
 if DistFrontEdge < 25 || !(ODistLE 60) || InAir
     Goto _end
 elif DistBackEdge < 25 || !(ODistLE 60) || InAir

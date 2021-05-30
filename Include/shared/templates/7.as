@@ -8,6 +8,18 @@ unk 0x0
 #let tempVar = var0
 #let grabOOS = var1
 #let grabRange = var2
+#let timer = var3
+predictOOption globTempVar man_shield LevelValue
+predictionConfidence immediateTempVar man_shield LevelValue
+if Equal globTempVar op_attack
+  timer = 7
+  if immediateTempVar >= 0.5
+    timer = 14
+  elif immediateTempVar >= 0.8
+    timer = 20
+  endif
+endif
+
 grabOOS = 0
 if LevelValue >= LV7
   grabRange = grab_xOffset + grab_xRange
@@ -18,14 +30,24 @@ else
 endif
 label
 Cmd30
+lastScript = hex(0x8007)
 
-LOGSTR str("Dist")
-globTempVar = TopNX - OTopNX
-Abs globTempVar
-LOGVAL globTempVar
-
-if OAttacking && OAnimFrame < 20 && XDistLE 50
+if OAttacking && OAnimFrame < 20 && XDistLE 50 || XDistLE 50 && timer > 0
   Button R
+endif
+timer -= 1
+
+if Equal CurrAction hex(0x1D)
+  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
+    grabOOS = 1
+  endif
+  if LevelValue >= LV8 && Equal OPos Direction
+    tempVar = OPos
+  else
+    tempVar = OPos * 0.6 * -1
+  endif
+  AbsStick tempVar
+  Return
 endif
 
 if Equal grabOOS 1 && XDistLE 20 && Equal OPos Direction
@@ -67,14 +89,6 @@ if immediateTempVar < 25 && Equal IsOnStage 1 && Rnd < 0.1
   Return
 endif
 
-if Equal CurrAction hex(0x1D)
-  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
-    grabOOS = 1
-  endif
-  tempVar = OPos * 0.6 * -1
-  AbsStick tempVar
-  Return
-endif
 if Equal CurrAction hex(0x1C)
   Button X
   Seek jumpHandler

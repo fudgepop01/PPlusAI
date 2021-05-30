@@ -11,10 +11,10 @@ unk 0x00000
 Cmd30
 
 #let timer = var0
-timer = Rnd * 80 + 10
+timer = Rnd * 20 + 5
 label
 if Equal CurrAction hex(0x4D)
-    if timer <= 0 || ODistLE 15
+    if timer <= 0 || ODistLE 20
         var0 = Rnd * 4
         if var0 > 3
             Button A
@@ -26,7 +26,7 @@ if Equal CurrAction hex(0x4D)
             AbsStick (-1) 0
         endif
     endif
-    if ODistLE 25 && timer < 60 && Rnd <= 0.02
+    if ODistLE 30 && Rnd <= 0.1
         Button A
     endif
     timer -= 1

@@ -16,6 +16,9 @@
 #const weight = 9999.9999
 #const shieldSize = 9999.9999
 
+#const recoveryHeight = 0
+#const sweetSpotYRange = 4
+#const ledgeRefreshDist = 40
 #const maxYEdgeDistWithJump = 9999.9999
 #const maxYEdgeDist = 9999.9999
 #const maxYEdgeDistJumpNoUpB = 9999.9999
@@ -107,13 +110,14 @@
 #const valDSpecialAir = 24649
 
 #const valGeneral = 25000
+#const valShield = 25001
 
-#const gen_xOffset = -50
-#const gen_yOffset = 60
-#const gen_xRange = 50
-#const gen_yRange = 60
-#const gen_hitFrame = 1
-#const gen_lastHitFrame = 1
+#const gen_xOffset = -35
+#const gen_yOffset = 35
+#const gen_xRange = 35
+#const gen_yRange = 35
+#const gen_hitFrame = 10
+#const gen_lastHitFrame = 10
 #const gen_IASA = 1
 
 #let noCombo = var19
@@ -128,6 +132,44 @@
 #const staunt = 2
 #const dtaunt = 3
 
+// AI Tracker Values (0-15)
+#const man_dashdance = 7
+#const man_approach = 8
+#const man_defend = 9
+#const man_techchase = 10
+#const man_shield = 11
+#const man_attacking = 12
+#const man_atEdgeInit = 13
+#const man_aim = 14
+#const man_outOfHitstun = 15
+
+#const op_null = 0
+#const op_attack = 1
+#const op_defend = 2
+#const op_grab = 3
+
+#const op_towards = 1
+#const op_neutral = 2
+#const op_away = 3
+
+#const op_threat = 1
+#const op_wait = 2
+#const op_commit = 3
+
+#const op_overshoot = 1
+// #const op_neutral = 2
+#const op_undershoot = 3
+
+#const op_jump = 1
+// #const op_neutral = 2
+#const op_hitstun_attack = 3
+
+// works beacause it isn't approaching - it's used to track what tactics
+// work or fail vs the target opponent
+#let edgeType = var16
+#const et_threat = 101
+#const et_wait = 102
+#const et_commit = 103
 
 // controls the approach the AI uses. It's okay because MOVES shouldn't care
 // about what script was called previously - only what move they are.
@@ -141,6 +183,7 @@
 #const at_OFF_LEDGE = 7
 #const at_immediate = 8
 #const at_reroll = 9
+#const at_retreat = 10
 
 // AI values
 #const LV1 = 0

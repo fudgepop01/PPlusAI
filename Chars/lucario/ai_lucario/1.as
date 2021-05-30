@@ -34,8 +34,4 @@
 #endsnippet
 
 #snippet ADDITIONAL_IDLE_HOOK
-  if Equal lastAttack valNSpecial && YDistBackEdge > -5 && YDistBackEdge < 0
-    Seek makeIdle
-    Jump
-  endif
 #endsnippet

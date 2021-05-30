@@ -1,27 +1,6 @@
 #snippet PRE_HOOKS
 #endsnippet
 
-#snippet HITSTUN_ENDS
-  if Equal AirGroundState 1
-    if Equal LevelValue LV9 && Damage < 50
-      movePart = 1
-      Call DTilt
-    endif
-    Stick -1
-  elif Rnd < 0.3 && CanJump
-    if Rnd < 0.6
-      movePart = 0
-      Call DAir
-    else
-      Button X
-      Call FAir
-    endif
-  else
-    Seek Hitstun_End
-    Return
-  endif
-#endsnippet
-
 #snippet L_CANCEL
   if !(Equal noCombo noComboVal) && YDistBackEdge < -5 && Equal HitboxConnected 1 && LevelValue >= LV5
     Call ComboHub
@@ -56,10 +35,19 @@
 #endsnippet
 
 #snippet DEFENSE_OPTIONS
-  if Rnd < 0.8 && !(Equal Direction OPos)
+  if Rnd < 0.65 && !(Equal Direction OPos)
     Call BAir
-  else
+  elif Rnd < 0.3
+    lastAttack = valShield
+    Call DefendHub
+  elif Rnd < 0.3
     Call FAir
+  elif Rnd < 0.2
+    Call DSmash
+  elif Rnd < 0.2
+    Call FSmash
+  else
+    Call DTilt
   endif
 #endsnippet
 
@@ -117,15 +105,27 @@
 #endsnippet
 
 #snippet COMBO_STARTERS
-$pickRandMove(dair|fair|dashattack|dtilt|jab123|utilt, Call)
-#endsnippet
-
-#snippet KILL_MOVES
-$refreshMoves()
+// $refreshMoves()
 // $filterMoveHitFrame()
 // $filterMoveEndlag(20)
 // $excludeMovesOrigin()
-$outputWithKnockbackThresholds(190, 400, Call)
+// $outputWithKnockbackThresholds(80, 170, Call)
+if Rnd < 0.4 || ODmgXWeight > 100 && Rnd < 0.75
+  Return
+endif
+$pickRandMove(dair|fair|dashattack|dtilt|utilt|sspecial|uthrow|dthrow, Call)
+#endsnippet
+
+#snippet KILL_MOVES
+// $refreshMoves()
+// $filterMoveHitFrame()
+// $filterMoveEndlag(20)
+// $excludeMovesOrigin()
+// $outputWithKnockbackThresholds(150, 400, Call)
+if Rnd < 0.5 || ODmgXWeight < 60
+  Return
+endif
+$pickRandMove(usmash|dsmash|fsmash|uair|nair|bair|sspecial_power, Call)
 #endsnippet
 
 #snippet NEUTRAL_MOVES
@@ -133,7 +133,7 @@ if ODistLE 20
   movePart = 1
 endif
 
-$pickRandMove(fair|dashattack|dtilt, Call)
+$pickRandMove(fair|dashattack|dtilt|grab, Call)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

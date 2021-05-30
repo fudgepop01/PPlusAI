@@ -1,171 +1,188 @@
-#include <Definition_AIMain.h>
-//TrueID=0x6030
-id 0x6030
-
-//Set Unknown
-unk 0x0
-
-//Strings
-
-
-
-// sets up offsets to get to target position
-if CalledAs Jab123
-  $generateDefinedVariants(Jab123)
-elif CalledAs DashAttack
-  $generateDefinedVariants(DashAttack)
-elif CalledAs FTilt
-  // LOGSTR str("ftilt")
-  $generateDefinedVariants(FTilt)
-elif CalledAs UTilt
-  // LOGSTR str("utilt")
-  $generateDefinedVariants(UTilt)
-elif CalledAs DTilt
-  // LOGSTR str("dtilt")
-  $generateDefinedVariants(DTilt)
-elif CalledAs FSmash
-  // LOGSTR str("fsmash")
-  $generateDefinedVariants(FSmash)
-elif CalledAs USmash
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(USmash)
-elif CalledAs DSmash
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(DSmash)
-elif CalledAs NSpecial
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(NSpecial)
-elif CalledAs SSpecial
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(SSpecial)
-elif CalledAs USpecial
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(USpecial)
-elif CalledAs DSpecial
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(DSpecial)
-elif CalledAs Grab
-  // LOGSTR str("usmash")
-  $generateDefinedVariants(Grab)
-else
-  Call AIHub
-endif
-
-if !(Equal movePart 0)
-  Seek
-  Jump
-  Return
-endif
-
-if Equal approachType at_defend && OFramesHitstun < 1
-  Call DefendHub
-else
-  Call ApproachHub
-endif
-
-label
-ClearStick
-if CalledAs Jab123
-  move_IASA = jab123_IASA
-  lastAttack = valJab123
-  Button A
-elif CalledAs FTilt
-  move_IASA = ftilt_IASA
-  lastAttack = valFTilt
-  Stick (0.5) 0
-  Button A
-elif CalledAs UTilt
-  move_IASA = utilt_IASA
-  lastAttack = valUTilt
-  Stick 0 0.7
-  Button A
-elif CalledAs DTilt
-  move_IASA = dtilt_IASA
-  lastAttack = valDTilt
-  Stick 0 (-0.7)
-  Button A
-elif CalledAs FSmash
-  move_IASA = fsmash_IASA
-  lastAttack = valFSmash
-  Stick 1 0
-  Button A
-elif CalledAs USmash
-  move_IASA = usmash_IASA
-  lastAttack = valUSmash
-  Stick 0 1
-  Button A
-elif CalledAs DSmash
-  move_IASA = dsmash_IASA
-  lastAttack = valDSmash
-  Stick 0 (-1)
-  Button A
-elif CalledAs NSpecial
-  move_IASA = nspecial_IASA
-  lastAttack = valNSpecial
-  Button B
-elif CalledAs SSpecial
-  move_IASA = sspecial_IASA
-  lastAttack = valSSpecial
-  Stick 1 0
-  Button B
-elif CalledAs USpecial
-  move_IASA = uspecial_IASA
-  lastAttack = valUSpecial
-  Stick 0 1
-  Button B
-elif CalledAs DSpecial
-  move_IASA = dspecial_IASA
-  lastAttack = valDSpecial
-  Stick 0 (-1)
-  Button B
-elif CalledAs Grab
-  move_IASA = grab_IASA
-  lastAttack = valGrab
-  Button R|A
-elif CalledAs DashAttack
-  move_IASA = dashattack_IASA
-  lastAttack = valDashAttack
-  Button A
-endif
-LOGSTR str("posData")
-LOGVAL move_xRange
-LOGVAL move_yRange
-LOGVAL move_xOffset
-LOGVAL move_yOffset
-SetFrame 0
-hit_knockback = -1
-Seek ExecuteAttack
-Return
-
-label ExecuteAttack
-var8 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, 1, _oCalc, _sCalc)
-
-if Equal movePart 2
-  if var5 <= move_xRange && var6 <= move_yRange
-  elif !(XDistLE 50)
-  else
-    Button A
+#snippet PRE_SCRIPT_HOOKS
+  if CalledAs USpecial
+    movePart = 1
   endif
-endif
+#endsnippet
 
-RECORD_HIT_KNOCKBACK
+#snippet PRE_HOOKS
+  if Equal movePart 2
+    if var5 <= move_xRange && var6 <= move_yRange
+    elif !(XDistLE 50)
+    else
+      Button A
+    endif
+  endif
+#endsnippet
 
-if CalledAs USmash
+#snippet USmash
   AbsStick OPos
   if Equal HitboxConnected 1 && NumFrames < 17 && Equal moveVariant mv_usmash_cancel
     movePart = 1
     moveVariant = mv_ASC
+    ClearStick
     Button B
     Call NSpecial
   endif 
-endif
+#endsnippet
 
-if Equal HitboxConnected 1
-  Call ComboHub
-elif FrameGE move_IASA || CurrAction <= hex(0x09) || !(Equal AirGroundState 1)
+#snippet POST_HOOKS
+  if Equal HitboxConnected 1
+    Call ComboHub
+  endif
+#endsnippet
+
+#snippet AGS_CHECK
+  if !(Equal AirGroundState 1) && !(CalledAs USmash)
+    Call AIHub
+  endif
+#endsnippet
+
+#snippet NSpecial
+  if Equal moveVariant mv_ASC 
+    Seek ASC
+  elif Equal moveVariant mv_aurabomb
+    Button A
+    Seek aurabomb
+  else
+    Seek NSPSetup
+  endif
+  Return
+
+  label ASC
+  if CurrAction <= hex(0x09)
+    Call AIHub
+  endif
+
+  if CurrSubaction >= hex(0x1D0) && CurrSubaction <= hex(0x1D3)
+    Button R
+    Call AIHub
+  endif
+  Return
+
+  label aurabomb
+  Button A
   Call AIHub
-endif
-Seek ExecuteAttack
-Return
-Return
+  Return
+
+  label NSPSetup
+  Goto checks
+  if CurrSubaction >= hex(0x1D0) && CurrSubaction <= hex(0x1D3)
+    Seek NSPExecuteSetup
+    Return
+  elif CurrAction <= hex(0x09)
+    Call AIHub
+  endif
+  if !(Equal OPos Direction)
+    AbsStick OPos
+  endif
+  Return
+
+  label NSPExecuteSetup
+  #let timer = var1
+  timer = 10 + Rnd * 70
+
+  label NSPExec
+  Goto checks
+
+  #let loopTempVar = var0
+  loopTempVar = 20
+
+  if Equal movePart 2
+    Seek 
+    Jump
+  endif
+  if !(True)
+    label _chk
+    #let targetXDist = var5
+    #let targetYDist = var6
+
+    Goto CTD
+
+    if targetXDist <= move_xRange && targetYDist <= move_yRange
+      Button B
+    endif
+
+    loopTempVar -= 5
+    if loopTempVar <= 0
+      Seek
+      Jump
+    else
+      Seek _chk
+      Jump
+    endif
+    Return
+  endif
+  label
+
+  if ODistLE 30
+    if Rnd < 0.8 && Equal Direction OPos
+      Button B
+    elif Rnd < 0.2
+      Button R
+    elif Rnd < 0.4
+      Stick 1 0
+    else
+      Stick -1 0
+    endif
+  endif
+  timer -= 1
+  if timer <= 0 && Equal movePart 2
+    Button R
+    Call AIHub
+  elif timer <= 0
+    movePart = 2
+    timer = 50 + Rnd * 100
+  endif
+  Seek NSPExec
+  Return
+#endsnippet
+
+#snippet SSpecial
+  if Equal moveVariant mv_sspecial_spike && Equal XDistBackEdge XDistFrontEdge && Equal frameCounter 20
+    Button A
+  elif Equal moveVariant mv_sspecial_power && Equal frameCounter 20 
+    Button A
+  endif
+
+  if FrameGE move_IASA || CurrAction <= hex(0x09) || Equal HitboxConnected 1
+    Call AIHub
+  endif
+#endsnippet
+
+#snippet USpecial
+  #let targetXDistance = var5
+  #let targetYDistance = var6
+  #let targetOverallDist = var7
+  EST_O_COORDS(targetXDistance, targetYDistance, 4)
+
+  targetXDistance -= TopNX
+  targetYDistance -= TopNY
+
+  Norm targetOverallDist targetXDistance targetYDistance
+  targetXDistance /= targetOverallDist
+  targetYDistance /= targetOverallDist
+  AbsStick targetXDistance targetYDistance
+
+  if Equal HitboxConnected 1 || Equal NumFrames 38
+    label
+    Button A
+    if Equal CurrSubaction hex(0x1E)
+      SetFrame 0
+      Seek CancelAttack
+    endif
+    Return
+  endif
+
+  if CurrAction <= hex(0x09) || Equal HitboxConnected 1
+    Call AIHub
+  endif
+  Return
+
+  label CancelAttack
+    Goto checks
+    if frameCounter >= 10
+      isImmediateCombo = immediate
+      Call ComboHub
+    endif
+  Return
+#endsnippet

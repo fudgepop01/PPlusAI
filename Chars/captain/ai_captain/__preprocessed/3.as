@@ -182,14 +182,20 @@ label WDBackGrabLedge
 if !(Equal AirGroundState 3)
   if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
     // wavedash back to ledge?
-    if var0 < 15
+    var22 = XSpeed
+    Abs var22
+    var22 = 20 + var22 
+    if var0 < var22
       var0 = var1 * Direction
-      // LOGSTR 1852012544 539631616 1684632064 0 0
-      // LOGVAL var0
-      if var0 < -5
+      LOGSTR 1852012544 539631616 1684632064 0 0
+      LOGVAL var0
+      if var0 < -10
         Stick -1
         Return
-      elif YDistBackEdge > -1 && InAir && var0 > 2.5 && Equal IsOnStage 1
+      elif var0 < 5
+        Stick 1
+        Return
+      elif YDistBackEdge > -1 && InAir && var0 > 5 && Equal IsOnStage 1
         Button R
         var0 *= -0.08
         if var0 > -0.3
@@ -203,12 +209,15 @@ if !(Equal AirGroundState 3)
         endif
       endif
     else
-      var0 = OPos*0.8
-      AbsStick var0
+      AbsStick OPos
+      if Equal CurrAction 1
+        ClearStick
+      endif
     endif
-  elif var0 > 3
-    var18 = 255
-    Call RecoveryHub
+  elif Equal IsFastfalling 1
+    Stick 1
+  else
+    Stick 1 (-1)
   endif
 // elif var4 < 10 && var5 < 10
 //   Button R

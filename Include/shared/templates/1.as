@@ -19,6 +19,7 @@ endif
 if Equal lastScript hex(0x1120)
   Call ComboHub
 elif FramesHitstun > 0 || Equal move_xRange 0
+  approachType = 0
   Call AIHub
 endif
 
@@ -79,8 +80,11 @@ label
 IF_O_IS_TECHING
 {SKIP_DASHDANCE_CONDITIONS}
 // elif OAttacking && Rnd < 0.6 && XDistLE 20
-// elif Rnd < 0.05 && XDistLE 60
+elif CurrAction >= hex(0x7C) && CurrAction <= hex(0x7D)
+elif XDistLE 10
+elif InAir
 elif move_xRange > 30
+elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x52)
 elif Equal lastScript hex(0x8F00) || Equal lastScript hex(0x2060) || Equal lastScript hex(0x8002) || MeteoChance
 elif Equal approachType at_throwOut && Rnd < 0.3
 else
@@ -88,18 +92,24 @@ else
   DASHDANCE(var0, var1)
 endif
 
+// prevTargetXDistance
+var7 = hex(0xFFFF)
 label BEGIN_MAIN
 Cmd30
 
-globTempVar = move_xOffset + (move_xRange * 2)
-if Equal AirGroundState 2 && YDistBackEdge < 30 && !(Equal approachType at_edgeguard)
-  if globTempVar <= -1 && Equal Direction OPos
-    approachType = at_reroll
-    Call AIHub
-  elif globTempVar >= 1 && !(Equal Direction OPos)
-    approachType = at_reroll
-    Call AIHub
-  endif
+// globTempVar = move_xOffset + (move_xRange * 2)
+// if Equal AirGroundState 2 && YDistBackEdge < 30 && !(Equal approachType at_edgeguard)
+//   if globTempVar <= -1 && Equal Direction OPos
+//     approachType = at_reroll
+//     Call AIHub
+//   elif globTempVar >= 1 && !(Equal Direction OPos)
+//     approachType = at_reroll
+//     Call AIHub
+//   endif
+// endif
+if OYDistBackEdge < -40 && lastAttack <= valDashAttack
+  approachType = at_reroll
+  Call AIHub
 endif
 
 if Equal OIsOnStage 1 && Equal approachType at_edgeguard
@@ -237,12 +247,31 @@ if loopTempVar < 1
   loopTempVar = 1
 endif
 
-if Equal AirGroundState 2
-  Seek LOOP_DIST_CHECK
-  Jump
-elif Equal AirGroundState 1
-  Seek LOOP_DIST_CHECK
-  Jump
+if Equal OCurrAction hex(0x61)
+  if Equal OAnimFrame 3
+    globTempVar = OXSpeed * OPos
+    if globTempVar > 0.1
+      trackOAction man_techchase op_away
+    elif globTempVar < -0.1
+      trackOAction man_techchase op_towards
+    else
+      trackOAction man_techchase op_neutral
+    endif
+  endif 
+endif
+
+Goto checkHitstunOption
+
+if !(Equal AirGroundState 3) 
+  if Equal OIsOnStage 1 && Equal IsOnStage 1
+    if SamePlane
+      Seek LOOP_DIST_CHECK
+      Jump
+    endif
+  else
+    Seek LOOP_DIST_CHECK
+    Jump
+  endif
 endif
 label LOOP_DIST_EXIT
 if !(True)
@@ -250,14 +279,52 @@ if !(True)
   // clacs distance to the target
   CALC_TARGET_DISTANCES(var5, var6, loopTempVar, var3, var4, move_hitFrame + (move_lastHitFrame - move_hitFrame) / 2, _oCalc, _sCalc)
 
+  if Equal var4 -9999.9999
+    targetYDistance = var4
+  endif
+
+  if LevelValue >= LV6 && OCurrAction >= hex(0x42) && OCurrAction <= hex(0x45) && Equal OIsOnStage 1 && Equal AirGroundState 1
+    EstOYCoord globTempVar OFramesHitstun
+    globTempVar = OTopNY - globTempVar
+    immediateTempVar = OTopNY + OYDistBackEdge
+    if globTempVar < immediateTempVar
+      predictOOption globTempVar man_outOfHitstun LevelValue
+      predictionConfidence immediateTempVar man_outOfHitstun LevelValue
+      
+      LOGSTR str("PREDICTION")
+      LOGVAL globTempVar
+      LOGVAL immediateTempVar
+      // DrawDebugRectOutline TopNX TopNY 25 3 color(0xFF0000DD)
+
+      if Equal globTempVar op_jump && Rnd < immediateTempVar
+        if ONumJumps > 0
+          targetYDistance -= 20
+        endif
+      elif Equal globTempVar op_hitstun_attack && Rnd < immediateTempVar && XDistLE 25
+        Call Unk3020
+      endif
+    endif
+  endif
+
+  globTempVar = prevTargetXDistance - targetXDistance
+  Abs globTempVar
+  if globTempVar > 50 && !(Equal prevTargetXDistance hex(0xFFFF))
+    targetXDistance = prevTargetXDistance
+  endif
+
   // targetXDistance and targetYDistance come from the macro
   absTargetXDistance = targetXDistance
   absTargetYDistance = targetYDistance
   Abs absTargetXDistance
   Abs absTargetYDistance
-  // if we're not jumping
 
-  if !(Equal CurrSubaction JumpSquat)
+  if lastAttack <= valDSmash && !(Equal lastAttack valUSmash) && !(Equal lastAttack valGrab) && Equal CurrAction hex(0x03)
+    immediateTempVar = groundFric * 50
+    absTargetXDistance -= immediateTempVar
+  endif
+
+  // if we're not jumping
+  if !(Equal CurrSubaction JumpSquat) && !(Equal targetYDistance -9999.999)
     shouldFastFall = 0
     #let localTempVar = var2
 
@@ -269,6 +336,16 @@ if !(True)
     {FASTFALL_CHECK}
 
     if !(Equal AirGroundState 2) || !(Equal YSpeed 0) 
+      if CanJump && YDistBackEdge > maxYEdgeDistWithJump
+        approachType = 0
+        Call RecoveryHub
+      elif !(CanJump) && YDistBackEdge > maxYEdgeDist
+        approachType = 0
+        Call RecoveryHub
+      elif YDistBackEdge > 50
+        approachType = 0
+        Call RecoveryHub
+      endif
       #let shouldAttack = var2
       if absTargetXDistance <= move_xRange
         shouldAttack = 0
@@ -292,28 +369,44 @@ if !(True)
         tempVar = TopNY - OTopNY
         Abs tempVar
         if !(Equal approachType at_edgeguard) && Rnd < 0.4
-          if XDistLE 25 && tempVar <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
-            if Rnd < 0.9
-              Call Unk3020
-            endif
-
-            DEFENSIVE_REACTION_TIME(var0, var1)
-
-            label
-            Button X
-            globTempVar = OPos * -1
-            AbsStick globTempVar
-            if InAir || FramesHitstun > 0
-              Call AIHub
-            endif
-            Return
-          elif XDistLE 35 && tempVar <= 40 && OAttacking && Equal AirGroundState 2 && !(MeteoChance)
-
-            DEFENSIVE_REACTION_TIME(var0, var1)
-            Button X
-            movePart = 0
-            Call AIHub
+          // I can get rid of this thanks to A N T I C I P A T I O N
+          if ODistLE 30
+            predictOOption globTempVar man_approach LevelValue
+            predictionConfidence immediateTempVar man_approach LevelValue
+            if !(Equal ODirection OPos) && Equal globTempVar op_attack && Rnd < immediateTempVar
+              if Equal AirGroundState 2 && NumJumps > 0
+                Button X
+                Seek BEGIN_MAIN
+              else
+                Call Unk3020
+              endif
+            elif Equal globTempVar op_defend && Rnd < immediateTempVar && Rnd < 0.55
+              lastScript = hex(0x8002)
+              Call Grab
+            endif 
           endif
+          // if XDistLE 25 && tempVar <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
+          //   if Rnd < 0.9
+          //     Call Unk3020
+          //   endif
+
+          //   DEFENSIVE_REACTION_TIME(var0, var1)
+
+          //   label
+          //   Button X
+          //   globTempVar = OPos * -1
+          //   AbsStick globTempVar
+          //   if InAir || FramesHitstun > 0
+          //     Call AIHub
+          //   endif
+          //   Return
+          // elif XDistLE 35 && tempVar <= 40 && OAttacking && Equal AirGroundState 2 && !(MeteoChance)
+
+          //   DEFENSIVE_REACTION_TIME(var0, var1)
+          //   Button X
+          //   movePart = 0
+          //   Call AIHub
+          // endif
         endif
       elif localTempVar <= move_xRange
         shouldAttack = 0
@@ -335,13 +428,6 @@ if !(True)
           Return
         endif
       endif
-      if CanJump && YDistBackEdge > maxYEdgeDistWithJump
-        approachType = 0
-        Call RecoveryHub
-      elif !(CanJump) && YDistBackEdge > maxYEdgeDist
-        approachType = 0
-        Call RecoveryHub
-      endif
     endif
   endif
 
@@ -355,7 +441,7 @@ if !(True)
   Jump
 endif
 
-if !(Equal CurrSubaction JumpSquat) && SamePlane && Equal AirGroundState 1 && Equal OAirGroundState 1 && absTargetYDistance > move_yRange
+if !(Equal CurrSubaction JumpSquat) && SamePlane && Equal AirGroundState 1 && Equal OAirGroundState 1 && absTargetYDistance > move_yRange && !(Equal targetYDistance -9999.9999) 
   Call AIHub
 endif
 
@@ -380,9 +466,11 @@ if !(Equal CurrSubaction JumpSquat)
   // tempVar -= TopNX
   // localTempVar -= TopNX
   Abs tempVar
-
-  if Equal AirGroundState 1 && CurrAction <= 9 && Equal IsOnStage 1 && !(Equal approachType at_throwOut)
-    if tempVar <= move_xRange && lastAttack >= hex(0x6041) && lastAttack <= valGeneral
+  // immediateTempVar = move_xRange + jumpXInitVel * move_hitFrame
+  
+  if Equal targetYDistance -9999.9999 
+  elif Equal AirGroundState 1 && CurrAction <= hex(0x9) && Equal IsOnStage 1 && !(Equal approachType at_throwOut)
+    if tempVar <= move_xRange && lastAttack >= hex(0x6041) && lastAttack <= valGeneral || XDistLE oJumpingDist && lastAttack >= hex(0x6041) && lastAttack <= valGeneral      
       if MeteoChance
         if OYDistBackEdge < -5
           Button X
@@ -406,35 +494,6 @@ if !(Equal CurrSubaction JumpSquat)
       else
         ClearStick 0
       endif
-    elif XDistLE oJumpingDist && lastAttack >= hex(0x6041) && lastAttack <= valGeneral
-      if MeteoChance
-        if OYDistBackEdge < -5
-          Button X
-        endif
-      elif targetYDistance <= jumpIfOWithin
-        globTempVar = move_xOffset + (move_xRange * 2)
-        label
-        if globTempVar <= -1 && Equal Direction OPos
-          Stick -1
-          Return
-        elif globTempVar >= 1 && !(Equal Direction OPos)
-          Stick -1
-          Return
-        endif
-        if !(Equal CurrSubaction JumpSquat) && targetYDistance <= jumpIfOWithin
-          Button X
-        elif targetYDistance <= jumpIfOWithin && OAttacking
-          Button X
-        endif
-        Goto JumpIfInRange
-      else
-        ClearStick 0
-      endif
-    // elif Rnd <= 0.02 && lastAttack >= valJab123 && lastAttack <= valDSmash && XDistLE 80 100 && !(Equal approachType at_combo) && !(Equal approachType at_edgeguard)
-    //   // randomly perform tomhawk stuff if using a grounded move and not comboing
-    //   Call mix_tomhawkJump
-    // elif Rnd <= 0.02 && Equal lastAttack hex(0x8008) && !(Equal approachType at_combo) && !(Equal approachType at_edgeguard)
-    //   Call mix_tomhawkJump
     endif
   {MIX_DOUBLEJUMP_SECTION}
   {ADDITIONAL_MIXUPS}
@@ -464,6 +523,61 @@ if !(Equal CurrSubaction JumpSquat)
   endif
 endif
 
+if YDistBackEdge > -4 && Equal IsOnStage 1 && Equal OIsOnStage 1 && YSpeed < 0
+  LOGSTR str("landing")
+  Button R
+  ClearStick
+
+  if XDistBackEdge > -15
+    Stick 1 (-1)
+  elif XDistFrontEdge < 15
+    Stick (-1) (-1)
+  else
+    immediateTempVar = Rnd * 10
+    Stick immediateTempVar (-1)
+  endif
+
+  AbsStick OPos (-1)
+  Seek BEGIN_MAIN
+  Return
+endif
+
+immediateTempVar = XSpeed * 8
+GetYDistFloorOffset globTempVar immediateTempVar 40 0
+if !(Equal globTempVar -1) && globTempVar < 20 && Rnd < 0.15 && !(Equal approachType at_combo) && lastAttack > valDashAttack
+  if XDistLE 25 && Rnd < 0.3 || !(XDistLE 25)
+    label 
+    LOGSTR str("Executing")
+    if !(CurrAction <= hex(0xB))
+      ClearStick
+      Return
+    endif
+    immediateTempVar = jumpSquatFrames + 4
+    label
+    Button X
+    if immediateTempVar <= 0 
+      Seek
+    endif
+    immediateTempVar -= 1
+    Return
+    label
+    if InAir && YDistBackEdge > -3 && !(Equal YSpeed 0) && YSpeed < jumpYInitVel
+      Button R
+      if XDistBackEdge > -15 && XDistBackEdge < -5
+        Stick (-1) (-1)
+      elif XDistFrontEdge < 15 && XDistFrontEdge > 5
+        Stick 1 (-1)
+      else
+        Stick 0 (-1)
+      endif
+      Seek BEGIN_MAIN
+    elif InAir && ODistLE 25
+      Seek BEGIN_MAIN
+    endif
+    Return
+  endif
+endif
+
 if !(SamePlane) && Rnd < 0.8
   if Equal AirGroundState 1 && targetYDistance < 0
     globTempVar = 4
@@ -483,7 +597,7 @@ if !(True)
     AbsStick 0 (-1)
   elif Equal CurrAction hex(0x11)
     AbsStick 0 (-1)
-  else
+  elif !(InAir)
     Return
   endif
 
@@ -514,12 +628,14 @@ nearCliffX = TopNX - nearCliffX
 if nearCliffX > maxXEdgeDist || nearCliffX < -maxXEdgeDist 
   if Equal isGoingOffstage 2 && !(Equal approachType at_edgeguard)
     movePart = 0
+    approachType = 0
     Call RecoveryHub
   endif
 endif
 
 if Equal isGoingOffstage 2 && Equal approachType at_edgeguard
   globTempVar = (YDistFrontEdge * -1) - gravChangeDist
+  immediateTempVar = OTopNY + 30
   if CanJump && YDistFrontEdge < -maxYEdgeDistWithJump
     moveVariant = 0
     approachType = 0
@@ -528,7 +644,7 @@ if Equal isGoingOffstage 2 && Equal approachType at_edgeguard
     moveVariant = 0
     approachType = 0
     Call AIHub
-  elif CanJump && YDistFrontEdge > maxYEdgeDistWithJump
+  elif CanJump && YDistFrontEdge > maxYEdgeDistWithJump || YDistFrontEdge > maxYEdgeDistJumpNoUpB && TopNY < immediateTempVar
     moveVariant = 0
     approachType = 0
     Call RecoveryHub
@@ -537,25 +653,31 @@ endif
 
 // now that the calculations using these are over with, we'll store them
 // for the next frame
-prevTargetXDistance = targetXDistance
+if Equal prevTargetXDistance targetXDistance
+  prevTargetXDistance = hex(0xFFFF)
+else
+  prevTargetXDistance = targetXDistance
+endif
 
 // if we're not in jumpsquat, we want to dash to the location
 if Equal approachType at_edgeguard && lastAttack < hex(0x6040)
+elif XDistLE oWalkingDist && lastAttack < hex(0x6040) && Equal AirGroundState 2
+  Goto makeIdle
+  shouldFastFall = 1
 elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
-  LOGVAL absTargetXDistance
   tempVar = targetXDistance
-  if absTargetXDistance <= 1
-    ClearStick
-  elif XDistLE oWalkingDist
-    if CurrAction < hex(0x03) || CurrAction > hex(0x04)
+  if absTargetXDistance <= 1 && lastAttack <= valDSmash
+    Goto makeIdle
+  elif absTargetXDistance <= oWalkingDist && lastAttack <= valDSmash
+    if CurrAction < hex(0x03)
       ClearStick
       if targetXDistance > 0
-        AbsStick 0.8
+        AbsStick 0.7
       else
-        AbsStick -0.8
+        AbsStick -0.7
       endif
     else
-      AbsStick targetXDistance
+      Goto makeIdle
     endif
   else
     AbsStick targetXDistance
@@ -564,7 +686,6 @@ elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
   if Equal CurrAction hex(0x01) && LevelValue > LV3 && !(XDistLE oWalkingDist)
     ClearStick
   endif
-
 
   if XDistLE oWalkingDist || absTargetXDistance <= move_xRange 
     EstOYCoord globTempVar move_lastHitFrame
@@ -583,8 +704,7 @@ elif Equal CurrSubaction JumpSquat
   shouldFullHop = Rnd
   label jsquat
   immediateTempVar = OTopNX - TopNX
-  tempVar = OXSpeed - XSpeed
-  tempVar *= 5
+  tempVar = (move_xOffset + move_xRange) * Direction
   immediateTempVar += tempVar
   tempVar = immediateTempVar
   Abs tempVar
@@ -629,16 +749,15 @@ elif Equal CurrSubaction JumpSquat
   //     endif
   //   endif
   // endif
-  if Equal CurrSubaction JumpSquat && !(Equal approachType at_throwOut) && !(Equal lastScript hex(0x8002)) && OFramesHitstun < 1
+  Goto JumpIfInRange
+
+  if Equal CurrSubaction JumpSquat && !(Equal approachType at_throwOut) && !(Equal approachType at_combo) && OFramesHitstun < 1
     if shouldFullHop <= 0.2
       Button X
     endif 
     Seek jsquat
     Return
   endif
-  
-
-  Goto JumpIfInRange
 else
   // otherwise...
   tempVar = targetXDistance
@@ -654,6 +773,7 @@ else
     tempVar /= 2
   endif
 
+  AbsStick tempVar
   if !(Equal isGoingOffstage 0) && !(Equal approachType at_edgeguard)
     ClearStick 0
     var0 = XSpeed * -10
@@ -670,6 +790,11 @@ else
 endif
 
 Seek BEGIN_MAIN
+// if Equal approachType at_throwOut
+//   LOGSTR str("throwout")
+//   LOGSTR str("canceled")
+//   approachType = 0
+// endif
 if shouldFastFall > 0
   Return
 endif
@@ -679,7 +804,9 @@ Stick 0 0.5
 Return
 
 label JumpIfInRange
-JUMP_IF_IN_RANGES(var6)
+if !(Equal targetYDistance -9999.9999)
+  JUMP_IF_IN_RANGES(var6)
+endif
 Return
 
 label XDistCheckPassed
@@ -688,13 +815,7 @@ label XDistCheckPassed
 #let loopTempVar = var8
 
 shouldAttack = 0
-
-// tempVar = HurtboxSize
-// if targetYDistance < tempVar && Equal AirGroundState 1 && Equal YSpeed 0 && !(Equal CurrAction hex(0x0A))
-//   tempVar = hex(0xFFFF)
-// else
-  tempVar = move_yRange
-// endif
+tempVar = move_yRange
 if absTargetYDistance <= tempVar
   #let approxDist = var4
   CALC_SELF_Y_CHANGE_GRAVITY(var4, var3, move_IASA, l_test)
@@ -713,6 +834,17 @@ if absTargetYDistance <= tempVar
     Stick 0 0.5
     globTempVar = -maxYEdgeDistWithJump 
     if Equal AirGroundState 1 && CurrAction <= hex(0x17)
+      predictOOption globTempVar man_approach LevelValue
+      predictionConfidence immediateTempVar man_approach LevelValue
+      immediateTempVar *= 0.5
+      if Equal globTempVar op_attack && Rnd < immediateTempVar && !(Equal approachType at_combo)
+        if Rnd < 0.5
+          Button Unk3020
+        else
+          Call FakeOutHub
+        endif
+      endif
+
       globTempVar = move_xOffset + (move_xRange * 2)
       if globTempVar >= 1 && !(Equal Direction OPos)
         Stick (-1)
@@ -741,14 +873,43 @@ if absTargetYDistance <= tempVar
       shouldAttack = 1
       Seek LOOP_DIST_CHECK
     endif
-  elif Equal AirGroundState 1
+  elif Equal AirGroundState 1 || Equal lastAttack valGeneral
     shouldAttack = 1
   endif
 endif
 Return
 
 label CallAttacks
+Cmd30
+if !(Equal approachType at_combo)
+  predictOOption globTempVar man_attacking LevelValue
+  predictionConfidence immediateTempVar man_attacking LevelValue
 
+  if Equal AirGroundState 1 && Rnd < 0.5
+    if Equal globTempVar op_attack && Rnd < immediateTempVar
+      Stick 1
+      Button R 
+      Call OOSHub
+    elif Equal globTempVar op_defend && Rnd < immediateTempVar
+      movePart = 1
+      Call FakeOutHub
+    elif Equal globTempVar op_grab && Rnd < immediateTempVar
+      Call DefendHub
+    endif 
+  elif Equal AirGroundState 2 && TopNY > OTopNY && Rnd < 0.2 && lastAttack >= valNAir && lastAttack <= valDSpecialAir && NumJumps > 0 && !(Equal approachType at_edgeguard)
+    if Rnd < immediateTempVar
+      SetFrame 0
+      label
+      Button X
+      if NumFrames > 2
+        Seek BEGIN_MAIN
+      endif
+      Return
+    endif 
+  endif
+endif
+label
+Goto checkHitstunOption
 // if Equal OAirGroundState 1 && OCurrAction <= hex(0x09) && Rnd < 0.3 && Equal AirGroundState 1 && lastAttack < valNAir
 //   lastAttack = hex(0x8008)
 // endif
@@ -764,74 +925,9 @@ framesOnGround = 0
 {ADDITIONAL_IDLE_HOOK}
 
 // if the action requires us to be stopped,
-if lastAttack >= valJab123 && lastAttack <= valDSmash
-  label makeIdle
-  Seek CallAttacks
-  if Equal CurrAction hex(0x03)
-    // stops the dash
-    ClearStick
-    Button X
-    Return
-  endif
-  if Equal CurrAction hex(0x04)
-    // interrupts run with crouch for one frame
-    ClearStick
-    Stick 0 (-1)
-    Return
-  endif
-  if Equal CurrAction hex(0x0A) || Equal CurrSubaction JumpSquat
-    Return
-  endif
-
-  #let isGoingOffstage = var2
-  GOING_OFFSTAGE(var2, var3, 4)
-
-  if InAir && YDistBackEdge > -10 && YDistBackEdge <= 2 && Equal isGoingOffstage 0
-    ClearStick
-    globTempVar = targetXDistance * -0.1
-    if XDistBackEdge < -5
-      globTempVar = 0.4
-    elif XDistFrontEdge < 5
-      globTempVar = -0.4
-    endif
-    if LevelValue <= LV7
-      if Rnd < 0.5
-        Button R
-        AbsStick globTempVar (-1)
-      endif
-    elif True
-      if Rnd < 0.25
-        globTempVar *= -1
-      elif Rnd < 0.7 && XDistFrontEdge < 30
-        globTempVar *= -1
-      endif
-      Button R
-      AbsStick globTempVar (-1)
-    endif
-    if XDistBackEdge > -shortEdgeRange || XDistFrontEdge < shortEdgeRange
-      ClearStick
-      AbsStick 0 (-1)
-    endif
-    Return
-  elif !(Equal AirGroundState 1)
-    Call AIHub
-  endif
-  globTempVar = move_xOffset + (move_xRange * 2)
-  if globTempVar >= 1 && !(Equal Direction OPos)
-    ClearStick
-    Stick (-0.7)
-    Return
-  elif globTempVar <= -1 && Equal Direction OPos
-    ClearStick
-    Stick (-0.7)
-    Return
-  endif
-  if CurrAction >= hex(0x16) && framesOnGround < 4
-    framesOnGround += 1
-    Return
-  elif CurrAction >= hex(0x18)
-    Return
-  endif
+if lastAttack >= valJab123 && lastAttack <= valDSpecial && !(Equal lastAttack valUSmash) && !(Equal lastAttack valSSpecial) && CurrAction > hex(0x1)
+  Goto makeIdle
+  Return
 elif Equal CurrSubaction JumpSquat
   Return
 elif lastAttack >= hex(0x6040) && lastAttack <= hex(0x604F) && Equal AirGroundState 1
@@ -856,17 +952,18 @@ if lastAttack >= valNSpecial && lastAttack <= valDSpecial
   globTempVar = move_xOffset + (move_xRange * 2)
   if globTempVar >= 1 && !(Equal Direction OPos)
     ClearStick
-    Stick (-1)
+    Stick (-0.7)
   elif globTempVar <= -1 && Equal Direction OPos
     ClearStick
-    Stick (-1)
+    Stick (-0.7)
   else
     ClearStick
-    AbsStick OPos
+    globTempVar = OPos * 0.7
+    AbsStick globTempVar
   endif
 endif
 // DashAttack
-if Equal lastAttack valDashAttack && !(Equal CurrAction hex(0x03))
+if Equal lastAttack valDashAttack && !(Equal CurrAction hex(0x03)) && !(Equal CurrAction hex(0x04))
   if Equal CurrAction hex(0x01)
     ClearStick
   else
@@ -930,5 +1027,79 @@ elif Equal lastAttack valGeneral
   movePart = mp_ATK
   Call ComboHub
 endif
+Return
+
+label makeIdle
+if Equal CurrAction hex(0x03)
+  // stops the dash
+  ClearStick
+  Button X
+  Return
+endif
+if Equal CurrAction hex(0x04)
+  // interrupts run with crouch for one frame
+  ClearStick
+  Stick 0 (-1)
+  Return
+endif
+if Equal CurrAction hex(0x0A) || Equal CurrSubaction JumpSquat
+  Return
+endif
+
+#let isGoingOffstage = var2
+GOING_OFFSTAGE(var2, var3, 4)
+
+if InAir && YDistBackEdge > -10 && YDistBackEdge <= 2 && Equal isGoingOffstage 0
+  ClearStick
+  globTempVar = targetXDistance * 0.4
+  if XDistBackEdge > -5
+    globTempVar = 0.4
+  elif XDistFrontEdge < 5
+    globTempVar = -0.4
+  endif
+  if LevelValue <= LV7
+    if Rnd < 0.5
+      Button R
+      AbsStick globTempVar (-1)
+    endif
+  elif True
+    if Rnd <= 0.1
+      globTempVar *= -1
+    elif Rnd < 0.7 && XDistFrontEdge < 30
+      globTempVar *= -1
+    endif
+    Button R
+    AbsStick globTempVar (-1)
+  endif
+  if XDistBackEdge > -shortEdgeRange || XDistFrontEdge < shortEdgeRange
+    ClearStick
+    AbsStick 0 (-1)
+  endif
+  Return
+elif !(Equal AirGroundState 1)
+  Call AIHub
+endif
+globTempVar = move_xOffset + (move_xRange * 2)
+if globTempVar >= 1 && !(Equal Direction OPos)
+  ClearStick
+  Stick (-0.7)
+  Return
+elif globTempVar <= -1 && Equal Direction OPos
+  ClearStick
+  Stick (-0.7)
+  Return
+endif
+if CurrAction >= hex(0x16) && framesOnGround < 4
+  framesOnGround += 1
+  Return
+elif CurrAction >= hex(0x18)
+  Return
+endif
+Return
+
+label checkHitstunOption
+
+TRACK_O_HITSTUN_OPTION
+
 Return
 Return

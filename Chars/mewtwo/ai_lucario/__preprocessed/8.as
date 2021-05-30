@@ -63,11 +63,11 @@ elif True
     Seek jumpOver
   endif
   var0 = Rnd
-  if var0 < 0.5 && Damage < 25 && !(Equal OCurrAction 52)
+  if var0 < 0.3 && Damage < 60 && !(Equal OCurrAction 52)
     Seek crouchCancelPunish
-  elif var0 < 0.3 && Equal CurrAction 3
+  elif var0 < 0.4 && Equal CurrAction 3
     Seek dashAway
-  elif var0 < 0.4
+  elif var0 < 0.45
     Seek wavedashBack
 
   else

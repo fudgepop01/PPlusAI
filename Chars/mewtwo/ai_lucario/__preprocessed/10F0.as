@@ -5,11 +5,16 @@ id 0x10F0
 //Set Unknown
 unk 0x00000
 
-//Strings
-// str "#wait_f"
-
-if FrameGE 1
-    Finish
-endif
+LOGSTR 1027423488 1027423488 1027423488 1027423488 0
+LOGSTR 1027423488 540094464 1177559040 1027423488 0
+LOGSTR 1027423488 1027423488 1027423488 1027423488 0
+var16 = 3
+  if OAttacking && Equal AirGroundState 1
+    Call Unk3020
+  elif Equal var21 32769
+    Call ApproachHub
+  endif
+Call AIHub
+Return
 Return
 

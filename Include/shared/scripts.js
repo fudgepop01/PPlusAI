@@ -78,6 +78,9 @@ const getMoveData = () => {
     bkb = parseFloat(bkb);
     kbg = parseFloat(kbg);
     angle = parseFloat(angle);
+    if (angle < 0) {
+      angle = 180 - (angle * -1);
+    }
 
     const moveName = name.substring(0, name.length - "_damage_info".length);
     let moveVariant = 0;
@@ -217,12 +220,12 @@ const outputRandMove = (moves, context) => {
   if (context === "Goto") updateTrackedMoves(moves);
   for (const [idx, {origin, moveName, moveVariant, yOffset}] of moves.entries()) {
     let append = "";
-    if (origin.endsWith("air") && yOffset <= -2) append += `&& OYDistBackEdge < -15`;
+    if (origin.toLowerCase().endsWith("air") && yOffset <= -2) append += `&& OYDistBackEdge < -5`;
     if (idx === 0) {
       out(`globTempVar = Rnd * ${moves.length}`);
-      out(`if globTempVar < 1 ${!(origin.endsWith("air")) ? "&& OYDistBackEdge > -10" : ""} ${append}`)
+      out(`if globTempVar < 1 ${(!(origin.toLowerCase().endsWith("air") || origin.toLowerCase().endsWith("special"))) ? " && YDistBackEdge > -3" : ""} ${append}`)
     } else {
-      out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1} ${!(origin.endsWith("air")) ? "&& YDistBackEdge > -10" : ""} ${append}`);
+      out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1} ${!(origin.toLowerCase().endsWith("air")) ? "&& YDistBackEdge > -10 && YDistBackEdge > -10" : ""} ${append}`);
     }
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
     out(context === "Goto" ? `Goto ${moveName.toLowerCase()}` : `Call ${origin}`);
@@ -374,7 +377,8 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
     if (origin === "Grab") {
       append = `&& Rnd < 0.12 && OCurrAction <= hex(0x45)`;
     }
-    if (origin.endsWith("air") && yOffset <= -2) append += ` && OYDistBackEdge < -15`;
+    if (origin.toLowerCase().endsWith("air") && yOffset <= -2) append += ` && OYDistBackEdge < -15`;
+    if (!(origin.toLowerCase().endsWith("air") || origin.toLowerCase().endsWith("special"))) append += ` && YDistBackEdge > -6`;
     out(`if ${conditional} ${append}`);
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
     out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
@@ -393,4 +397,46 @@ export const output = (context) => {
   if (context === "Goto") updateTrackedMoves(CurrMoves);
 
   return outputRandMove(CurrMoves, context);
+}
+
+export const generateThrowDMG = (min, dir) => {
+  clearOut();
+  min = parseFloat(min);
+  dir = parseFloat(dir);
+
+  CurrMoves = Object.values(getMoveData());
+  CurrMoves = CurrMoves.filter((m) => {
+    if (!m.moveName.endsWith("throw")) return false;
+
+    let minKb = m.bkb
+    if (m.angle >= 250 && m.angle <= 290) minKb *= 2;
+    if (dir === "b" || dir === "f") {
+      minKb *= Math.cos(m.angle * Math.PI / 180)
+    } else if (dir === "u") {
+      minKb *= Math.sin(m.angle * Math.PI / 180)
+    }    
+    const minDmg = minKnockbackDamage(min, m.dmg, minKb, m.kbg, m.isWeightDependent);
+    m.minDmg = minDmg;
+    return true;
+  });
+
+  for (const {moveName, minDmg, angle} of CurrMoves) {
+    let output = "";
+    switch (moveName.toLowerCase()) {
+      case 'uthrow': output += 'uThrowDMG = '; break;
+      case 'dthrow': output += 'dThrowDMG = '; break;
+      case 'fthrow': output += 'fThrowDMG = '; break;
+      case 'bthrow': output += 'bThrowDMG = '; break;
+    }
+
+    if ((dir === "b" && ((angle <= 90 && angle >= 0) || (angle > 270 && angle <= 360)))
+      || (dir === "f" && (angle > 90 && angle < 270))) {
+      output += 9999;
+    } else {
+      output += minDmg;
+    }
+    out(output);
+  }
+
+  return _out;
 }

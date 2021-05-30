@@ -12,6 +12,5 @@ LOGSTR str("============")
 LOGSTR str("=== 2010 ===")
 LOGSTR str("============")
 Call RecoveryHub
-Finish
 Return
 Return

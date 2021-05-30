@@ -8,8 +8,26 @@ unk 0x00000
 
 //Strings
 
+if OAnimFrame > 1 && OAnimFrame <= 2 && ODistLE 80
+  if OPrevAction >= 66 && OPrevAction <= 69 || Equal OPrevAction 73 || Equal var16 6
+    if Equal OCurrAction 12 || Equal OCurrAction 13
+      trackOAction 15 1
+    elif OAttacking && Rnd < 0.6
+      trackOAction 15 3
+    elif Equal OCurrAction 14 || Equal OCurrAction 70 || Equal OCurrAction 74 || Equal OCurrAction 96 || Equal OCurrAction 97
+      if OFramesHitstun <= 0 && Rnd < 0.5
+        trackOAction 15 2
+      endif
+    endif
+  endif
+endif
+
 if FramesHitstun > 0 || Equal CurrAction 69
     Call AIHub
+endif
+
+if Rnd < 0.4
+    Call FakeOutHub
 endif
 
 if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
@@ -65,15 +83,14 @@ endif
 
 label
 
-if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 60
+if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && Damage < 60
     SetFrame 0
     label
     Stick 0 (-1)
-    if NumFrames >= 20
+    if NumFrames >= 40
         Call AIHub
     elif FramesHitstun > 0
-        Seek
-        Jump
+        Call OnGotDamaged
     endif
     Return
 endif
@@ -183,7 +200,6 @@ label _1
 Goto shieldStunCheck
 if FrameGE 2
     Stick 0 1
-    Button A
     if FrameGE 2
         SetFrame 0
     endif
@@ -199,7 +215,6 @@ if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
     Finish
 endif
 if FrameGE 2
-    Button A
     if FrameGE 2
         SetFrame 0
     endif
@@ -223,7 +238,7 @@ if Equal CurrAction 29
     Call OOSHub
     Finish
 endif
-if XDistLE 25 && Rnd <= 0.3
+if XDistLE 5 && Rnd <= 0.1
     Button R|A
     Finish
 endif

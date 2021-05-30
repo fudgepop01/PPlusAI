@@ -5,6 +5,17 @@ id 0x8007
 
 unk 0x0
 
+predictOOption var17 11 LevelValue
+predictionConfidence var22 11 LevelValue
+if Equal var17 1
+  var3 = 7
+  if var22 >= 0.5
+    var3 = 14
+  elif var22 >= 0.8
+    var3 = 20
+  endif
+endif
+
 var1 = 0
 if LevelValue >= 60
   var2 = 1 + 6
@@ -15,14 +26,24 @@ else
 endif
 label
 Cmd30
+var21 = 32775
 
-LOGSTR 1147761408 1946157056 0 0 0
-var17 = TopNX - OTopNX
-Abs var17
-LOGVAL var17
-
-if OAttacking && OAnimFrame < 20 && XDistLE 50
+if OAttacking && OAnimFrame < 20 && XDistLE 50 || XDistLE 50 && var3 > 0
   Button R
+endif
+var3 -= 1
+
+if Equal CurrAction 29
+  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
+    var1 = 1
+  endif
+  if LevelValue >= 75 && Equal OPos Direction
+    var0 = OPos
+  else
+    var0 = OPos * 0.6 * -1
+  endif
+  AbsStick var0
+  Return
 endif
 
 if Equal var1 1 && XDistLE 20 && Equal OPos Direction
@@ -68,14 +89,6 @@ if var22 < 25 && Equal IsOnStage 1 && Rnd < 0.1
   Return
 endif
 
-if Equal CurrAction 29
-  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
-    var1 = 1
-  endif
-  var0 = OPos * 0.6 * -1
-  AbsStick var0
-  Return
-endif
 if Equal CurrAction 28
   Button X
   Seek jumpHandler

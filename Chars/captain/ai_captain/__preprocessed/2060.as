@@ -7,6 +7,11 @@ unk 0x0
 
 //Strings
 
+if Equal var21 8272 && !(Equal AirGroundState 3) && YDistBackEdge < 0
+    var18 = 255
+    Call OnGotDamaged
+endif
+
 Cmd30
 if Equal var16 7
     Seek _OL
@@ -209,7 +214,7 @@ if !(True)
         endif
     else
         Stick 1 (-0.3)
-        if YDistBackEdge >= 2
+        if YDistBackEdge >= -1
             Button X
         else
             Button R
@@ -220,7 +225,6 @@ if !(True)
 endif
 
 if Equal var16 7 && Equal AirGroundState 2
-    LOGSTR 1751478784 1694498816 0 0 0
     var17 = Rnd
     LOGVAL var17
     if var17 < 1

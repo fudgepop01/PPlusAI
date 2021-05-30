@@ -24,8 +24,9 @@
 #const weight = 104
 #const shieldSize = 9.6
 
-#const maxYEdgeDistWithJump = 69
-#const maxYEdgeDist = 57
+#const sweetSpotYRange = 4
+#const maxYEdgeDistWithJump = 75
+#const maxYEdgeDist = 58
 #const maxYEdgeDistJumpNoUpB = 25
 #const maxXEdgeDist = 60
 
@@ -35,17 +36,17 @@
 #const edgeRange = 25
 #const calloutSpeed = 0.3
 
-#const jumpIfOWithin = 80
+#const jumpIfOWithin = 75
 #const SHIfOBeyond = 7
 #const FHIfOBeyond = 25
-#const DJIfOWithin = 35
+#const DJIfOWithin = 32
 #const DJIfOBeyond = 23
 
 #const techChaseCloseDist = 20
 #const techChaseFarDist = 40
 
-#const dashCountMax = 15
-#const dashForceTurnFrame = 27
+#const dashCountMax = 12
+#const dashForceTurnFrame = 14
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.1
 #const DDMaxRange = 50
@@ -179,10 +180,10 @@
 #const sspecial_IASA = 26
 #const sspecial_xOffset = 3
 #const sspecial_yOffset = 0
-#const sspecial_xRange = 8
+#const sspecial_xRange = 18
 #const sspecial_yRange = 5
-#const sspecial_hitFrame = 26
-#const sspecial_lastHitFrame = 26 // just a dummy
+#const sspecial_hitFrame = 1
+#const sspecial_lastHitFrame = 1 // just a dummy
 #const sspecial_damage_info = SSpecial|7|78|80|90
 
 // grab

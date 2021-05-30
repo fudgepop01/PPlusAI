@@ -156,14 +156,20 @@ label WDBackGrabLedge
 if !(Equal AirGroundState 3)
   if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
     // wavedash back to ledge?
-    if tempVar < 15
+    immediateTempVar = XSpeed
+    Abs immediateTempVar
+    immediateTempVar = 20 + immediateTempVar 
+    if tempVar < immediateTempVar
       tempVar = nearCliffX * Direction
-      // LOGSTR str("ncx * dir")
-      // LOGVAL tempVar
-      if tempVar < -5
+      LOGSTR str("ncx * dir")
+      LOGVAL tempVar
+      if tempVar < -10
         Stick -1
         Return
-      elif YDistBackEdge > -1 && InAir && tempVar > 2.5 && Equal IsOnStage 1
+      elif tempVar < 5
+        Stick 1
+        Return
+      elif YDistBackEdge > -1 && InAir && tempVar > 5 && Equal IsOnStage 1
         Button R
         tempVar *= -groundFric
         if tempVar > -0.3
@@ -177,12 +183,15 @@ if !(Equal AirGroundState 3)
         endif
       endif
     else
-      tempVar = OPos*0.8
-      AbsStick tempVar
+      AbsStick OPos
+      if Equal CurrAction hex(0x1)
+        ClearStick
+      endif
     endif
-  elif tempVar > 3
-    movePart = hex(0xFF)
-    Call RecoveryHub
+  elif Equal IsFastfalling 1
+    Stick 1
+  else
+    Stick 1 (-1)
   endif
 // elif AbsOXDistFrontEdge < 10 && EstOYDistFrontEdge < 10
 //   Button R

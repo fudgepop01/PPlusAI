@@ -33,18 +33,22 @@
   // endif
 
   if !(Equal isImmediateCombo immediate) && Equal HitboxConnected 1
-    LOGSTR str("cancel")
-    LOGVAL lastAttack
+    #let trueLastAttack = var4
+    #let frameCounter = var6
+    frameCounter = -1
+    trueLastAttack = lastAttack
+    
     label _begin_immediates
+    frameCounter += 1
+    
     #let incrementor = var7
-    #let rndChoice = var1
+    #let rndChoice = var17
     movePart = 1
-    comboLeniency = 10
-    if Equal lastAttack valJab123 || Equal lastAttack valDashAttack
+    comboLeniency = 12
+    if Equal trueLastAttack valJab123 || Equal trueLastAttack valDashAttack
       incrementor = 8
       label _tilts
       rndChoice = Rnd * 6
-      LOGVAL incrementor
       LOGSTR str("tilts")
 
       if rndChoice < 1
@@ -65,12 +69,14 @@
       endif
       Jump
     endif
-    if lastAttack >= valFTilt && lastAttack <= valDTilt
+    if trueLastAttack >= valFTilt && trueLastAttack <= valDTilt
       label _smEntry
       incrementor = 8
+      if ODmgXWeight > 90
+        incrementor = 15
+      endif
       label _smashes
       movePart = 2
-      LOGVAL incrementor
       LOGSTR str("smashes")
       rndChoice = Rnd * 6
       if rndChoice < 1
@@ -79,7 +85,7 @@
         Goto dsmash
       elif rndChoice < 3
         Goto usmash
-        if Rnd < 0.7
+        if Rnd < 0.7 && ODmgXWeight < 80
           moveVariant = mv_usmash_cancel
         endif
       else
@@ -94,21 +100,21 @@
       endif
       Jump
     endif
-    if lastAttack >= valNAir && lastAttack <= valDAir
+    if trueLastAttack >= valNAir && trueLastAttack <= valDAir
       Seek _spEntry
       Jump
     endif
-    if lastAttack >= valFSmash && lastAttack <= valDSmash
+    if trueLastAttack >= valFSmash && trueLastAttack <= valDSmash
       label _spEntry
       incrementor = 10
-      LOGVAL incrementor
+      LOGSTR str("specials")
       label _specials
       movePart = 1
       moveVariant = 0
       rndChoice = Rnd * 18
-      if rndChoice < 2
+      if rndChoice < 1
         Goto nspecial      
-      elif rndChoice < 6 && XDistFrontEdge > edgeRange
+      elif rndChoice < 5 && XDistFrontEdge > edgeRange
         if Equal Direction 1 && OKBXSpeed > 0.7
           Call DSpecial
         elif Equal Direction -1 && OKBXSpeed < -0.7
@@ -116,32 +122,41 @@
         else
           Goto clear
         endif
-      elif rndChoice < 8
+      elif rndChoice < 11
         Goto sspecial
         if ODmgXWeight > 80 && Equal AirGroundState 1
           moveVariant = mv_sspecial_power
         elif ODmgXWeight > 40 && Equal AirGroundState 2 && Equal OIsOnStage 0
           moveVariant = mv_sspecial_spike
         endif
-      elif rndChoice < 11 && OKBSpeed > 2.95 && OKBYSpeed > 0 && OKBXSpeed >= -2 && OKBXSpeed <= 2 && !(Equal OXDistBackEdge OXDistFrontEdge)
+      elif rndChoice < 14 && OKBSpeed > 2.95 && OKBYSpeed > 0 && OKBXSpeed >= -2 && OKBXSpeed <= 2 && !(Equal OXDistBackEdge OXDistFrontEdge)
         Call USpecial
+      elif rndChoice < 16 && Equal trueLastAttack valUSmash && AnimFrame >= 15
+        Button X
+        Call AIHub
       else
         Goto clear
       endif
       Goto analyze
       incrementor -= 1
       if incrementor <= 0
-        if LevelValue >= LV6 && Rnd < 0.1
+        if LevelValue >= LV6 && Rnd < 0.1 && !(Equal trueLastAttack valJab123) && !(Equal trueLastAttack valDTilt)
           moveVariant = mv_ASC
           Goto nspecial
           Call NSpecial
-        elif LevelValue >= LV5 && NumFrames >= 5
+        elif LevelValue >= LV5 && frameCounter >= 5 && !(Equal trueLastAttack valJab123) && !(Equal trueLastAttack valDTilt)
           moveVariant = mv_ASC
           Goto nspecial
           Call NSpecial
         endif
-        if NumFrames < 5
+        LOGSTR str("FCounter")
+        LOGVAL frameCounter
+        if frameCounter < 5
           Seek _begin_immediates
+          Return
+        elif Equal trueLastAttack valUSmash && AnimFrame >= 15
+          Button X
+          Seek _end
           Return
         else
           Seek _end
@@ -153,6 +168,7 @@
     endif
   endif
   label _end
+  LOGSTR str("end")
   movePart = 0
 
   if Equal isImmediateCombo immediate
@@ -174,7 +190,7 @@
 
 #snippet KILL_OPTIONS
   $refreshMoves()
-  $outputWithKnockbackThresholds(180, 400, Goto)
+  $outputWithKnockbackThresholds(140, 400, Goto)
 #endsnippet
 
 #snippet JUGGLE_OPTIONS
@@ -193,7 +209,7 @@
 
 #snippet EXTRA_ANALYSIS
 if Equal movePart 1 
-  frameToCalc = move_hitFrame
+  frameToCalc = move_hitFrame + 3
   {CTD}
 endif
 #endsnippet

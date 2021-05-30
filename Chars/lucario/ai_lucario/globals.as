@@ -24,11 +24,11 @@
 #const weight = 94
 #const shieldSize = 8.6
 
-#const maxYEdgeDistWithJump = 65
-#const maxYEdgeDist = 45
+#const recoveryHeight = -50
+#const maxYEdgeDistWithJump = 85
+#const maxYEdgeDist = 70
 #const maxYEdgeDistJumpNoUpB = 20
 #const maxXEdgeDist = 45
-
 
 #const oWalkingDist = 10
 #const shortEdgeRange = 10
@@ -44,8 +44,8 @@
 #const techChaseCloseDist = 10
 #const techChaseFarDist = 25
 
-#const dashCountMax = 20
-#const dashForceTurnFrame = 27
+#const dashCountMax = 15
+#const dashForceTurnFrame = 10
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.2
 #const DDMaxRange = 45

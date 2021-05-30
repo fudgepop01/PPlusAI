@@ -159,8 +159,7 @@ label execute
   var17 = var14 + var1
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
-    var17 -= var13 
-    var17 -= var8
+    var17 = 0
   endif
   var17 += 1
   EstOXCoord var5 var17
@@ -604,7 +603,7 @@ endif
   //   endif
   // endif
   var6 += var0
-  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
   // if !(CalledAs ComboHub)
@@ -625,8 +624,8 @@ endif
   //     // var17 = TopNY - var10 + var12 + var22
   //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
   //     if CalledAs ApproachHub
-  //       var11 -= 3
-  //       var9 += 6
+  //       var11 -= 2.5
+  //       var9 += 5
   //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
@@ -646,8 +645,8 @@ endif
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
   //     if CalledAs ApproachHub
-  //       var11 += 3
-  //       var9 -= 6
+  //       var11 += 2.5
+  //       var9 -= 5
   //     endif
   //     var17 = var11 * 0.0
   //     var9 -= var17

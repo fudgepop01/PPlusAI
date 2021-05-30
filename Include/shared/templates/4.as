@@ -9,14 +9,19 @@ unk 0x0
 sureTimer = 4
 label
 Cmd30
+
+if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(OutOfStage)
+  Call OnGotDamaged
+endif
+
 if Equal AirGroundState 1 && Equal lastScript hex(0x8001)
   Call ApproachHub
 elif Equal approachType at_OFF_LEDGE
-elif Equal lastScript hex(0x8001) && MeteoChance && Equal approachType at_edgeguard
+elif Equal lastScript hex(0x8001) && MeteoChance && Equal approachType at_edgeguard && !(NoOpponent)
   Call ApproachHub
 endif
 
-if !(Equal XDistFrontEdge XDistBackEdge)
+if !(OutOfStage) || Equal AirGroundState 1
   Call AIHub
 endif
 if Equal approachType at_OFF_LEDGE
@@ -41,8 +46,9 @@ endif
 #let jumpingTimer = var6
 jumpingTimer = 0
 label
+{INITIALIZERS}
 hasTriedToUpB = 0
-label
+label _main
 if FramesHitstun > 0
   Call AIHub
 endif
@@ -58,21 +64,25 @@ Cmd30
 GetNearestCliff rawCX
 GetReturnGoal rawReturnX
 
+#const NCXOffs = 7
+#const NCXOffsNear = 5
+{NCXOFFS_REDEFINE}
+
 globTempVar = rawReturnX - rawCX 
 isBelowStage = 0
 if globTempVar < 10 && globTempVar > -10
   if globTempVar < 0
-    nearCliffXOffset = 5
+    nearCliffXOffset = NCXOffsNear
   else
-    nearCliffXOffset = -5
+    nearCliffXOffset = -NCXOffsNear
   endif
 elif rawReturnX < TopNX && TopNX < rawCX
 elif rawCX < TopNX && TopNX < rawReturnX  
 elif TopNY < rawReturnY
   if globTempVar < 0
-    nearCliffXOffset = 7
+    nearCliffXOffset = NCXOffs
   else
-    nearCliffXOffset = -7
+    nearCliffXOffset = -NCXOffs
   endif
   isBelowStage = 1
 endif
@@ -85,24 +95,27 @@ endif
 NEAREST_CLIFF(nearCliffX, nearCliffY)
 
 nearCliffX += nearCliffXOffset
-if Rnd < 0.15 && LevelValue <= LV8
-  nearCliffY -= 20
-elif Rnd <= 0.03
-  nearCliffY -= 20
-endif
 
 if !(NoOneHanging)
   nearCliffY -= 20 
 endif
 
+// nearCliffX -= TopNX
+// nearCliffX *= -1
+// nearCliffY -= TopNY
+// DrawDebugRectOutline nearCliffX nearCliffY maxXEdgeDist maxYEdgeDistWithJump color(0xFF000088)
+// DrawDebugRectOutline nearCliffX nearCliffY maxXEdgeDist maxYEdgeDist color(0xFF880088)
+// DrawDebugRectOutline nearCliffX nearCliffY maxXEdgeDist maxYEdgeDistJumpNoUpB color(0xFFFF0088)
+// DrawDebugRectOutline nearCliffX nearCliffY 5 5 color(0x00FF00DD)
+// nearCliffX *= -1
+// nearCliffX += TopNX
+// nearCliffY += TopNY
+
 if FramesHitstun > 0
   Call AIHub
 endif
 if Equal approachType at_ledgeRefresh
-  if nearCliffY < -40
-    Button X
-  endif
-  Return
+  {LEDGE_REFRESH}
 endif
 
 LOGSTR str("act/sact")
@@ -128,7 +141,7 @@ endif
 #let isGoingOffstage = var2
 GOING_OFFSTAGE(isGoingOffstage, var3, 15)
 
-if Equal isGoingOffstage 0
+if Equal isGoingOffstage 0 || Equal AirGroundState 1
   Call AIHub
 endif
 
@@ -141,15 +154,14 @@ endif
 
 #let localMaxYEdgeDist = var2
 if CanJump && NumJumps > 0
-  localMaxYEdgeDist = -maxYEdgeDistWithJump
+  localMaxYEdgeDist = maxYEdgeDistWithJump
 elif !(CanJump)
-  localMaxYEdgeDist = -maxYEdgeDistJumpNoUpB
+  localMaxYEdgeDist = maxYEdgeDistJumpNoUpB
 else
-  localMaxYEdgeDist = -maxYEdgeDist
+  localMaxYEdgeDist = maxYEdgeDist
 endif
 
-globTempVar = localMaxYEdgeDist * -1
-if Equal OIsOnStage 0 && Equal approachType at_edgeguard && OTopNY > BBoundary && YDistBackEdge < globTempVar
+if Equal OIsOnStage 0 && Equal approachType at_edgeguard && !(NoOpponent) && YDistBackEdge < localMaxYEdgeDist
   Call ApproachHub
 endif
 
@@ -168,8 +180,16 @@ if jumpingTimer > 0
   Return
 endif
 
-globTempVar = nearCliffX
-Abs globTempVar
+
+LOGSTR str("NCY")
+LOGVAL nearCliffY
+
+#let diamondDist = var2
+#let absNCX = var3
+DIAMOND_DIST(diamondDist, nearCliffX, nearCliffY)
+
+absNCX = nearCliffX
+Abs absNCX
 immediateTempVar = TopNY - BBoundary
 if immediateTempVar < 10
   if NumJumps > 0
@@ -184,24 +204,27 @@ elif nearCliffY > maxYEdgeDistJumpNoUpB && Rnd < 0.03 && Equal isBelowStage 0 &&
   AbsStick globTempVar
   Button X
   jumpingTimer = 30
+  Return
 elif nearCliffY < -maxYEdgeDistJumpNoUpB && Rnd < 0.03 && Equal isBelowStage 0 && NumJumps > 0 && !(Equal movePart hex(0xFF))
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
   Button X
   jumpingTimer = 30
-elif nearCliffY < -maxYEdgeDistWithJump && NumJumps > 0 && !(Equal movePart hex(0xFF))
+  Return
+elif nearCliffY < -maxYEdgeDistWithJump && NumJumps > 0
   Button X
   jumpingTimer = 30
-elif nearCliffY < -maxYEdgeDist
-  if globTempVar > maxXEdgeDist
+  Return
+elif nearCliffY > -maxYEdgeDist && nearCliffY <= -calc(maxYEdgeDist - sweetSpotYRange)
+  if diamondDist > 0 && NumJumps > 0
     GetRndPointOnStage nearCliffX
     globTempVar = nearCliffX - TopNX
     AbsStick globTempVar
     Button X
     jumpingTimer = 30
-  elif Equal hasTriedToUpB 0
-    if YDistBackEdge < 0
+  elif Equal hasTriedToUpB 0 
+    if YDistBackEdge < recoveryHeight
       Return
     endif
     ClearStick
@@ -211,25 +234,32 @@ elif nearCliffY < -maxYEdgeDist
   endif
   Return
 endif
-if globTempVar > maxXEdgeDist && Equal hasTriedToUpB 0 && Equal NumJumps 0
-  if YDistBackEdge < 0
+immediateTempVar = OTopNY + 30
+if YDistBackEdge > 0 && Equal hasTriedToUpB 0 && TopNY < immediateTempVar && nearCliffY > -maxYEdgeDist && Equal OIsOnStage 0 && Equal isBelowStage 0 && XDistLE 10 && absNCX > 10 && diamondDist < 0
+  ClearStick
+  Stick 0 0.7
+  Button B
+  hasTriedToUpB = 1
+  Return
+endif
+if diamondDist < 0 && Equal hasTriedToUpB 0 && Equal NumJumps 0
+  if YDistBackEdge < recoveryHeight
     Return
   endif
   ClearStick
   Stick 0 0.7
   Button B
   hasTriedToUpB = 1
-elif nearCliffY > -15 && Equal isBelowStage 0 && globTempVar < minXEdgeDist && Equal hasTriedToUpB 0 && NumJumps > 0 && !(Equal movePart hex(0xFF))
+elif nearCliffY > -15 && Equal isBelowStage 0 && diamondDist < 0 && Equal hasTriedToUpB 0 && NumJumps > 0 && !(Equal movePart hex(0xFF))
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
   Button X
   jumpingTimer = 30
 endif
-Return
+{ADDITIONAL_TRIGGERS}
 
-label willOEdgehog
-  
+Seek _main
 Return
 
 

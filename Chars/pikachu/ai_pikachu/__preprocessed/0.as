@@ -7,6 +7,14 @@ label begin
 
 
 
+// if CurrAction >= 66 && CurrAction <= 68 || Equal CurrAction 69 && YDistBackEdge < -7 && !(OutOfStage)
+//   Call OnGotDamaged
+// endif
+
+// if Equal var17 1111573504
+//   Call OnGotDamaged
+// endif
+
 if Equal var18 255 || Equal var18 255
   var18 = 0
 endif
@@ -30,11 +38,6 @@ if Equal var16 9
   Jump
 endif
 
-if Equal CurrAction 73 || Equal var17 1111573504
-  Seek Hitstun_End
-  Jump
-endif
-
 if Equal LevelValue 100
   if CurrAction >= 30 && CurrAction <= 32
     Stick 0 (-1)
@@ -48,237 +51,12 @@ if Equal LevelValue 100
   endif
 endif
 
-//______________________________________
-// Rand DI / tech "smart" implementation
-// randomly DIs unless conditions are met for survival DI
-
-// if in hitstun...
-if FramesHitstun > 0 || FramesHitlag > 0
-  label hitstunHandler
-  var21 = 32768
-  if LevelValue >= 60
-    var0 = Rnd * 2 * OPos * -1
-    if KBAngle > 90 && KBAngle < 170
-      var0 *= -1
-    endif  
-    if Rnd < 0.2
-      var0 *= -1
-    endif
-  else
-    var0 = (Rnd * 2) - 1
-  endif
-  var1 = Rnd - 1
-  if Rnd < 0.2
-    var1 *= -1
-  endif
-  var2 = 1
-  var3 = Rnd * 5 + 15
-  var5 = 0
-  // makes it loop from here each frame
-  label
-  Cmd30
-
-  if FramesHitlag > 0 && Equal LevelValue 100 
-    if Rnd < 0.75
-      var17 = OPos * -1
-      if XDistBackEdge > -10
-        var17 = OPos
-      endif
-      var22 = Rnd * 2 - 1
-      AbsStick var17 var22
-    endif
-    Return
-  endif
-endif
-
-if FramesHitstun > 1 && CurrAction >= 68 && CurrAction <= 69 && Equal AirGroundState 2 
-  LOGSTR 1751741440 1936982016 0 0 0
-  LOGVAL KBAngle
-  if KBAngle >= 80 && KBAngle <= 100
-    LOGSTR 1668247040 1680932864 0 0 0
-    var17 = OPos * -1
-    if KBAngle > 90
-      var17 *= -1
-    endif
-    if Rnd < 0.2
-      var17 *= -1
-    endif
-    AbsStick var17 (-1)
-  elif Equal IsOnStage 0 || KBSpeed > 4
-    LOGSTR 1668247040 1680998400 0 0 0
-    // if offstage with high damage, switch to survival DI
-    var0 = TopNX * -1
-    AbsStick var0 1
-  else
-    LOGSTR 1668247040 1681063936 0 0 0
-    AbsStick var0 var1
-  endif
-  if Equal LevelValue 75 && YDistBackEdge > -5 && Equal IsOnStage 1
-    ClearStick
-    AbsStick var0 (-1)
-  endif
-  // until hitstun is 0
-  if LevelValue >= 60
-    Goto _checkMeteorCancel
-  endif
-  if LevelValue >= 21
-    Goto _checkTech
-  endif
-  Return
-endif
-
 if FramesHitstun > 1 && CurrAction >= 67 && CurrAction <= 69 && LevelValue >= 75
-  var17 = OPos * -1
-  if XDistBackEdge > -10
-    var17 = OPos
-  endif
-  Stick var17 (-1)
-  Return
+  Call OnGotDamaged
 endif
 
-if FramesHitstun > 0 && CurrAction <= 16
-  Seek
-  Jump
-elif FramesHitstun > 0 && var5 > 3 && LevelValue >= 42
-  label
-  var0 = Damage / 100
-  var0 *= 0.75
-  if Rnd < var0
-    var18 = 1
-    Call FakeOutHub
-  endif
-  
-  if Equal AirGroundState 1
-    if Rnd < 0.5 || LevelValue < 48
-      Stick -1
-    else
-      var18 = 1
-      Call DTilt
-    endif
-  elif Rnd < 0.2 && CanJump
-    Button X
-    var18 = 0
-    Call DAir
-  else
-    Seek Hitstun_End
-    Return
-  endif
-  Seek
-  Jump
-elif Equal FramesHitstun 1 && LevelValue >= 42
-  label
-  GetNearestCliff var0
-  var17 = 15
-  var1 = XSpeed * var17
-  var0 -= TopNX
-  if var0 < 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var0 -= var1
-      if var0 >= 0
-        var0 = 1
-      endif
-    endif
-  elif var0 > 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var0 -= var1
-      if var0 <= 0
-        var0 = -1
-      endif
-    endif
-  endif
-  if !(Equal var0 1) && !(Equal var0 -1)
-    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
-      var0 = 2
-    else
-      var0 = 0
-    endif
-  endif
-  if !(Equal var0 0)
-    Seek begin
-    Return
-  endif
-
-  var0 = Damage / 100
-  var0 *= 0.75
-  if Rnd < var0
-    Call FakeOutHub
-  endif
-
-  if Equal AirGroundState 1
-    if Rnd < 0.5 || LevelValue < 48
-      Stick -1
-    else
-      var18 = 1
-      Call DTilt
-    endif
-  elif Rnd < 0.2 && CanJump
-    Button X
-    var18 = 0
-    Call DAir
-  else
-    Seek Hitstun_End
-    Return
-  endif
-  Seek begin
-  Return
-endif
-
-if CurrAction >= 17 && CurrAction <= 23
-  var5 += 1
-endif
-
-if FramesHitstun > 0 || FramesHitlag > 0
-  Return
-endif
 Seek _main
 Jump
-Return
-
-// Goto statements will return back to where they came
-// from if there isn't a label, making this possible
-//
-// makes the AI input R every 41 frames 80% (base) of the time
-label _checkTech
-if var2 <= 0
-  if CurrAction >= 69 && CurrAction <= 77 && FramesSinceShield > 40
-    var4 = (100 - LevelValue) / 100 * -1
-    var4 += 0.8
-    if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
-      if Rnd < var4
-        Button R
-      endif
-      var2 = 41
-    elif Equal IsOnStage 1 && YDistBackEdge > -7 && YSpeed < 0
-      if Rnd < var4
-        Button R
-      endif
-      var2 = 41
-    endif
-  endif
-endif
-var2 -= 1
-Return
-
-// meteor cancels when applicable 90% (base) of the time with
-// a jump 50% of the time (if possible), otherwise with upB
-label _checkMeteorCancel
-if KBAngle >= 260 && KBAngle <= 280 && var3 <= 0 && Equal IsOnStage 0 && YDistFrontEdge > 0
-  var4 = (100 - LevelValue) / 100
-  var4 = 0.9 - var4
-  if Rnd < 0.9
-    if CanJump && Rnd < 0.5
-      Button X
-    elif CanJump && YDistFrontEdge > 40
-      Button X
-    else
-      Stick 0 0.7
-      Button B
-      Call RecoveryHub
-    endif
-  endif
-  var3 = 41
-endif
-var3 -= 1
 Return
 
 // the stuff here happens when not in hitstun.
@@ -328,26 +106,7 @@ if Equal var0 2 && !(Equal AirGroundState 1)
 endif
 
 if !(True)
-  label Hitstun_End
-  if YDistBackEdge > -25 || LevelValue <= 42
-    Seek _main
-    Return
-  endif
-  label
-  if !(Equal AirGroundState 1) && Rnd <= 0.95 && !(Equal XDistFrontEdge XDistBackEdge) && YDistBackEdge < -50
-    GetRndPointOnStage var2
-    if Rnd < 0.03 && CanJump
-      Button X
-    endif
-    var2 = TopNX - var2
-    AbsStick var2 // the stick X var
-    if YDistBackEdge > -3 && Rnd < 0.4 && Equal CurrAction 73
-      Button R
-    endif
-    Return
-  endif
-  Seek _main
-  Return
+  
 endif
 
 if Equal var0 0 && YDistBackEdge > -15 && Equal CurrAction 51 && LevelValue >= 60
@@ -370,11 +129,6 @@ endif
 // we hold the control stick in the opposite direction
 
 label
-if FramesHitstun > 1
-  Seek hitstunHandler
-  Jump
-  Return
-endif
 if !(Equal var0 0)
   if InAir || Equal CurrAction 3
     var0 = XSpeed * -10
@@ -408,10 +162,15 @@ if !(Equal var19 256)
     Call ComboHub
   elif OFramesHitstun > 0 && LevelValue >= 42
     Call ComboHub
+  elif OCurrAction >= 66 && OCurrAction <= 82 && LevelValue >= 60
+    Call ComboHub
   endif
 endif
 
 ClearStick
+if Equal CurrAction 4 || Equal CurrAction 3
+  Stick 1
+endif
 if Equal AirGroundState 1
   if XDistBackEdge > -15 && XDistFrontEdge > 20
     Stick 1
@@ -448,9 +207,9 @@ var19 = 0
 var18 = 0
 var16 = -1
 
-if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73
+if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73 || OCurrAction >= 77 && OCurrAction <= 95
   SetTimeout 300
-  var0 = Rnd * 50 + 25
+  var0 = Rnd * 40 + 15
   var1 = 0
   if Damage < 80
     var2 = 20
@@ -585,6 +344,21 @@ if Equal var0 0
     endif
   elif YDistBackEdge > -40
 
+  GetNearestCliff var0
+  var0 = TopNX - var0
+  var0 *= -1
+  var1 *= -1
+  var1 = var1 - (TopNY * -1)
+    Abs var0
+
+    var1 = TopNX
+    Abs var1
+    var2 = OTopNX
+    Abs var2
+    if var0 < 25 && XDistLE 40 && var2 < var1 && Equal OFramesHitstun 0 && !(Equal var21 32777) && LevelValue >= 48 && SamePlane
+      Call EdgeEscapeHub
+    endif
+
     if OCurrAction >= 26 && OCurrAction <= 28 && Rnd < 0.7 && XDistLE 25
       Call Grab
     endif
@@ -622,12 +396,12 @@ if Equal var0 0
 
     var21 = 32768
 
-    var3 = Damage - ODamage
+    var3 = 150 - (ODamage - Damage) * 4
     var3 /= 200
 
     if LevelValue >= 42 && Equal var6 0 && var7 <= 2
 
-      var2 = var3 * 0.1
+      var2 = var3 * 0.15
 
       if XDistLE 30 && Rnd < 0.4 && Equal AirGroundState 1
         if Rnd < var2 || Rnd < 0.04
@@ -640,7 +414,7 @@ if Equal var0 0
     endif
 
     if LevelValue >= 60 && Equal var6 0 && var7 <= 2
-      var2 = var3 * 0.10
+      var2 = var3 * 0.18
       Abs var2
       if Rnd < var2
         Call FakeOutHub
@@ -648,12 +422,23 @@ if Equal var0 0
     endif
 
     if Equal var6 0 && var7 <= 3
-      var2 = var3 * 0.1
-      if Rnd < var3 || Rnd < 0.05 || Equal var7 3
+      var2 = var3 * 0.25
+      if Rnd < var3 || Rnd <= 0.2 || Equal var7 3
         var16 = 2
   if OYDistBackEdge < -20
     Call UAir
   endif
+  var22 = Rnd * 6
+  if var22 < 1
+    Call FTilt
+  elif var22 < 2
+    Call DTilt
+  elif var22 < 3
+    Call FSmash
+  elif var22 < 4
+    Call USmash
+  endif
+  
   if Rnd < 0.8 && !(Equal Direction OPos)
     Call BAir
   else
@@ -912,9 +697,9 @@ endif
     Call DAir
   elif var22 > 20
 var17 = Rnd * 2
-if var17 < 1 && OYDistBackEdge > -10 
+if var17 < 1  
 Call FAir
-elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
+elif 1 < var17 && var17 < 2  
 Call DAir
 endif
   elif var22 < -20
@@ -933,43 +718,46 @@ Abs var17
 if ODistLE 8 && var17 < 20 && Equal AirGroundState 1
   var16 = 8
 endif
+if Rnd < 0.1
+  var16 = 2
+endif
 // $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
-if True && 742 <= var2 && Rnd < 0.45
+if True && 742 <= var2 && Rnd < 0.45 && YDistBackEdge > -6
 Call Jab123
 endif
 if True && 199 <= var2 && Rnd < 0.45
 var19 = 1
 Call UAir
 endif
-if True && 178 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 178 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 2
 Call Grab
 endif
-if True && 126 <= var2 && var2 <= 368 && Rnd < 0.30
+if True && 126 <= var2 && var2 <= 368 && Rnd < 0.30 && YDistBackEdge > -6
 Call FTilt
 endif
 if True && 126 <= var2 && var2 <= 347 && Rnd < 0.30
 Call NAir
 endif
-if True && 123 <= var2 && var2 <= 366 && Rnd < 0.40
+if True && 123 <= var2 && var2 <= 366 && Rnd < 0.40 && YDistBackEdge > -6
 Call DTilt
 endif
-if True && 121 <= var2 && Rnd < 0.30
+if True && 121 <= var2 && Rnd < 0.30 && OYDistBackEdge < -15
 var19 = 2
 Call UAir
 endif
-if True && 106 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 106 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 3
 Call Grab
 endif
 if True && 105 <= var2 && Rnd < 0.30
 Call FAir
 endif
-if True && 96 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 96 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 5
 Call Grab
 endif
-if True && 87 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 87 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 4
 Call Grab
 endif
@@ -979,69 +767,72 @@ endif
 if True && 75 <= var2 && var2 <= 248 && Rnd < 0.30
 Call DAir
 endif
-if True && 62 <= var2 && var2 <= 280 && Rnd < 0.45
+if True && 62 <= var2 && var2 <= 280 && Rnd < 0.45 && YDistBackEdge > -6
 Call UTilt
 endif
 if True && 58 <= var2 && var2 <= 210 && Rnd < 0.30
 Call BAir
 endif
-if True && 44 <= var2 && Rnd < 0.45
+if True && 44 <= var2 && Rnd < 0.45 && OYDistBackEdge < -15
 Call UAir
 endif
-if True && 41 <= var2 && var2 <= 163 && Rnd < 0.30
+if True && 41 <= var2 && var2 <= 163 && Rnd < 0.30 && YDistBackEdge > -6
 Call FSmash
 endif
-if True && 31 <= var2 && var2 <= 154 && Rnd < 0.45
+if True && 31 <= var2 && var2 <= 154 && Rnd < 0.45 && YDistBackEdge > -6
 Call USmash
 endif
-if True && 31 <= var2 && var2 <= 316 && Rnd < 0.35
+if True && 31 <= var2 && var2 <= 316 && Rnd < 0.35 && YDistBackEdge > -6
 Call DSmash
 endif
 Return
 
 label killMoves
+if Rnd < 0.1
+  var16 = 2
+endif
 // $filterMoveEndlag(20)
 // $excludeMovesOrigin(sspecial|utilt)
 if True && 508 <= var2 && Rnd < 0.45
 var19 = 1
 Call UAir
 endif
-if True && 459 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 459 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 5
 Call Grab
 endif
-if True && 438 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 438 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 2
 Call Grab
 endif
-if True && 431 <= var2 && Rnd < 0.30
+if True && 431 <= var2 && Rnd < 0.30 && OYDistBackEdge < -15
 var19 = 2
 Call UAir
 endif
-if True && 397 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 397 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 3
 Call Grab
 endif
-if True && 353 <= var2 && Rnd < 0.45
+if True && 353 <= var2 && Rnd < 0.45 && OYDistBackEdge < -15
 Call UAir
 endif
-if True && 295 <= var2 && Rnd < 0.12 && OCurrAction <= 69
+if True && 295 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 4
 Call Grab
 endif
-if True && 240 <= var2 && Rnd < 0.30
+if True && 240 <= var2 && Rnd < 0.30 && YDistBackEdge > -6
 Call FTilt
 endif
-if True && 237 <= var2 && Rnd < 0.40
+if True && 237 <= var2 && Rnd < 0.40 && YDistBackEdge > -6
 Call DTilt
 endif
 if True && 230 <= var2 && var2 <= 489 && Rnd < 0.30
 Call NAir
 endif
-if True && 165 <= var2 && var2 <= 421 && Rnd < 0.45
+if True && 165 <= var2 && var2 <= 421 && Rnd < 0.45 && YDistBackEdge > -6
 Call UTilt
 endif
-if True && 165 <= var2 && Rnd < 0.35
+if True && 165 <= var2 && Rnd < 0.35 && YDistBackEdge > -6
 Call DSmash
 endif
 if True && 158 <= var2 && var2 <= 362 && Rnd < 0.30
@@ -1053,10 +844,10 @@ endif
 if True && 129 <= var2 && var2 <= 308 && Rnd < 0.30
 Call BAir
 endif
-if True && 98 <= var2 && var2 <= 242 && Rnd < 0.30
+if True && 98 <= var2 && var2 <= 242 && Rnd < 0.30 && YDistBackEdge > -6
 Call FSmash
 endif
-if True && 89 <= var2 && var2 <= 233 && Rnd < 0.45
+if True && 89 <= var2 && var2 <= 233 && Rnd < 0.45 && YDistBackEdge > -6
 Call USmash
 endif
 Return
@@ -1069,53 +860,56 @@ Abs var17
 if ODistLE 8 && var17 < 20 && Equal AirGroundState 1
   var16 = 8
 endif
+if Rnd < 0.1
+  var16 = 2
+endif
 // $excludeMovesNotOrigin(fair|dair|nair|jab123|grab)
 var17 = Rnd * 20
-if var17 < 1 && OYDistBackEdge > -10 
+if var17 < 1  && YDistBackEdge > -3 
 Call Jab123
-elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call FTilt
-elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call UTilt
-elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call DTilt
-elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call FSmash
-elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call USmash
-elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 
+elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call DSmash
-elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 
+elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call Grab
-elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 
+elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 2
 Call Grab
-elif 9 < var17 && var17 < 10 && YDistBackEdge > -10 
+elif 9 < var17 && var17 < 10 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 3
 Call Grab
-elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 
+elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 4
 Call Grab
-elif 11 < var17 && var17 < 12 && YDistBackEdge > -10 
+elif 11 < var17 && var17 < 12 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 5
 Call Grab
-elif 12 < var17 && var17 < 13 && YDistBackEdge > -10 
+elif 12 < var17 && var17 < 13  
 Call NAir
-elif 13 < var17 && var17 < 14 && YDistBackEdge > -10 
+elif 13 < var17 && var17 < 14  
 Call NAir
-elif 14 < var17 && var17 < 15 && YDistBackEdge > -10 
+elif 14 < var17 && var17 < 15  
 Call FAir
-elif 15 < var17 && var17 < 16 && YDistBackEdge > -10 
+elif 15 < var17 && var17 < 16  
 Call BAir
-elif 16 < var17 && var17 < 17 && YDistBackEdge > -10 
+elif 16 < var17 && var17 < 17  && OYDistBackEdge < -5
 Call UAir
-elif 17 < var17 && var17 < 18 && YDistBackEdge > -10 
+elif 17 < var17 && var17 < 18  
 var19 = 1
 Call UAir
-elif 18 < var17 && var17 < 19 && YDistBackEdge > -10 
+elif 18 < var17 && var17 < 19  && OYDistBackEdge < -5
 var19 = 2
 Call UAir
-elif 19 < var17 && var17 < 20 && YDistBackEdge > -10 
+elif 19 < var17 && var17 < 20  
 Call DAir
 endif
 Return
@@ -1134,47 +928,47 @@ if Equal Direction OPos
 
 
 var17 = Rnd * 18
-if var17 < 1 && OYDistBackEdge > -10 
+if var17 < 1  && YDistBackEdge > -3 
 Call Jab123
-elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call FTilt
-elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call UTilt
-elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call DTilt
-elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call FSmash
-elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call USmash
-elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 
+elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call DSmash
-elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 
+elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call Grab
-elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 
+elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 2
 Call Grab
-elif 9 < var17 && var17 < 10 && YDistBackEdge > -10 
+elif 9 < var17 && var17 < 10 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 3
 Call Grab
-elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 
+elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 4
 Call Grab
-elif 11 < var17 && var17 < 12 && YDistBackEdge > -10 
+elif 11 < var17 && var17 < 12 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 5
 Call Grab
-elif 12 < var17 && var17 < 13 && YDistBackEdge > -10 
+elif 12 < var17 && var17 < 13  
 Call NAir
-elif 13 < var17 && var17 < 14 && YDistBackEdge > -10 
+elif 13 < var17 && var17 < 14  
 Call NAir
-elif 14 < var17 && var17 < 15 && YDistBackEdge > -10 
+elif 14 < var17 && var17 < 15  
 Call FAir
-elif 15 < var17 && var17 < 16 && YDistBackEdge > -10 
+elif 15 < var17 && var17 < 16  
 var19 = 1
 Call UAir
-elif 16 < var17 && var17 < 17 && YDistBackEdge > -10 
+elif 16 < var17 && var17 < 17  && OYDistBackEdge < -5
 var19 = 2
 Call UAir
-elif 17 < var17 && var17 < 18 && YDistBackEdge > -10 
+elif 17 < var17 && var17 < 18  
 Call DAir
 endif
   if var0 <= 0
@@ -1190,20 +984,20 @@ elif True
 
 
 var17 = Rnd * 7
-if var17 < 1 && OYDistBackEdge > -10 
+if var17 < 1  && YDistBackEdge > -3 
 Call UTilt
-elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
+elif 1 < var17 && var17 < 2  
 Call NAir
-elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
+elif 2 < var17 && var17 < 3  
 Call NAir
-elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
+elif 3 < var17 && var17 < 4  
 Call BAir
-elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 
+elif 4 < var17 && var17 < 5  && OYDistBackEdge < -5
 Call UAir
-elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 
+elif 5 < var17 && var17 < 6  
 var19 = 1
 Call UAir
-elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 
+elif 6 < var17 && var17 < 7  
 Call DAir
 endif
   if var0 <= 0

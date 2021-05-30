@@ -2,7 +2,7 @@ id 0x59
 
 unk 0x0
 
-RECORD_HIT_KNOCKBACK
+PUT_ME_AT_TOP
 
 if Equal IsOnStage 0
   Call AIHub

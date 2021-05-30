@@ -214,3 +214,11 @@ func OIsOnPassableGround : 0x154
 /// if the character can cancel their current attack
 func CanCancelAttack : 0x55
 func OCanCancelAttack : 0x155
+
+/// character's weight stat
+func Weight : 0x56
+func OWeight : 0x156
+
+/// character's gravity stat
+func Gravity : 0x57
+func OGravity : 0x157

@@ -12,7 +12,7 @@ $clearMovesUsed()
 ClearStick
 lastScript = hex(0x8002)
 
-if Equal CurrAction hex(0x04)
+if Equal CurrAction hex(0x04) || Equal CurrAction hex(0x03)
   Stick 1
 endif
 
@@ -59,7 +59,7 @@ Jump
 Return
 
 label techChase_wait
-TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 60, _AIHub, contCombo)
+TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 50, _AIHub, contCombo)
 
 label _AIHub
 Call AIHub
@@ -222,7 +222,6 @@ endif
 
 #let targetXDistance = var0
 #let targetYDistance = var1
-var4 = 0
 
 #let frameToCalc = var5
 frameToCalc = move_hitFrame

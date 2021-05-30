@@ -8,14 +8,19 @@ unk 0x0
 var0 = 4
 label
 Cmd30
+
+if CurrAction >= 66 && CurrAction <= 69 && !(OutOfStage)
+  Call OnGotDamaged
+endif
+
 if Equal AirGroundState 1 && Equal var21 32769
   Call ApproachHub
 elif Equal var16 7
-elif Equal var21 32769 && MeteoChance && Equal var16 3
+elif Equal var21 32769 && MeteoChance && Equal var16 3 && !(NoOpponent)
   Call ApproachHub
 endif
 
-if !(Equal XDistFrontEdge XDistBackEdge)
+if !(OutOfStage) || Equal AirGroundState 1
   Call AIHub
 endif
 if Equal var16 7
@@ -38,8 +43,9 @@ endif
 
 var6 = 0
 label
+  var10 = Rnd
 var8 = 0
-label
+label _main
 if FramesHitstun > 0
   Call AIHub
 endif
@@ -49,6 +55,8 @@ Cmd30
 
 GetNearestCliff var0
 GetReturnGoal var1
+
+
 
 var17 = var1 - var0 
 var7 = 0
@@ -62,9 +70,9 @@ elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
 elif TopNY < var2
   if var17 < 0
-    var2 = 7
+    var2 = 6
   else
-    var2 = -7
+    var2 = -6
   endif
   var7 = 1
 endif
@@ -79,24 +87,37 @@ endif
   var1 = var1 - (TopNY * -1)
 
 var0 += var2
-if Rnd < 0.15 && LevelValue <= 75
-  var1 -= 20
-elif Rnd <= 0.03
-  var1 -= 20
-endif
 
 if !(NoOneHanging)
   var1 -= 20 
 endif
 
+// var0 -= TopNX
+// var0 *= -1
+// var1 -= TopNY
+// DrawDebugRectOutline var0 var1 60 75 255 0 0 136
+// DrawDebugRectOutline var0 var1 60 58 255 136 0 136
+// DrawDebugRectOutline var0 var1 60 25 255 255 0 136
+// DrawDebugRectOutline var0 var1 5 5 0 255 0 221
+// var0 *= -1
+// var0 += TopNX
+// var1 += TopNY
+
 if FramesHitstun > 0
   Call AIHub
 endif
 if Equal var16 5
-  if var1 < -40
-    Button X
+  if var1 < -40 && YSpeed < 0
+    if NumJumps > 0
+      Button X
+      Return 
+    else
+      var16 = 0
+      Return
+    endif
+  else
+    Return
   endif
-  Return
 endif
 
 LOGSTR 1633907712 796090624 1668546560 0 0
@@ -105,7 +126,7 @@ LOGVAL CurrSubaction
   if Equal CurrAction 16 
   Goto handleSFall
   Return
-    elif Equal CurrAction 276 || Equal CurrAction 281 || Equal CurrAction 282
+  elif Equal CurrAction 276 || Equal CurrAction 281 || Equal CurrAction 282
   Goto handleUSpecial
   Return
   elif Equal CurrAction 274
@@ -146,7 +167,7 @@ endif
     endif
   endif
 
-if Equal var2 0
+if Equal var2 0 || Equal AirGroundState 1
   Call AIHub
 endif
 
@@ -158,15 +179,14 @@ elif Equal CurrAction 51 && AnimFrame <= var15
 endif
 
 if CanJump && NumJumps > 0
-  var2 = -69
+  var2 = 75
 elif !(CanJump)
-  var2 = -25
+  var2 = 25
 else
-  var2 = -57
+  var2 = 58
 endif
 
-var17 = var2 * -1
-if Equal OIsOnStage 0 && Equal var16 3 && OTopNY > BBoundary && YDistBackEdge < var17
+if Equal OIsOnStage 0 && Equal var16 3 && !(NoOpponent) && YDistBackEdge < var2
   Call ApproachHub
 endif
 
@@ -185,8 +205,20 @@ if var6 > 0
   Return
 endif
 
-var17 = var0
-Abs var17
+
+LOGSTR 1313036544 0 0 0 0
+LOGVAL var1
+
+  var22 = var0 
+  Abs var22
+  var17 = var1
+  Abs var17
+  var22 = var17 - var22
+  Abs var22
+  var2 = var22 - 60
+
+var3 = var0
+Abs var3
 var22 = TopNY - BBoundary
 if var22 < 10
   if NumJumps > 0
@@ -201,23 +233,26 @@ elif var1 > 25 && Rnd < 0.03 && Equal var7 0 && NumJumps > 0 && !(Equal var18 25
   AbsStick var17
   Button X
   var6 = 30
+  Return
 elif var1 < -25 && Rnd < 0.03 && Equal var7 0 && NumJumps > 0 && !(Equal var18 255)
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
   Button X
   var6 = 30
-elif var1 < -69 && NumJumps > 0 && !(Equal var18 255)
+  Return
+elif var1 < -75 && NumJumps > 0
   Button X
   var6 = 30
-elif var1 < -57
-  if var17 > 60
+  Return
+elif var1 > -58 && var1 <= -54
+  if var2 > 0 && NumJumps > 0
     GetRndPointOnStage var0
     var17 = var0 - TopNX
     AbsStick var17
     Button X
     var6 = 30
-  elif Equal var8 0
+  elif Equal var8 0 
     if YDistBackEdge < 0
       Return
     endif
@@ -228,7 +263,15 @@ elif var1 < -57
   endif
   Return
 endif
-if var17 > 60 && Equal var8 0 && Equal NumJumps 0
+var22 = OTopNY + 30
+if YDistBackEdge > 0 && Equal var8 0 && TopNY < var22 && var1 > -58 && Equal OIsOnStage 0 && Equal var7 0 && XDistLE 10 && var3 > 10 && var2 < 0
+  ClearStick
+  Stick 0 0.7
+  Button B
+  var8 = 1
+  Return
+endif
+if var2 < 0 && Equal var8 0 && Equal NumJumps 0
   if YDistBackEdge < 0
     Return
   endif
@@ -236,17 +279,31 @@ if var17 > 60 && Equal var8 0 && Equal NumJumps 0
   Stick 0 0.7
   Button B
   var8 = 1
-elif var1 > -15 && Equal var7 0 && var17 < 15 && Equal var8 0 && NumJumps > 0 && !(Equal var18 255)
+elif var1 > -15 && Equal var7 0 && var2 < 0 && Equal var8 0 && NumJumps > 0 && !(Equal var18 255)
   GetRndPointOnStage var0
   var17 = var0 - TopNX
   AbsStick var17
   Button X
   var6 = 30
 endif
-Return
+LOGSTR 1313036544 0 0 0 0
+LOGVAL var1
+LOGVAL var3
+if var1 > -10 && var1 < 5 && var3 < 40 && var10 <= 0.4
+  ClearStick
+  AbsStick var0
+  Button B
+elif var1 > 60 && var3 > 60
+  ClearStick
+  AbsStick 0 (-0.7)
+  Button B
+elif var1 > 60 && var10 <= 0.6
+  ClearStick
+  AbsStick 0 (-0.7)
+  Button B
+endif
 
-label willOEdgehog
-  
+Seek _main
 Return
 
 
@@ -255,8 +312,11 @@ label handleNSpecial
 Return
 
 label handleSSpecial
-  if !(Equal CurrSubaction 468) && !(Equal CurrSubaction 469)
-    Call AIHub
+  if AnimFrame > 2 && AnimFrame < 5
+    var22 = TopNX * -1
+    AbsStick var22
+  else
+    Stick 1
   endif
 Return
 
@@ -270,6 +330,7 @@ label handleUSpecial
     GetRndPointOnStage var0
     var17 = var0 - TopNX
     AbsStick var17
+    LOGSTR 1751478784 1694498816 0 0 0
   else
     var17 = var0 * -1
     AbsStick var17
@@ -277,7 +338,12 @@ label handleUSpecial
 Return
 
 label handleDSpecial
-// move "dspecial" not found
+  if AnimFrame > 2 && AnimFrame < 5
+    var22 = TopNX * -1
+    AbsStick var22
+  else
+    Stick 1
+  endif
 Return
 
 label handleSFall

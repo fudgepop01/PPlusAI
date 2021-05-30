@@ -15,6 +15,9 @@
   $outputWithKnockbackThresholds(90, 290, Goto)
   if YDistBackEdge < -15
     approachType = at_hover
+  elif YDistBackEdge > -10
+    approachType = at_hover
+    moveVariant = mv_hc
   endif
 #endsnippet
 
@@ -24,6 +27,9 @@
   $output(Goto)
   if YDistBackEdge < -15
     approachType = at_hover
+  elif YDistBackEdge > -10
+    approachType = at_hover
+    moveVariant = mv_hc
   endif
 #endsnippet
 
@@ -32,6 +38,9 @@
   $outputWithKnockbackThresholds(180, 400, Goto)
   if YDistBackEdge < -15
     approachType = at_hover
+  elif YDistBackEdge > -10
+    approachType = at_hover
+    moveVariant = mv_hc
   endif
 #endsnippet
 

@@ -27,19 +27,34 @@ else
 endif
 // LOGSTR 1986097664 805306368 0 0 0
 // LOGVAL var0
+
 SAFE_INJECT_2 var0
-if XDistLE 20
+if XDistLE 20 && var20 >= 24641 && var20 <= 24655
   label
-  Button X
-  var17 = OPos * -1
-  AbsStick var17
+  Goto trackOMoves
+  if CurrAction <= 9
+    if var17 <= 0 && Equal OPos Direction
+      Stick -1
+    elif var17 > 0 && !(Equal OPos Direction)
+      Stick -1
+    else
+      Button X
+    endif
+  endif
+  if Equal CurrSubaction JumpSquat 
+    var22 = OPos * -1
+    AbsStick var22
+  endif
   if InAir
-    Call AIHub
+    Seek execute
+    Jump
   endif
   Return
 endif
-label
+label _handlers
 if var20 >= 24641 && var20 <= 24655
+  Goto trackOMoves
+
   if var0 <= 0.2
   // Retreating RAR aerial (if possible without going offstage)
     if Equal AirGroundState 1
@@ -126,7 +141,7 @@ if var20 >= 24641 && var20 <= 24655
       var0 = 1
       Return
     endif
-  else
+  elif True
   // approach
     if var17 <= 0
       var0 = 0.85
@@ -142,9 +157,87 @@ if var20 >= 24641 && var20 <= 24655
       Jump
     endif
   endif
-else
-  Call ApproachHub
+elif True
+  // dash away ==> attack
+  Goto trackOMoves
+  if var0 < 0.3
+    if XDistFrontEdge < 10 || Equal CurrAction 4 || Equal CurrAction 3
+      Seek turnExecute
+      Jump
+    endif
+    var22 = OPos * -1
+    AbsStick var22
+    if Equal CurrAction 1
+      ClearStick
+    endif
+  elif var0 < 0.6
+    var3 = Rnd * 60 + 10
+    label
+    Stick 0 (-1)
+    var3 -= 1
+    if var3 <= 0 || XDistLE 25
+      Seek turnExecute
+      Jump
+    endif
+    var22 = OTopNY - TopNY
+    if var22 > 15 && XDistLE 35
+      Call FakeOutHub
+    endif
+    Return
+  elif True
+    if Equal OIsOnStage 1 && !(XDistLE 55)
+      AbsStick OPos
+    else
+      var0 = 0.5
+    endif
+  endif
 endif
+Return
+
+label trackOMoves
+  if ODistLE 45 && Equal OAnimFrame 5
+    if OAttacking && Rnd < 0.7
+      trackOAction 9 1
+    elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.7
+      trackOAction 9 2
+    elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.7
+      trackOAction 9 3
+    elif Rnd < 0.1
+      trackOAction 9 0
+    endif
+
+    predictOOption var17 9 LevelValue
+    predictionConfidence var22 9 LevelValue
+
+    if Equal var17 1 && Rnd < var22
+      Call Unk3020
+    elif Equal var17 2 && Rnd < var22
+      var18 = 0
+      var21 = 32770
+      Call Grab
+    elif Equal var17 3 && Rnd < var22
+      Seek turnExecute
+      Jump
+    endif
+  endif 
+Return
+
+label turnExecute
+  if Equal CurrAction 4
+    Stick 0 (-1)
+    Return
+  elif Equal CurrAction 3
+    Stick -1
+    Return
+  endif
+  if var17 <= 0 && Equal OPos Direction
+    Stick -0.5
+  elif var17 > 0 && !(Equal OPos Direction)
+    Stick -0.5
+  else
+    Seek execute
+    Jump
+  endif
 Return
 
 label turnFaceJump
@@ -154,7 +247,7 @@ label turnFaceJump
   endif
   if Equal CurrAction 5 && !(Equal OPos Direction)
     Button X
-  elif Equal CurrAction 6 || Equal CurrAction 8 || Equal CurrAction 9 || Idling
+  elif Equal CurrAction 6 || Equal CurrAction 8 || Equal CurrAction 9
     if Equal OPos Direction
       Button X
       Return
@@ -212,6 +305,17 @@ elif Equal var20 24648
   Call USpecialAir
 elif Equal var20 24649
   Call DSpecialAir
+elif Equal var20 25001 && Equal AirGroundState 1
+  var0 = 10 + Rnd * 15
+  label
+  Button R
+  var0 -= 1
+  if var0 <= 0
+    Call OOSHub
+  endif
+  Return
+else
+  Call AIHub
 endif
 Return
 Return

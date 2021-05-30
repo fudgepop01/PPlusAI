@@ -1,7 +1,9 @@
 #snippet OFFENSIVE_ONSTAGE_MOVES
     if rndChoice < 0.1
+        movePart = 0
         Call USpecial
     elif rndChoice < 0.35
+        movePart = 0
         Call DAir
     else
         Call FAir

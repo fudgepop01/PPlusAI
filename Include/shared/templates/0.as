@@ -7,6 +7,14 @@ label begin
 
 {PRE_HOOKS}
 
+// if CurrAction >= hex(0x42) && CurrAction <= hex(0x44) || Equal CurrAction hex(0x45) && YDistBackEdge < -7 && !(OutOfStage)
+//   Call OnGotDamaged
+// endif
+
+// if Equal globTempVar strv("BAD")
+//   Call OnGotDamaged
+// endif
+
 if Equal movePart mp_ATK || Equal movePart hex(0xFF)
   movePart = 0
 endif
@@ -30,11 +38,6 @@ if Equal approachType at_reroll
   Jump
 endif
 
-if Equal CurrAction hex(0x49) || Equal globTempVar strv("BAD")
-  Seek Hitstun_End
-  Jump
-endif
-
 if Equal LevelValue LV9
   if CurrAction >= hex(0x1E) && CurrAction <= hex(0x20)
     Stick 0 (-1)
@@ -48,196 +51,24 @@ if Equal LevelValue LV9
   endif
 endif
 
-//______________________________________
-// Rand DI / tech "smart" implementation
-// randomly DIs unless conditions are met for survival DI
-#let StickX = var0
-#let StickY = var1
-#let TechWindow = var2
-#let MeteorCancelWindow = var3
-#let tempVar = var4
-#let framesOnGround = var5
-
-// if in hitstun...
-if FramesHitstun > 0 || FramesHitlag > 0
-  label hitstunHandler
-  lastScript = hex(0x8000)
-  if LevelValue >= LV7
-    StickX = Rnd * 2 * OPos * -1
-    if KBAngle > 90 && KBAngle < 170
-      StickX *= -1
-    endif  
-    if Rnd < 0.2
-      StickX *= -1
-    endif
-  else
-    StickX = (Rnd * 2) - 1
-  endif
-  StickY = Rnd - 1
-  if Rnd < 0.2
-    StickY *= -1
-  endif
-  TechWindow = 1
-  MeteorCancelWindow = Rnd * 5 + 15
-  framesOnGround = 0
-  // makes it loop from here each frame
-  label
-  Cmd30
-
-  if FramesHitlag > 0 && Equal LevelValue LV9 
-    if Rnd < 0.75
-      globTempVar = OPos * -1
-      if XDistBackEdge > -shortEdgeRange
-        globTempVar = OPos
-      endif
-      immediateTempVar = Rnd * 2 - 1
-      AbsStick globTempVar immediateTempVar
-    endif
-    Return
-  endif
+if FramesHitstun > 1
+  Call OnGotDamaged
 endif
 
-if FramesHitstun > 1 && CurrAction >= hex(0x44) && CurrAction <= hex(0x45) && Equal AirGroundState 2 
-  LOGSTR str("hitst")
-  LOGVAL KBAngle
-  if KBAngle >= 80 && KBAngle <= 100
-    LOGSTR str("cond1")
-    globTempVar = OPos * -1
-    if KBAngle > 90
-      globTempVar *= -1
-    endif
-    if Rnd < 0.2
-      globTempVar *= -1
-    endif
-    AbsStick globTempVar (-1)
-  elif Equal IsOnStage 0 || KBSpeed > 4
-    LOGSTR str("cond2")
-    // if offstage with high damage, switch to survival DI
-    StickX = TopNX * -1
-    AbsStick StickX 1
-  else
-    LOGSTR str("cond3")
-    AbsStick StickX StickY
-  endif
-  if Equal LevelValue LV8 && YDistBackEdge > -5 && Equal IsOnStage 1
-    ClearStick
-    AbsStick StickX (-1)
-  endif
-  // until hitstun is 0
-  if LevelValue >= LV7
-    Goto _checkMeteorCancel
-  endif
-  if LevelValue >= LV3
-    Goto _checkTech
-  endif
-  Return
+#let inDisadvantage = var7
+inDisadvantage = 0
+if CurrAction >= hex(0x43) && CurrAction <= hex(0x45) && LevelValue >= LV8
+  inDisadvantage = 1
 endif
 
-if FramesHitstun > 1 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45) && LevelValue >= LV8
-  globTempVar = OPos * -1
-  if XDistBackEdge > -shortEdgeRange
-    globTempVar = OPos
-  endif
-  Stick globTempVar (-1)
-  Return
-endif
-
-if FramesHitstun > 0 && CurrAction <= hex(0x10)
-  Seek
-  Jump
-elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
-  label
-  var0 = Damage / 100
-  var0 *= 0.75
-  if Rnd < var0
-    movePart = 1
-    Call FakeOutHub
-  endif
-  
-  {HITSTUN_ENDS}
-  Seek
-  Jump
-elif Equal FramesHitstun 1 && LevelValue >= LV5
-  label
-  #let isGoingOffstage = var0
-  GOING_OFFSTAGE(isGoingOffstage, var1, 15)
-  if !(Equal isGoingOffstage 0)
-    Seek begin
-    Return
-  endif
-
-  var0 = Damage / 100
-  var0 *= 0.75
-  if Rnd < var0
-    Call FakeOutHub
-  endif
-
-  {HITSTUN_ENDS}
-  Seek begin
-  Return
-endif
-
-if CurrAction >= hex(0x11) && CurrAction <= hex(0x17)
-  framesOnGround += 1
-endif
-
-if FramesHitstun > 0 || FramesHitlag > 0
-  Return
-endif
 Seek _main
 Jump
-Return
-
-// Goto statements will return back to where they came
-// from if there isn't a label, making this possible
-//
-// makes the AI input R every 41 frames 80% (base) of the time
-label _checkTech
-if TechWindow <= 0
-  if CurrAction >= hex(0x45) && CurrAction <= hex(0x4D) && FramesSinceShield > 40
-    tempVar = (100 - LevelValue) / 100 * -1
-    tempVar += 0.8
-    if Equal IsOnStage 0 && Equal CurrAction hex(0x45) && FramesHitlag <= 1
-      if Rnd < tempVar
-        Button R
-      endif
-      TechWindow = 41
-    elif Equal IsOnStage 1 && YDistBackEdge > -7 && YSpeed < 0
-      if Rnd < tempVar
-        Button R
-      endif
-      TechWindow = 41
-    endif
-  endif
-endif
-TechWindow -= 1
-Return
-
-// meteor cancels when applicable 90% (base) of the time with
-// a jump 50% of the time (if possible), otherwise with upB
-label _checkMeteorCancel
-if KBAngle >= 260 && KBAngle <= 280 && MeteorCancelWindow <= 0 && Equal IsOnStage 0 && YDistFrontEdge > 0
-  tempVar = (100 - LevelValue) / 100
-  tempVar = 0.9 - tempVar
-  if Rnd < 0.9
-    if CanJump && Rnd < 0.5
-      Button X
-    elif CanJump && YDistFrontEdge > 40
-      Button X
-    else
-      Stick 0 0.7
-      Button B
-      Call RecoveryHub
-    endif
-  endif
-  MeteorCancelWindow = 41
-endif
-MeteorCancelWindow -= 1
 Return
 
 // the stuff here happens when not in hitstun.
 label _main
 #let waitTeamFlag = var6
+#let tempVar = var4
 waitTeamFlag = 0
 
 // for efficiency, we just use a label here so we don't need to call the
@@ -259,28 +90,7 @@ if Equal isGoingOffstage 2 && !(Equal AirGroundState 1)
 endif
 
 if !(True)
-  label Hitstun_End
-  if YDistBackEdge > -25 || LevelValue <= LV5
-    Seek _main
-    Return
-  endif
-  label
-  if !(Equal AirGroundState 1) && Rnd <= 0.95 && !(Equal XDistFrontEdge XDistBackEdge) && YDistBackEdge < -50
-    #let rndX = var2
-    #let rndY = var3
-    GetRndPointOnStage rndX
-    if Rnd < 0.03 && CanJump
-      Button X
-    endif
-    rndX = TopNX - rndX
-    AbsStick rndX // the stick X var
-    if YDistBackEdge > -3 && Rnd < 0.4 && Equal CurrAction hex(0x49)
-      Button R
-    endif
-    Return
-  endif
-  Seek _main
-  Return
+  
 endif
 
 if Equal isGoingOffstage 0 && YDistBackEdge > -15 && Equal CurrAction hex(0x33) && LevelValue >= LV7
@@ -296,11 +106,6 @@ endif
 // we hold the control stick in the opposite direction
 
 label
-if FramesHitstun > 1
-  Seek hitstunHandler
-  Jump
-  Return
-endif
 if !(Equal isGoingOffstage 0)
   if InAir || Equal CurrAction hex(0x03)
     var0 = XSpeed * -10
@@ -334,10 +139,15 @@ if !(Equal noCombo noComboVal)
     Call ComboHub
   elif OFramesHitstun > 0 && LevelValue >= LV5
     Call ComboHub
+  elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x52) && LevelValue >= LV7
+    Call ComboHub
   endif
 endif
 
 ClearStick
+if Equal CurrAction hex(0x04) || Equal CurrAction hex(0x03)
+  Stick 1
+endif
 if Equal AirGroundState 1
   if XDistBackEdge > -15 && XDistFrontEdge > 20
     Stick 1
@@ -374,8 +184,8 @@ moveVariant = 0
 movePart = 0
 hit_knockback = -1
 
-if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction hex(0x49)
-  TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 50 + 25, _afterTCS, _afterTCS)
+if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction hex(0x49) || OCurrAction >= hex(0x4D) && OCurrAction <= hex(0x5F)
+  TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 40 + 15, _afterTCS, _afterTCS)
 endif
 
 IS_EARLY_ROLL(var0, var1)
@@ -438,6 +248,21 @@ if Equal isEarlyRoll 0
     endif
   elif YDistBackEdge > -40
 
+    #let nearCliffX = var0
+    #let nearCliffY = var1
+    NEAREST_CLIFF(nearCliffX, nearCliffY)
+    Abs nearCliffX
+
+    #let absPos = var1
+    #let absOPos = var2
+    absPos = TopNX
+    Abs absPos
+    absOPos = OTopNX
+    Abs absOPos
+    if nearCliffX < edgeRange && XDistLE 40 && absOPos < absPos && Equal OFramesHitstun 0 && !(Equal lastScript hex(0x8009)) && LevelValue >= LV6 && SamePlane
+      Call EdgeEscapeHub
+    endif
+
     if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1C) && Rnd < 0.7 && XDistLE 25
       Call Grab
     endif
@@ -479,7 +304,7 @@ if Equal isEarlyRoll 0
     lastScript = hex(0x8000)
 
     #let defenseMul = var3
-    defenseMul = Damage - ODamage
+    defenseMul = 150 - (ODamage - Damage) * 4
     defenseMul /= 200
 
     if LevelValue >= LV5 && Equal waitTeamFlag 0 && injected <= 2
@@ -487,7 +312,7 @@ if Equal isEarlyRoll 0
       #let tempVar2 = var1
       #let defenseChance = var2
 
-      defenseChance = defenseMul * 0.1
+      defenseChance = defenseMul * 0.15
 
       if XDistLE 30 && Rnd < 0.4 && Equal AirGroundState 1
         if Rnd < defenseChance || Rnd < 0.04
@@ -501,7 +326,7 @@ if Equal isEarlyRoll 0
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 2
       #let fakeChance = var2
-      fakeChance = defenseMul * 0.10
+      fakeChance = defenseMul * 0.18
       Abs fakeChance
       if Rnd < fakeChance
         Call FakeOutHub
@@ -510,8 +335,8 @@ if Equal isEarlyRoll 0
 
     if Equal waitTeamFlag 0 && injected <= 3
       #let defenseChance = var2
-      defenseChance = defenseMul * 0.1
-      if Rnd < defenseMul || Rnd < 0.05 || Equal injected 3
+      defenseChance = defenseMul * 0.25
+      if Rnd < defenseMul || Rnd <= 0.2 || Equal injected 3
         approachType = at_defend
         {DEFENSE_OPTIONS}
       endif
@@ -567,11 +392,17 @@ Abs globTempVar
 if ODistLE 8 && globTempVar < 20 && Equal AirGroundState 1
   approachType = at_immediate
 endif
+if Rnd < 0.1
+  approachType = at_defend
+endif
 {COMBO_STARTERS}
 Return
 
 label killMoves
 #let ODmgXWeight = var2
+if Rnd < 0.1
+  approachType = at_defend
+endif
 {KILL_MOVES}
 Return
 
@@ -583,6 +414,9 @@ globTempVar = TopNY - OTopNY
 Abs globTempVar
 if ODistLE 8 && globTempVar < 20 && Equal AirGroundState 1
   approachType = at_immediate
+endif
+if Rnd < 0.1
+  approachType = at_defend
 endif
 {NEUTRAL_MOVES}
 Return

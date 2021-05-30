@@ -145,8 +145,7 @@ var1 = 0
   var17 = var14 + var1
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
-    var17 -= var13 
-    var17 -= var8
+    var17 = 0
   endif
   var17 += 1
   EstOXCoord var5 var17
@@ -590,7 +589,7 @@ endif
   //   endif
   // endif
   var6 += var0
-  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
   // if !(CalledAs ComboHub)
@@ -611,8 +610,8 @@ endif
   //     // var17 = TopNY - var10 + var12 + var22
   //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
   //     if CalledAs ApproachHub
-  //       var11 -= 3
-  //       var9 += 6
+  //       var11 -= 2.5
+  //       var9 += 5
   //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
@@ -632,8 +631,8 @@ endif
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
   //     if CalledAs ApproachHub
-  //       var11 += 3
-  //       var9 -= 6
+  //       var11 += 2.5
+  //       var9 -= 5
   //     endif
   //     var17 = var11 * 0.0
   //     var9 -= var17
@@ -650,6 +649,47 @@ endif
 
 if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
   var16 = OKBSpeed
+endif
+if Equal AnimFrame 1
+  if OAttacking && Rnd < 0.8
+    trackOAction 12 3
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.8
+    trackOAction 12 2
+  elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.8
+    trackOAction 12 3
+  elif Rnd < 0.3
+    trackOAction 12 0
+  endif
+endif
+if AnimFrame > 30 && AnimFrame <= 31 
+  if OAttacking && Rnd < 0.7
+    trackOAction 8 3
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.7
+    trackOAction 8 2
+  elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.7
+    trackOAction 8 3
+  elif Rnd < 0.2
+    trackOAction 8 0
+  endif
+endif
+var22 = var14 + 1
+if AnimFrame >= var14 && AnimFrame < var22 && !(Equal var16 4)
+  var22 = OTopNX - TopNX 
+  if var22 < -10 && Equal HitboxConnected 0
+    if XSpeed < -0.2
+      trackOAction 14 1
+    elif XSpeed > 0.2
+      trackOAction 14 3
+    endif
+  elif var22 > 10 && Equal HitboxConnected 0
+    if XSpeed < -0.2
+      trackOAction 14 3
+    elif XSpeed > 0.2
+      trackOAction 14 1
+    endif
+  else
+    trackOAction 14 2
+  endif
 endif
 
 if FrameGE var15 || CurrAction <= 9 || !(Equal AirGroundState 1) || FramesHitstun > 0

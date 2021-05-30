@@ -70,11 +70,11 @@ elif True
     Seek jumpOver
   endif
   tempVar = Rnd
-  if tempVar < 0.5 && Damage < 25 && !(Equal OCurrAction hex(0x34))
+  if tempVar < 0.3 && Damage < 60 && !(Equal OCurrAction hex(0x34))
     Seek crouchCancelPunish
-  elif tempVar < 0.3 && Equal CurrAction hex(0x03)
+  elif tempVar < 0.4 && Equal CurrAction hex(0x03)
     Seek dashAway
-  elif tempVar < 0.4
+  elif tempVar < 0.45
     Seek wavedashBack
   {ADDITIONAL_FAKEOUTS}
   else

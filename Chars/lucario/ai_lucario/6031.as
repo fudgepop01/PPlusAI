@@ -39,16 +39,12 @@ endif
 
 label
 ClearStick
-var1 = 0
-
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_hitFrame - NumFrames, _oCalc, _sCalc)
-
 
 if FrameGE 2
   if Equal CurrSubaction Attack11
     if Equal HitboxConnected 1 && whereCancel < 1 && FrameGE 7
       Call ComboHub
-    elif Equal HitboxConnected 1 && FrameGE 7
+    elif Equal HitboxConnected 1 && FrameGE 9
       SetFrame 0
       Button A
     elif FrameGE 15
@@ -57,7 +53,7 @@ if FrameGE 2
   elif Equal CurrSubaction Attack12
     if Equal HitboxConnected 1 && whereCancel < 2 && FrameGE 8
       Call ComboHub
-    elif Equal HitboxConnected 1 && FrameGE 8
+    elif Equal HitboxConnected 1 && FrameGE 12
       SetFrame 0
       Button A
     elif FrameGE 18

@@ -1,17 +1,35 @@
 #snippet PRE_HOOKS
-#endsnippet
+  // #let timer = var0
+  // timer = 60
 
-#snippet HITSTUN_ENDS
-  if Equal AirGroundState 1
-    Stick -1
-  elif Rnd < 0.2 && CanJump
-    Button X
-    movePart = 0
-    Call DAir
-  else
-    Seek Hitstun_End
-    Return
-  endif
+  // label
+  // timer -= 1
+  // if timer <= 0
+  //   timer = 60
+  //   if Equal OCurrAction hex(0x34)
+  //     trackOAction man_approach op_grab
+  //   elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21)
+  //     trackOAction man_approach op_defend
+  //   elif OAttacking
+  //     trackOAction man_approach op_attack
+  //   endif
+
+  //   predictOOption var1 man_approach LevelValue
+  //   if Equal var1 op_attack
+  //     LOGSTR str("attack")
+  //   elif Equal var1 op_defend
+  //     LOGSTR str("defend")
+  //   elif Equal var1 op_grab
+  //     LOGSTR str("grab")
+  //   else
+  //     LOGSTR str("none")
+  //   endif
+
+  //   LOGSTR str("confidence")
+  //   predictionConfidence var1 man_approach LevelValue
+  //   LOGVAL var1
+  // endif
+  // Return
 #endsnippet
 
 #snippet TECH_CHASE_OPTIONS
@@ -35,9 +53,15 @@
   endif
   if Rnd < 0.8 && !(Equal Direction OPos)
     Call BAir
-  else
+  elif Rnd < 0.3
     moveVariant = mv_nairHit2
     Call NAir
+  elif Rnd < 0.3
+    Call FTilt
+  elif Rnd < 0.3
+    Call DTilt
+  else
+    Call FSmash
   endif
 #endsnippet
 

@@ -5,29 +5,6 @@
   endif
 #endsnippet
 
-#snippet HITSTUN_ENDS
-  if Equal AirGroundState 1
-    if Equal LevelValue LV9
-      movePart = 1
-      Call DTilt
-    else
-      Stick -1
-    endif
-  elif Rnd < 0.5
-    movePart = 0
-    if Rnd < 0.4 && CanJump
-      Button X
-      Stick 0 (-1)
-      Call NAir
-    else
-      Call NAir
-    endif    
-  else
-    Seek Hitstun_End
-    Return  
-  endif
-#endsnippet
-
 #snippet TECH_CHASE_OPTIONS
 #endsnippet
 
@@ -54,6 +31,19 @@
   if OYDistBackEdge < -20
     Call UAir
   endif
+  immediateTempVar = Rnd * 8
+  if immediateTempVar < 1
+    Call FTilt
+  elif immediateTempVar < 2
+    Call DTilt
+  elif immediateTempVar < 3
+    Call UTilt
+  elif immediateTempVar < 4
+    Call DSmash
+  elif immediateTempVar < 5
+    Call FSmash
+  endif
+  
   if Rnd < 0.8 && !(Equal Direction OPos)
     Call BAir
   else
@@ -124,8 +114,8 @@ endif
 $refreshMoves()
 $filterMoveHitFrame(20)
 $filterMoveEndlag(25)
-$excludeMovesOrigin(uair|dair)
-$outputWithKnockbackThresholds(150, 290, Call)
+// $excludeMovesOrigin(uair|dair)
+$outputWithKnockbackThresholds(70, 190, Call)
 #endsnippet
 
 #snippet KILL_MOVES
@@ -137,7 +127,7 @@ $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
 $excludeMovesOrigin(dair)
-$outputWithKnockbackThresholds(250, 400, Call)
+$outputWithKnockbackThresholds(150, 400, Call)
 #endsnippet
 
 #snippet NEUTRAL_MOVES
@@ -146,10 +136,7 @@ if Rnd < 0.8
   approachType = at_hover
 endif
 $refreshMoves()
-$filterMoveHitFrame(20)
-$filterMoveEndlag(20)
-// $filterMoveXMinMax(4, 20)
-$excludeMovesOrigin(sspecial|uair|dair)
+$excludeMovesNotOrigin(nair|bair|ftilt|dtilt)
 $output(Call)
 #endsnippet
 

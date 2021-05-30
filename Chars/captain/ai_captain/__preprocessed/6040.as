@@ -3,65 +3,160 @@
 id 0x6040
 
 //Set Unknown
-unk 0x00000
+unk 0x0
 
 //Strings
+
 Cmd30
 
+// {PRE_SCRIPT_HOOKS}
 
-// sets up offsets to get to target position
+if CalledAs NAir
+  Goto _NAir
+elif CalledAs FAir
+  Goto _FAir
+elif CalledAs BAir
+  Goto _BAir
+elif CalledAs UAir
+  Goto _UAir
+elif CalledAs DAir
+  Goto _DAir
+elif CalledAs NSpecialAir
+  Goto _NSpecialAir
+elif CalledAs SSpecialAir
+  Goto _SSpecialAir
+elif CalledAs USpecialAir
+  Goto _USpecialAir
+elif CalledAs DSpecialAir
+  Goto _DSpecialAir
+else
+  Call AIHub
+endif
+
 if Equal var18 0
-  if CalledAs NAir
-    Goto nair
-  elif CalledAs FAir
-    Goto fair
-  elif CalledAs BAir
-    Goto bair
-  elif CalledAs UAir
-    Goto uair
-  elif CalledAs DAir
-    Goto dair
-  else
-    Call AIHub
-  endif
   if Equal var16 2 && OFramesHitstun < 1
     Call DefendHub
   else
     Call ApproachHub
   endif
-elif Equal AirGroundState 2 && Equal var18 1
-  ClearStick
-  Goto nair
-  var15 = 45
-  if CalledAs FAir
-    Goto fair
-    var15 = 36
-    Stick (0.5) 0
-  elif CalledAs BAir
-    Goto bair
-    var15 = 29
-    Stick (-0.5) 0
-  elif CalledAs UAir
-    Goto uair
-    var15 = 30
-    Stick 0 (0.5)
-  elif CalledAs DAir
-    Goto dair
-    var15 = 38
-    Stick 0 (-0.5)
-  endif
-  Button A
-  var3 = 0
-  var16 = -1
-  Seek ExecuteAttack
-else
+endif
+
+if !(Equal AirGroundState 2)
   Call AIHub
 endif
+
+ClearStick
+if CalledAs NAir
+  Button A
+elif CalledAs FAir
+  Button A
+  Stick 1 0
+elif CalledAs BAir
+  Button A
+  Stick -1
+elif CalledAs UAir
+  Button A
+  Stick 0 0.7
+elif CalledAs DAir
+  Button A
+  Stick 1 (-0.7)
+elif CalledAs NSpecialAir
+  Button B
+elif CalledAs SSpecialAir
+  Button B
+  Stick 1 0
+elif CalledAs USpecialAir
+  Button B
+  Stick 0 0.7
+elif CalledAs DSpecialAir
+  Button B
+  Stick 0 (-1)
+endif
+label
+Seek 
+Return
+label
+if OAttacking && Rnd < 0.7
+  trackOAction 8 1
+elif OCurrAction >= 26 && OCurrAction <= 33
+  trackOAction 8 2
+elif OCurrAction >= 52 && OCurrAction <= 56
+  trackOAction 8 3
+elif Rnd < 0.8
+  trackOAction 8 0
+endif
+
+var3 = -1
+label _begin
+Goto checks
+Goto CTD
+Goto movement
+
+// {PRE_HOOKS}
+
+if CalledAs NAir
+  Goto _NAir_impl
+elif CalledAs FAir
+  Goto _FAir_impl
+elif CalledAs BAir
+  Goto _BAir_impl
+elif CalledAs UAir
+  Goto _UAir_impl
+elif CalledAs DAir
+  Goto _DAir_impl
+elif CalledAs NSpecialAir
+  Goto _NSpecialAir_impl
+elif CalledAs SSpecialAir
+  Goto _SSpecialAir_impl
+elif CalledAs USpecialAir
+  Goto _USpecialAir_impl
+elif CalledAs DSpecialAir
+  Goto _DSpecialAir_impl
+endif
+
+// {POST_HOOKS}
+
+Seek _begin
 Return
 
-label ExecuteAttack
-Cmd30
-var1 = 0
+label _NAir_impl
+//   {NAir}
+Return
+
+label _FAir_impl
+//   {FAir}
+Return
+
+label _BAir_impl
+//   {BAir}
+Return
+
+label _UAir_impl
+//   {UAir}
+Return
+
+label _DAir_impl
+//   {DAir}
+Return
+
+label _NSpecialAir_impl
+//   {NSpecialAir}
+Return
+
+label _SSpecialAir_impl
+//   {SSpecialAir}
+Return
+
+label _USpecialAir_impl
+//   {USpecialAir}
+Return
+
+label _DSpecialAir_impl
+//   {DSpecialAir}
+Return
+
+label CTD
+  var1 = 0
   // this prevents it from auto-attacking.
   // this issue persisted for... 9 months
   Cmd30
@@ -94,11 +189,10 @@ var1 = 0
   SAFE_INJECT_6 var11
   SAFE_INJECT_7 var12
   // calculate own estimated position
-  var17 = var13 - var3 + var1
+  var17 = var14 - var3 + var1
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
-    var17 -= var13 
-    var17 -= var8
+    var17 = 0
   endif
   var17 += 1
   EstOXCoord var5 var17
@@ -114,35 +208,15 @@ var1 = 0
   var17 -= var22
   var0 += TopNX
   var17 += TopNY
-  // invert them because sometimes that happens
-  // if var6 > var17 && TopNY < OTopNY
-  //   var22 = var17
-  //   var17 = var6
-  //   var6 = var22
-  // elif var6 < var17 && TopNY > OTopNY
-  //   var22 = var17
-  //   var17 = var6
-  //   var6 = var22
-  // endif 
-  // if var5 > var0 && TopNX > OTopNX
-  //   var22 = var0
-  //   var0 = var5
-  //   var5 = var22
-  // elif var5 < var0 && TopNX < OTopNX
-  //   var22 = var0
-  //   var0 = var5
-  //   var5 = var22
-  // endif
-  // no need to do this for the X axis (trust me i've tried)
   var0 -= OTopNX
   var0 *= -2
   var22 = var5 - OTopNX
   var0 += var22
   var0 += TopNX
   // estimate target position separately  
-  var22 = var13 - var3 + var1
+  var22 = var14 - var3 + var1
   var1 = 0
-  if !(CalledAs ComboHub) // because this involves a label
+  if CalledAs ApproachHub // because this involves a label
   if Equal var20 24625
     LOGSTR 1247896064 825373440 0 0 0
   elif Equal var20 24638
@@ -193,7 +267,7 @@ var1 = 0
     LOGSTR 1131375872 1651460096 1969356800 0 0
   endif
     // calculate own Y coord because I can't figure out the !@$% EstOPosVecR thing
-  var22 = var13 - var3
+  var22 = var14 - var3
   var6 = 0
   if Equal CurrSubaction JumpSquat
     var1 = -2.03
@@ -359,7 +433,7 @@ elif OIsCharOf ZSS // Zero Suit Samus
   var1 = 85
   var1 = 0.135
 endif
-  var22 = var13 - var3 + var1
+  var22 = var14 - var3 + var1
   var5 = 0
   var6 = OCharYSpeed + OKBYSpeed
   var6 *= -1
@@ -384,7 +458,7 @@ endif
     var1 = var5
   endif
   // it's awful, I know, but i'm all out of variables and this was the only way lol
-  var22 = var13 - var3 
+  var22 = var14 - var3 
   if var20 >= 24625 && var20 <= 24631
     if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
       var22 += 0
@@ -404,11 +478,64 @@ endif
   endif
   EstOXCoord var5 var22
   var6 = var6 - (OSCDBottom - OTopNY)
+  if LevelValue >= 75 && !(Equal var16 6) && OCurrAction <= 15 && Equal OIsOnStage 1
+    predictOOption var22 14 LevelValue
+    var22 = 30 * OPos
+    if Equal var22 1
+      var5 += var22
+    elif Equal var22 3
+      var5 -= var22
+    endif
+  endif
+  if LevelValue >= 48
+    if var20 >= 24641 && var20 <= 24649
+      var22 = var13 + 4 + 3
+    else
+      var22 = var13
+    endif
+    EstOYCoord var22 var22
+    var1 = TopNY + YDistBackEdge
+    if SamePlane && var22 <= var1 
+      var22 = 1
+    else
+      var22 = 0
+    endif
+    if Equal OCurrAction 97 || Equal OCurrAction 96
+      Seek
+      Jump
+    elif OCurrAction >= 68 && OCurrAction <= 73 && Equal var22 1
+      label
+      if Equal OCurrAction 97 && OAnimFrame > 18
+      elif Equal OCurrAction 96
+      else
+        var1 = -9999.9999
+      endif 
+      predictOOption var22 10 LevelValue
+      if Equal var22 1
+        LOGSTR 1414485760 1095910400 1392508928 0 0
+        var22 = 21
+        if Equal OCurrAction 97
+          var22 -= OAnimFrame
+        endif
+        var22 *= 2 * OPos
+        var5 -= var22
+      elif Equal var22 3
+        LOGSTR 1096237312 1493172224 0 0 0
+        var22 = 21
+        if Equal OCurrAction 97
+          var22 -= OAnimFrame
+        endif
+        var22 *= 2 * OPos
+        var5 += var22
+      endif
+    endif
+  endif
   // var5 = estimated target x position
   // var6 = estimated target y position
   // var0 = estimated own x position
   // var17 = estimated own y position
   // var22 = temporary variable
+  // var1 = by some miracle, another temporary variable
   // correct if estimated y positions go beyond ground level
   // target
   // var17 += var22
@@ -542,7 +669,7 @@ endif
   //   endif
   // endif
   var6 += var0
-  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
   // if !(CalledAs ComboHub)
@@ -563,8 +690,8 @@ endif
   //     // var17 = TopNY - var10 + var12 + var22
   //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
   //     if CalledAs ApproachHub
-  //       var11 -= 3
-  //       var9 += 6
+  //       var11 -= 2.5
+  //       var9 += 5
   //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
@@ -584,8 +711,8 @@ endif
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
   //     if CalledAs ApproachHub
-  //       var11 += 3
-  //       var9 -= 6
+  //       var11 += 2.5
+  //       var9 -= 5
   //     endif
   //     var17 = var11 * 0.0
   //     var9 -= var17
@@ -596,9 +723,140 @@ endif
   //   endif
   // endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
-  //   var17 = var13 - var3 - var8
+  //   var17 = var14 - var3 - var8
   //   var5 = var5 + OXSpeed * var17 * -2
   // endif
+Return
+
+label checks
+  if FramesHitstun > 0
+    var22 = LevelValue * 0.01 - 0.1
+    if LevelValue >= 60 && Rnd <= var22
+      ClearStick
+      Stick 0 (-1)
+    endif
+    Call OnGotDamaged
+  endif
+if var3 < 0 || var3 > var15
+  var3 = -1
+endif
+Cmd30
+var3 += 1
+if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
+  var16 = OKBSpeed
+endif
+if Equal var3 1
+  if OAttacking && Rnd < 0.8
+    trackOAction 12 1
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.8
+    trackOAction 12 2
+  elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.8
+    trackOAction 12 3
+  elif Rnd < 0.3
+    trackOAction 12 0
+  endif
+endif
+if Equal var3 10
+  if OAttacking && Rnd < 0.7
+    trackOAction 8 1
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.7
+    trackOAction 8 2
+  elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.7
+    trackOAction 8 3
+  elif Rnd < 0.2
+    trackOAction 8 0
+  endif
+endif
+if Equal var3 var13 && !(Equal var16 4) && Equal var21 32769
+  predictOOption var17 14 LevelValue
+  var22 = OTopNX - TopNX
+  if var22 < -15 && Equal HitboxConnected 0
+    if Equal AirGroundState 2
+      if XSpeed < -0.2
+        if Equal var17 3
+          trackOAction 14 2
+        else
+          trackOAction 14 1
+        endif
+      elif XSpeed > 0.2
+        if Equal var17 1
+          trackOAction 14 2
+        else
+          trackOAction 14 3
+          trackOAction 14 3
+        endif
+      endif
+    elif True
+      if Equal OPos Direction
+        if Equal var17 3
+          trackOAction 14 2
+        else
+          trackOAction 14 1
+        endif
+      elif True
+        if Equal var17 1
+          trackOAction 14 2
+        else
+          trackOAction 14 3
+          trackOAction 14 3
+        endif
+      endif
+    endif
+  elif var22 > 15 && Equal HitboxConnected 0
+    if Equal AirGroundState 2
+      if XSpeed < -0.2
+        if Equal var17 1
+          trackOAction 14 2
+        else
+          trackOAction 14 3
+          trackOAction 14 3
+        endif
+      elif XSpeed > 0.2
+        if Equal var17 3
+          trackOAction 14 2
+        else
+          trackOAction 14 1
+        endif
+      endif
+    elif True
+      if Equal OPos Direction
+        if Equal var17 3
+          trackOAction 14 2
+        else
+          trackOAction 14 1
+        endif
+      elif True
+        if Equal var17 1
+          trackOAction 14 2
+        else
+          trackOAction 14 3
+          trackOAction 14 3
+        endif
+      endif
+    endif
+  else
+    trackOAction 14 var17
+  endif
+  var22 = Rnd * 7
+  if var22 < 1
+    trackOAction 14 1
+  elif var22 < 2
+    trackOAction 14 2
+  elif var22 < 4
+    trackOAction 14 3
+  endif
+  // HIGHLIGHT_GUESSES(14, LevelValue)
+endif
+if var3 >= var15 || CurrAction <= 9
+  Call AIHub
+endif
+  if !(Equal AirGroundState 2)
+    Call AIHub
+  endif
+Return
+
+label movement
+  ClearStick
 
   GetNearestCliff var0
   var17 = var15 - var3
@@ -627,51 +885,39 @@ endif
     endif
   endif
 
-if Equal AirGroundState 1 || var3 >= var15 || FramesHitstun > 0
-  Call AIHub
-endif
-
-if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
-  var16 = OKBSpeed
-endif
-
-ClearStick
-
-if YSpeed <= 0 && Equal IsOnStage 1 && Equal var2 1 && Equal var0 0
-  LOGSTR 1936224000 1970037760 1598440960 0 0
-  Stick 0 (-1)
-else
-  Stick 0 0.5
-endif
-
-if !(Equal var0 0) && !(Equal var0 2)
-  AbsStick var0
-elif !(Equal var16 4)
-  if var5 < 0
-    AbsStick -1 0
+  if YSpeed <= 0 && Equal IsOnStage 1 && Equal var2 1 && Equal var0 0
+    LOGSTR 1936224000 1970037760 1598440960 0 0
+    Stick 0 (-1)
   else
-    AbsStick 1 0
+    Stick 0 0.5
   endif
-endif
 
-Abs var5
-Abs var6
-Seek ExecuteAttack
-var3 += 1
-if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1 && var3 > var14
-  var17 = var11 * 2
-  if var5 <= var17 && Equal var16 (-1)
-    Return
-  elif !(Equal var0 0)
-    Return
+  if !(Equal var0 0) && !(Equal var0 2)
+    AbsStick var0
+  elif !(Equal var16 4)
+    if var5 < 0
+      AbsStick -1 0
+    else
+      AbsStick 1 0
+    endif
   endif
-  var19 = 2
-  var18 = 1
-  Call Landing
-endif
+
+  Abs var5
+  Abs var6
+  if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1 && var3 > var14
+    var17 = var11 * 2
+    if var5 <= var17 && Equal var16 (-1)
+      Return
+    elif !(Equal var0 0)
+      Return
+    endif
+    var19 = 2
+    var18 = 1
+    Call Landing
+  endif
 Return
 
-label nair
+label _NAir
 var20 = 24641
 var15 = 45
 var9 = -3.2
@@ -689,9 +935,9 @@ var10 = -4
 var13 = 20
 var14 = 29
 endif
-Return 
+Return
 
-label fair
+label _FAir
 var20 = 24642
 var15 = 36
 var9 = 1
@@ -704,9 +950,9 @@ if Equal var19 1
 var13 = 17
 var14 = 30
 endif
-Return 
+Return
 
-label bair
+label _BAir
 var20 = 24643
 var15 = 29
 var9 = -16
@@ -717,7 +963,7 @@ var13 = 10
 var14 = 17
 Return
 
-label uair
+label _UAir
 var20 = 24644
 var15 = 30
 var9 = -3
@@ -734,9 +980,9 @@ var12 = 8
 var13 = 11
 var14 = 13
 endif
-Return 
+Return
 
-label dair
+label _DAir
 var20 = 24645
 var15 = 38
 var9 = -4
@@ -746,6 +992,20 @@ var12 = 12
 var13 = 16
 var14 = 20
 Return
+
+label _NSpecialAir
+
+Return
+
+label _SSpecialAir
+
+Return
+
+label _USpecialAir
+
+Return
+
+label _DSpecialAir
 
 Return
 Return

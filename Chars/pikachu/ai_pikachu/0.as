@@ -1,24 +1,6 @@
 #snippet PRE_HOOKS
 #endsnippet
 
-#snippet HITSTUN_ENDS
-  if Equal AirGroundState 1
-    if Rnd < 0.5 || LevelValue < LV6
-      Stick -1
-    else
-      movePart = 1
-      Call DTilt
-    endif
-  elif Rnd < 0.2 && CanJump
-    Button X
-    movePart = 0
-    Call DAir
-  else
-    Seek Hitstun_End
-    Return
-  endif
-#endsnippet
-
 #snippet TECH_CHASE_OPTIONS
 #endsnippet
 
@@ -38,6 +20,17 @@
   if OYDistBackEdge < -20
     Call UAir
   endif
+  immediateTempVar = Rnd * 6
+  if immediateTempVar < 1
+    Call FTilt
+  elif immediateTempVar < 2
+    Call DTilt
+  elif immediateTempVar < 3
+    Call FSmash
+  elif immediateTempVar < 4
+    Call USmash
+  endif
+  
   if Rnd < 0.8 && !(Equal Direction OPos)
     Call BAir
   else

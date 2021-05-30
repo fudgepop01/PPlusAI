@@ -15,7 +15,7 @@ cmd GetLaBit : 0x38 variable index opponent
 cmd GetLaBasic : 0x39 variable index opponent
 cmd GetLaFloat : 0x3A variable index opponent
 
-cmd GetYDistFloorOffset : 0x3B variable offset opponent
+cmd GetYDistFloorOffset : 0x3B variable xOffset yOffset opponent
 
 // cmd GetMoveFrequency : 0x3D variable move stale opponent
 
@@ -43,7 +43,37 @@ cmd SwitchTarget : 0x42
 
 /// clears the button input
 /// particularly useful when dealing with md 3
-cmd ClearButton : 0x43
+cmd CalcKnockback : 0x43 variable damage atkDamage bkb kbg isWeightDependent
+
+//AI TRACKING CODES
+
+/// configurable opponent option tracking
+/// 1 for "approach"
+/// 2 for "defend"
+/// ---
+/// 0 for "null"
+/// 1 for "attack"
+/// 2 for "grab"
+/// 3 for "defend"
+cmd trackOAction : 0x50 managertype actiontype
+
+/// predicts option of opponent based on tracked data and stores in variable
+/// 1 = "attack"
+/// 2 = "grab"
+/// 3 = "defend"
+/// lookamount = value / 100 (for LevelValue support)
+cmd predictOOption : 0x51 variable managertype lookamount 
+
+/// returns how confident the prediction is 
+cmd predictionConfidence : 0x52 variable managertype lookamount
+
+// MISSING OPERATOR CODES
+cmd OR : 0x60 variable op1 op2
+cmd AND : 0x61 variable op1 op2
+cmd LSHIFT : 0x62 variable op1 op2
+cmd RSHIFT : 0x63 variable op1 op2
+cmd MOD : 0x64 variable op1 op2
+
 
 //DEBUGGING CODES
 

@@ -12,7 +12,7 @@ unk 0x0
 ClearStick
 var21 = 32770
 
-if Equal CurrAction 4
+if Equal CurrAction 4 || Equal CurrAction 3
   Stick 1
 endif
 
@@ -197,7 +197,7 @@ Return
 
 label techChase_wait
   SetTimeout 300
-  var0 = Rnd * 60
+  var0 = Rnd * 50
   var1 = 0
   if Damage < 80
     var2 = 10
@@ -374,25 +374,25 @@ Return
 
 label comboOptions
 LOGVAL var8
-if True && 64 <= var8 && var8 <= 268 && Rnd < 0.30
+if True && 64 <= var8 && var8 <= 268 && Rnd < 0.30 && OYDistBackEdge < -15
 Goto uair
 endif
-if True && 58 <= var8 && var8 <= 415 && Rnd < 0.45
+if True && 58 <= var8 && var8 <= 415 && Rnd < 0.45 && YDistBackEdge > -6
 Goto dtilt
 endif
 if True && 49 <= var8 && var8 <= 269 && Rnd < 0.30
 Goto bair
 endif
-if True && 38 <= var8 && var8 <= 251 && Rnd < 0.40
+if True && 38 <= var8 && var8 <= 251 && Rnd < 0.40 && YDistBackEdge > -6
 Goto utilt
 endif
-if True && 22 <= var8 && var8 <= 184 && Rnd < 0.30
+if True && 22 <= var8 && var8 <= 184 && Rnd < 0.30 && YDistBackEdge > -6
 Goto fsmash
 endif
 if True && 18 <= var8 && var8 <= 196 && Rnd < 0.45
 Goto fair
 endif
-if True && 17 <= var8 && var8 <= 163 && Rnd < 0.30
+if True && 17 <= var8 && var8 <= 163 && Rnd < 0.30 && YDistBackEdge > -6
 Goto dsmash
 endif
 if True && 14 <= var8 && Rnd < 0.30
@@ -403,6 +403,9 @@ Goto dair
 endif
   if YDistBackEdge < -15
     var16 = 255
+  elif YDistBackEdge > -10
+    var16 = 255
+    var19 = 1
   endif
 Seek combo_end
 Jump
@@ -411,45 +414,48 @@ Return
 label juggleOptions
 LOGVAL var8
 var17 = Rnd * 9
-if var17 < 1 && OYDistBackEdge > -10 
+if var17 < 1  && YDistBackEdge > -3 
 Goto jab123
-elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Goto utilt
-elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Goto dtilt
-elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Goto usmash
-elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Goto sspecial
-elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 2
 Goto fthrow
 Goto fthrow
-elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 
+elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 3
 Goto dthrow
 Goto dthrow
-elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 
+elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 5
 Goto uthrow
 Goto uthrow
-elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 
+elif 8 < var17 && var17 < 9  
 Goto fair
 endif
   if YDistBackEdge < -15
     var16 = 255
+  elif YDistBackEdge > -10
+    var16 = 255
+    var19 = 1
   endif
 Seek juggle_end
 Jump
 Return
 
 label killOptions
-if True && 555 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+if True && 555 <= var8 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 2
 Goto grab
 Goto fthrow
 endif
-if True && 374 <= var8 && Rnd < 0.12 && OCurrAction <= 69
+if True && 374 <= var8 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 3
 Goto grab
 Goto dthrow
@@ -457,39 +463,39 @@ endif
 if True && 282 <= var8 && Rnd < 0.30
 Goto nair
 endif
-if True && 218 <= var8 && Rnd < 0.45
+if True && 218 <= var8 && Rnd < 0.45 && YDistBackEdge > -6
 Goto dtilt
 endif
 if True && 185 <= var8 && Rnd < 0.45
 Goto sspecial
 endif
-if True && 179 <= var8 && Rnd < 0.30
+if True && 179 <= var8 && Rnd < 0.30 && YDistBackEdge > -6
 Goto ftilt
 endif
-if True && 156 <= var8 && var8 <= 381 && Rnd < 0.30
+if True && 156 <= var8 && var8 <= 381 && Rnd < 0.30 && OYDistBackEdge < -15
 Goto uair
 endif
 if True && 148 <= var8 && var8 <= 390 && Rnd < 0.30
 Goto bair
 endif
-if True && 134 <= var8 && var8 <= 368 && Rnd < 0.40
+if True && 134 <= var8 && var8 <= 368 && Rnd < 0.40 && YDistBackEdge > -6
 Goto utilt
 endif
-if True && 123 <= var8 && var8 <= 425 && Rnd < 0.12 && OCurrAction <= 69
+if True && 123 <= var8 && var8 <= 425 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 4
 Goto grab
 Goto bthrow
 endif
-if True && 112 <= var8 && var8 <= 334 && Rnd < 0.45
+if True && 112 <= var8 && var8 <= 334 && Rnd < 0.45 && YDistBackEdge > -6
 Goto usmash
 endif
 if True && 98 <= var8 && var8 <= 295 && Rnd < 0.45
 Goto fair
 endif
-if True && 95 <= var8 && var8 <= 273 && Rnd < 0.30
+if True && 95 <= var8 && var8 <= 273 && Rnd < 0.30 && YDistBackEdge > -6
 Goto fsmash
 endif
-if True && 94 <= var8 && var8 <= 429 && Rnd < 0.12 && OCurrAction <= 69
+if True && 94 <= var8 && var8 <= 429 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
 var19 = 5
 Goto grab
 Goto uthrow
@@ -497,11 +503,14 @@ endif
 if True && 85 <= var8 && var8 <= 275 && Rnd < 0.30
 Goto dair
 endif
-if True && 83 <= var8 && var8 <= 243 && Rnd < 0.30
+if True && 83 <= var8 && var8 <= 243 && Rnd < 0.30 && YDistBackEdge > -6
 Goto dsmash
 endif
   if YDistBackEdge < -15
     var16 = 255
+  elif YDistBackEdge > -10
+    var16 = 255
+    var19 = 1
   endif
 if Equal var1 1 
   Seek kill_end
@@ -693,12 +702,12 @@ Return
 label TBD
   // LOGSTR 1734700544 0 0 0 0
   var20 = 25000
-  var9 = -50
-  var10 = 60
-  var11 = 50
-  var12 = 60
-  var13 = 1
-  var14 = 1
+  var9 = -35
+  var10 = 35
+  var11 = 35
+  var12 = 35
+  var13 = 10
+  var14 = 10
   var15 = 1
 Return
 
@@ -719,7 +728,7 @@ endif
 
 if var20 >= 24641 && var20 <= 24655
   if !(InAir)
-    var13 += 5
+    var13 += 3
   endif
 elif var20 <= 24631 || Equal var20 24636 || Equal var20 24638
   if var3 > 20
@@ -728,7 +737,6 @@ elif var20 <= 24631 || Equal var20 24636 || Equal var20 24638
   endif
 endif
 
-var4 = 0
 
 var5 = var13
   var0 = 0
@@ -758,6 +766,7 @@ var5 = var13
   var3 = var12 * (1 + 0.0)
   var2 *= 2
   var3 *= 2
+  var22 = var1
   Abs var0
   Abs var1
   if Equal AirGroundState 1
@@ -780,8 +789,13 @@ var5 = var13
     // var1 -= OTopNY
     // var1 += TopNY
     // DrawDebugRectOutline var0 var1 var2 var3 0 0 255 136
-    Seek callMove
-    Jump
+    // if OKBAngle >= 180 && OKBAngle <= 360
+      Seek callMove
+      Jump
+    // elif var22 > 0
+    //   Seek callMove
+    //   Jump
+    // endif
   endif
 
 var5 = var14
@@ -812,6 +826,7 @@ var5 = var14
   var3 = var12 * (1 + 0.0)
   var2 *= 2
   var3 *= 2
+  var22 = var1
   Abs var0
   Abs var1
   if Equal AirGroundState 1
@@ -834,8 +849,13 @@ var5 = var14
     // var1 -= OTopNY
     // var1 += TopNY
     // DrawDebugRectOutline var0 var1 var2 var3 0 0 255 136
-    Seek callMove
-    Jump
+    // if OKBAngle >= 180 && OKBAngle <= 360
+      Seek callMove
+      Jump
+    // elif var22 > 0
+    //   Seek callMove
+    //   Jump
+    // endif
   endif
 
 if !(Equal var18 255)
@@ -871,6 +891,7 @@ var5 = OFramesHitstun
   var3 = var12 * (1 + 0.0)
   var2 *= 2
   var3 *= 2
+  var22 = var1
   Abs var0
   Abs var1
   if Equal AirGroundState 1
@@ -893,8 +914,13 @@ var5 = OFramesHitstun
     // var1 -= OTopNY
     // var1 += TopNY
     // DrawDebugRectOutline var0 var1 var2 var3 0 0 255 136
-    Seek callMove
-    Jump
+    // if OKBAngle >= 180 && OKBAngle <= 360
+      Seek callMove
+      Jump
+    // elif var22 > 0
+    //   Seek callMove
+    //   Jump
+    // endif
   endif
 
 // {EXTRA_ANALYSIS}

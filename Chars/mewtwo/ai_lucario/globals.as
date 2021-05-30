@@ -14,7 +14,7 @@
 #const groundedMaxXVel = 3
 #const dashCancelFrameWindow = 1
 #const guardOnMaxMomentum = 0.75
-#const jumpSquatFrames = 5
+#const jumpSquatFrames = 3
 #const jumpXInitVel = 0.9
 #const jumpYInitVel = 2.382
 #const jumpYInitVelShort = 1.482
@@ -25,9 +25,9 @@
 #const shieldSize = 8.64
 
 #const maxYEdgeDistWithJump = 80
-#const maxYEdgeDist = 45
-#const maxYEdgeDistJumpNoUpB = 30
-#const maxXEdgeDist = 60
+#const maxYEdgeDist = 40
+#const maxYEdgeDistJumpNoUpB = 60
+#const maxXEdgeDist = 35
 
 #const oWalkingDist = 15
 #const shortEdgeRange = 10
@@ -43,10 +43,10 @@
 #const techChaseCloseDist = 10
 #const techChaseFarDist = 25
 
-#const dashCountMax = 5
-#const dashForceTurnFrame = 27
+#const dashCountMax = 10
+#const dashForceTurnFrame = 17
 #const dashDanceMinFrames = 3
-#const DDWaveDash = 0.5
+#const DDWaveDash = 0.6
 #const DDMaxRange = 55
 
 #const minBaseReactionTime = 0

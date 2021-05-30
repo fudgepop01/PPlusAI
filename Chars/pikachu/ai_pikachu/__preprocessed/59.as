@@ -5,6 +5,47 @@ unk 0x0
 if Equal HitboxConnected 1 && OKBSpeed > var16 && OFramesHitstun > 0
   var16 = OKBSpeed
 endif
+if Equal AnimFrame 1
+  if OAttacking && Rnd < 0.8
+    trackOAction 12 3
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.8
+    trackOAction 12 2
+  elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.8
+    trackOAction 12 3
+  elif Rnd < 0.3
+    trackOAction 12 0
+  endif
+endif
+if AnimFrame > 30 && AnimFrame <= 31 
+  if OAttacking && Rnd < 0.7
+    trackOAction 8 3
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.7
+    trackOAction 8 2
+  elif OCurrAction >= 52 && OCurrAction <= 56 && Rnd < 0.7
+    trackOAction 8 3
+  elif Rnd < 0.2
+    trackOAction 8 0
+  endif
+endif
+var22 = var14 + 1
+if AnimFrame >= var14 && AnimFrame < var22 && !(Equal var16 4)
+  var22 = OTopNX - TopNX 
+  if var22 < -10 && Equal HitboxConnected 0
+    if XSpeed < -0.2
+      trackOAction 14 1
+    elif XSpeed > 0.2
+      trackOAction 14 3
+    endif
+  elif var22 > 10 && Equal HitboxConnected 0
+    if XSpeed < -0.2
+      trackOAction 14 3
+    elif XSpeed > 0.2
+      trackOAction 14 1
+    endif
+  else
+    trackOAction 14 2
+  endif
+endif
 
 if Equal IsOnStage 0
   Call AIHub

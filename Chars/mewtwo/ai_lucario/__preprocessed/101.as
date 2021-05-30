@@ -14,7 +14,7 @@ endif
 // to keep hover going
 Button X
 
-if YDistBackEdge > 45
+if YDistBackEdge > 40
   Call ChrSpecific3
 endif
 

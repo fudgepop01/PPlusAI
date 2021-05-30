@@ -30,19 +30,34 @@ else
 endif
 // LOGSTR str("actionType")
 // LOGVAL actionType
+
 SAFE_INJECT_2 actionType
-if XDistLE 20
+if XDistLE 20 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   label
-  Button X
-  globTempVar = OPos * -1
-  AbsStick globTempVar
+  Goto trackOMoves
+  if CurrAction <= hex(0x9)
+    if globTempVar <= 0 && Equal OPos Direction
+      Stick -1
+    elif globTempVar > 0 && !(Equal OPos Direction)
+      Stick -1
+    else
+      Button X
+    endif
+  endif
+  if Equal CurrSubaction JumpSquat 
+    immediateTempVar = OPos * -1
+    AbsStick immediateTempVar
+  endif
   if InAir
-    Call AIHub
+    Seek execute
+    Jump
   endif
   Return
 endif
-label
+label _handlers
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+  Goto trackOMoves
+
   if actionType <= 0.2
   // Retreating RAR aerial (if possible without going offstage)
     if Equal AirGroundState 1
@@ -129,7 +144,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       actionType = 1
       Return
     endif
-  else
+  elif True
   // approach
     if globTempVar <= 0
       actionType = 0.85
@@ -145,9 +160,88 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
       Jump
     endif
   endif
-else
-  Call ApproachHub
+elif True
+  // dash away ==> attack
+  Goto trackOMoves
+  if actionType < 0.3
+    if XDistFrontEdge < shortEdgeRange || Equal CurrAction hex(0x04) || Equal CurrAction hex(0x03)
+      Seek turnExecute
+      Jump
+    endif
+    immediateTempVar = OPos * -1
+    AbsStick immediateTempVar
+    if Equal CurrAction hex(0x01)
+      ClearStick
+    endif
+  elif actionType < 0.6
+    #let timer = var3
+    timer = Rnd * 60 + 10
+    label
+    Stick 0 (-1)
+    timer -= 1
+    if timer <= 0 || XDistLE 25
+      Seek turnExecute
+      Jump
+    endif
+    immediateTempVar = OTopNY - TopNY
+    if immediateTempVar > 15 && XDistLE 35
+      Call FakeOutHub
+    endif
+    Return
+  elif True
+    if Equal OIsOnStage 1 && !(XDistLE 55)
+      AbsStick OPos
+    else
+      actionType = 0.5
+    endif
+  endif
 endif
+Return
+
+label trackOMoves
+  if ODistLE 45 && Equal OAnimFrame 5
+    if OAttacking && Rnd < 0.7
+      trackOAction man_defend op_attack
+    elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21) && Rnd < 0.7
+      trackOAction man_defend op_defend
+    elif OCurrAction >= hex(0x34) && OCurrAction <= hex(0x38) && Rnd < 0.7
+      trackOAction man_defend op_grab
+    elif Rnd < 0.1
+      trackOAction man_defend op_null
+    endif
+
+    predictOOption globTempVar man_defend LevelValue
+    predictionConfidence immediateTempVar man_defend LevelValue
+
+    if Equal globTempVar op_attack && Rnd < immediateTempVar
+      Call Unk3020
+    elif Equal globTempVar op_defend && Rnd < immediateTempVar
+      movePart = 0
+      lastScript = hex(0x8002)
+      Call Grab
+    elif Equal globTempVar op_grab && Rnd < immediateTempVar
+      Seek turnExecute
+      Jump
+    endif
+  endif 
+Return
+
+label turnExecute
+  if Equal CurrAction hex(0x04)
+    Stick 0 (-1)
+    Return
+  elif Equal CurrAction hex(0x03)
+    Stick -1
+    Return
+  endif
+  if globTempVar <= 0 && Equal OPos Direction
+    Stick -0.5
+  elif globTempVar > 0 && !(Equal OPos Direction)
+    Stick -0.5
+  else
+    Seek execute
+    Jump
+  endif
 Return
 
 label turnFaceJump
@@ -157,7 +251,7 @@ label turnFaceJump
   endif
   if Equal CurrAction hex(0x05) && !(Equal OPos Direction)
     Button X
-  elif Equal CurrAction hex(0x06) || Equal CurrAction hex(0x08) || Equal CurrAction hex(0x09) || Idling
+  elif Equal CurrAction hex(0x06) || Equal CurrAction hex(0x08) || Equal CurrAction hex(0x09)
     if Equal OPos Direction
       Button X
       Return
@@ -215,6 +309,18 @@ elif Equal lastAttack hex(0x6048)
   Call USpecialAir
 elif Equal lastAttack hex(0x6049)
   Call DSpecialAir
+elif Equal lastAttack valShield && Equal AirGroundState 1
+  #let timer = var0
+  timer = 10 + Rnd * 15
+  label
+  Button R
+  timer -= 1
+  if timer <= 0
+    Call OOSHub
+  endif
+  Return
+else
+  Call AIHub
 endif
 Return
 Return

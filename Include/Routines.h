@@ -353,6 +353,7 @@ act DefendHub : 0x8005
 act NeutralHub : 0x8006
 act OOSHub : 0x8007
 act FakeOutHub : 0x8008
+act EdgeEscapeHub : 0x8009
 
 act mix_tomhawkJump : 0x8F00
 act mix_doubleJump : 0x8F01

@@ -24,6 +24,7 @@ endif
 if Equal var21 4384
   Call ComboHub
 elif FramesHitstun > 0 || Equal var11 0
+  var16 = 0
   Call AIHub
 endif
 
@@ -89,8 +90,16 @@ if !(Equal var21 36609) && !(Equal var21 36608) && !(Equal var21 32769)
     var12 = var12 + var17
     // attempts to say each character has a "width" of 4
     if !(Equal var20 24636)
-      var11 += 3
-      var9 -= 6
+      var11 += 2.5
+      var9 -= 5
+      // if var20 <= 24638 && !(Equal var20 24630)
+      //   var22 = 0.04 * 50
+      //   var11 += var22
+      //   var22 *= 2
+      //   var9 -= var22
+      // endif
+    else
+      var11 -= 1
     endif
   // endif
 
@@ -112,14 +121,17 @@ label
   if Equal OCurrAction 78 || Equal OCurrAction 80 || Equal OCurrAction 82 || Equal OCurrAction 96 || Equal OCurrAction 97
   elif Equal var21 33026 || Equal var21 33028 || XDistFrontEdge < 10 || XDistBackEdge > -10
 // elif OAttacking && Rnd < 0.6 && XDistLE 20
-// elif Rnd < 0.05 && XDistLE 60
+elif CurrAction >= 124 && CurrAction <= 125
+elif XDistLE 10
+elif InAir
 elif var11 > 30
+elif OCurrAction >= 66 && OCurrAction <= 82
 elif Equal var21 36608 || Equal var21 8288 || Equal var21 32770 || MeteoChance
 elif Equal var16 4 && Rnd < 0.3
 else
   var21 = 32769
   var0 = (105 - LevelValue) / 100
-  var0 = (Rnd * 5) - 5 * var0
+  var0 = (Rnd * 10) - 10 * var0
   var1 = (Rnd * 10) + 3
   // var17 = OXSpeed * 3
   // Abs var17
@@ -156,7 +168,13 @@ else
   endif
   var17 = OXSpeed * 3
   Abs var17
-  var17 += 5
+  var17 += 30
+  // predictOOption var22 14 LevelValue
+  // if Equal var22 1
+  //   var17 += 10
+  // elif Equal var22 3
+  //   var17 -= 10
+  // endif
   if Equal CurrAction 10
     Return
   elif Equal CurrAction 22 && AnimFrame < 4
@@ -183,17 +201,17 @@ else
     if Equal CurrAction 1 && !(Equal CurrAction 7)
       ClearStick
     elif !(XDistLE 55) && !(Equal OPos Direction) && CurrAction <= 3 && NumFrames > 3
-      LOGSTR 1835104256 544366848 1852269824 0 0
       SetFrame 0
       Stick (-1)
       var0 -= 1
     elif NumFrames >= var1 && Equal CurrAction 3
       Goto _ddSubr
-    elif AnimFrame >= 27 && Equal CurrAction 3
+    elif AnimFrame >= 17 && Equal CurrAction 3
       Goto _ddSubr
     elif Equal CurrAction 4
       ClearStick
       Stick 0 (-1)
+      var0 -= 1
     elif XDistFrontEdge <= 10
       SetFrame 0
       Stick (-1)
@@ -202,9 +220,18 @@ else
         var0 = 100
       endif
     elif ODistLE var17 && CurrAction <= 3
-      LOGSTR 1668050688 1935998976 0 0 0
+      predictOOption var17 7 LevelValue
+      predictionConfidence var22 7 LevelValue
+      if !(Equal ODirection OPos) && Equal var17 1 && Rnd < var22
+        Call Unk3020
+      elif Equal var17 2 && Rnd < var22
+        var21 = 32770
+        Call Grab
+      elif Equal var17 3 && Rnd < var22
+        var0 = 0
+        Return
+      endif 
       if Equal Direction OPos && Rnd < 0.8 && XDistFrontEdge > 25
-        LOGSTR 1684366848 1701737216 1694498816 0 0
         if XDistBackEdge > -25 && Rnd < 0.55 || Rnd < 0.15
           Button R
           var22 = TopNX * -1
@@ -216,15 +243,12 @@ else
         endif
         Goto _ddSubr
       elif Equal Direction OPos && XDistBackEdge < -25 && Rnd < 0.7
-        LOGSTR 1953853952 1845493760 0 0 0
         SetFrame 0
         Stick (-1)
         var0 -= 1
       elif Equal Direction OPos && Rnd < 0.2
-        LOGSTR 1635021824 1633905408 0 0 0
         var0 = 0
       else
-        LOGSTR 1953001984 1869965056 1744830464 0 0
         Stick 1
       endif
     elif Rnd < 0.7 && Equal CurrAction 3 && !(XDistFrontEdge <= 10)
@@ -241,11 +265,11 @@ else
   Return
   label _ddSubr
   SetFrame 0
-  if Equal Direction OPos && Rnd < 0.5 && XDistFrontEdge > 10 && XDistBackEdge < -10
+  if Equal Direction OPos && Rnd < 0.6 && XDistFrontEdge > 10 && XDistBackEdge < -10
     Button X
   endif
   var0 = var0 - 1
-  if (var0 > 0)
+  if var0 > 0 && Rnd < 0.7
     if LevelValue <= 60
       Stick (-1)
     elif LevelValue >= 75 && Rnd < 0.65
@@ -253,22 +277,37 @@ else
     endif
   endif
   var1 = (Rnd * 50) + 3
+  if OAttacking && Rnd < 0.4
+    trackOAction 7 1
+  elif OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.8
+    trackOAction 7 2
+  elif OCurrAction >= 52 && OCurrAction <= 56
+    trackOAction 7 3
+  elif Rnd < 0.1
+    trackOAction 7 0
+  endif
   Return
   label _dashdanceEnd
 endif
 
+// var7
+var7 = 65535
 label BEGIN_MAIN
 Cmd30
 
-var17 = var9 + (var11 * 2)
-if Equal AirGroundState 2 && YDistBackEdge < 30 && !(Equal var16 3)
-  if var17 <= -1 && Equal Direction OPos
-    var16 = 9
-    Call AIHub
-  elif var17 >= 1 && !(Equal Direction OPos)
-    var16 = 9
-    Call AIHub
-  endif
+// var17 = var9 + (var11 * 2)
+// if Equal AirGroundState 2 && YDistBackEdge < 30 && !(Equal var16 3)
+//   if var17 <= -1 && Equal Direction OPos
+//     var16 = 9
+//     Call AIHub
+//   elif var17 >= 1 && !(Equal Direction OPos)
+//     var16 = 9
+//     Call AIHub
+//   endif
+// endif
+if OYDistBackEdge < -40 && var20 <= 24638
+  var16 = 9
+  Call AIHub
 endif
 
 if Equal OIsOnStage 1 && Equal var16 3
@@ -338,7 +377,7 @@ if MeteoChance
   // if CanJump && YDistBackEdge > 80
   //   var16 = 0
   //   Call RecoveryHub
-  // elif !(CanJump) && YDistBackEdge > 45
+  // elif !(CanJump) && YDistBackEdge > 40
   //   var16 = 0
   //   Call RecoveryHub
   // endif
@@ -397,12 +436,31 @@ if var8 < 1
   var8 = 1
 endif
 
-if Equal AirGroundState 2
-  Seek LOOP_DIST_CHECK
-  Jump
-elif Equal AirGroundState 1
-  Seek LOOP_DIST_CHECK
-  Jump
+if Equal OCurrAction 97
+  if Equal OAnimFrame 3
+    var17 = OXSpeed * OPos
+    if var17 > 0.1
+      trackOAction 10 3
+    elif var17 < -0.1
+      trackOAction 10 1
+    else
+      trackOAction 10 2
+    endif
+  endif 
+endif
+
+Goto checkHitstunOption
+
+if !(Equal AirGroundState 3) 
+  if Equal OIsOnStage 1 && Equal IsOnStage 1
+    if SamePlane
+      Seek LOOP_DIST_CHECK
+      Jump
+    endif
+  else
+    Seek LOOP_DIST_CHECK
+    Jump
+  endif
 endif
 label LOOP_DIST_EXIT
 if !(True)
@@ -422,7 +480,7 @@ if !(True)
   elif var20 >= 24641 && var20 <= 24655
     var4 = 0
     if Equal AirGroundState 1
-      var4 = 5
+      var4 = 3
     endif
   elif Equal var20 25000
     var4 = OFramesHitstun 
@@ -443,8 +501,7 @@ if !(True)
   var17 = var13 + (var14 - var13) / 2 + var4
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
-    var17 -= var13 
-    var17 -= var8
+    var17 = 0
   endif
   var17 += 1
   EstOXCoord var5 var17
@@ -460,26 +517,6 @@ if !(True)
   var17 -= var22
   var3 += TopNX
   var17 += TopNY
-  // invert them because sometimes that happens
-  // if var6 > var17 && TopNY < OTopNY
-  //   var22 = var17
-  //   var17 = var6
-  //   var6 = var22
-  // elif var6 < var17 && TopNY > OTopNY
-  //   var22 = var17
-  //   var17 = var6
-  //   var6 = var22
-  // endif 
-  // if var5 > var3 && TopNX > OTopNX
-  //   var22 = var3
-  //   var3 = var5
-  //   var5 = var22
-  // elif var5 < var3 && TopNX < OTopNX
-  //   var22 = var3
-  //   var3 = var5
-  //   var5 = var22
-  // endif
-  // no need to do this for the X axis (trust me i've tried)
   var3 -= OTopNX
   var3 *= -2
   var22 = var5 - OTopNX
@@ -488,7 +525,7 @@ if !(True)
   // estimate target position separately  
   var22 = var13 + (var14 - var13) / 2 + var4
   var4 = 0
-  if !(CalledAs ComboHub) // because this involves a label
+  if CalledAs ApproachHub // because this involves a label
   if Equal var20 24625
     LOGSTR 1247896064 825373440 0 0 0
   elif Equal var20 24638
@@ -737,7 +774,7 @@ endif
     endif
   elif var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1
-      var22 += 5
+      var22 += 3
     endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
@@ -750,11 +787,64 @@ endif
   endif
   EstOXCoord var5 var22
   var6 = var6 - (OSCDBottom - OTopNY)
+  if LevelValue >= 75 && !(Equal var16 6) && OCurrAction <= 15 && Equal OIsOnStage 1
+    predictOOption var22 14 LevelValue
+    var22 = 30 * OPos
+    if Equal var22 1
+      var5 += var22
+    elif Equal var22 3
+      var5 -= var22
+    endif
+  endif
+  if LevelValue >= 48
+    if var20 >= 24641 && var20 <= 24649
+      var22 = var13 + 3 + 3
+    else
+      var22 = var13
+    endif
+    EstOYCoord var22 var22
+    var4 = TopNY + YDistBackEdge
+    if SamePlane && var22 <= var4 
+      var22 = 1
+    else
+      var22 = 0
+    endif
+    if Equal OCurrAction 97 || Equal OCurrAction 96
+      Seek
+      Jump
+    elif OCurrAction >= 68 && OCurrAction <= 73 && Equal var22 1
+      label
+      if Equal OCurrAction 97 && OAnimFrame > 18
+      elif Equal OCurrAction 96
+      else
+        var4 = -9999.9999
+      endif 
+      predictOOption var22 10 LevelValue
+      if Equal var22 1
+        LOGSTR 1414485760 1095910400 1392508928 0 0
+        var22 = 21
+        if Equal OCurrAction 97
+          var22 -= OAnimFrame
+        endif
+        var22 *= 2 * OPos
+        var5 -= var22
+      elif Equal var22 3
+        LOGSTR 1096237312 1493172224 0 0 0
+        var22 = 21
+        if Equal OCurrAction 97
+          var22 -= OAnimFrame
+        endif
+        var22 *= 2 * OPos
+        var5 += var22
+      endif
+    endif
+  endif
   // var5 = estimated target x position
   // var6 = estimated target y position
   // var3 = estimated own x position
   // var17 = estimated own y position
   // var22 = temporary variable
+  // var4 = by some miracle, another temporary variable
   // correct if estimated y positions go beyond ground level
   // target
   // var17 += var22
@@ -888,7 +978,7 @@ endif
   //   endif
   // endif
   var6 += var3
-  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645
+  if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
   // if !(CalledAs ComboHub)
@@ -909,8 +999,8 @@ endif
   //     // var17 = TopNY - var10 + var12 + var22
   //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
   //     if CalledAs ApproachHub
-  //       var11 -= 3
-  //       var9 += 6
+  //       var11 -= 2.5
+  //       var9 += 5
   //     endif
   //     var22 = (var9 + var11)
   //     var22 *= Direction
@@ -930,8 +1020,8 @@ endif
   //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
       
   //     if CalledAs ApproachHub
-  //       var11 += 3
-  //       var9 -= 6
+  //       var11 += 2.5
+  //       var9 -= 5
   //     endif
   //     var17 = var11 * 0.0
   //     var9 -= var17
@@ -946,14 +1036,52 @@ endif
   //   var5 = var5 + OXSpeed * var17 * -2
   // endif
 
+  if Equal var4 -9999.9999
+    var6 = var4
+  endif
+
+  if LevelValue >= 48 && OCurrAction >= 66 && OCurrAction <= 69 && Equal OIsOnStage 1 && Equal AirGroundState 1
+    EstOYCoord var17 OFramesHitstun
+    var17 = OTopNY - var17
+    var22 = OTopNY + OYDistBackEdge
+    if var17 < var22
+      predictOOption var17 15 LevelValue
+      predictionConfidence var22 15 LevelValue
+      
+      LOGSTR 1347568896 1145651968 1414090496 1308622848 0
+      LOGVAL var17
+      LOGVAL var22
+      // DrawDebugRectOutline TopNX TopNY 25 3 255 0 0 221
+
+      if Equal var17 1 && Rnd < var22
+        if ONumJumps > 0
+          var6 -= 20
+        endif
+      elif Equal var17 3 && Rnd < var22 && XDistLE 25
+        Call Unk3020
+      endif
+    endif
+  endif
+
+  var17 = var7 - var5
+  Abs var17
+  if var17 > 50 && !(Equal var7 65535)
+    var5 = var7
+  endif
+
   // var5 and var6 come from the macro
   var0 = var5
   var1 = var6
   Abs var0
   Abs var1
-  // if we're not jumping
 
-  if !(Equal CurrSubaction JumpSquat)
+  if var20 <= 24631 && !(Equal var20 24630) && !(Equal var20 24636) && Equal CurrAction 3
+    var22 = 0.04 * 50
+    var0 -= var22
+  endif
+
+  // if we're not jumping
+  if !(Equal CurrSubaction JumpSquat) && !(Equal var6 -9999.999)
     var2 = 0
 
     // if one is negative and one is positive, and it's <= var11
@@ -1149,6 +1277,16 @@ endif
   endif
 
     if !(Equal AirGroundState 2) || !(Equal YSpeed 0) 
+      if CanJump && YDistBackEdge > 80
+        var16 = 0
+        Call RecoveryHub
+      elif !(CanJump) && YDistBackEdge > 40
+        var16 = 0
+        Call RecoveryHub
+      elif YDistBackEdge > 50
+        var16 = 0
+        Call RecoveryHub
+      endif
       if var0 <= var11
         var2 = 0
         Goto XDistCheckPassed
@@ -1171,100 +1309,44 @@ endif
         var17 = TopNY - OTopNY
         Abs var17
         if !(Equal var16 3) && Rnd < 0.4
-          if XDistLE 25 && var17 <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
-            if Rnd < 0.9
-              Call Unk3020
-            endif
-
-  if !(OAttacking) || Rnd <= 0.25 || OCurrActionFreq >= 4
-    Seek begin
-    Jump
-  endif
-  var0 = 21 - 0
-  var0 = Rnd * var0 + 0
-  if !(Equal var0 0)
-    var0 = var0 + Rnd * (100 - LevelValue) / 6
-  endif
-  
-  // var0 = var0 - (OCurrActionFreq * 4) 
-  var1 = 0
-  label
-  LOGSTR 1027423488 1025524736 1162223616 1027423488 1023410176
-  if FramesHitstun > 0
-    Call AIHub
-  endif
-  if !(OAttacking)
-    var1 = 1
-  endif
-  if Equal CurrAction 3
-    Stick 0.8
-  elif Equal CurrAction 4
-    Stick 0 (-1)
-  endif
-  if Equal var1 1 && OAttacking
-    Seek
-    Jump
-  elif var0 <= 0
-    Seek
-    Jump
-  endif
-  var0 -= 1
-  Return
-  label
-  SetFrame 0
-  label begin
-
-            label
-            Button X
-            var17 = OPos * -1
-            AbsStick var17
-            if InAir || FramesHitstun > 0
-              Call AIHub
-            endif
-            Return
-          elif XDistLE 35 && var17 <= 40 && OAttacking && Equal AirGroundState 2 && !(MeteoChance)
-
-  if !(OAttacking) || Rnd <= 0.25 || OCurrActionFreq >= 4
-    Seek begin
-    Jump
-  endif
-  var0 = 21 - 0
-  var0 = Rnd * var0 + 0
-  if !(Equal var0 0)
-    var0 = var0 + Rnd * (100 - LevelValue) / 6
-  endif
-  
-  // var0 = var0 - (OCurrActionFreq * 4) 
-  var1 = 0
-  label
-  LOGSTR 1027423488 1025524736 1162223616 1027423488 1023410176
-  if FramesHitstun > 0
-    Call AIHub
-  endif
-  if !(OAttacking)
-    var1 = 1
-  endif
-  if Equal CurrAction 3
-    Stick 0.8
-  elif Equal CurrAction 4
-    Stick 0 (-1)
-  endif
-  if Equal var1 1 && OAttacking
-    Seek
-    Jump
-  elif var0 <= 0
-    Seek
-    Jump
-  endif
-  var0 -= 1
-  Return
-  label
-  SetFrame 0
-  label begin
-            Button X
-            var18 = 0
-            Call AIHub
+          // I can get rid of this thanks to A N T I C I P A T I O N
+          if ODistLE 30
+            predictOOption var17 8 LevelValue
+            predictionConfidence var22 8 LevelValue
+            if !(Equal ODirection OPos) && Equal var17 1 && Rnd < var22
+              if Equal AirGroundState 2 && NumJumps > 0
+                Button X
+                Seek BEGIN_MAIN
+              else
+                Call Unk3020
+              endif
+            elif Equal var17 2 && Rnd < var22 && Rnd < 0.55
+              var21 = 32770
+              Call Grab
+            endif 
           endif
+          // if XDistLE 25 && var17 <= 40 && OAttacking && Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
+          //   if Rnd < 0.9
+          //     Call Unk3020
+          //   endif
+
+          //   DEFENSIVE_REACTION_TIME(var0, var1)
+
+          //   label
+          //   Button X
+          //   var17 = OPos * -1
+          //   AbsStick var17
+          //   if InAir || FramesHitstun > 0
+          //     Call AIHub
+          //   endif
+          //   Return
+          // elif XDistLE 35 && var17 <= 40 && OAttacking && Equal AirGroundState 2 && !(MeteoChance)
+
+          //   DEFENSIVE_REACTION_TIME(var0, var1)
+          //   Button X
+          //   var18 = 0
+          //   Call AIHub
+          // endif
         endif
       elif var2 <= var11
         var2 = 0
@@ -1286,13 +1368,6 @@ endif
           Return
         endif
       endif
-      if CanJump && YDistBackEdge > 80
-        var16 = 0
-        Call RecoveryHub
-      elif !(CanJump) && YDistBackEdge > 45
-        var16 = 0
-        Call RecoveryHub
-      endif
     endif
   endif
 
@@ -1306,7 +1381,7 @@ endif
   Jump
 endif
 
-if !(Equal CurrSubaction JumpSquat) && SamePlane && Equal AirGroundState 1 && Equal OAirGroundState 1 && var1 > var12
+if !(Equal CurrSubaction JumpSquat) && SamePlane && Equal AirGroundState 1 && Equal OAirGroundState 1 && var1 > var12 && !(Equal var6 -9999.9999) 
   Call AIHub
 endif
 
@@ -1351,13 +1426,15 @@ if !(Equal CurrSubaction JumpSquat)
   endif
   // if we want to perform an aerial, jump with respect to the
   // var13 to attempt to get there by the time the move's hitbox is out
-  var17 = var5 //+ (TotalXSpeed * (var13 + 5) * -1) + TopNX
+  var17 = var5 //+ (TotalXSpeed * (var13 + 3) * -1) + TopNX
   // var17 -= TopNX
   // var2 -= TopNX
   Abs var17
-
-  if Equal AirGroundState 1 && CurrAction <= 9 && Equal IsOnStage 1 && !(Equal var16 4)
-    if var17 <= var11 && var20 >= 24641 && var20 <= 25000
+  // var22 = var11 + 0.9 * var13
+  
+  if Equal var6 -9999.9999 
+  elif Equal AirGroundState 1 && CurrAction <= 9 && Equal IsOnStage 1 && !(Equal var16 4)
+    if var17 <= var11 && var20 >= 24641 && var20 <= 25000 || XDistLE 15 && var20 >= 24641 && var20 <= 25000      
       if MeteoChance
         if OYDistBackEdge < -5
           Button X
@@ -1381,35 +1458,6 @@ if !(Equal CurrSubaction JumpSquat)
       else
         ClearStick 0
       endif
-    elif XDistLE 15 && var20 >= 24641 && var20 <= 25000
-      if MeteoChance
-        if OYDistBackEdge < -5
-          Button X
-        endif
-      elif var6 <= 60
-        var17 = var9 + (var11 * 2)
-        label
-        if var17 <= -1 && Equal Direction OPos
-          Stick -1
-          Return
-        elif var17 >= 1 && !(Equal Direction OPos)
-          Stick -1
-          Return
-        endif
-        if !(Equal CurrSubaction JumpSquat) && var6 <= 60
-          Button X
-        elif var6 <= 60 && OAttacking
-          Button X
-        endif
-        Goto JumpIfInRange
-      else
-        ClearStick 0
-      endif
-    // elif Rnd <= 0.02 && var20 >= 24625 && var20 <= 24631 && XDistLE 80 100 && !(Equal var16 6) && !(Equal var16 3)
-    //   // randomly perform tomhawk stuff if using a grounded move and not comboing
-    //   Call mix_tomhawkJump
-    // elif Rnd <= 0.02 && Equal var20 32776 && !(Equal var16 6) && !(Equal var16 3)
-    //   Call mix_tomhawkJump
     endif
 
 
@@ -1439,6 +1487,61 @@ if !(Equal CurrSubaction JumpSquat)
   endif
 endif
 
+if YDistBackEdge > -4 && Equal IsOnStage 1 && Equal OIsOnStage 1 && YSpeed < 0
+  LOGSTR 1818324480 1684631040 1728053248 0 0
+  Button R
+  ClearStick
+
+  if XDistBackEdge > -15
+    Stick 1 (-1)
+  elif XDistFrontEdge < 15
+    Stick (-1) (-1)
+  else
+    var22 = Rnd * 10
+    Stick var22 (-1)
+  endif
+
+  AbsStick OPos (-1)
+  Seek BEGIN_MAIN
+  Return
+endif
+
+var22 = XSpeed * 8
+GetYDistFloorOffset var17 var22 40 0
+if !(Equal var17 -1) && var17 < 20 && Rnd < 0.15 && !(Equal var16 6) && var20 > 24638
+  if XDistLE 25 && Rnd < 0.3 || !(XDistLE 25)
+    label 
+    LOGSTR 1165518080 1668641792 1768843008 0 0
+    if !(CurrAction <= 11)
+      ClearStick
+      Return
+    endif
+    var22 = 3 + 4
+    label
+    Button X
+    if var22 <= 0 
+      Seek
+    endif
+    var22 -= 1
+    Return
+    label
+    if InAir && YDistBackEdge > -3 && !(Equal YSpeed 0) && YSpeed < 2.382
+      Button R
+      if XDistBackEdge > -15 && XDistBackEdge < -5
+        Stick (-1) (-1)
+      elif XDistFrontEdge < 15 && XDistFrontEdge > 5
+        Stick 1 (-1)
+      else
+        Stick 0 (-1)
+      endif
+      Seek BEGIN_MAIN
+    elif InAir && ODistLE 25
+      Seek BEGIN_MAIN
+    endif
+    Return
+  endif
+endif
+
 if !(SamePlane) && Rnd < 0.8
   if Equal AirGroundState 1 && var6 < 0
     var17 = 4
@@ -1458,7 +1561,7 @@ if !(True)
     AbsStick 0 (-1)
   elif Equal CurrAction 17
     AbsStick 0 (-1)
-  else
+  elif !(InAir)
     Return
   endif
 
@@ -1508,24 +1611,26 @@ label
 GetNearestCliff var3
 var3 = TopNX - var3
 
-if var3 > 60 || var3 < -60 
+if var3 > 35 || var3 < -35 
   if Equal var2 2 && !(Equal var16 3)
     var18 = 0
+    var16 = 0
     Call RecoveryHub
   endif
 endif
 
 if Equal var2 2 && Equal var16 3
   var17 = (YDistFrontEdge * -1) - var1
+  var22 = OTopNY + 30
   if CanJump && YDistFrontEdge < -80
     var19 = 0
     var16 = 0
     Call AIHub
-  elif !CanJump && YDistFrontEdge < -45 && YSpeed < 0.1
+  elif !CanJump && YDistFrontEdge < -40 && YSpeed < 0.1
     var19 = 0
     var16 = 0
     Call AIHub
-  elif CanJump && YDistFrontEdge > 80
+  elif CanJump && YDistFrontEdge > 80 || YDistFrontEdge > 60 && TopNY < var22
     var19 = 0
     var16 = 0
     Call RecoveryHub
@@ -1534,25 +1639,31 @@ endif
 
 // now that the calculations using these are over with, we'll store them
 // for the next frame
-var7 = var5
+if Equal var7 var5
+  var7 = 65535
+else
+  var7 = var5
+endif
 
 // if we're not in jumpsquat, we want to dash to the location
 if Equal var16 3 && var20 < 24640
+elif XDistLE 15 && var20 < 24640 && Equal AirGroundState 2
+  Goto makeIdle
+  var2 = 1
 elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
-  LOGVAL var0
   var17 = var5
-  if var0 <= 1
-    ClearStick
-  elif XDistLE 15
-    if CurrAction < 3 || CurrAction > 4
+  if var0 <= 1 && var20 <= 24631
+    Goto makeIdle
+  elif var0 <= 15 && var20 <= 24631
+    if CurrAction < 3
       ClearStick
       if var5 > 0
-        AbsStick 0.8
+        AbsStick 0.7
       else
-        AbsStick -0.8
+        AbsStick -0.7
       endif
     else
-      AbsStick var5
+      Goto makeIdle
     endif
   else
     AbsStick var5
@@ -1561,7 +1672,6 @@ elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
   if Equal CurrAction 1 && LevelValue > 21 && !(XDistLE 15)
     ClearStick
   endif
-
 
   if XDistLE 15 || var0 <= var11 
     EstOYCoord var17 var14
@@ -1579,6 +1689,8 @@ elif Equal CurrSubaction JumpSquat
   var0 = Rnd
   label jsquat
   var22 = OTopNX - TopNX
+  var17 = (var9 + var11) * Direction
+  var22 += var17
   var17 = var22
   Abs var17
   if var17 <= 20
@@ -1622,16 +1734,15 @@ elif Equal CurrSubaction JumpSquat
   //     endif
   //   endif
   // endif
-  if Equal CurrSubaction JumpSquat && !(Equal var16 4) && !(Equal var21 32770) && OFramesHitstun < 1
+  Goto JumpIfInRange
+
+  if Equal CurrSubaction JumpSquat && !(Equal var16 4) && !(Equal var16 6) && OFramesHitstun < 1
     if var0 <= 0.2
       Button X
     endif 
     Seek jsquat
     Return
   endif
-  
-
-  Goto JumpIfInRange
 else
   // otherwise...
   var17 = var5
@@ -1647,6 +1758,7 @@ else
     var17 /= 2
   endif
 
+  AbsStick var17
   if !(Equal var2 0) && !(Equal var16 3)
     ClearStick 0
     var0 = XSpeed * -10
@@ -1663,6 +1775,11 @@ else
 endif
 
 Seek BEGIN_MAIN
+// if Equal var16 4
+//   LOGSTR 1953001984 1870098176 1970536448 0 0
+//   LOGSTR 1667329536 1667591168 1701052416 0 0
+//   var16 = 0
+// endif
 if var2 > 0
   Return
 endif
@@ -1672,6 +1789,7 @@ Stick 0 0.5
 Return
 
 label JumpIfInRange
+if !(Equal var6 -9999.9999)
   EstOYCoord var17 var13
   var17 -= TopNY
   if MeteoChance && Equal AirGroundState 1 && OYSpeed > 0.01 && OYDistBackEdge > 15
@@ -1706,18 +1824,13 @@ label JumpIfInRange
       endif
     endif
   endif
+endif
 Return
 
 label XDistCheckPassed
 
 var2 = 0
-
-// var17 = HurtboxSize
-// if var6 < var17 && Equal AirGroundState 1 && Equal YSpeed 0 && !(Equal CurrAction 10)
-//   var17 = 65535
-// else
-  var17 = var12
-// endif
+var17 = var12
 if var1 <= var17
   var22 = var15
   var4 = 0
@@ -1785,6 +1898,17 @@ if var1 <= var17
     Stick 0 0.5
     var17 = -80 
     if Equal AirGroundState 1 && CurrAction <= 23
+      predictOOption var17 8 LevelValue
+      predictionConfidence var22 8 LevelValue
+      var22 *= 0.5
+      if Equal var17 1 && Rnd < var22 && !(Equal var16 6)
+        if Rnd < 0.5
+          Button Unk3020
+        else
+          Call FakeOutHub
+        endif
+      endif
+
       var17 = var9 + (var11 * 2)
       if var17 >= 1 && !(Equal Direction OPos)
         Stick (-1)
@@ -1804,25 +1928,54 @@ if var1 <= var17
       var19 = 0
       var16 = 0
       Call AIHub
-    elif !CanJump && Equal var2 2 && var4 < -45
+    elif !CanJump && Equal var2 2 && var4 < -40
       var19 = 0
       var16 = 0
       Call AIHub
-  elif !(CanJump) && NumJumps > 0 && var4 < -30
+  elif !(CanJump) && NumJumps > 0 && var4 < -60
       var19 = 0
       Call AIHub
     else
       var2 = 1
       Seek LOOP_DIST_CHECK
     endif
-  elif Equal AirGroundState 1
+  elif Equal AirGroundState 1 || Equal var20 25000
     var2 = 1
   endif
 endif
 Return
 
 label CallAttacks
+Cmd30
+if !(Equal var16 6)
+  predictOOption var17 12 LevelValue
+  predictionConfidence var22 12 LevelValue
 
+  if Equal AirGroundState 1 && Rnd < 0.5
+    if Equal var17 1 && Rnd < var22
+      Stick 1
+      Button R 
+      Call OOSHub
+    elif Equal var17 2 && Rnd < var22
+      var18 = 1
+      Call FakeOutHub
+    elif Equal var17 3 && Rnd < var22
+      Call DefendHub
+    endif 
+  elif Equal AirGroundState 2 && TopNY > OTopNY && Rnd < 0.2 && var20 >= 24641 && var20 <= 24649 && NumJumps > 0 && !(Equal var16 3)
+    if Rnd < var22
+      SetFrame 0
+      label
+      Button X
+      if NumFrames > 2
+        Seek BEGIN_MAIN
+      endif
+      Return
+    endif 
+  endif
+endif
+label
+Goto checkHitstunOption
 // if Equal OAirGroundState 1 && OCurrAction <= 9 && Rnd < 0.3 && Equal AirGroundState 1 && var20 < 24641
 //   var20 = 32776
 // endif
@@ -1837,98 +1990,9 @@ var0 = 0
 // {ADDITIONAL_IDLE_HOOK}
 
 // if the action requires us to be stopped,
-if var20 >= 24625 && var20 <= 24631
-  label makeIdle
-  Seek CallAttacks
-  if Equal CurrAction 3
-    // stops the dash
-    ClearStick
-    Button X
-    Return
-  endif
-  if Equal CurrAction 4
-    // interrupts run with crouch for one frame
-    ClearStick
-    Stick 0 (-1)
-    Return
-  endif
-  if Equal CurrAction 10 || Equal CurrSubaction JumpSquat
-    Return
-  endif
-
-  GetNearestCliff var2
-  var17 = 4
-  var3 = XSpeed * var17
-  var2 -= TopNX
-  if var2 < 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var2 -= var3
-      if var2 >= 0
-        var2 = 1
-      endif
-    endif
-  elif var2 > 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var2 -= var3
-      if var2 <= 0
-        var2 = -1
-      endif
-    endif
-  endif
-  if !(Equal var2 1) && !(Equal var2 -1)
-    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
-      var2 = 2
-    else
-      var2 = 0
-    endif
-  endif
-
-  if InAir && YDistBackEdge > -10 && YDistBackEdge <= 2 && Equal var2 0
-    ClearStick
-    var17 = var5 * -0.1
-    if XDistBackEdge < -5
-      var17 = 0.4
-    elif XDistFrontEdge < 5
-      var17 = -0.4
-    endif
-    if LevelValue <= 60
-      if Rnd < 0.5
-        Button R
-        AbsStick var17 (-1)
-      endif
-    elif True
-      if Rnd < 0.25
-        var17 *= -1
-      elif Rnd < 0.7 && XDistFrontEdge < 30
-        var17 *= -1
-      endif
-      Button R
-      AbsStick var17 (-1)
-    endif
-    if XDistBackEdge > -10 || XDistFrontEdge < 10
-      ClearStick
-      AbsStick 0 (-1)
-    endif
-    Return
-  elif !(Equal AirGroundState 1)
-    Call AIHub
-  endif
-  var17 = var9 + (var11 * 2)
-  if var17 >= 1 && !(Equal Direction OPos)
-    ClearStick
-    Stick (-0.7)
-    Return
-  elif var17 <= -1 && Equal Direction OPos
-    ClearStick
-    Stick (-0.7)
-    Return
-  endif
-  if CurrAction >= 22 && var0 < 4
-    var0 += 1
-    Return
-  elif CurrAction >= 24
-    Return
-  endif
+if var20 >= 24625 && var20 <= 24635 && !(Equal var20 24630) && !(Equal var20 24633) && CurrAction > 1
+  Goto makeIdle
+  Return
 elif Equal CurrSubaction JumpSquat
   Return
 elif var20 >= 24640 && var20 <= 24655 && Equal AirGroundState 1
@@ -1953,17 +2017,18 @@ if var20 >= 24632 && var20 <= 24635
   var17 = var9 + (var11 * 2)
   if var17 >= 1 && !(Equal Direction OPos)
     ClearStick
-    Stick (-1)
+    Stick (-0.7)
   elif var17 <= -1 && Equal Direction OPos
     ClearStick
-    Stick (-1)
+    Stick (-0.7)
   else
     ClearStick
-    AbsStick OPos
+    var17 = OPos * 0.7
+    AbsStick var17
   endif
 endif
 // DashAttack
-if Equal var20 24638 && !(Equal CurrAction 3)
+if Equal var20 24638 && !(Equal CurrAction 3) && !(Equal CurrAction 4)
   if Equal CurrAction 1
     ClearStick
   else
@@ -2027,5 +2092,115 @@ elif Equal var20 25000
   var18 = 255
   Call ComboHub
 endif
+Return
+
+label makeIdle
+if Equal CurrAction 3
+  // stops the dash
+  ClearStick
+  Button X
+  Return
+endif
+if Equal CurrAction 4
+  // interrupts run with crouch for one frame
+  ClearStick
+  Stick 0 (-1)
+  Return
+endif
+if Equal CurrAction 10 || Equal CurrSubaction JumpSquat
+  Return
+endif
+
+  GetNearestCliff var2
+  var17 = 4
+  var3 = XSpeed * var17
+  var2 -= TopNX
+  if var2 < 0
+    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
+      var2 -= var3
+      if var2 >= 0
+        var2 = 1
+      endif
+    endif
+  elif var2 > 0
+    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
+      var2 -= var3
+      if var2 <= 0
+        var2 = -1
+      endif
+    endif
+  endif
+  if !(Equal var2 1) && !(Equal var2 -1)
+    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
+      var2 = 2
+    else
+      var2 = 0
+    endif
+  endif
+
+if InAir && YDistBackEdge > -10 && YDistBackEdge <= 2 && Equal var2 0
+  ClearStick
+  var17 = var5 * 0.4
+  if XDistBackEdge > -5
+    var17 = 0.4
+  elif XDistFrontEdge < 5
+    var17 = -0.4
+  endif
+  if LevelValue <= 60
+    if Rnd < 0.5
+      Button R
+      AbsStick var17 (-1)
+    endif
+  elif True
+    if Rnd <= 0.1
+      var17 *= -1
+    elif Rnd < 0.7 && XDistFrontEdge < 30
+      var17 *= -1
+    endif
+    Button R
+    AbsStick var17 (-1)
+  endif
+  if XDistBackEdge > -10 || XDistFrontEdge < 10
+    ClearStick
+    AbsStick 0 (-1)
+  endif
+  Return
+elif !(Equal AirGroundState 1)
+  Call AIHub
+endif
+var17 = var9 + (var11 * 2)
+if var17 >= 1 && !(Equal Direction OPos)
+  ClearStick
+  Stick (-0.7)
+  Return
+elif var17 <= -1 && Equal Direction OPos
+  ClearStick
+  Stick (-0.7)
+  Return
+endif
+if CurrAction >= 22 && var0 < 4
+  var0 += 1
+  Return
+elif CurrAction >= 24
+  Return
+endif
+Return
+
+label checkHitstunOption
+
+if OAnimFrame > 1 && OAnimFrame <= 2 && ODistLE 80
+  if OPrevAction >= 66 && OPrevAction <= 69 || Equal OPrevAction 73 || Equal var16 6
+    if Equal OCurrAction 12 || Equal OCurrAction 13
+      trackOAction 15 1
+    elif OAttacking && Rnd < 0.6
+      trackOAction 15 1
+    elif Equal OCurrAction 14 || Equal OCurrAction 70 || Equal OCurrAction 74 || Equal OCurrAction 96 || Equal OCurrAction 97
+      if OFramesHitstun <= 0 && Rnd < 0.5
+        trackOAction 15 2
+      endif
+    endif
+  endif
+endif
+
 Return
 Return
