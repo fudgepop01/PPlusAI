@@ -29,8 +29,6 @@ if Equal CurrAction 77
         Button A
     endif
     var0 -= 1
-else
-    Call AIHub
 endif
 Return
 Return

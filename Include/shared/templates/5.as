@@ -17,17 +17,8 @@ lastScript = hex(0x8005)
 #let tempVar2 = var2
 
 globTempVar = move_xOffset + (move_xRange * 2)
-
-tempVar = TopNX
-tempVar2 = OTopNX
-Abs tempVar
-Abs tempVar2
 // if closer to center stage, then don't give up positional advantage
-if tempVar < tempVar2
-  actionType = (Rnd * 0.8 ) + 0.21
-else
-  actionType = Rnd
-endif
+actionType = Rnd
 // LOGSTR str("actionType")
 // LOGVAL actionType
 
@@ -56,7 +47,17 @@ if XDistLE 20 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
 endif
 label _handlers
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
+  tempVar = TopNX
+  tempVar2 = OTopNX
+  Abs tempVar
+  Abs tempVar2
+  if tempVar < tempVar2
+    actionType = (Rnd * 0.3) + 0.6
+  endif
+  label
+  
   Goto trackOMoves
+  Goto defend_from_o
 
   if actionType <= 0.2
   // Retreating RAR aerial (if possible without going offstage)
@@ -163,6 +164,7 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
 elif True
   // dash away ==> attack
   Goto trackOMoves
+  Goto defend_from_o
   if actionType < 0.3
     if XDistFrontEdge < shortEdgeRange || Equal CurrAction hex(0x04) || Equal CurrAction hex(0x03)
       Seek turnExecute
@@ -180,11 +182,15 @@ elif True
     Stick 0 (-1)
     timer -= 1
     if timer <= 0 || XDistLE 25
-      Seek turnExecute
-      Jump
+      if XDistLE 40
+        Seek turnExecute
+        Jump
+      endif
     endif
     immediateTempVar = OTopNY - TopNY
-    if immediateTempVar > 15 && XDistLE 35
+    predictAverage globTempVar man_oXAttackDist LevelValue
+    globTempVar += 10
+    if immediateTempVar > 15 && XDistLE globTempVar
       Call FakeOutHub
     endif
     Return
@@ -200,12 +206,12 @@ Return
 
 label trackOMoves
   if ODistLE 45 && Equal OAnimFrame 5
-    if OAttacking && Rnd < 0.7
-      trackOAction man_defend op_attack
-    elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21) && Rnd < 0.7
+    if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21) && Rnd < 0.7
       trackOAction man_defend op_defend
     elif OCurrAction >= hex(0x34) && OCurrAction <= hex(0x38) && Rnd < 0.7
       trackOAction man_defend op_grab
+    elif OAttacking && Rnd < 0.7
+      trackOAction man_defend op_attack
     elif Rnd < 0.1
       trackOAction man_defend op_null
     endif
@@ -322,5 +328,10 @@ elif Equal lastAttack valShield && Equal AirGroundState 1
 else
   Call AIHub
 endif
+Return
+
+label defend_from_o
+DEFEND_FROM_O
+TRACK_O_OPTIONS
 Return
 Return

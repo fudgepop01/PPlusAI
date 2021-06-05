@@ -18,20 +18,38 @@ endif
 
 // sets up offsets to get to target position
 if Equal var18 0 && !(XDistLE 15)
-  RetrieveATKD var0 OCurrSubaction 1
+  predictAverage var0 3 LevelValue
 
   var21 = 32776
-  var20 = 32776
+  var20 = 25002
   var9 = 0
-  var11 = 25
-  if !(Equal var0 -1)
-    var9 = var3
-    var11 = 10 + (var3 - var2)
-    Abs var11
-  endif
+  var11 = 15 + var0
+  Abs var11
   var10 = 0
   var12 = 50
   var13 = Rnd * 3
+
+  predictAverage var22 3 LevelValue
+  var22 += 5
+  predictOOption var17 7 LevelValue
+  predictionConfidence var23 7 LevelValue
+  var23 *= 3.5
+
+  if Rnd <= 0.75 && Equal var17 1 || Rnd < 0.3 || OCurrActionFreq >= 3
+    Seek
+    Jump
+  endif
+  if OCurrAction <= 23 && Rnd < var23 && Equal var17 1
+    label
+    var11 = var22 * 2
+    var9 = 0
+    var13 = Rnd * 3
+    var20 = 25002
+    LOGSTR 1330005504 1162760960 1230390528 0 0
+    LOGSTR 1397246208 1162626048 0 0 0
+    Call ApproachHub
+  endif
+
   Call ApproachHub
 elif Equal AirGroundState 2
   var0 = OPos * -1
@@ -48,6 +66,10 @@ elif Equal AirGroundState 2
 elif True
   label
   Cmd30
+  if Equal var20 25002
+    Seek offensiveShield
+    Jump
+  endif
 
   if FramesHitstun > 0 && Equal AirGroundState 1 && NumFrames < 4
     Return
@@ -59,9 +81,15 @@ elif True
     AbsStick var0
     Return
   endif
-  if Equal OCurrAction 37 || Equal OCurrAction 36
+  if Equal OCurrAction 37
     Seek jumpOver
   endif
+  predictAverage var22 3 LevelValue
+  predictAverage var17 4 LevelValue
+  if XDistLE var17 var22 && OAttacking
+    Seek offensiveShield
+  endif
+
   var0 = Rnd
   if var0 < 0.3 && Damage < 60 && !(Equal OCurrAction 52)
     Seek crouchCancelPunish
@@ -123,7 +151,7 @@ Return
 
 label offensiveShield
 Cmd30
-var1 = Rnd * 30 + 10
+var1 = Rnd * 30 + 40
 var17 = var9 + 10
 if XDistLE var17 || XDistLE 15
   Seek

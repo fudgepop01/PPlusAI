@@ -12,7 +12,7 @@
 #snippet COMBO_OPTIONS
   $refreshMoves()
   $filterMoveEndlag(20)
-  $outputWithKnockbackThresholds(90, 290, Goto)
+  $output(Goto)
   if YDistBackEdge < -15
     approachType = at_hover
   elif YDistBackEdge > -10
@@ -23,7 +23,6 @@
 
 #snippet JUGGLE_OPTIONS
   $refreshMoves()
-  $filterMoveAngle(60, 120)
   $output(Goto)
   if YDistBackEdge < -15
     approachType = at_hover
@@ -35,7 +34,7 @@
 
 #snippet KILL_OPTIONS
   $refreshMoves()
-  $outputWithKnockbackThresholds(180, 400, Goto)
+  $output(Goto)
   if YDistBackEdge < -15
     approachType = at_hover
   elif YDistBackEdge > -10

@@ -65,19 +65,19 @@
   $refreshMoves()
   $filterMoveEndlag(30)
   $excludeMovesNotOrigin(nair|bair|dair|uair|fair|dtilt|ftilt|sspecial)
-  $outputWithKnockbackThresholds(70, 250, Goto)
+  $excludeMovesNamed(fair_weak)
+  $output(Goto)
 #endsnippet
 
 #snippet KILL_OPTIONS
   $refreshMoves()
-  $excludeMovesOrigin(dair)
-  $outputWithKnockbackThresholds(170, 400, Goto)
+  $output(Goto)
 #endsnippet
 
 #snippet JUGGLE_OPTIONS
   $refreshMoves()
   $excludeMovesNotOrigin(nair|uair|usmash|fair)
-  $excludeMovesNamed(uair_tipman|fair)
+  $excludeMovesNamed(uair_tipman|fair_weak)
   $output(Goto)
 #endsnippet
 

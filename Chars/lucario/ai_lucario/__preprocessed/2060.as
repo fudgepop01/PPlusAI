@@ -13,7 +13,7 @@ if Equal var21 8272 && !(Equal AirGroundState 3) && YDistBackEdge < 0
 endif
 
 Cmd30
-if Equal var16 7
+if Equal var16 8
     Seek _OL
     Jump
 endif
@@ -77,7 +77,7 @@ if var1 < 35 && Equal Direction OPos
             endif
             if Equal NumFrames 1
                 Stick -1
-                var16 = 7
+                var16 = 8
             endif
         else
             Stick 1
@@ -209,7 +209,7 @@ if !(True)
         endif
         if Equal NumFrames 1
             Stick -1
-            var16 = 7
+            var16 = 8
         endif
     else
         Stick 1 (-0.3)
@@ -223,7 +223,7 @@ if !(True)
     Return
 endif
 
-if Equal var16 7 && Equal AirGroundState 2
+if Equal var16 8 && Equal AirGroundState 2
     var17 = Rnd
     LOGVAL var17
     if var17 < 1

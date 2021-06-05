@@ -37,6 +37,10 @@
 
   label NSpecialExec
   Goto checks
+  frameCounter = 0
+  if frameCounter >= 10
+    frameCounter = -2
+  endif
 
   #let loopTempVar = var0
   loopTempVar = 20

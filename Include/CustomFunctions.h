@@ -222,3 +222,11 @@ func OWeight : 0x156
 /// character's gravity stat
 func Gravity : 0x57
 func OGravity : 0x157
+
+/// character's fast fall speed
+func FastFallSpeed : 0x58
+func OFastFallSpeed : 0x158
+
+/// endframe of O's current animation
+func EndFrame : 0x59
+func OEndFrame : 0x159

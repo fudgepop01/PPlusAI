@@ -45,7 +45,7 @@
 #const techChaseCloseDist = 20
 #const techChaseFarDist = 40
 
-#const dashCountMax = 12
+#const dashCountMax = 20
 #const dashForceTurnFrame = 14
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.1
@@ -180,10 +180,10 @@
 #const sspecial_IASA = 26
 #const sspecial_xOffset = 3
 #const sspecial_yOffset = 0
-#const sspecial_xRange = 18
+#const sspecial_xRange = 5
 #const sspecial_yRange = 5
 #const sspecial_hitFrame = 1
-#const sspecial_lastHitFrame = 1 // just a dummy
+#const sspecial_lastHitFrame = 26 // just a dummy
 #const sspecial_damage_info = SSpecial|7|78|80|90
 
 // grab
@@ -201,7 +201,7 @@
 #const grab_damage_info = Grab|0|0|0|0
 #const fthrow_damage_info = Grab|4|45|105|45
 #const dthrow_damage_info = Grab|7|75|34|65
-#const bthrow_damage_info = Grab|4|30|130|45
+#const bthrow_damage_info = Grab|4|30|130|-45
 #const uthrow_damage_info = Grab|3|70|105|85
 
 // NAir
@@ -267,7 +267,7 @@
 #const uair_tipman_yRange = 8
 #const uair_tipman_hitFrame = 11
 #const uair_tipman_lastHitFrame = 13
-#const uair_tipman_damage_info = UAir|12|8|80|30
+#const uair_tipman_damage_info = UAir|12|8|80|-30
 
 // DAir
 #const dair_IASA = 38

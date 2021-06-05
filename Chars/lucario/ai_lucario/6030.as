@@ -6,6 +6,9 @@
 
 #snippet PRE_HOOKS
   if Equal movePart 2
+    var5 *= 0.5
+    var6 *= 0.5
+
     if var5 <= move_xRange && var6 <= move_yRange
     elif !(XDistLE 50)
     else
@@ -41,11 +44,11 @@
   if Equal moveVariant mv_ASC 
     Seek ASC
   elif Equal moveVariant mv_aurabomb
-    Button A
     Seek aurabomb
   else
     Seek NSPSetup
   endif
+  Jump
   Return
 
   label ASC
@@ -78,17 +81,20 @@
   Return
 
   label NSPExecuteSetup
-  #let timer = var1
+  #let timer = var0
   timer = 10 + Rnd * 70
 
   label NSPExec
   Goto checks
+  if frameCounter >= 10
+    frameCounter = -2
+  endif
 
-  #let loopTempVar = var0
+  #let loopTempVar = var1
   loopTempVar = 20
 
   if Equal movePart 2
-    Seek 
+    Seek _chk
     Jump
   endif
   if !(True)
@@ -143,16 +149,12 @@
   elif Equal moveVariant mv_sspecial_power && Equal frameCounter 20 
     Button A
   endif
-
-  if FrameGE move_IASA || CurrAction <= hex(0x09) || Equal HitboxConnected 1
-    Call AIHub
-  endif
 #endsnippet
 
 #snippet USpecial
-  #let targetXDistance = var5
-  #let targetYDistance = var6
-  #let targetOverallDist = var7
+  #let targetXDistance = var0
+  #let targetYDistance = var1
+  #let targetOverallDist = var2
   EST_O_COORDS(targetXDistance, targetYDistance, 4)
 
   targetXDistance -= TopNX
@@ -163,7 +165,7 @@
   targetYDistance /= targetOverallDist
   AbsStick targetXDistance targetYDistance
 
-  if Equal HitboxConnected 1 || Equal NumFrames 38
+  if Equal HitboxConnected 1 || Equal frameCounter 38
     label
     Button A
     if Equal CurrSubaction hex(0x1E)

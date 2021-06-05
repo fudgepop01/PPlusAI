@@ -24,8 +24,7 @@ if !(Equal XDistBackEdge XDistFrontEdge)
 
   #let ODmgXWeight = var2
 
-  GET_WEIGHT_TABLE(ODmgXWeight, var1)
-
+  ODmgXWeight = OWeight
   ODmgXWeight /= 100
   ODmgXWeight *= ODamage
 

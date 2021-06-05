@@ -1,8 +1,5 @@
 #snippet CTD
-  EST_O_COORDS(var0, var1, frameToCalc)
-
-  var0 -= TopNX
-  var1 = TopNY - var1
+  CALC_TARGET_DISTANCES(var0, var1, var2, var3, frameToCalc)
 
   #let calcMoveXRange = var2
   #let calcMoveYRange = var3
@@ -11,40 +8,65 @@
   calcMoveYRange = move_yRange * (1 + hitboxSizeMultiplier)
   calcMoveXRange *= 2
   calcMoveYRange *= 2
-  immediateTempVar = targetYDistance
-  Abs targetXDistance
-  Abs targetYDistance
 
   if Equal AirGroundState 1
     calcMoveXRange = calcMoveXRange + frameToCalc * dashRunTermVel
   else
-    calcMoveXRange = calcMoveXRange + frameToCalc * XSpeed
+    immediateTempVar = XSpeed
+    Abs immediateTempVar
+    calcMoveXRange = calcMoveXRange + frameToCalc * immediateTempVar
   endif
 
   if NumJumps > 0
     if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) || Equal lastAttack valGeneral 
-      globTempVar = GetJumpHeight * 2
+      globTempVar = GetJumpHeight
       calcMoveYRange += globTempVar 
     endif
   endif
 
-  if targetXDistance <= calcMoveXRange && targetYDistance <= calcMoveYRange
-    // targetXDistance += OTopNX
-    // targetYDistance += OTopNY
-    // DrawDebugRectOutline targetXDistance targetYDistance calcMoveXRange calcMoveYRange color(0xFF000088)
+  // targetXDistance += TopNX
+  // targetYDistance += TopNY
+  // DrawDebugRectOutline targetXDistance targetYDistance move_xRange move_yRange color(0x00FF0088)
+  // targetXDistance -= TopNX
+  // targetYDistance -= TopNY
 
-    // targetXDistance -= OTopNX 
-    // targetXDistance += TopNX
-    // targetYDistance -= OTopNY
-    // targetYDistance += TopNY
-    // DrawDebugRectOutline targetXDistance targetYDistance calcMoveXRange calcMoveYRange color(0x0000FF88)
-    // if OKBAngle >= 180 && OKBAngle <= 360
-      Seek callMove
-      Jump
-    // elif immediateTempVar > 0
-    //   Seek callMove
-    //   Jump
-    // endif
+  Abs targetXDistance
+  Abs targetYDistance
+
+  if targetXDistance <= calcMoveXRange && targetYDistance <= calcMoveYRange
+      Norm immediateTempVar TopNX TopNY
+      Norm globTempVar OTopNX OTopNY
+      #let comboToleranceOffset = var2
+      if globTempVar > immediateTempVar
+        comboToleranceOffset = 50
+      else
+        comboToleranceOffset = 0
+      endif
+
+      #let result = var2
+      EstOXCoord targetXDistance frameToCalc
+      EstOYCoord targetYDistance frameToCalc
+      KILL_CHECK(result, move_currKnockback, move_angle, targetXDistance, targetYDistance)
+      if Equal result 1
+        Seek callMove
+        Jump
+      endif
+      
+      if Equal moveType mt_combo
+        #let result = var2
+        MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 50, 0, 70 + comboToleranceOffset, 0, 120)
+        if Equal result 1
+          Seek callMove
+          Jump
+        endif
+      elif Equal moveType mt_juggle
+        #let result = var2
+        MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 50, 0, 30 + comboToleranceOffset, 0, 80)
+        if Equal result 1
+          Seek callMove
+          Jump
+        endif
+      endif
   endif
 #endsnippet
 
@@ -67,5 +89,5 @@
 #endsnippet
 
 #snippet MOVE_GENERATION
-  $generateMovesUsed()
+  $generateMovesUsedKB()
 #endsnippet

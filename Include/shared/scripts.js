@@ -36,13 +36,55 @@ export const generateMovesUsed = () => {
   return _out;
 }
 
+export const generateMovesUsedKB = () => {
+  clearOut();
+  const moves = moveUsageTracker.values();
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
+  for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`label ${mn}`)
+    out(`LOGSTR str("${moveName}")`);
+    if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
+    if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
+    if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
+    if (xRange_src.startsWith(mn)) out(`move_xRange = ${xRange_src}`)
+    if (yRange_src.startsWith(mn)) out(`move_yRange = ${yRange_src}`)
+    if (hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${hitFrame_src}`)
+    if (lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${lastHitFrame_src}`)
+    out(`CalcKnockback move_currKnockback ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
+    out(`move_angle = ${angle}`)
+    out(`Goto __ANGLE_FIX__`)
+    out("Return")
+  }
+  out("")
+  out("label __ANGLE_FIX__")
+  out(`if move_angle > 180 && Equal OAirGroundState 1`);
+  out(`  if Equal move_angle 361`)
+  out(`    if move_currKnockback < 32`)
+  out(`      move_angle = 0`)
+  out(`    else`)
+  out(`      move_angle = 44`)
+  out(`    endif`)
+  out(`  else`)
+  out(`    move_angle = 180 - move_angle`);
+  out(`  endif`)
+  out(`elif Equal move_angle 361`);
+  out(`  move_angle = 45`);
+  out(`endif`);
+  out("Return");
+  return _out;
+}
+
 export const generateAllMovesGoto = () => {
   clearOut();
   const moves = Object.values(getMoveData());
   // for (const move of moves) {
   //   console.log(move)
   // }
-  for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src} of moves) {
+  for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, bkb, kbg} of moves) {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
@@ -57,6 +99,48 @@ export const generateAllMovesGoto = () => {
     if (lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${lastHitFrame_src}`)
     out("Return")
   }
+  return _out; 
+}
+
+export const generateAllMovesGotoKB = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
+  for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`label ${mn}`)
+    out(`LOGSTR str("${moveName}")`);
+    if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
+    if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
+    if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
+    if (xRange_src.startsWith(mn)) out(`move_xRange = ${xRange_src}`)
+    if (yRange_src.startsWith(mn)) out(`move_yRange = ${yRange_src}`)
+    if (hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${hitFrame_src}`)
+    if (lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${lastHitFrame_src}`)
+    out(`CalcKnockback move_currKnockback ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
+    out(`move_angle = ${angle}`)
+    out(`Goto __ANGLE_FIX__`)
+    out("Return")
+  }
+  out("")
+  out("label __ANGLE_FIX__")
+  out(`if move_angle > 180 && Equal OAirGroundState 1`);
+  out(`  if Equal move_angle 361`)
+  out(`    if move_currKnockback < 32`)
+  out(`      move_angle = 0`)
+  out(`    else`)
+  out(`      move_angle = 44`)
+  out(`    endif`)
+  out(`  else`)
+  out(`    move_angle = 180 - move_angle`);
+  out(`  endif`)
+  out(`elif Equal move_angle 361`);
+  out(`  move_angle = 45`);
+  out(`endif`);
+  out("Return");
   return _out; 
 }
 
@@ -228,7 +312,7 @@ const outputRandMove = (moves, context) => {
       out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1} ${!(origin.toLowerCase().endsWith("air")) ? "&& YDistBackEdge > -10 && YDistBackEdge > -10" : ""} ${append}`);
     }
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
-    out(context === "Goto" ? `Goto ${moveName.toLowerCase()}` : `Call ${origin}`);
+    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
     if (context === "Goto" && moveVariant !== 0) {
       out(`Goto ${moveName.toLowerCase()}`);
     }
@@ -319,7 +403,7 @@ export const excludeMovesNotNamed = (moveNames) => {
 }
 
 export const excludeMovesOrigin = (origins) => {
-  origins = origins.split("|");
+  origins = origins.toLowerCase().split("|");
   CurrMoves = CurrMoves.filter(({origin}) => {
     return !origins.includes(origin.toLowerCase());
   })
@@ -327,7 +411,7 @@ export const excludeMovesOrigin = (origins) => {
 }
 
 export const excludeMovesNotOrigin = (origins) => {
-  origins = origins.split("|");
+  origins = origins.toLowerCase().split("|");
   CurrMoves = CurrMoves.filter(({origin}) => {
     return origins.includes(origin.toLowerCase());
   })
@@ -397,6 +481,10 @@ export const output = (context) => {
   if (context === "Goto") updateTrackedMoves(CurrMoves);
 
   return outputRandMove(CurrMoves, context);
+}
+
+export const outputWithKBChecks = () => {
+  
 }
 
 export const generateThrowDMG = (min, dir) => {

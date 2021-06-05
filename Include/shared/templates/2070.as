@@ -30,8 +30,6 @@ if Equal CurrAction hex(0x4D)
         Button A
     endif
     timer -= 1
-else
-    Call AIHub
 endif
 Return
 Return

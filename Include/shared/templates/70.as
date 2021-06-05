@@ -7,7 +7,7 @@ unk 0x0
 
 //Strings
 
-TRACK_O_HITSTUN_OPTION
+TRACK_O_OPTIONS
 
 if DistFrontEdge < 25 || !(ODistLE 60) || InAir
     Goto _end
@@ -19,7 +19,7 @@ label
 if FrameGE 0 && !(FrameGE 1)
     Button X
 endif
-if FrameGE 4 && !(FrameGE 5)
+if InAir
     Button R
     if ODistLE 40
         globTempVar = OPos * -1

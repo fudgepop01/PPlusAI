@@ -9,24 +9,42 @@ unk 0x00000
 //Strings
 
 if OAnimFrame > 1 && OAnimFrame <= 2 && ODistLE 80
-  if OPrevAction >= 66 && OPrevAction <= 69 || Equal OPrevAction 73 || Equal var16 6
+  if OPrevAction >= 66 && OPrevAction <= 69 || Equal OPrevAction 73 || Equal var16 7
     if Equal OCurrAction 12 || Equal OCurrAction 13
-      trackOAction 15 1
+      trackOAction 14 1
     elif OAttacking && Rnd < 0.6
-      trackOAction 15 3
+      trackOAction 14 1
     elif Equal OCurrAction 14 || Equal OCurrAction 70 || Equal OCurrAction 74 || Equal OCurrAction 96 || Equal OCurrAction 97
       if OFramesHitstun <= 0 && Rnd < 0.5
-        trackOAction 15 2
+        trackOAction 14 2
       endif
     endif
   endif
 endif
+// if OAttacking && OAnimFrame > 1 && OAnimFrame <= 2 && ODistLE 70
+//   if YDistBackEdge > -3 && YDistBackEdge <= 3
+//     var22 = TopNX - OTopNX
+//     Abs var22
+//     var22 += 10
+//     if var22 > 126
+//       var22 = 126
+//     endif
+//     trackOAction 4 var22
+//     var22 = TopNY - OTopNY
+//     Abs var22
+//     var22 += 10
+//     if var22 > 126
+//       var22 = 126
+//     endif
+//     trackOAction 5 var22
+//   endif
+// endif
 
 if FramesHitstun > 0 || Equal CurrAction 69
-    Call AIHub
+    Call OnGotDamaged
 endif
 
-if Rnd < 0.4
+if Rnd < 0.35
     Call FakeOutHub
 endif
 
@@ -39,51 +57,13 @@ if var0 < 20
     Finish
 endif
 
-  if !(OAttacking) || Rnd <= 0.25 || OCurrActionFreq >= 4
-    Seek begin
-    Jump
-  endif
-  var0 = 21 - 0
-  var0 = Rnd * var0 + 0
-  if !(Equal var0 0)
-    var0 = var0 + Rnd * (100 - LevelValue) / 6
-  endif
-  
-  // var0 = var0 - (OCurrActionFreq * 4) 
-  var1 = 0
-  label
-  LOGSTR 1027423488 1025524736 1162223616 1027423488 1023410176
-  if FramesHitstun > 0
-    Call AIHub
-  endif
-  if !(OAttacking)
-    var1 = 1
-  endif
-  if Equal CurrAction 3
-    Stick 0.8
-  elif Equal CurrAction 4
-    Stick 0 (-1)
-  endif
-  if Equal var1 1 && OAttacking
-    Seek
-    Jump
-  elif var0 <= 0
-    Seek
-    Jump
-  endif
-  var0 -= 1
-  Return
-  label
-  SetFrame 0
-  label begin
-
 if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
     Finish
 endif
 
 label
 
-if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && Damage < 60
+if Rnd < 0.2 && Equal LevelValue 100 && Equal AirGroundState 1 && Damage < 60
     SetFrame 0
     label
     Stick 0 (-1)

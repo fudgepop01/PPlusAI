@@ -52,10 +52,13 @@
 
 #let globTempVar = var17
 
+
 // THIS IS TO BE USED IMMEDIATELY WITH SIMPLE OPERATIONS OTHERWISE SIDE EFFECTS MAY OCCUR
 #let immediateTempVar = var22
+#let anotherTempVar = var23
 
 // used when planning / executing moves
+#let move_angle = var8
 #let move_xOffset = var9
 #let move_yOffset = var10
 #let move_xRange = var11
@@ -63,6 +66,7 @@
 #let move_hitFrame = var13
 #let move_lastHitFrame = var14
 #let move_IASA = var15
+#let move_currKnockback = var15
 
 // recorded after the move is executed / hits;
 // will not interfere with move position type
@@ -111,6 +115,7 @@
 
 #const valGeneral = 25000
 #const valShield = 25001
+#const valOffensiveShield = 25002
 
 #const gen_xOffset = -35
 #const gen_yOffset = 35
@@ -133,15 +138,19 @@
 #const dtaunt = 3
 
 // AI Tracker Values (0-15)
-#const man_dashdance = 7
-#const man_approach = 8
-#const man_defend = 9
-#const man_techchase = 10
-#const man_shield = 11
-#const man_attacking = 12
-#const man_atEdgeInit = 13
-#const man_aim = 14
-#const man_outOfHitstun = 15
+#const man_oXHitDist = 3
+#const man_oXAttackDist = 4
+#const man_oYAttackDist = 5
+#const man_dashdance = 6
+#const man_approach = 7
+#const man_defend = 8
+#const man_techchase = 9
+#const man_shield = 10
+#const man_attacking = 11
+#const man_atEdgeInit = 12
+#const man_aim = 13
+#const man_outOfHitstun = 14
+#const man_willTech = 15
 
 #const op_null = 0
 #const op_attack = 1
@@ -164,6 +173,9 @@
 // #const op_neutral = 2
 #const op_hitstun_attack = 3
 
+#const op_tech = 1
+#const op_noTech = 2
+
 // works beacause it isn't approaching - it's used to track what tactics
 // work or fail vs the target opponent
 #let edgeType = var16
@@ -177,13 +189,16 @@
 #const at_attack = 1 // default
 #const at_defend = 2
 #const at_edgeguard = 3
-#const at_throwOut = 4
-#const at_ledgeRefresh = 5
-#const at_combo = 6
-#const at_OFF_LEDGE = 7
-#const at_immediate = 8
-#const at_reroll = 9
-#const at_retreat = 10
+#const at_undershoot = 4
+#const at_overshoot = 5
+#const at_ledgeRefresh = 6
+#const at_combo = 7
+#const at_OFF_LEDGE = 8
+#const at_immediate = 9
+#const at_reroll = 10
+#const at_retreat = 11
+#const at_poke = 12
+#const at_threaten = 13
 
 // AI values
 #const LV1 = 0

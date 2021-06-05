@@ -112,8 +112,8 @@ if Falling
         Call Unk1080
         Goto _end
     elif !(OutOfStage) && !(XDistLE 30) && LevelValue > 30
-        var23=LevelValue*LevelValue*0.01*var11
-        var11=var23
+        var21=LevelValue*LevelValue*0.01*var11
+        var11=var21
         if IsCharOf Mario
             var11*=0.0015
         elif IsCharOf Diddy

@@ -44,7 +44,7 @@
 #const techChaseCloseDist = 10
 #const techChaseFarDist = 25
 
-#const dashCountMax = 15
+#const dashCountMax = 25
 #const dashForceTurnFrame = 10
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.2
@@ -71,7 +71,7 @@
 #const at_attack = 1 // default
 #const at_defend = 2
 #const at_edgeguard = 3
-#const at_throwOut = 4
+#const at_undershoot = 4
 #const at_ledgeRefresh = 5
 
 // the following is the data that I give the AI that allows it to determine

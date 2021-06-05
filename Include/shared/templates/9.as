@@ -15,12 +15,10 @@ label start
 if !(Equal Direction OPos)
   immediateTempVar = OPos * 0.5
   AbsStick immediateTempVar
-else
-  Seek
-  Jump
+  Return
 endif
 
-if ODistLE 20 && Rnd < 0.3
+if ODistLE 20 && Rnd < 0.25
   Seek commit
 endif
 
@@ -61,25 +59,30 @@ if globTempVar < 1 && Equal AirGroundState 1
   label 
   Goto checkSituation
   frameCount -= 1
-  if frameCount <= 0 || XDistLE 15
+  if frameCount <= 0
     Button X
     Seek
   endif
   AbsStick OPos
+  if Equal CurrAction hex(0x01) || Equal CurrAction hex(0x06)
+    ClearStick
+  endif 
   Return
   label
   Goto checkSituation
   immediateTempVar = OPos * -1
   AbsStick immediateTempVar
-  if InAir
+  if InAir && YDistBackEdge > -1 && XDistBackEdge < -1 && Equal IsOnStage 1
     Button R
     if XDistBackEdge > -5
       ClearStick 
-      AbsStick 0 (-1)
+      AbsStick OPos (-1)
     else
       AbsStick immediateTempVar (-1)
     endif
     Seek
+  elif InAir
+    Call RecoveryHub
   endif
   Return 
   label
@@ -99,7 +102,7 @@ elif globTempVar < 2
     Seek
   endif
   AbsStick OPos
-  if Equal CurrAction hex(0x01)
+  if Equal CurrAction hex(0x01) || Equal CurrAction hex(0x06)
     ClearStick
   endif 
   Return
@@ -115,6 +118,9 @@ elif globTempVar < 3 && XDistBackEdge < -10
   endif
   immediateTempVar = OPos * -1
   AbsStick immediateTempVar
+  if Equal CurrAction hex(0x01) || Equal CurrAction hex(0x06)
+    ClearStick
+  endif 
   Return
   label  
 elif globTempVar < 4 && XSpeed < 0.5 && XSpeed > -0.5
@@ -187,10 +193,10 @@ if Rnd < 0.5
   endif
   Return
   label
-else
+elif Equal AirGroundState 1
   label wait_shield
   Goto checkSituation
-  frameCount = Rnd * 40 + 20
+  frameCount = Rnd * 40 + 10
   label 
   Goto checkSituation
   frameCount -= 1
@@ -204,7 +210,6 @@ else
   Return
   label
 endif
-Return
 label
 
 Seek start
@@ -254,6 +259,7 @@ elif globTempVar < 3
   Goto checkSituation
   if !(InAir)
     Seek
+    Jump
   endif
   Return
   label
@@ -291,6 +297,9 @@ Return
 label checkSituation
 #const outEdgeRange = calc(edgeRange + 20)
 
+DEFEND_FROM_O
+TRACK_O_OPTIONS
+
 #let absNearCliffX = var0
 NEAREST_CLIFF(absNearCliffX, var1)
 Abs absNearCliffX
@@ -305,7 +314,9 @@ Abs absOPos
 #let oYDist = var3
 oYDist = TopNY - OTopNY
 
-if absNearCliffX > outEdgeRange || absPos < absOPos || !(XDistLE 50) || oYDist > 40
+if Equal IsOnStage 0
+  Call RecoveryHub
+elif absNearCliffX > outEdgeRange || absPos < absOPos || !(XDistLE 50) || oYDist > 40
   if Equal edgeType et_commit
     trackOAction man_atEdgeInit op_commit
   endif

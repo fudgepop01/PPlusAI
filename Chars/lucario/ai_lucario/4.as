@@ -22,6 +22,10 @@
 #endsnippet
 
 #snippet USPECIAL
+  if Equal IsOnStage 1
+    Call USpecial
+  endif
+
   if !(Equal CurrAction hex(0x114)) && !(Equal CurrAction hex(0x10)) && !(Equal CurrAction hex(0x11B))
     if Equal AirGroundState 1 || Equal CurrAction hex(0x0E) || Equal CurrAction hex(0x0F) || FramesHitstun > 0
       Call AIHub

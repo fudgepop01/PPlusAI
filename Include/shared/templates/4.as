@@ -5,8 +5,6 @@ id 0x8004
 
 unk 0x0
 
-#let sureTimer = var0
-sureTimer = 4
 label
 Cmd30
 
@@ -14,25 +12,19 @@ if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(OutOfStage)
   Call OnGotDamaged
 endif
 
-if Equal AirGroundState 1 && Equal lastScript hex(0x8001)
+OFFSTAGE_OFFSET(immediateTempVar, 0,0)
+if !(Equal immediateTempVar 2) && Equal lastScript hex(0x8001)
   Call ApproachHub
 elif Equal approachType at_OFF_LEDGE
 elif Equal lastScript hex(0x8001) && MeteoChance && Equal approachType at_edgeguard && !(NoOpponent)
   Call ApproachHub
 endif
 
-if !(OutOfStage) || Equal AirGroundState 1
+if !(OutOfStage)
   Call AIHub
 endif
 if Equal approachType at_OFF_LEDGE
   Call LedgeHang
-endif
-if FramesHitstun > 0
-  Return
-endif
-sureTimer -= 1
-if sureTimer > 0
-  Return
 endif
 
 if Equal movePart hex(0xFF)
@@ -49,8 +41,11 @@ label
 {INITIALIZERS}
 hasTriedToUpB = 0
 label _main
-if FramesHitstun > 0
+if !(OutOfStage)
   Call AIHub
+endif
+if FramesHitstun > 0 && CurrAction < hex(0xB) && CurrAction > hex(0x10)
+  Call OnGotDamaged
 endif
 Cmd30
 #let isBelowStage = var7
@@ -118,9 +113,9 @@ if Equal approachType at_ledgeRefresh
   {LEDGE_REFRESH}
 endif
 
-LOGSTR str("act/sact")
-LOGVAL CurrAction
-LOGVAL CurrSubaction
+// LOGSTR str("act/sact")
+// LOGVAL CurrAction
+// LOGVAL CurrSubaction
 {SFALL_ACTIONS}
   Goto handleSFall
   Return
@@ -146,9 +141,7 @@ if Equal isGoingOffstage 0 || Equal AirGroundState 1
 endif
 
 
-if CurrAction < hex(0x0B) && CurrAction > hex(0x10)
-  Return
-elif Equal CurrAction hex(0x33) && AnimFrame <= move_IASA
+if Equal CurrAction hex(0x33) && AnimFrame <= move_IASA
   Return
 endif
 
@@ -180,10 +173,6 @@ if jumpingTimer > 0
   Return
 endif
 
-
-LOGSTR str("NCY")
-LOGVAL nearCliffY
-
 #let diamondDist = var2
 #let absNCX = var3
 DIAMOND_DIST(diamondDist, nearCliffX, nearCliffY)
@@ -202,6 +191,9 @@ elif nearCliffY > maxYEdgeDistJumpNoUpB && Rnd < 0.03 && Equal isBelowStage 0 &&
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
+  if absNCX < 10 && Equal isBelowStage 0
+    globTempVar *= -1
+  endif
   Button X
   jumpingTimer = 30
   Return
@@ -209,6 +201,9 @@ elif nearCliffY < -maxYEdgeDistJumpNoUpB && Rnd < 0.03 && Equal isBelowStage 0 &
   GetRndPointOnStage nearCliffX
   globTempVar = nearCliffX - TopNX
   AbsStick globTempVar
+  if absNCX < 10 && Equal isBelowStage 0
+    globTempVar *= -1
+  endif
   Button X
   jumpingTimer = 30
   Return
@@ -220,6 +215,9 @@ elif nearCliffY > -maxYEdgeDist && nearCliffY <= -calc(maxYEdgeDist - sweetSpotY
   if diamondDist > 0 && NumJumps > 0
     GetRndPointOnStage nearCliffX
     globTempVar = nearCliffX - TopNX
+    if absNCX < 10 && Equal isBelowStage 0
+      globTempVar *= -1
+    endif
     AbsStick globTempVar
     Button X
     jumpingTimer = 30
@@ -242,7 +240,7 @@ if YDistBackEdge > 0 && Equal hasTriedToUpB 0 && TopNY < immediateTempVar && nea
   hasTriedToUpB = 1
   Return
 endif
-if diamondDist < 0 && Equal hasTriedToUpB 0 && Equal NumJumps 0
+if diamondDist < 0 && Equal hasTriedToUpB 0 && Equal NumJumps 0 && Equal isBelowStage 0 && YSpeed < 0
   if YDistBackEdge < recoveryHeight
     Return
   endif

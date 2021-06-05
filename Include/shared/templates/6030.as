@@ -11,6 +11,7 @@ Cmd30
 
 {PRE_SCRIPT_HOOKS}
 
+SetTimeout 300
 if Equal CurrAction hex(0x03) || Equal CurrAction hex(0x04) 
   Stick 1
 endif
@@ -50,7 +51,9 @@ if Equal movePart 0
 endif
 
 if !(Equal AirGroundState 1)
-  Call AIHub
+  if lastAttack <= valDSmash || lastAttack >= valGrab
+    Call AIHub
+  endif
 endif
 
 ClearStick
@@ -78,7 +81,7 @@ elif CalledAs NSpecial
   Button B
 elif CalledAs SSpecial
   Button B
-  Stick 1 0
+  AbsStick OPos 0
 elif CalledAs USpecial
   Button B
   Stick 0 1
@@ -108,17 +111,17 @@ label
 Seek 
 Return
 label
-if OAttacking && Rnd < 0.7
-  trackOAction man_approach op_attack
-elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21)
+if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21)
   trackOAction man_approach op_defend
 elif OCurrAction >= hex(0x34) && OCurrAction <= hex(0x38)
   trackOAction man_approach op_grab
+elif OAttacking && Rnd < 0.7
+  trackOAction man_approach op_attack
 elif Rnd < 0.8
   trackOAction man_approach op_null
 endif
 
-#let frameCounter = var3
+#let frameCounter = var4
 frameCounter = -1
 label _begin
 Goto checks
@@ -159,7 +162,7 @@ Seek _begin
 Return
 
 label _Jab123_impl
-  {Jab123}
+  {Jab}
 Return
 
 label _FTilt_impl
@@ -212,12 +215,14 @@ Return
 
 label CTD
 var1 = 0
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var7, var8, move_lastHitFrame - frameCounter)
 Return
 
 label checks
 PUT_ME_AT_TOP
-{AGS_CHECK}
+if lastAttack <= valDSmash || lastAttack >= valGrab
+  {AGS_CHECK}
+endif
 Return
 
 label _Jab123

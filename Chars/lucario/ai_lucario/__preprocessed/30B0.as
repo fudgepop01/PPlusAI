@@ -9,15 +9,13 @@ unk 0x0
 
 if !(Equal AirGroundState 1)
   if OAttacking && Equal AirGroundState 1
-    Call Unk3020
-  elif Equal var21 32769
-    Call ApproachHub
-  endif
-    Call AIHub
-endif
-
-SetTimeout 50
-  if !(OAttacking) || Rnd <= 0.25 || OCurrActionFreq >= 4
+    if Rnd < 0.3
+      Call Spotdodge
+    elif Rnd < 0.3
+      Call RollBase
+    elif True
+      label defStart
+  if !(OAttacking) || Rnd <= 0.1 || OCurrActionFreq >= 4
     Seek begin
     Jump
   endif
@@ -54,6 +52,36 @@ SetTimeout 50
   label
   SetFrame 0
   label begin
+      label def
+      if Rnd < 0.3
+        Call Unk3020
+      elif Rnd < 0.3
+        Button R
+        Stick 1
+        Call AIHub
+      elif Rnd < 0.3
+        Button R 
+        Stick -1
+        Call AIHub
+      endif
+      Return
+    endif
+  else
+    predictOOption var0 6 LevelValue
+    predictionConfidence var1 6 LevelValue
+    if Equal var0 1 && Rnd < 6
+      Seek def
+      Jump
+    endif
+    if Equal var21 32769
+      Call ApproachHub
+    endif
+    Call AIHub
+  endif
+    Call AIHub
+endif
+
+SetTimeout 50
 
 if Rnd < 0.5 && Equal LevelValue 100 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 60
     SetFrame 0

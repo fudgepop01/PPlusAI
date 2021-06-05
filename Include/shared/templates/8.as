@@ -19,26 +19,39 @@ endif
 
 // sets up offsets to get to target position
 if Equal movePart 0 && !(XDistLE 15)
-  RetrieveATKD var0 OCurrSubaction 1
-  #let oDangerStart = var0
-  #let oDangerEnd = var1
-  #let oDangerXMin = var2
-  #let oDangerXMax = var3
-  #let oDangerYMin = var4
-  #let oDangerYMax = var5
+  #let oDanger = var0
+  predictAverage oDanger man_oXHitDist LevelValue
 
   lastScript = hex(0x8008)
-  lastAttack = hex(0x8008)
+  lastAttack = valOffensiveShield
   move_xOffset = 0
-  move_xRange = 25
-  if !(Equal oDangerStart -1)
-    move_xOffset = oDangerXMax
-    move_xRange = 10 + (oDangerXMax - oDangerXMin)
-    Abs move_xRange
-  endif
+  move_xRange = 15 + oDanger
+  Abs move_xRange
   move_yOffset = 0
   move_yRange = 50
   move_hitFrame = Rnd * 3
+
+  predictAverage immediateTempVar man_oXHitDist LevelValue
+  immediateTempVar += 5
+  predictOOption globTempVar man_approach LevelValue
+  predictionConfidence anotherTempVar man_approach LevelValue
+  anotherTempVar *= 3.5
+
+  if Rnd <= 0.75 && Equal globTempVar op_attack || Rnd < 0.3 || OCurrActionFreq >= 3
+    Seek
+    Jump
+  endif
+  if OCurrAction <= hex(0x17) && Rnd < anotherTempVar && Equal globTempVar op_attack
+    label
+    move_xRange = immediateTempVar * 2
+    move_xOffset = 0
+    move_hitFrame = Rnd * 3
+    lastAttack = valOffensiveShield
+    LOGSTR str("OFFENSIVE")
+    LOGSTR str("SHIELD")
+    Call ApproachHub
+  endif
+
   Call ApproachHub
 elif Equal AirGroundState 2
   tempVar = OPos * -1
@@ -55,6 +68,10 @@ elif Equal AirGroundState 2
 elif True
   label
   Cmd30
+  if Equal lastAttack valOffensiveShield
+    Seek offensiveShield
+    Jump
+  endif
 
   if FramesHitstun > 0 && Equal AirGroundState 1 && NumFrames < 4
     Return
@@ -66,9 +83,15 @@ elif True
     AbsStick tempVar
     Return
   endif
-  if Equal OCurrAction hex(0x25) || Equal OCurrAction hex(0x24)
+  if Equal OCurrAction hex(0x25)
     Seek jumpOver
   endif
+  predictAverage immediateTempVar man_oXHitDist LevelValue
+  predictAverage globTempVar man_oXAttackDist LevelValue
+  if XDistLE globTempVar immediateTempVar && OAttacking
+    Seek offensiveShield
+  endif
+
   tempVar = Rnd
   if tempVar < 0.3 && Damage < 60 && !(Equal OCurrAction hex(0x34))
     Seek crouchCancelPunish
@@ -134,7 +157,7 @@ label offensiveShield
 Cmd30
 #let timer = var1
 #let shieldRemaining = var2
-timer = Rnd * 30 + 10
+timer = Rnd * 30 + 40
 globTempVar = move_xOffset + 10
 if XDistLE globTempVar || XDistLE 15
   Seek

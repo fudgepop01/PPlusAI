@@ -44,7 +44,6 @@
     #let incrementor = var7
     #let rndChoice = var17
     movePart = 1
-    comboLeniency = 12
     if Equal trueLastAttack valJab123 || Equal trueLastAttack valDashAttack
       incrementor = 8
       label _tilts
@@ -185,12 +184,12 @@
   $refreshMoves()
   $filterMoveEndlag(30)
   $excludeMovesNotOrigin(bair|uair|fair|dashattack|dtilt|utilt|usmash)
-  $outputWithKnockbackThresholds(30, 180, Goto)
+  $output(Goto)
 #endsnippet
 
 #snippet KILL_OPTIONS
   $refreshMoves()
-  $outputWithKnockbackThresholds(140, 400, Goto)
+  $output(Goto)
 #endsnippet
 
 #snippet JUGGLE_OPTIONS
@@ -210,6 +209,6 @@
 #snippet EXTRA_ANALYSIS
 if Equal movePart 1 
   frameToCalc = move_hitFrame + 3
-  {CTD}
+  Goto CTD
 endif
 #endsnippet

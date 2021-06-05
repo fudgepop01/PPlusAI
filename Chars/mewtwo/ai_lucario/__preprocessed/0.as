@@ -5,6 +5,9 @@ unk 0x0
 
 label begin
 
+SetAutoDefend 0
+SetDisabledMd -1
+
   if Equal CurrAction 288
     Button X
     Call ChrSpecific1 // mewtwo hover handler
@@ -36,7 +39,7 @@ if CurrAction >= 26 && CurrAction <= 29
   Call OOSHub
 endif
 
-if Equal var16 9
+if Equal var16 10
   Seek _reroll
   Jump
 endif
@@ -75,31 +78,23 @@ var6 = 0
 // stuff above every frame we're in here
 label
 Cmd30
-  GetNearestCliff var0
   var17 = 15
   var1 = XSpeed * var17
-  var0 -= TopNX
-  if var0 < 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var0 -= var1
-      if var0 >= 0
-        var0 = 1
-      endif
+  GetYDistFloorOffset var0 var1 5 0
+  // var22 = TopNY - var0 
+  // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
+  if var0 < 4 && !(Equal var0 -1) 
+    var0 = 0
+  elif Equal DistBackEdge DistFrontEdge
+    var0 = 2
+  elif Equal var0 -1
+    if var1 < 0
+      var0 = 1
+    elif var1 > 0
+      var0 = -1
     endif
-  elif var0 > 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var0 -= var1
-      if var0 <= 0
-        var0 = -1
-      endif
-    endif
-  endif
-  if !(Equal var0 1) && !(Equal var0 -1)
-    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
-      var0 = 2
-    else
-      var0 = 0
-    endif
+  else
+    var0 = 0
   endif
 
 if Equal CurrAction 24 && !(Equal HitboxConnected 1)
@@ -111,10 +106,6 @@ endif
 if Equal var0 2 && !(Equal AirGroundState 1)
   var18 = 0
   Call RecoveryHub
-endif
-
-if !(True)
-  
 endif
 
 if Equal var0 0 && YDistBackEdge > -15 && Equal CurrAction 51 && LevelValue >= 60
@@ -213,7 +204,6 @@ endif
 var16 = 0
 var19 = 0
 var18 = 0
-var16 = -1
 
 if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73 || OCurrAction >= 77 && OCurrAction <= 95
   SetTimeout 300
@@ -363,7 +353,7 @@ if Equal var0 0
     Abs var1
     var2 = OTopNX
     Abs var2
-    if var0 < 25 && XDistLE 40 && var2 < var1 && Equal OFramesHitstun 0 && !(Equal var21 32777) && LevelValue >= 48 && SamePlane
+    if var0 < 25 && XDistLE 40 && var2 < var1 && Equal OFramesHitstun 0 && !(Equal var21 32777) && LevelValue >= 48 && SamePlane && !(XDistLE 20)
       Call EdgeEscapeHub
     endif
 
@@ -389,21 +379,25 @@ if Equal var0 0
   endif
     endif 
 
+    var4 = OEndFrame - OAnimFrame 
+    var4 += var0
     if LevelValue >= 60 && Equal var6 0 && var7 <= 1
       if Equal var7 1
         Call FakeOutHub
-      elif var1 < OAnimFrame || Equal OCurrAction 37
-        if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && XDistLE var3
-          var18 = 1
-          Call FakeOutHub
-        endif
-      elif OAttacking && var1 > OAnimFrame && !(Equal var0 -1) && Rnd < 0.5 && Equal AirGroundState 1 && LevelValue >= 75 && !(Equal OCurrAction 27)
+      elif OAttacking && var0 < OAnimFrame && var4 >= 8 && !(Equal var0 -1) && LevelValue >= 75 && !(Equal OCurrAction 27) && XDistLE 40
   if Rnd < 0.8
     Call Grab
   else
     var16 = 255
     Call FAir
   endif
+      elif var1 < OAnimFrame || Equal OCurrAction 37 || var4 < 8
+        if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && XDistLE var3
+          var18 = 1
+          Call FakeOutHub
+        endif
+      elif OAttacking && OCurrActionFreq >= 3 
+        Call FakeOutHub
       elif Rnd < 0.1 && !(Equal var21 32776) 
         Call FakeOutHub
       endif
@@ -411,14 +405,31 @@ if Equal var0 0
 
     var21 = 32768
 
-    var3 = 150 - (ODamage - Damage) * 4
+    var3 = 200 - (ODamage - Damage) * 4
     var3 /= 200
 
+    predictOOption var17 6 LevelValue
+    predictionConfidence var22 6 LevelValue
+    if Equal var17 1
+      var17 = 0.5 + var22 * 1.1
+      var3 *= var17
+    endif 
+
+    predictOOption var17 7 LevelValue
+    predictionConfidence var22 7 LevelValue
+    if Equal var17 1
+      var17 = 0.5 + var22 * 1.1
+      var3 *= var17
+    endif 
+
+    Norm var22 TopNX TopNY
+    Norm var17 OTopNX OTopNY
     if LevelValue >= 42 && Equal var6 0 && var7 <= 2
 
-      var2 = var3 * 0.15
+      var2 = var3 * 0.20
+      predictAverage var22 3 LevelValue
 
-      if XDistLE 30 && Rnd < 0.4 && Equal AirGroundState 1
+      if XDistLE var22 && Rnd < 0.4 && Equal AirGroundState 1
         if Rnd < var2 || Rnd < 0.04
           var16 = 2
         endif
@@ -429,15 +440,19 @@ if Equal var0 0
     endif
 
     if LevelValue >= 60 && Equal var6 0 && var7 <= 2
-      var2 = var3 * 0.18
+      if var22 < var17
+        var2 = var3 * 0.23
+      else
+        var2 = var3 * 0.10
+      endif
       Abs var2
       if Rnd < var2
         Call FakeOutHub
       endif
     endif
 
-    if Equal var6 0 && var7 <= 3
-      var2 = var3 * 0.25
+    if Equal var6 0 && var22 < var17 && var7 <= 3
+      var2 = var3 * 0.28
       if Rnd < var3 || Rnd <= 0.2 || Equal var7 3
         var16 = 2
   if OYDistBackEdge < -20
@@ -497,143 +512,7 @@ if Equal var0 0
       Jump
     endif
 
-if OIsCharOf Bowser
-  var2 = 113
-  var1 = 0.13
-elif OIsCharOf Falcon
-  var2 = 104
-  var1 = 0.13
-elif OIsCharOf Lizardon // Charizard
-  var2 = 106
-  var1 = 0.105
-elif OIsCharOf Diddy
-  var2 = 85
-  var1 = 0.12
-elif OIsCharOf Donkey
-  var2 = 109
-  var1 = 0.1
-elif OIsCharOf Falco
-  var2 = 80
-  var1 = 0.17
-elif OIsCharOf Fox
-  var2 = 75
-  var1 = 0.23
-  // 2.8
-elif OIsCharOf Gamewatch
-  var2 = 75
-  var1 = 0.095
-elif OIsCharOf Ganondorf
-  var2 = 109
-  var1 = 0.13
-// GIGA BOWSER WOULD GO HERE
-// elif OIsCharOf Bowser
-//   var2 = 113
-//   var1 = 0.13
-elif OIsCharOf Nana || OIsCharOf Popo
-  var2 = 88
-  var1 = 0.1
-elif OIsCharOf Ike
-  var2 = 100
-  var1 = 0.103
-elif OIsCharOf Fushigisou // Ivysaur
-  var2 = 85
-  var1 = 0.075
-elif OIsCharOf Purin // Jigglypuff
-  var2 = 62
-  var1 = 0.064
-elif OIsCharOf DDD // King Dedede
-  var2 = 107
-  var1 = 0.095
-elif OIsCharOf Kirby
-  var2 = 74
-  var1 = 0.08
-elif OIsCharOf Knuckles
-  var2 = 90
-  var1 = 0.14
-elif OIsCharOf Link
-  var2 = 104
-  var1 = 0.11
-elif OIsCharOf Lucario
-  var2 = 94
-  var1 = 0.125
-elif OIsCharOf Lucas
-  var2 = 80
-  var1 = 0.125
-elif OIsCharOf Luigi
-  var2 = 100
-  var1 = 0.069 // nice
-  // 1.6
-elif OIsCharOf Mario
-  var2 = 100
-  var1 = 0.095 // 1.7
-elif OIsCharOf Marth
-  var2 = 87
-  var1 = 0.085
-elif OIsCharOf Metaknight
-  var2 = 79
-  var1 = 0.11
-elif OIsCharOf Mewtwo
-  var2 = 90
-  var1 = 0.082
-elif OIsCharOf Ness
-  var2 = 94
-  var1 = 0.09
-elif OIsCharOf Pikmin // Olimar
-  var2 = 90
-  var1 = 0.09
-elif OIsCharOf Peach
-  var2 = 90
-  var1 = 0.08
-elif OIsCharOf Pikachu
-  var2 = 80
-  var1 = 0.11
-elif OIsCharOf Pit
-  var2 = 80
-  var1 = 0.095
-elif OIsCharOf Robot // ROB
-  var2 = 104
-  var1 = 0.09
-elif OIsCharOf Roy
-  var2 = 85
-  var1 = 0.114
-elif OIsCharOf Samus
-  var2 = 110
-  var1 = 0.66
-elif OIsCharOf Shiek
-  var2 = 90
-  var1 = 0.12
-elif OIsCharOf Snake
-  var2 = 105
-  var1 = 0.098
-elif OIsCharOf Sonic
-  var2 = 82
-  var1 = 0.122
-elif OIsCharOf Zenigame // Squirtle
-  var2 = 85
-  var1 = 0.126
-elif OIsCharOf Toonlink
-  var2 = 85
-  var1 = 0.11
-elif OIsCharOf Wario
-  var2 = 102
-  var1 = 0.112
-// WARIO MAN GOES HERE
-// elif OIsCharOf Bowser
-//   var2 = 113
-//   var1 = 0.13
-elif OIsCharOf Wolf
-  var2 = 85
-  var1 = 0.16
-elif OIsCharOf Yoshi
-  var2 = 108
-  var1 = 0.093
-elif OIsCharOf Zelda
-  var2 = 90
-  var1 = 0.073
-elif OIsCharOf ZSS // Zero Suit Samus
-  var2 = 85
-  var1 = 0.135
-endif
+    var2 = OWeight
 
     var2 = var2 - 200
     var2 *= -1
@@ -642,41 +521,46 @@ endif
 
     if LevelValue >= 21
   if OYDistBackEdge > -15
-  if Rnd < 0.2
+  if Rnd <= 0.05
     Call Grab
   endif
-  if XDistLE 40 && Rnd < 0.35
-    var3 = 3
-    label _kill
-    Goto killMoves
+  
+  var3 = 10
+  Norm var22 TopNX TopNY
+  Norm var17 OTopNX OTopNY
+  var22 -= var17
+  Abs var22
+  if var22 < 40 && !(XDistLE 30)
+    label _neutralOption
+    Goto neutralMoves
     var3 -= 1
     if var3 <= 0
       Seek
     else
-      Seek _kill
-    endif
-    Jump
-    label
-    var3 = 3
-    label _startCombo
-    Goto comboStarters
-    var3 -= 1
-    if var3 <= 0
-      Seek
-    else
-      Seek _startCombo
+      Seek _neutralOption
     endif
     Jump
     label
   endif
-  var3 = 10
-  label _neutralOption
-  Goto neutralMoves
+  var3 = 5
+  label _kill
+  Goto killMoves
   var3 -= 1
   if var3 <= 0
     Seek
   else
-    Seek _neutralOption
+    Seek _kill
+  endif
+  Jump
+  label
+  var3 = 5
+  label _startCombo
+  Goto comboStarters
+  var3 -= 1
+  if var3 <= 0
+    Seek
+  else
+    Seek _startCombo
   endif
   Jump
   label
@@ -724,149 +608,195 @@ endif
 Return
 
 label comboStarters
-
-var17 = TopNY - OTopNY
-Abs var17
-if ODistLE 8 && var17 < 20 && Equal AirGroundState 1
-  var16 = 8
-endif
-if Rnd < 0.1
-  var16 = 2
-endif
-if Rnd < 0.8
+Goto approachTypes
+if Rnd < 0.3
   var19 = 1
   var16 = 255
 endif
 // $excludeMovesOrigin(uair|dair)
-if True && 51 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+var17 = Rnd * 17
+if var17 < 1  && YDistBackEdge > -3 
+Goto jab123
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto ftilt
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto utilt
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto dtilt
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto fsmash
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto nspecial
+elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto grab
+elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 2
-Call Grab
-endif
-if True && 44 <= var2 && var2 <= 166 && Rnd < 0.30 && OYDistBackEdge < -15
-Call UAir
-endif
-if True && 27 <= var2 && var2 <= 159 && Rnd < 0.30
-Call BAir
-endif
-if True && 22 <= var2 && var2 <= 236 && Rnd < 0.45 && YDistBackEdge > -6
-Call DTilt
-endif
-if True && 16 <= var2 && var2 <= 194 && Rnd < 0.30 && YDistBackEdge > -6
-Call FTilt
-endif
-if True && 16 <= var2 && var2 <= 144 && Rnd < 0.40 && YDistBackEdge > -6
-Call UTilt
-endif
-if True && 5 <= var2 && var2 <= 103 && Rnd < 0.30 && YDistBackEdge > -6
-Call FSmash
-endif
-if True && var2 <= 107 && Rnd < 0.45
-Call FAir
-endif
-if True && var2 <= 108 && Rnd < 0.30
-Call DAir
-endif
-if True && var2 <= 410 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+Goto grab
+Goto fthrow
+elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 3
-Call Grab
-endif
-if True && var2 <= 137 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+Goto grab
+Goto dthrow
+elif 9 < var17 && var17 < 10 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 4
-Call Grab
-endif
-if True && var2 <= 312 && Rnd < 0.30
-Call NAir
-endif
-if True && var2 <= 110 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+Goto grab
+Goto bthrow
+elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 5
-Call Grab
+Goto grab
+Goto uthrow
+elif 11 < var17 && var17 < 12  
+Goto nair
+elif 12 < var17 && var17 < 13  
+Goto nair
+elif 13 < var17 && var17 < 14  
+Goto fair
+elif 14 < var17 && var17 < 15  
+Goto bair
+elif 15 < var17 && var17 < 16  && OYDistBackEdge < -5
+Goto uair
+elif 16 < var17 && var17 < 17  
+Goto dair
 endif
+  Goto KBCheck
+  if !(True)
+    label KBCheck
+    if var15 < 45
+      var2 = 0
+      Return
+    endif
+    COS var22 var8
+    var22 *= var15
+    Abs var22
+    var17 = 0
+    var23 = 90
+    if var22 < var17 || var23 < var22
+      var2 = 0
+      Return
+    endif
+    SIN var22 var8
+    var22 *= var15
+    var17 = 0
+    var23 = 90
+    if var22 < var17 || var23 < var22
+      var2 = 0
+      Return
+    endif
+    var2 = 1
+    Return
+  endif
+if Equal var2 0
+  Return
+endif
+Goto approachType_filter
 Return
 
 label killMoves
-if Rnd < 0.1
-  var16 = 2
-endif
-if Rnd < 0.8
+Goto approachTypes
+if Rnd < 0.3
   var19 = 1
   var16 = 255
 endif
 // $filterMoveEndlag(20)
-if True && 418 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+var17 = Rnd * 18
+if var17 < 1  && YDistBackEdge > -3 
+Goto jab123
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto ftilt
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto utilt
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto dtilt
+elif 4 < var17 && var17 < 5 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto fsmash
+elif 5 < var17 && var17 < 6 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto usmash
+elif 6 < var17 && var17 < 7 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto nspecial
+elif 7 < var17 && var17 < 8 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto sspecial
+elif 8 < var17 && var17 < 9 && YDistBackEdge > -10 && YDistBackEdge > -10 
+Goto grab
+elif 9 < var17 && var17 < 10 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 2
-Call Grab
-endif
-if True && 267 <= var2 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+Goto grab
+Goto fthrow
+elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 3
-Call Grab
-endif
-if True && 193 <= var2 && Rnd < 0.30
-Call NAir
-endif
-if True && 165 <= var2 && Rnd < 0.45 && YDistBackEdge > -6
-Call DTilt
-endif
-if True && 135 <= var2 && Rnd < 0.30 && YDistBackEdge > -6
-Call FTilt
-endif
-if True && 129 <= var2 && Rnd < 0.45
-Call SSpecial
-endif
-if True && 126 <= var2 && var2 <= 381 && Rnd < 0.30 && OYDistBackEdge < -15
-Call UAir
-endif
-if True && 115 <= var2 && var2 <= 390 && Rnd < 0.30
-Call BAir
-endif
-if True && 102 <= var2 && var2 <= 368 && Rnd < 0.40 && YDistBackEdge > -6
-Call UTilt
-endif
-if True && 82 <= var2 && var2 <= 334 && Rnd < 0.45 && YDistBackEdge > -6
-Call USmash
-endif
-if True && 82 <= var2 && var2 <= 425 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+Goto grab
+Goto dthrow
+elif 11 < var17 && var17 < 12 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 4
-Call Grab
-endif
-if True && 71 <= var2 && var2 <= 295 && Rnd < 0.45
-Call FAir
-endif
-if True && 70 <= var2 && var2 <= 273 && Rnd < 0.30 && YDistBackEdge > -6
-Call FSmash
-endif
-if True && 49 <= var2 && var2 <= 429 && Rnd < 0.12 && OCurrAction <= 69 && YDistBackEdge > -6
+Goto grab
+Goto bthrow
+elif 12 < var17 && var17 < 13 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 5
-Call Grab
+Goto grab
+Goto uthrow
+elif 13 < var17 && var17 < 14  
+Goto nair
+elif 14 < var17 && var17 < 15  
+Goto nair
+elif 15 < var17 && var17 < 16  
+Goto fair
+elif 16 < var17 && var17 < 17  
+Goto bair
+elif 17 < var17 && var17 < 18  && OYDistBackEdge < -5
+Goto uair
 endif
+  Goto KCheck
+  if !(True)
+    label KCheck
+    COS var22 var8
+    var22 *= var15
+    var22 *= Direction
+    var22 *= 1.2
+    var17 = RBoundary - (0)
+    if var22 > var17
+      var2 = 1
+      Return
+    endif
+    var17 = LBoundary - (0)
+    if var22 < var17
+      var2 = 1
+      Return
+    endif
+    var17 = TBoundary - (0)
+    SIN var22 var8
+    var22 *= var15
+    var22 *= 1.2
+    if var22 > var17
+      var2 = 1
+      Return
+    endif
+    var2 = 0
+    Return
+  endif
+if Equal var2 0
+  Return
+endif
+Goto approachType_filter
 Return
 
 label neutralMoves
-var16 = 4
-
-var17 = TopNY - OTopNY
-Abs var17
-if ODistLE 8 && var17 < 20 && Equal AirGroundState 1
-  var16 = 8
-endif
-if Rnd < 0.1
-  var16 = 2
-endif
-if Rnd < 0.8
+Goto approachTypes
+if Rnd < 0.4
   var19 = 1
   var16 = 255
 endif
 var17 = Rnd * 5
 if var17 < 1  && YDistBackEdge > -3 
-Call FTilt
+Goto ftilt
 elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
-Call DTilt
+Goto dtilt
 elif 2 < var17 && var17 < 3  
-Call NAir
+Goto nair
 elif 3 < var17 && var17 < 4  
-Call NAir
+Goto nair
 elif 4 < var17 && var17 < 5  
-Call BAir
+Goto bair
 endif
+Goto approachType_filter
 Return
 
 label _reroll
@@ -955,5 +885,351 @@ endif
   Jump
   Return
 endif
+Return
+
+label jab123
+LOGSTR 1784766976 825373440 0 0 0
+var20 = 24625
+var9 = 4
+var10 = -6
+var11 = 6
+var12 = 4
+var13 = 8
+var14 = 9
+CalcKnockback var15 ODamage 6 35 100 OWeight 1
+var8 = 83
+Goto __ANGLE_FIX__
+Return
+label ftilt
+LOGSTR 1718905088 1819541504 0 0 0
+var20 = 24626
+var9 = 5
+var10 = -3
+var11 = 10
+var12 = 4
+var13 = 6
+var14 = 8
+CalcKnockback var15 ODamage 10 40 80 OWeight 0
+var8 = 361
+Goto __ANGLE_FIX__
+Return
+label utilt
+LOGSTR 1970563328 1819541504 0 0 0
+var20 = 24627
+var9 = -6
+var10 = 2
+var11 = 10
+var12 = 16
+var13 = 6
+var14 = 13
+CalcKnockback var15 ODamage 8 25 134 OWeight 0
+var8 = 78
+Goto __ANGLE_FIX__
+Return
+label dtilt
+LOGSTR 1685350656 1819541504 0 0 0
+var20 = 24628
+var9 = 2
+var10 = 0
+var11 = 11
+var12 = 4
+var13 = 5
+var14 = 7
+CalcKnockback var15 ODamage 8 40 80 OWeight 0
+var8 = 80
+Goto __ANGLE_FIX__
+Return
+label fsmash
+LOGSTR 1718840576 1634953216 0 0 0
+var20 = 24629
+var9 = 20
+var10 = -4
+var11 = 5
+var12 = 5
+var13 = 19
+var14 = 22
+CalcKnockback var15 ODamage 20 30 80 OWeight 0
+var8 = 361
+Goto __ANGLE_FIX__
+Return
+label usmash
+LOGSTR 1970498816 1634953216 0 0 0
+var20 = 24630
+var9 = -10
+var10 = -6
+var11 = 10
+var12 = 9
+var13 = 8
+var14 = 35
+CalcKnockback var15 ODamage 10 40 118 OWeight 0
+var8 = 90
+Goto __ANGLE_FIX__
+Return
+label dsmash
+LOGSTR 1685286144 1634953216 0 0 0
+var20 = 24631
+var9 = 8
+var10 = 3
+var11 = 6
+var12 = 6
+var13 = 21
+var14 = 23
+CalcKnockback var15 ODamage 17 30 103 OWeight 0
+var8 = 361
+Goto __ANGLE_FIX__
+Return
+label nspecial
+LOGSTR 1853059072 1701013760 1634467840 0 0
+var20 = 24632
+var9 = 8
+var10 = -3
+var11 = 69 // nice
+var12 = 5
+var13 = 8
+var14 = 8
+CalcKnockback var15 ODamage 0 0 0 OWeight 0
+var8 = 0
+Goto __ANGLE_FIX__
+Return
+label sspecial
+LOGSTR 1936945152 1701013760 1634467840 0 0
+var20 = 24633
+var9 = 0
+var10 = 0
+var11 = 20
+var12 = 10
+var13 = 20
+var14 = 20
+CalcKnockback var15 ODamage 10 65 64 OWeight 0
+var8 = 87
+Goto __ANGLE_FIX__
+Return
+label grab
+LOGSTR 1735549184 1644167168 0 0 0
+var20 = 24636
+var9 = 3
+var10 = -3
+var11 = 5
+var12 = 6
+var13 = 7
+var14 = 8
+CalcKnockback var15 ODamage 0 0 0 OWeight 0
+var8 = 0
+Goto __ANGLE_FIX__
+Return
+label fthrow
+LOGSTR 1718904832 1919907584 0 0 0
+CalcKnockback var15 ODamage 1 40 104 OWeight 0
+var8 = 72
+Goto __ANGLE_FIX__
+Return
+label dthrow
+LOGSTR 1685350400 1919907584 0 0 0
+CalcKnockback var15 ODamage 6 65 50 OWeight 0
+var8 = 69
+Goto __ANGLE_FIX__
+Return
+label bthrow
+LOGSTR 1651795968 1919907584 0 0 0
+CalcKnockback var15 ODamage 11 70 80 OWeight 0
+var8 = 45
+Goto __ANGLE_FIX__
+Return
+label uthrow
+LOGSTR 1970563072 1919907584 0 0 0
+CalcKnockback var15 ODamage 12 100 67 OWeight 0
+var8 = 90
+Goto __ANGLE_FIX__
+Return
+label nair
+LOGSTR 1851877632 1912602624 0 0 0
+var20 = 24641
+var9 = -9
+var10 = 1
+var11 = 8
+var12 = 6
+var13 = 5
+var14 = 38
+CalcKnockback var15 ODamage 4 70 80 OWeight 0
+var8 = 361
+Goto __ANGLE_FIX__
+Return
+label nair_hc
+LOGSTR 1851877632 1918855168 1660944384 0 0
+var14 = 30
+CalcKnockback var15 ODamage 2 20 100 OWeight 1
+var8 = 160
+Goto __ANGLE_FIX__
+Return
+label fair
+LOGSTR 1717659904 1912602624 0 0 0
+var20 = 24642
+var9 = 3
+var10 = 3
+var11 = 5
+var12 = 5
+var13 = 6
+var14 = 8
+CalcKnockback var15 ODamage 14 40 100 OWeight 0
+var8 = 84
+Goto __ANGLE_FIX__
+Return
+label bair
+LOGSTR 1650551040 1912602624 0 0 0
+var20 = 24643
+var9 = -21
+var10 = 5
+var11 = 9
+var12 = 10
+var13 = 8
+var14 = 11
+CalcKnockback var15 ODamage 11 20 100 OWeight 0
+var8 = 361
+Goto __ANGLE_FIX__
+Return
+label uair
+LOGSTR 1969318144 1912602624 0 0 0
+var20 = 24644
+var9 = -14
+var10 = -7
+var11 = 18
+var12 = 8
+var13 = 8
+var14 = 12
+CalcKnockback var15 ODamage 12 0 100 OWeight 0
+var8 = 55
+Goto __ANGLE_FIX__
+Return
+label dair
+LOGSTR 1684105472 1912602624 0 0 0
+var20 = 24645
+var9 = -8
+var10 = 10
+var11 = 8
+var12 = 7
+var13 = 15
+var14 = 19
+CalcKnockback var15 ODamage 16 20 100 OWeight 0
+var8 = 270
+Goto __ANGLE_FIX__
+Return
+label __ANGLE_FIX__
+if var8 > 180 && Equal OAirGroundState 1
+  if Equal var8 361
+    if var15 < 32
+      var8 = 0
+    else
+      var8 = 44
+    endif
+  else
+    var8 = 180 - var8
+  endif
+elif Equal var8 361
+  var8 = 45
+endif
+Return
+
+label callMove
+LOGSTR 1277182208 1953169408 0 0 0
+LOGVAL var20
+
+if Equal CurrAction 24
+  Return
+endif
+
+if Equal var20 24625
+  Call Jab123
+elif Equal var20 24638
+  Call DashAttack
+elif Equal var20 24626
+  Call FTilt
+elif Equal var20 24627
+  Call UTilt
+elif Equal var20 24628
+  Call DTilt
+elif Equal var20 24629
+  Call FSmash
+elif Equal var20 24630
+  Call USmash
+elif Equal var20 24631
+  Call DSmash
+elif Equal var20 24632
+  Call NSpecial
+elif Equal var20 24633
+  Call SSpecial
+elif Equal var20 24634
+  Call USpecial
+elif Equal var20 24635
+  Call DSpecial
+elif Equal var20 24636
+  Call Grab
+elif Equal var20 24641
+  Call NAir
+elif Equal var20 24642
+  Call FAir
+elif Equal var20 24643
+  Call BAir
+elif Equal var20 24644
+  Call UAir
+elif Equal var20 24645
+  Call DAir
+elif Equal var20 24646
+  Call NSpecialAir
+elif Equal var20 24647
+  Call SSpecialAir
+elif Equal var20 24648
+  Call USpecialAir
+elif Equal var20 24649
+  Call DSpecialAir
+endif
+
+Return
+
+label approachTypes
+var17 = TopNY - OTopNY
+Abs var17
+if ODistLE 8 && var17 < 20 && Equal AirGroundState 1
+  var16 = 9
+endif
+predictOOption var17 7 LevelValue
+predictionConfidence var22 7 LevelValue
+if Equal 7 1 && Rnd < var22
+  var16 = 4
+elif Rnd < 0.2
+  var16 = 4
+endif
+Norm var22 TopNX TopNY
+Norm var17 OTopNX OTopNY
+if Rnd < 0.1 && var22 < var17
+  var16 = 2
+elif Rnd < 0.4 && var22 < var17
+  var16 = 12
+elif Rnd < 0.1
+  var16 = 12
+endif
+if var22 < var17 && Rnd < 0.5
+  var16 = 13
+endif
+var22 -= var17
+Abs var22
+if var22 < 30 && Rnd < 0.7 && LevelValue >= 60 && !(XDistLE 35)
+  var16 = 13
+endif
+Return
+
+label approachType_filter
+if Equal var16 13
+  if Equal var20 24636
+    Return
+  elif var20 < 24641 && Rnd < 0.4
+  elif var20 >= 24641
+  else
+    Return
+  endif
+elif Equal var16 12 && Equal var20 24636
+  Return
+endif
+Seek callMove
+Jump
 Return
 Return

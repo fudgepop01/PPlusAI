@@ -43,8 +43,6 @@ if !(Equal var21 36609) && !(Equal var21 36608) && !(Equal var21 32769) && !(Equ
       //   var22 *= 2
       //   var9 -= var22
       // endif
-    else
-      var11 -= 1
     endif
   // endif
 
@@ -128,10 +126,6 @@ if !(True)
   elif Equal var20 25000
     var3 = OFramesHitstun 
   endif
-  
-  if var8 < 1
-    var8 = 1
-  endif
   SAFE_WRITE_4 var9
   SAFE_WRITE_5 var10
   SAFE_WRITE_6 var11
@@ -140,277 +134,60 @@ if !(True)
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
   SAFE_INJECT_7 var12
+  var2 = 0
   // calculate own estimated position
-  var17 = var13 + var8 + var3
+  var17 = var13 + var3
   // if using a grounded attack then own offset will be very small
   if var20 >= 24625 && var20 <= 24631
     var17 = 0
   endif
   var17 += 1
-  EstOXCoord var0 var17
-  EstOYCoord var1 var17
+  if OAnimFrame <= 2
+    var0 = OTopNX + OXSpeed * var17
+  var17 = var13
+  var23 = OYSpeed * -1
+  CalcYChange var1 var17 var23 OGravity OMaxFallSpeed OFastFallSpeed 0
+    var1 = OTopNY - var1
+    // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
+  else 
+    EstOXCoord var0 var17
+    EstOYCoord var1 var17
+  endif
   var17 -= 1
   var17 /= 60
   EstOPosVecR var2 var17 var17
-  var22 = ExactOXCoord - ExactXCoord
-  var22 = var22 - (OTopNX - TopNX)
-  var2 -= var22
-  var22 = ExactOYCoord - ExactYCoord
-  var22 = var22 - (OSCDBottom - TopNY)
-  var17 -= var22
-  var2 += TopNX
-  var17 += TopNY
-  var2 -= OTopNX
-  var2 *= -2
-  var22 = var0 - OTopNX
-  var2 += var22
-  var2 += TopNX
+  if OAnimFrame > 2
+    var22 = ExactOXCoord - ExactXCoord
+    var22 = var22 - (OTopNX - TopNX)
+    var2 -= var22
+    var22 = ExactOYCoord - ExactYCoord
+    var22 = var22 - (OSCDBottom - TopNY)
+    var17 -= var22
+  endif
+    var2 += TopNX
+    var17 += TopNY
+    var2 -= OTopNX
+    var2 *= -2
+    var22 = var0 - OTopNX
+    var2 += var22
+    var2 += TopNX
   // estimate target position separately  
-  var22 = var13 + var8 + var3
-  var3 = 0
-  if CalledAs ApproachHub // because this involves a label
-  if Equal var20 24625
-    LOGSTR 1247896064 825373440 0 0 0
-  elif Equal var20 24638
-    LOGSTR 1147237120 1749120000 1952539392 1795162112 0
-  elif Equal var20 24626
-    LOGSTR 1179937024 1819541504 0 0 0
-  elif Equal var20 24627
-    LOGSTR 1431595264 1819541504 0 0 0
-  elif Equal var20 24628
-    LOGSTR 1146382592 1819541504 0 0 0
-  elif Equal var20 24629
-    LOGSTR 1179872512 1634953216 0 0 0
-  elif Equal var20 24630
-    LOGSTR 1431530752 1634953216 0 0 0
-  elif Equal var20 24631
-    LOGSTR 1146318080 1634953216 0 0 0
-  elif Equal var20 24632
-    LOGSTR 1314091008 1701013760 1634467840 0 0
-  elif Equal var20 24633
-    LOGSTR 1397977088 1701013760 1634467840 0 0
-  elif Equal var20 24634
-    LOGSTR 1431531520 1701013760 1634467840 0 0
-  elif Equal var20 24635
-    LOGSTR 1146318848 1701013760 1634467840 0 0
-  elif Equal var20 24636
-    LOGSTR 1198678272 1644167168 0 0 0
-  elif Equal var20 24641
-    LOGSTR 1312909568 1912602624 0 0 0
-  elif Equal var20 24642
-    LOGSTR 1178691840 1912602624 0 0 0
-  elif Equal var20 24643
-    LOGSTR 1111582976 1912602624 0 0 0
-  elif Equal var20 24644
-    LOGSTR 1430350080 1912602624 0 0 0
-  elif Equal var20 24645
-    LOGSTR 1145137408 1912602624 0 0 0
-  elif Equal var20 24646
-    LOGSTR 1314091008 1701013760 1634484480 1769078784 0
-  elif Equal var20 24647
-    LOGSTR 1397977088 1701013760 1634484480 1769078784 0
-  elif Equal var20 24648
-    LOGSTR 1431531520 1701013760 1634484480 1769078784 0
-  elif Equal var20 24649
-    LOGSTR 1146318848 1701013760 1634484480 1769078784 0
-  elif Equal var20 32776
-    LOGSTR 1180789504 1699706112 1950905600 1644167168 0
-  elif Equal var20 25000
-    LOGSTR 1131375872 1651460096 1969356800 0 0
-  endif
-    // calculate own Y coord because I can't figure out the !@$% EstOPosVecR thing
-  var22 = var13 + var8
-  var1 = 0
+  var22 = var13 + var3
+  // calculate own Y coord because I can't figure out the !@$% EstOPosVecR thing
+  var17 = var13
   if Equal CurrSubaction JumpSquat
-    var3 = -1.482
+    var22 = -1.482
   else
-    var3 = YSpeed * -1
+    var22 = YSpeed * -1
   endif
-  Seek _MID_CALC_GRAV
-  Jump
-  if !(True)
-    label _MID_CALC_GRAV
-    var1 += var3
-    var22 -= 1
-    var3 += 0.082 // 0.082
-    if var3 > 2.3
-      var3 = 2.3
-    elif var3 > MaxFallSpeed
-      var3 = MaxFallSpeed
-    endif
-    if var22 < 1
-      Seek
-    else
-      Seek _MID_CALC_GRAV
-    endif
-    Jump
-  endif
-  label
-    var17 = TopNY - var1
-    // calculate Opponent change in 0.082 (used later)
-if OIsCharOf Bowser
-  var3 = 113
-  var3 = 0.13
-elif OIsCharOf Falcon
-  var3 = 104
-  var3 = 0.13
-elif OIsCharOf Lizardon // Charizard
-  var3 = 106
-  var3 = 0.105
-elif OIsCharOf Diddy
-  var3 = 85
-  var3 = 0.12
-elif OIsCharOf Donkey
-  var3 = 109
-  var3 = 0.1
-elif OIsCharOf Falco
-  var3 = 80
-  var3 = 0.17
-elif OIsCharOf Fox
-  var3 = 75
-  var3 = 0.23
-  // 2.8
-elif OIsCharOf Gamewatch
-  var3 = 75
-  var3 = 0.095
-elif OIsCharOf Ganondorf
-  var3 = 109
-  var3 = 0.13
-// GIGA BOWSER WOULD GO HERE
-// elif OIsCharOf Bowser
-//   var3 = 113
-//   var3 = 0.13
-elif OIsCharOf Nana || OIsCharOf Popo
-  var3 = 88
-  var3 = 0.1
-elif OIsCharOf Ike
-  var3 = 100
-  var3 = 0.103
-elif OIsCharOf Fushigisou // Ivysaur
-  var3 = 85
-  var3 = 0.075
-elif OIsCharOf Purin // Jigglypuff
-  var3 = 62
-  var3 = 0.064
-elif OIsCharOf DDD // King Dedede
-  var3 = 107
-  var3 = 0.095
-elif OIsCharOf Kirby
-  var3 = 74
-  var3 = 0.08
-elif OIsCharOf Knuckles
-  var3 = 90
-  var3 = 0.14
-elif OIsCharOf Link
-  var3 = 104
-  var3 = 0.11
-elif OIsCharOf Lucario
-  var3 = 94
-  var3 = 0.125
-elif OIsCharOf Lucas
-  var3 = 80
-  var3 = 0.125
-elif OIsCharOf Luigi
-  var3 = 100
-  var3 = 0.069 // nice
-  // 1.6
-elif OIsCharOf Mario
-  var3 = 100
-  var3 = 0.095 // 1.7
-elif OIsCharOf Marth
-  var3 = 87
-  var3 = 0.085
-elif OIsCharOf Metaknight
-  var3 = 79
-  var3 = 0.11
-elif OIsCharOf Mewtwo
-  var3 = 90
-  var3 = 0.082
-elif OIsCharOf Ness
-  var3 = 94
-  var3 = 0.09
-elif OIsCharOf Pikmin // Olimar
-  var3 = 90
-  var3 = 0.09
-elif OIsCharOf Peach
-  var3 = 90
-  var3 = 0.08
-elif OIsCharOf Pikachu
-  var3 = 80
-  var3 = 0.11
-elif OIsCharOf Pit
-  var3 = 80
-  var3 = 0.095
-elif OIsCharOf Robot // ROB
-  var3 = 104
-  var3 = 0.09
-elif OIsCharOf Roy
-  var3 = 85
-  var3 = 0.114
-elif OIsCharOf Samus
-  var3 = 110
-  var3 = 0.66
-elif OIsCharOf Shiek
-  var3 = 90
-  var3 = 0.12
-elif OIsCharOf Snake
-  var3 = 105
-  var3 = 0.098
-elif OIsCharOf Sonic
-  var3 = 82
-  var3 = 0.122
-elif OIsCharOf Zenigame // Squirtle
-  var3 = 85
-  var3 = 0.126
-elif OIsCharOf Toonlink
-  var3 = 85
-  var3 = 0.11
-elif OIsCharOf Wario
-  var3 = 102
-  var3 = 0.112
-// WARIO MAN GOES HERE
-// elif OIsCharOf Bowser
-//   var3 = 113
-//   var3 = 0.13
-elif OIsCharOf Wolf
-  var3 = 85
-  var3 = 0.16
-elif OIsCharOf Yoshi
-  var3 = 108
-  var3 = 0.093
-elif OIsCharOf Zelda
-  var3 = 90
-  var3 = 0.073
-elif OIsCharOf ZSS // Zero Suit Samus
-  var3 = 85
-  var3 = 0.135
-endif
-  var22 = var13 + var8 + var3
-  var0 = 0
-  var1 = OCharYSpeed + OKBYSpeed
-  var1 *= -1
-  Seek _MID_CALC_O_GRAV
-  Jump
-  if !(True)
-    label _MID_CALC_O_GRAV
-    var0 += var1
-    var22 -= 1
-    var1 += var3 // 0.082
-    if var1 > OMaxFallSpeed
-      var1 = OMaxFallSpeed
-    endif
-    if var22 < 1
-      Seek
-    else
-      Seek _MID_CALC_O_GRAV
-    endif
-    Jump
-  endif
-  label
-    var3 = var0
-  endif
+  CalcYChange var1 var17 var22 Gravity MaxFallSpeed FastFallSpeed 0
+  var17 = TopNY - var1
+  // calculate Opponent change in 0.082 (used later)
+  // if !(Equal OYSpeed 0) 
+  //   O_CALC_SELF_Y_CHANGE_GRAVITY(var0, var13)
+  // endif
   // it's awful, I know, but i'm all out of variables and this was the only way lol
-  var22 = var13 + var8 
+  var22 = var13 
   if var20 >= 24625 && var20 <= 24631
     if Equal AirGroundState 1 && Equal CurrAction 3 && !(Equal var20 24636) && !(Equal var20 24630)
       var22 += 0
@@ -422,66 +199,127 @@ endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
   endif
-  EstOYCoord var1 var22
-  // if the opponent is in an actionable state, lower the estimate of
-  // their x offset to prevent dashdancing from setting it off when very far away
-  if OCurrAction <= 9 && var20 < 24641
-    var22 *= 0.3
+  if OAnimFrame <= 2
+  var17 = var22
+  var23 = OYSpeed * -1
+  CalcYChange var1 var17 var23 OGravity OMaxFallSpeed OFastFallSpeed 0
+    var1 = OTopNY - var1
+    var1 *= -1
+    if OCurrAction <= 9 && var20 < 24641
+      var22 *= 0.3
+    endif
+    var0 = OTopNX + OXSpeed * var22
+    // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
+  else 
+    EstOYCoord var1 var22
+    // if the opponent is in an actionable state, lower the estimate of
+    // their x offset to prevent dashdancing from setting it off when very far away
+    if OCurrAction <= 9 && var20 < 24641
+      var22 *= 0.3
+    endif
+    EstOXCoord var0 var22
+    var1 = var1 - (OSCDBottom - OTopNY)
   endif
-  EstOXCoord var0 var22
-  var1 = var1 - (OSCDBottom - OTopNY)
-  if LevelValue >= 75 && !(Equal var16 6) && OCurrAction <= 15 && Equal OIsOnStage 1
-    predictOOption var22 14 LevelValue
-    var22 = 30 * OPos
-    if Equal var22 1
-      var0 += var22
-    elif Equal var22 3
+  var3 = TopNY + YDistBackEdge
+  if SamePlane && var1 <= var3 && !(MeteoChance)
+    var1 = var3
+  endif
+  if !(CalledAs ComboHub)
+    // if Equal var16 4
+    //   var22 = 20 * OPos
+    //   var0 -= var22
+    // elif Equal var16 5
+    //   var22 = 20 * OPos
+    //   var0 += var22
+    // el
+    if Equal var16 13
+      LOGSTR 1414025728 1161909248 1162758400 1313275904 0
+      predictAverage var22 3 LevelValue
+      var22 += 35
+      var22 *= OPos
       var0 -= var22
     endif
-  endif
-  if LevelValue >= 48
-    if var20 >= 24641 && var20 <= 24649
-      var22 = var13 + 3 + 3
-    else
-      var22 = var13
+    if Equal var16 12
+      predictAverage var22 3 LevelValue
+      var22 += 10
+      var22 *= OPos
+      var0 -= var22
     endif
-    EstOYCoord var22 var22
-    var3 = TopNY + YDistBackEdge
-    if SamePlane && var22 <= var3 
-      var22 = 1
-    else
-      var22 = 0
-    endif
-    if Equal OCurrAction 97 || Equal OCurrAction 96
-      Seek
-      Jump
-    elif OCurrAction >= 68 && OCurrAction <= 73 && Equal var22 1
-      label
-      if Equal OCurrAction 97 && OAnimFrame > 18
-      elif Equal OCurrAction 96
-      else
-        var3 = -9999.9999
-      endif 
-      predictOOption var22 10 LevelValue
+    if LevelValue >= 75 && !(Equal var16 7) && OCurrAction <= 15 && Equal OIsOnStage 1
+      predictOOption var22 13 LevelValue
+      var22 = 30 * OPos
       if Equal var22 1
-        LOGSTR 1414485760 1095910400 1392508928 0 0
-        var22 = 21
-        if Equal OCurrAction 97
-          var22 -= OAnimFrame
-        endif
-        var22 *= 2 * OPos
-        var0 -= var22
+        var0 += var22
       elif Equal var22 3
-        LOGSTR 1096237312 1493172224 0 0 0
-        var22 = 21
-        if Equal OCurrAction 97
-          var22 -= OAnimFrame
-        endif
-        var22 *= 2 * OPos
+        var0 -= var22
+      endif
+      if Equal var20 24636 && Equal CurrAction 4 
+        var22 = 10 * OPos
         var0 += var22
       endif
     endif
+    if LevelValue >= 48 && CalledAs ApproachHub
+      predictOOption var22 15 LevelValue
+      predictionConfidence var3 15 LevelValue
+      if Equal var22 1 && Rnd < var3
+        if var20 >= 24641 && var20 <= 24649
+          var22 = var13 + 3 + 3
+        else
+          var22 = var13
+        endif
+        EstOYCoord var22 var22
+        var3 = TopNY + YDistBackEdge
+        if SamePlane && var22 <= var3 
+          var22 = 1
+        else
+          var22 = 0
+        endif
+        if Equal OCurrAction 97 || Equal OCurrAction 96
+          Seek
+          Jump
+        elif OCurrAction >= 68 && OCurrAction <= 73 && Equal var22 1
+          label
+          if Equal OCurrAction 97 && OAnimFrame > 18
+          elif Equal OCurrAction 96
+          else
+            var3 = -9999.9999
+          endif 
+          predictOOption var22 9 LevelValue
+          if Equal var22 1
+            LOGSTR 1414485760 1095910400 1392508928 0 0
+            var22 = 21
+            if Equal OCurrAction 97
+              var22 -= OAnimFrame
+            endif
+            var22 *= 2 * OPos
+            var0 -= var22
+          elif Equal var22 3
+            LOGSTR 1096237312 1493172224 0 0 0
+            var22 = 21
+            if Equal OCurrAction 97
+              var22 -= OAnimFrame
+            endif
+            var22 *= 2 * OPos
+            var0 += var22
+          endif
+        endif
+      endif
+    endif
   endif
+  // correct to be sure it's not senslessly offstage
+  if Equal OIsOnStage 1 && Equal OFramesHitstun 0
+    var22 = var0 - TopNX
+    GetYDistFloorOffset var22 var22 0 0
+    if Equal var22 -1
+      var22 = OXDistBackEdge
+      Abs var22
+      if var22 > OXDistFrontEdge
+        var22 = OXDistFrontEdge
+      endif
+      var0 = OTopNX + var22 
+      // var0 *= OPos
+    endif
+  endif 
   // var0 = estimated target x position
   // var1 = estimated target y position
   // var2 = estimated own x position
@@ -507,22 +345,14 @@ endif
   elif Equal OAirGroundState 1
     // var17 -= var3
   endif
-  // self (dependent on target)
-  var22 = YDistBackEdge + TopNY
-  if var17 < var22 && Equal IsOnStage 1 && Equal AirGroundState 1
-    // if CalledAs ApproachHub && Equal var8 1 && var20 >= 24641 && var20 <= 24645 && InAir
-    //   Call AIHub
-    // endif 
-    var22 -= var17
-    var17 += var22
+  if Equal AirGroundState 1
+    var17 = TopNY
   endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || var18 >= 1
-  //     // self
-  //     DrawDebugRectOutline var2 var17 5 5 255 0 0 136
-  //     // target
-  //     DrawDebugRectOutline var0 var1 5 5 0 0 255 136
-  //   endif
+  //   // self
+  //   DrawDebugRectOutline var2 var17 5 5 255 0 0 136
+  //   // target
+  //   DrawDebugRectOutline var0 var1 5 5 0 0 255 136
   // endif
   // adjust for move parameters
   if var20 >= 24641 && var20 <= 24645
@@ -559,7 +389,7 @@ endif
   // endif
   
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || var18 >= 1
+  //   if Equal index 1 || var18 >= 1
   //     // self
   //     DrawDebugRectOutline var2 var17 var11 var12 255 187 0 136
   //   endif
@@ -569,7 +399,7 @@ endif
   var0 = var2 - var0
   var1 = var1 - var17
   // adjust for opponent position (aim towards nearest blastzone)
-  if !(Equal var20 32776) && !(Equal var20 25000)
+  if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
     var22 = 0
     var17 = LBoundary - (TopNX + var0) 
     if var17 < 90 && Equal Direction (-1)
@@ -625,57 +455,55 @@ endif
     var1 = 0
   endif
   // if !(CalledAs ComboHub)
-  //   if Equal var8 1 || var18 >= 1
-  //     var0 += TopNX
-  //     var1 += TopNY
-  //     DrawDebugRectOutline var0 var1 var11 var12 0 255 0 136
-  //     var0 -= TopNX
-  //     var1 -= TopNY
-  //     var17 = 0.0 + 1
-  //     var17 = var11 * (1/var17)
-  //     var11 = var17
-  //     var9 = var9 + var17 * 0.0
-  //     var17 = 0.0 + 1
-  //     var17 = var12 * (1/var17)
-  //     var12 = var17
-  //     var10 = var10 - var17 * 0.0
-  //     // var17 = TopNY - var10 + var12 + var22
-  //     // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
-  //     if CalledAs ApproachHub
-  //       var11 -= 2.5
-  //       var9 += 5
-  //     endif
-  //     var22 = (var9 + var11)
-  //     var22 *= Direction
-  //     var22 += TopNX
-  //     var17 = TopNY - var10 + var12
-  //     DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
-  //     var17 += var2
-      
-  //     // if OTopNX > 0
-  //     //   var22 += var11
-  //     // else
-  //     //   var22 -= var11
-  //     // endif 
-  //     DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
-  //     var22 = OHurtboxSize / 2
-  //     var17 = var22 + OSCDBottom
-  //     DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
-      
-  //     if CalledAs ApproachHub
-  //       var11 += 2.5
-  //       var9 -= 5
-  //     endif
-  //     var17 = var11 * 0.0
-  //     var9 -= var17
-  //     var11 = var11 + var17
-  //     var17 = var12 * 0.0
-  //     var10 += var17
-  //     var12 = var12 + var17
+  //   var0 += TopNX
+  //   var1 += TopNY
+  //   DrawDebugRectOutline var0 var1 var11 var12 0 255 0 136
+  //   var0 -= TopNX
+  //   var1 -= TopNY
+  //   var17 = 0.0 + 1
+  //   var17 = var11 * (1/var17)
+  //   var11 = var17
+  //   var9 = var9 + var17 * 0.0
+  //   var17 = 0.0 + 1
+  //   var17 = var12 * (1/var17)
+  //   var12 = var17
+  //   var10 = var10 - var17 * 0.0
+  //   // var17 = TopNY - var10 + var12 + var22
+  //   // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //   if CalledAs ApproachHub
+  //     var11 -= 2.5
+  //     var9 += 5
   //   endif
+  //   var22 = (var9 + var11)
+  //   var22 *= Direction
+  //   var22 += TopNX
+  //   var17 = TopNY - var10 + var12
+  //   DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
+  //   var17 += var2
+    
+  //   // if OTopNX > 0
+  //   //   var22 += var11
+  //   // else
+  //   //   var22 -= var11
+  //   // endif 
+  //   DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
+  //   var22 = OHurtboxSize / 2
+  //   var17 = var22 + OSCDBottom
+  //   DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
+    
+  //   if CalledAs ApproachHub
+  //     var11 += 2.5
+  //     var9 -= 5
+  //   endif
+  //   var17 = var11 * 0.0
+  //   var9 -= var17
+  //   var11 = var11 + var17
+  //   var17 = var12 * 0.0
+  //   var10 += var17
+  //   var12 = var12 + var17
   // endif
-  // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 6) 
-  //   var17 = var13 + var8 - var8
+  // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 7) 
+  //   var17 = var13 - index
   //   var0 = var0 + OXSpeed * var17 * -2
   // endif
 
@@ -688,60 +516,32 @@ endif
   if var2 <= var11
     var17 = var12 + (OHurtboxSize / 2)
     if var3 <= var17
-  var22 = var15
-  var4 = 0
+  var17 = var15
   if Equal CurrSubaction JumpSquat
-    var3 = -1.482
+    var22 = -1.482
   else
-    var3 = YSpeed * -1
+    var22 = YSpeed * -1
   endif
-  Seek l_test
-  Jump
-  if !(True)
-    label l_test
-    var4 += var3
-    var22 -= 1
-    var3 += 0.082 // 0.082
-    if var3 > 2.3
-      var3 = 2.3
-    elif var3 > MaxFallSpeed
-      var3 = MaxFallSpeed
-    endif
-    if var22 < 1
-      Seek
-    else
-      Seek l_test
-    endif
-    Jump
-  endif
-  label
+  CalcYChange var4 var17 var22 Gravity MaxFallSpeed FastFallSpeed 0
       var4 = (YDistFrontEdge * -1) - var4
 
-  GetNearestCliff var2
   var17 = var15 + 3
   var3 = XSpeed * var17
-  var2 -= TopNX
-  if var2 < 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var2 -= var3
-      if var2 >= 0
-        var2 = 1
-      endif
+  GetYDistFloorOffset var2 var3 5 0
+  // var22 = TopNY - var2 
+  // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
+  if var2 < 4 && !(Equal var2 -1) 
+    var2 = 0
+  elif Equal DistBackEdge DistFrontEdge
+    var2 = 2
+  elif Equal var2 -1
+    if var3 < 0
+      var2 = 1
+    elif var3 > 0
+      var2 = -1
     endif
-  elif var2 > 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var2 -= var3
-      if var2 <= 0
-        var2 = -1
-      endif
-    endif
-  endif
-  if !(Equal var2 1) && !(Equal var2 -1)
-    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
-      var2 = 2
-    else
-      var2 = 0
-    endif
+  else
+    var2 = 0
   endif
       
       if !(Equal var2 0)
@@ -786,6 +586,7 @@ endif
 Seek Begin
 Return
 label CallAttacks
+LOGSTR 1667329024 1818848768 1728053248 0 0
 
 var18 = 1
 if Equal var20 24641
@@ -798,6 +599,8 @@ elif Equal var20 24644
   Call UAir
 elif Equal var20 24645
   Call DAir
+elif Equal var20 25000
+  Call ComboHub
 endif
 
 Return

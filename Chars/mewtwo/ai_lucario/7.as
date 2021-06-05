@@ -7,3 +7,9 @@
     Call NAir
   endif
 #endsnippet
+
+#snippet SHIELDDROP_OPTIONS
+  movePart = 0
+  approachType = at_hover
+  $pickRandMove(nair|bair|uair|fair, Call)
+#endsnippet

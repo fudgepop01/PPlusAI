@@ -5,36 +5,39 @@ id 0x8007
 
 unk 0x0
 
-predictOOption var17 11 LevelValue
-predictionConfidence var22 11 LevelValue
+var3 = 20
+predictOOption var17 10 LevelValue
+predictionConfidence var22 10 LevelValue
 if Equal var17 1
-  var3 = 7
-  if var22 >= 0.5
-    var3 = 14
+  var3 = 40
+  if var22 >= 0.4
+    var3 = 55
   elif var22 >= 0.8
-    var3 = 20
+    var3 = 70
   endif
+  var3 *= LevelValue * 0.01
 endif
 
 var1 = 0
-if LevelValue >= 60
-  var2 = -0.75 + 5.5
-elif LevelValue >= 21
-  var2 = 40
-else
-  var2 = 0 // will not grab OOS
-endif
 label
 Cmd30
 var21 = 32775
 
-if OAttacking && OAnimFrame < 20 && XDistLE 50 || XDistLE 50 && var3 > 0
+RetrieveATKD var4 OCurrSubaction 1
+
+var4 = OEndFrame - OAnimFrame
+if OAttacking && var4 > 20 && OAnimFrame >= var5 
+elif XDistLE 50 && var3 > 0
+  Button R
+elif OAttacking && OAnimFrame > 15 && OAnimFrame < var5 && XDistLE 50
+  var3 += 1
   Button R
 endif
 var3 -= 1
 
 if Equal CurrAction 29
-  if Equal OPos Direction && XDistLE 20 && Rnd < 0.8 && AnimFrame > 3
+  Button R
+  if Equal OPos Direction && XDistLE 12 && Rnd < 0.8 && AnimFrame > 3
     var1 = 1
   endif
   if LevelValue >= 75 && Equal OPos Direction
@@ -46,7 +49,7 @@ if Equal CurrAction 29
   Return
 endif
 
-if Equal var1 1 && XDistLE 20 && Equal OPos Direction
+if Equal var1 1 && XDistLE 10.25 && Equal OPos Direction && var4 > 3
   Button R
   if Equal CurrAction 27
     Button A|R
@@ -54,17 +57,20 @@ if Equal var1 1 && XDistLE 20 && Equal OPos Direction
     Call Grab
   endif
   Return
-elif Equal var1 1 || Rnd <= 0.03
+elif Equal var1 1
   Button R
-  if Equal CurrAction 27
+  if Equal LevelValue 100 && Equal IsOnPassableGround 1 && Rnd < 0.7
+    Seek shieldDropOOS
+    Jump
+  elif Equal CurrAction 27 && var4 > 8 && var3 <= 10
     var17 = Rnd * 100
-    if var17 < 70
+    if var17 < 78
       Button X
       Seek jumpHandler
       Return
-    elif var17 < 80 && XDistFrontEdge > 25
+    elif var17 < 90 && XDistFrontEdge > 25
       AbsStick OPos
-    elif var17 < 90
+    elif var17 < 93
       var17 = OPos * -1
       AbsStick var17
     else
@@ -100,6 +106,30 @@ if CurrAction <= 32
 endif
 Return
 
+label shieldDropOOS
+  var22 = 3
+  label
+  ClearStick
+  Button R
+  if Equal CurrAction 27
+    Stick 0 (-0.715)
+    var22 -= 1
+    if var22 <= 0
+      Button X
+      Seek jumpHandler
+      Return
+    endif
+  elif Equal CurrAction 114
+  var18 = 1
+  if Equal OPos Direction
+    Call UAir
+  else
+    Call BAir
+  endif
+    Call AIHub
+  endif
+Return
+
 label jumpHandler
 Cmd30
 var0 = OXSpeed
@@ -107,37 +137,38 @@ Abs var0
 var17 = OPos * 0.4
 AbsStick var17
 var1 = OXSpeed * OPos
-if SamePlane && var1 < 0 && var0 > 0.2 && InAir
+if SamePlane && var1 < 0 && var0 > 0.2 && InAir && ODistLE 60
   var18 = 1
-  if XDistLE 40
+  if XDistLE 25 && Rnd < 0.5
     Call DAir
-  elif !(Equal OPos Direction) && XDistLE 60
+  elif !(Equal OPos Direction) && XDistLE 50
     Call BAir
-  elif XDistLE 60
+  elif XDistLE 50
     Call NAir
   endif
-elif Rnd < 0.4 && InAir
+elif Rnd < 0.3 && InAir && XDistLE 60
   var18 = 1
-  if XDistLE 40
+  if XDistLE 25 && Rnd < 0.5
     Call DAir
-  elif !(Equal OPos Direction) && XDistLE 60
+  elif !(Equal OPos Direction) && XDistLE 50
     Call BAir
-  elif XDistLE 60
+  elif XDistLE 50
     Call NAir
   endif
 endif
 
 if InAir
-  if XDistBackEdge < -10
+  if XDistBackEdge < -10 && var4 < 6
     var17 = OPos * -1
     AbsStick var17 (-1)
-  elif XDistFrontEdge > 10 && Rnd < 0.4
+  elif XDistFrontEdge > 10 && LevelValue >= 7
     AbsStick OPos (-1)
   else
     AbsStick 0 (-1)
   endif
 
   Button R
+//   {WAVEDASH_OPTIONS}
   Call AIHub
 endif
 Return

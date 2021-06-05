@@ -1,35 +1,4 @@
 #snippet PRE_HOOKS
-  // #let timer = var0
-  // timer = 60
-
-  // label
-  // timer -= 1
-  // if timer <= 0
-  //   timer = 60
-  //   if Equal OCurrAction hex(0x34)
-  //     trackOAction man_approach op_grab
-  //   elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21)
-  //     trackOAction man_approach op_defend
-  //   elif OAttacking
-  //     trackOAction man_approach op_attack
-  //   endif
-
-  //   predictOOption var1 man_approach LevelValue
-  //   if Equal var1 op_attack
-  //     LOGSTR str("attack")
-  //   elif Equal var1 op_defend
-  //     LOGSTR str("defend")
-  //   elif Equal var1 op_grab
-  //     LOGSTR str("grab")
-  //   else
-  //     LOGSTR str("none")
-  //   endif
-
-  //   LOGSTR str("confidence")
-  //   predictionConfidence var1 man_approach LevelValue
-  //   LOGVAL var1
-  // endif
-  // Return
 #endsnippet
 
 #snippet TECH_CHASE_OPTIONS
@@ -40,11 +9,32 @@
 #endsnippet
 
 #snippet WHIFF_PUNISH_OPTIONS
-  if Rnd < 0.8
-    Call SSpecial
-  else
-    Call Grab
+  #let tries = var0
+  tries = 10
+  label whiffPunish
+  $refreshMoves()
+  $output(Goto)
+
+  if move_hitFrame < OCurrEndlag && lastAttack >= valJab123 && lastAttack <= valDSpecialAir
+    LOGSTR str("PUNISHING WHIFF")
+    if Equal OAirGroundState 2
+      if lastAttack >= valNAir && lastAttack <= valDSpecialAir
+        Seek callMove
+        Jump
+      endif
+    else 
+      Seek callMove
+      Jump
+    endif
   endif
+  if tries <= 0
+    Seek
+  else
+    Seek whiffPunish
+  endif
+  tries -= 1
+  Jump
+  label
 #endsnippet
 
 #snippet DEFENSE_OPTIONS
@@ -77,7 +67,7 @@
 
 #snippet ADDITIONAL_PREMAIN_OPTIONS
   if LevelValue >= LV7 && Rnd < 0.2
-    approachType = at_throwOut
+    approachType = at_undershoot
     if XDistLE 10
       Call Jab123
     else
@@ -113,7 +103,12 @@
 #snippet COMBO_STARTERS
 $refreshMoves()
 $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
-$outputWithKnockbackThresholds(120, 290, Call)
+$output(Goto)
+#let result = var2
+MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 90, 0, 90)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet KILL_MOVES
@@ -121,13 +116,18 @@ $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
 $excludeMovesOrigin(sspecial|utilt)
-$outputWithKnockbackThresholds(200, 400, Call)
+$output(Goto)
+#let result = var2
+KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet NEUTRAL_MOVES
 $refreshMoves()
 $excludeMovesNotOrigin(fair|dair|nair|jab123|grab)
-$output(Call)
+$output(Goto)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

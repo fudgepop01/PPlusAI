@@ -62,7 +62,7 @@ Call ApproachHub
 Return
 
 label execute
-CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame, _oCalc, _sCalc)
+CALC_TARGET_DISTANCES(var5, var6, var0, var1, move_lastHitFrame)
 
 if CurrAction <= hex(0x09) || Equal CurrAction hex(0x7D) || FramesHitstun > 0
   Call AIHub

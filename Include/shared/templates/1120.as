@@ -23,7 +23,7 @@ endif
 label _begin
 
 #let ODmgXWeight = var1
-GET_WEIGHT_TABLE(ODmgXWeight, var2)
+ODmgXWeight = OWeight
 
 ODmgXWeight = ODmgXWeight - 200
 ODmgXWeight *= -1
@@ -40,168 +40,61 @@ elif Equal CurrAction hex(0x39)
     pummelCount -= 1
     Return
   elif True
-    #let fBoundDist = var2
-    #let bBoundDist = var3
-    #let uBoundDist = var4
-    #let tries = var4
+    $clearMovesUsed()
+    $refreshMoves()
+    $excludeMovesNotOrigin(grab)
+    $excludeMovesNamed(grab)
+    $output(Goto)
 
-    if Equal Direction 1
-      fBoundDist = RBoundary - TopNX
-      bBoundDist = LBoundary - TopNX
-    else
-      bBoundDist = RBoundary - TopNX
-      fBoundDist = LBoundary - TopNX
-    endif
-    uBoundDist = TBoundary - TopNY
-
-    #let fThrowDMG = var5
-    #let bThrowDMG = var6
-    #let uThrowDMG = var7
-    #let dThrowDMG = var8
-
-    LOGSTR str("fbound")
-    if fBoundDist < 120
-      $generateThrowDMG(160, f)
-
-      tries = 5
-      label
-      tries -= 1
-      if tries < 0
-        Seek
-        Jump
-      endif
-      if fThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto fthrow
-        Seek _begin
-      elif uThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto uthrow
-        Seek _begin
-      elif dThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto dthrow
-        Seek _begin
-      elif bThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto bthrow
-        Seek _begin
-      endif
+    #let result = var2
+    KILL_CHECK(result, move_currKnockback, move_angle, TopNX, TopNY)
+    immediateTempVar = LevelValue * 0.01
+    if Equal result 1 && Rnd <= immediateTempVar
+      LOGSTR str("will kill")
+      Goto execThrow
       Return
-      label
-      if Rnd < 0.7
-        if Rnd < 0.5
-          Goto dthrow
-        else
-          Goto fthrow
-        endif
-        Seek _begin 
+    endif
+
+    #let result = var2
+    MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 60, 0, 45, 20, 180)
+    if Equal result 1 && Rnd <= 0.8
+      LOGSTR str("combo")
+      Goto execThrow
+      Return
+    endif
+
+    MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 120, 50, 150, -200, 200)
+    if Equal result 1 && Rnd <= 0.8
+      TO_NEAREST_BLASTZONE(result, move_angle)
+      if Equal result 1
+        LOGSTR str("control")
+        Goto execThrow
         Return
       endif
-    endif
-    LOGSTR str("bbound")
-    if bBoundDist < 120
-      $generateThrowDMG(160, b)
-
-      tries = 5
-      label
-      tries -= 1
-      if tries < 0
-        Seek
-        Jump
-      endif
-      if bThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto fthrow
-        Seek _begin
-      elif uThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto uthrow
-        Seek _begin
-      elif dThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto dthrow
-        Seek _begin
-      elif fThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto bthrow
-        Seek _begin
-      endif
-      label
-      if Rnd < 0.7
-        if Rnd < 0.5
-          Goto uthrow
-        else
-          Goto bthrow
-        endif
-        Seek _begin 
-        Return
-      endif
+    elif Equal result 1 && Rnd <= 0.2
+      LOGSTR str("yeet")
+      Goto execThrow
+      Return
+    elif Rnd <= 0.02
+      LOGSTR str("yeet")
+      Goto execThrow
       Return
     endif
-    LOGSTR str("ubound")
-    if uBoundDist < 350
-      $generateThrowDMG(220, u)
-
-      tries = 5
-      label
-      tries -= 1
-      if tries < 0
-        Seek
-        Jump
-      endif
-      if bThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto fthrow
-        Seek _begin
-      elif uThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto uthrow
-        Seek _begin
-      elif dThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto dthrow
-        Seek _begin
-      elif fThrowDMG < ODmgXWeight && Rnd < 0.4
-        Goto bthrow
-        Seek _begin
-      endif
-    endif
-    label
-
-    LOGSTR str("all out")
-    $generateThrowDMG(80, any)
-
-    Seek _begin
-
-    if ODmgXWeight < dThrowDMG && Rnd < 0.5
-      Goto dthrow
-      Return
-    elif ODmgXWeight < uThrowDMG && Rnd < 0.8
-      Goto uthrow
-      Return
-    endif
-
-    if fBoundDist < bBoundDist
-      Goto fthrow
-      Return
-    else
-      Goto bthrow
-      Return
-    endif
-    LOGSTR str("end")
   endif
-  Return
 endif
 Return
 
-label fthrow
-  Stick 1 0
-  moveVariant = mv_fthrow
-Return
+$generateMovesUsedKB()
 
-label bthrow
-  Stick (-1) 0
-  moveVariant = mv_bthrow
-Return
-
-label uthrow
-  Stick 0 1
-  moveVariant = mv_uthrow
-Return
-
-label dthrow
-  Stick 0 (-1)
-  moveVariant = mv_dthrow
-Return
+label execThrow
+  if Equal moveVariant mv_fthrow
+    Stick 1 0
+  elif Equal moveVariant mv_bthrow
+    Stick -1 0
+  elif Equal moveVariant mv_uthrow
+    Stick 0 1
+  elif Equal moveVariant mv_dthrow
+    Stick 0 (-1)
+  endif
 Return
 Return

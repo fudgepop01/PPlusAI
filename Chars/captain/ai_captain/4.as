@@ -31,12 +31,10 @@
 #endsnippet
 
 #snippet ADDITIONAL_TRIGGERS
-LOGSTR str("NCY")
-LOGVAL nearCliffY
-LOGVAL absNCX
-if nearCliffY > -10 && nearCliffY < 5 && absNCX < 40 && recoveryType <= 0.4
+if nearCliffY > -10 && nearCliffY < 5 && absNCX < 40 && absNCX > 13 && recoveryType <= 0.6
   ClearStick
-  AbsStick nearCliffX
+  immediateTempVar = TopNX * -1
+  AbsStick immediateTempVar
   Button B
 elif nearCliffY > 60 && absNCX > maxXEdgeDist
   ClearStick

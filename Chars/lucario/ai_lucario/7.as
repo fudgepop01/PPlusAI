@@ -7,3 +7,12 @@
     Call NAir
   endif
 #endsnippet
+
+#snippet SHIELDDROP_OPTIONS
+  movePart = 1
+  if Rnd < 0.5 || !(Equal OPos Direction)
+    Call UAir
+  else
+    Call FAir
+  endif
+#endsnippet

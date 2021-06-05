@@ -11,6 +11,8 @@ Cmd30
 
 {PRE_SCRIPT_HOOKS}
 
+SetTimeout 300
+
 if CalledAs NAir
   Goto _NAir
 elif CalledAs FAir
@@ -55,7 +57,7 @@ elif CalledAs UAir
   Stick 0 0.7
 elif CalledAs DAir
   Button A
-  Stick 1 (-0.7)
+  Stick 0 (-0.7)
 elif CalledAs NSpecialAir
   Button B
 elif CalledAs SSpecialAir
@@ -72,17 +74,17 @@ label
 Seek 
 Return
 label
-if OAttacking && Rnd < 0.7
-  trackOAction man_approach op_attack
-elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21)
+if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21)
   trackOAction man_approach op_defend
 elif OCurrAction >= hex(0x34) && OCurrAction <= hex(0x38)
   trackOAction man_approach op_grab
+elif OAttacking && Rnd < 0.7
+  trackOAction man_approach op_attack
 elif Rnd < 0.8
   trackOAction man_approach op_null
 endif
 
-#let frameCounter = var3
+#let frameCounter = var4
 frameCounter = -1
 label _begin
 Goto checks
@@ -154,7 +156,7 @@ Return
 
 label CTD
   var1 = 0
-  CALC_TARGET_DISTANCES(var5, var6, var8, var0, var1, move_lastHitFrame - frameCounter, _oCalc, _sCalc)
+  CALC_TARGET_DISTANCES(var5, var6, var7, var8, move_lastHitFrame - frameCounter)
 Return
 
 label checks
@@ -179,7 +181,7 @@ label movement
 
   if !(Equal isGoingOffstage 0) && !(Equal isGoingOffstage 2)
     AbsStick isGoingOffstage
-  elif !(Equal approachType at_throwOut)
+  elif !(Equal approachType at_undershoot)
     if targetXDistance < 0
       AbsStick -1 0
     else
@@ -191,7 +193,7 @@ label movement
   Abs targetYDistance
   if YSpeed < 0 && YDistBackEdge > -10 && YDistBackEdge <= 0 && Equal IsOnStage 1 && frameCounter > move_lastHitFrame
     globTempVar = move_xRange * 2
-    if targetXDistance <= globTempVar && Equal hit_knockback (-1)
+    if targetXDistance <= globTempVar && Equal HitboxConnected 0
       Return
     elif !(Equal isGoingOffstage 0)
       Return

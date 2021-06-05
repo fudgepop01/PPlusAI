@@ -43,7 +43,7 @@
 #const techChaseCloseDist = 10
 #const techChaseFarDist = 25
 
-#const dashCountMax = 10
+#const dashCountMax = 14
 #const dashForceTurnFrame = 17
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.6
@@ -146,6 +146,7 @@
 #const nspecial_yRange = 5
 #const nspecial_hitFrame = 8
 #const nspecial_lastHitFrame = 8
+#const nspecial_damage_info = NSpecial|0|0|0|0
 
 #const nspecial_start_xRange = 90
 #const nspecial_start_yRange = 10

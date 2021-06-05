@@ -1,4 +1,4 @@
-#snippet Jab123
+#snippet Jab
   if Equal moveVariant mv_jabReset
     if frameCounter >= 15 || Idling
       Call AIHub
@@ -6,6 +6,9 @@
     Return
   endif
 
+  LOGSTR str("FCounter")
+  LOGSTR str("frameCounter")
+  LOGVAL frameCounter
   if frameCounter >= 2
     if Equal CurrSubaction Attack11
       if Equal HitboxConnected 1 && frameCounter >= 7

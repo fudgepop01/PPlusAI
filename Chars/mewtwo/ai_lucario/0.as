@@ -107,7 +107,7 @@
 #endsnippet
 
 #snippet COMBO_STARTERS
-if Rnd < 0.8
+if Rnd < 0.3
   moveVariant = mv_hc
   approachType = at_hover
 endif
@@ -115,11 +115,16 @@ $refreshMoves()
 $filterMoveHitFrame(20)
 $filterMoveEndlag(25)
 // $excludeMovesOrigin(uair|dair)
-$outputWithKnockbackThresholds(70, 190, Call)
+$output(Goto)
+#let result = var2
+MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 90, 0, 90)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet KILL_MOVES
-if Rnd < 0.8
+if Rnd < 0.3
   moveVariant = mv_hc
   approachType = at_hover
 endif
@@ -127,17 +132,22 @@ $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
 $excludeMovesOrigin(dair)
-$outputWithKnockbackThresholds(150, 400, Call)
+$output(Goto)
+#let result = var2
+KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet NEUTRAL_MOVES
-if Rnd < 0.8
+if Rnd < 0.4
   moveVariant = mv_hc
   approachType = at_hover
 endif
 $refreshMoves()
 $excludeMovesNotOrigin(nair|bair|ftilt|dtilt)
-$output(Call)
+$output(Goto)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

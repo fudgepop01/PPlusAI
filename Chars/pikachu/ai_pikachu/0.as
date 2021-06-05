@@ -50,7 +50,7 @@
 
 #snippet ADDITIONAL_PREMAIN_OPTIONS
   if LevelValue >= LV7 && Rnd < 0.2
-    approachType = at_throwOut
+    approachType = at_undershoot
     if XDistLE 10
       Call UTilt
     else
@@ -86,7 +86,12 @@
 #snippet COMBO_STARTERS
 $refreshMoves()
 // $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
-$outputWithKnockbackThresholds(120, 290, Call)
+$output(Goto)
+#let result = var2
+MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 90, 0, 90)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet KILL_MOVES
@@ -94,13 +99,18 @@ $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
 // $excludeMovesOrigin(sspecial|utilt)
-$outputWithKnockbackThresholds(200, 400, Call)
+$output(Call)
+#let result = var2
+KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet NEUTRAL_MOVES
 $refreshMoves()
 // $excludeMovesNotOrigin(fair|dair|nair|jab123|grab)
-$output(Call)
+$output(Goto)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

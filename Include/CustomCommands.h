@@ -43,7 +43,14 @@ cmd SwitchTarget : 0x42
 
 /// clears the button input
 /// particularly useful when dealing with md 3
-cmd CalcKnockback : 0x43 variable damage atkDamage bkb kbg isWeightDependent
+cmd CalcKnockback : 0x43 variable damage atkDamage bkb kbg targetWeight isWeightDependent
+
+/// calcs the Y change of a fighter
+cmd CalcYChange : 0x44 variable frameCount ySpeed gravity maxFallSpeed fastFallSpeed shouldFastFall
+
+cmd SetAutoDefend : 0x45 oneOrZero
+
+cmd SetDisabledMd : 0x46 mdValue
 
 //AI TRACKING CODES
 
@@ -67,13 +74,29 @@ cmd predictOOption : 0x51 variable managertype lookamount
 /// returns how confident the prediction is 
 cmd predictionConfidence : 0x52 variable managertype lookamount
 
+/// averages the prediction values
+cmd predictAverage : 0x53 variable managertype lookamount
+
+/// adds 1 to the current prediction (effectively treats as a counter)
+cmd incrementPrediction : 0x54 managertype
+
+/// obtains the current value stored in the prediction
+cmd getCurrentPredictValue : 0x55 variable managerType
+
+
 // MISSING OPERATOR CODES
 cmd OR : 0x60 variable op1 op2
 cmd AND : 0x61 variable op1 op2
 cmd LSHIFT : 0x62 variable op1 op2
 cmd RSHIFT : 0x63 variable op1 op2
 cmd MOD : 0x64 variable op1 op2
+cmd COS : 0x65 variable value
+cmd SIN : 0x66 variable value
 
+// ITEM CODES
+cmd GetItemLocFromIdx : 0x70 variable1 variable2 idx
+cmd GetArticleOfTypeAtTarget : 0x71 variable1 variable2 type opponent
+cmd GetArticleOfTypeLoc : 0x72 variable1 variable2 type
 
 //DEBUGGING CODES
 

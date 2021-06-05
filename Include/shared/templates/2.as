@@ -9,17 +9,16 @@ unk 0x0
 // was the last move used...
 $clearMovesUsed()
 
-ClearStick
 lastScript = hex(0x8002)
 
 if Equal CurrAction hex(0x04) || Equal CurrAction hex(0x03)
   Stick 1
 endif
 
-#let ODmgXWeight = var8
-#let comboLeniency = var7
+#let ODmgXWeight = var4
+// #let comboLeniency = var7
 
-GET_WEIGHT_TABLE(var8, var0)
+ODmgXWeight = OWeight
 
 ODmgXWeight = ODmgXWeight - 200
 ODmgXWeight *= -1
@@ -37,10 +36,6 @@ approachType = 0
 OYDistSelf = OTopNY - TopNY
 
 {DEBUG_START}
-
-if Equal hit_knockback -1
-  hit_knockback = hex(0xFFFF)
-endif
 
 LOGSTR str("START")
 
@@ -74,13 +69,18 @@ OYDistSelf = OTopNY - TopNY
 GetNearestCliff nearCliffX
 nearCliffX = TopNX - nearCliffX
 nearCliffX *= -1
-#let action = var1
-action = 0
+#let moveType = var7
+#let phase = var23
+#const mt_combo = 0
+#const mt_juggle = 1
+#const mt_kill = 2
+moveType = -1
 
 globTempVar = OTopNX - (TopNX + nearCliffX) 
 Abs nearCliffX
 Abs globTempVar
 
+phase = 1
 Goto clear
 if globTempVar < nearCliffX && OYDistSelf < 70 && globTempVar < 20 && Equal OXDistBackEdge OXDistFrontEdge
   testLimit = 10
@@ -89,56 +89,61 @@ if globTempVar < nearCliffX && OYDistSelf < 70 && globTempVar < 20 && Equal OXDi
   approachType = at_edgeguard
   {EDGEGUARD_OPTIONS}
   Seek edgeguard
-elif Equal OIsOnStage 1 && OYDistSelf < 65 && Rnd < 0.8 && ODmgXWeight > 20
+elif Equal OIsOnStage 1 && OYDistSelf < 65 && Rnd < 0.8
   if Equal LevelValue LV9 
-    testLimit = 50
+    testLimit = 15
   else
-    testLimit = 40
+    testLimit = 10
   endif
   label combo
   LOGSTR str("combo")
-  action = 1
-  Seek killOptions
-  Jump 
-  label kill_end
-  if testLimit < 20
+  moveType = mt_kill
+  Goto killOptions
+  if testLimit < 10
+    moveType = mt_combo
     Goto analyze
     Goto clear
-    Seek comboOptions
-    Jump
-    label combo_end
+    Goto comboOptions
+    moveType = mt_combo
   endif
   Seek combo
 elif True
   if Equal LevelValue LV9 
-    testLimit = 50
+    testLimit = 15
   else
-    testLimit = 40
+    testLimit = 10
   endif
   label juggle
   LOGSTR str("juggle")
-  action = 2
-  Seek killOptions
-  Jump 
-  label kill_high_end
-  if testLimit < 25
+  moveType = mt_kill
+  Goto killOptions 
+  if testLimit < 10
+    moveType = mt_juggle
     Goto analyze
     Goto clear
-    Seek juggleOptions
-    Jump
-    label juggle_end
+    Goto juggleOptions
   endif
   Seek juggle
 endif
 Goto analyze
 testLimit -= 1
 if testLimit <= 0
-  Seek NCombo
+  if phase < 3
+    phase += 1
+    LOGSTR str("=======")
+    LOGSTR str("PHASE UP:")
+    LOGVAL phase
+    LOGSTR str("=======")
+    testLimit = 10
+    Return
+  else
+    Seek NCombo
+  endif
 endif
-comboLeniency = 8
-if Equal movePart mp_ATK
-  comboLeniency = 15
-endif
+// comboLeniency = 8
+// if Equal movePart mp_ATK
+//   comboLeniency = 15
+// endif
 LOGSTR str("=====")
 Goto clear
 Jump
@@ -157,29 +162,15 @@ endif
 Return
 
 label comboOptions
-LOGVAL var8
 {COMBO_OPTIONS}
-Seek combo_end
-Jump
 Return
 
 label juggleOptions
-LOGVAL var8
 {JUGGLE_OPTIONS}
-Seek juggle_end
-Jump
 Return
 
 label killOptions
 {KILL_OPTIONS}
-if Equal action 1 
-  Seek kill_end
-elif Equal action 2
-  Seek kill_high_end
-else
-  Seek NCombo
-endif
-Jump
 Return
 
 {MOVE_GENERATION}
@@ -198,8 +189,7 @@ label analyze
 
 if Equal lastAttack valGeneral
   Return
-elif valJab123 <= lastAttack && lastAttack <= valDashAttack && OYDistBackEdge < -40 && OTotalYSpeed > -0.5
-  comboLeniency = 0
+elif valJab123 <= lastAttack && lastAttack <= valDashAttack && OYDistBackEdge < -40 && OTotalYSpeed > -0.2
   Return
 endif
 
@@ -212,35 +202,60 @@ endif
 if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if !(InAir)
     move_hitFrame += jumpSquatFrames
+    move_lastHitFrame += jumpSquatFrames
   endif
 elif lastAttack <= valDSmash || Equal lastAttack valGrab || Equal lastAttack valDashAttack
   if OYDistSelf > 20
-    comboLeniency = 0
+    // comboLeniency = 0
     Return
   endif
 endif
 
+#let slowest = var0
+#let mid = var1
+#let fastest = var2
+if OFramesHitstun < move_hitFrame
+  fastest = OFramesHitstun
+  mid = move_hitFrame
+  slowest = move_lastHitFrame
+elif OFramesHitstun < move_lastHitFrame
+  fastest = move_hitFrame
+  mid = OFramesHitstun
+  slowest = move_lastHitFrame
+else
+  fastest = move_hitFrame
+  mid = move_lastHitFrame
+  slowest = OFramesHitstun
+endif
+
+#let frameToCalc = var5
+if Equal phase 1
+  frameToCalc = fastest
+elif Equal phase 2
+  frameToCalc = mid
+elif Equal phase 3
+  frameToCalc = slowest
+endif
+
+frameToCalc += 3
+
 #let targetXDistance = var0
 #let targetYDistance = var1
 
-#let frameToCalc = var5
-frameToCalc = move_hitFrame
-{CTD}
-
-frameToCalc = move_lastHitFrame
-{CTD}
+Goto CTD
 
 if !(Equal movePart mp_ATK)
-  comboLeniency = 0
+  // comboLeniency = 0
   Return
 endif
 
-frameToCalc = OFramesHitstun
-{CTD}
-
 {EXTRA_ANALYSIS}
 
-comboLeniency = 0
+// comboLeniency = 0
+Return
+
+label CTD
+{CTD}
 Return
 
 label callMove

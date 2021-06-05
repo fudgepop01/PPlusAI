@@ -61,7 +61,7 @@
 
 #snippet ADDITIONAL_PREMAIN_OPTIONS
   if !(XDistLE 20) && LevelValue >= LV7 && Rnd < 0.35
-    approachType = at_throwOut
+    approachType = at_undershoot
     if Equal Direction OPos
       Call FAir
     else
@@ -110,10 +110,12 @@
 // $filterMoveEndlag(20)
 // $excludeMovesOrigin()
 // $outputWithKnockbackThresholds(80, 170, Call)
-if Rnd < 0.4 || ODmgXWeight > 100 && Rnd < 0.75
+$pickRandMove(dair|fair|dashattack|dtilt|utilt|sspecial|uthrow|dthrow, Goto)
+#let result = var2
+MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 90, 0, 90)
+if Equal result 0
   Return
 endif
-$pickRandMove(dair|fair|dashattack|dtilt|utilt|sspecial|uthrow|dthrow, Call)
 #endsnippet
 
 #snippet KILL_MOVES
@@ -125,7 +127,12 @@ $pickRandMove(dair|fair|dashattack|dtilt|utilt|sspecial|uthrow|dthrow, Call)
 if Rnd < 0.5 || ODmgXWeight < 60
   Return
 endif
-$pickRandMove(usmash|dsmash|fsmash|uair|nair|bair|sspecial_power, Call)
+$pickRandMove(usmash|dsmash|fsmash|uair|nair|bair|sspecial_power, Goto)
+#let result = var2
+KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
+if Equal result 0
+  Return
+endif
 #endsnippet
 
 #snippet NEUTRAL_MOVES
@@ -133,7 +140,7 @@ if ODistLE 20
   movePart = 1
 endif
 
-$pickRandMove(fair|dashattack|dtilt|grab, Call)
+$pickRandMove(fair|dashattack|dtilt|grab, Goto)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

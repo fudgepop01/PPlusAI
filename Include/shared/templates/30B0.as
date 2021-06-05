@@ -13,7 +13,6 @@ if !(Equal AirGroundState 1)
 endif
 
 SetTimeout 50
-DEFENSIVE_REACTION_TIME(var0, var1)
 
 if Rnd < 0.5 && Equal LevelValue LV9 && Equal AirGroundState 1 && FramesHitstun < 1 && Damage < 60
     SetFrame 0

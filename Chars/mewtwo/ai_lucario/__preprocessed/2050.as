@@ -24,6 +24,44 @@ endif
 // Rand DI / tech "smart" implementation
 // randomly DIs unless conditions are met for survival DI
 
+if !(Equal var21 8272)
+  var22 = -1
+  if Equal var21 32769
+    var22 = 7
+  elif Equal var21 32773
+    var22 = 8
+  elif Equal var21 32775
+    var22 = 10
+  endif
+
+  var21 = 8272
+
+  if Equal OCurrAction 60
+    trackOAction var22 3
+  else 
+    trackOAction var22 1
+  endif
+
+  if ODistLE 70
+    // if YDistBackEdge > -3 && YDistBackEdge <= 3
+      var22 = TopNX - OTopNX
+      Abs var22
+      var22 += 5
+      if var22 > 126
+        var22 = 126
+      endif
+      trackOAction 4 var22
+      var22 = TopNY - OTopNY
+      Abs var22
+      var22 += 5
+      if var22 > 126
+        var22 = 126
+      endif
+      trackOAction 5 var22
+    // endif
+  endif
+endif
+
 // if in hitstun...
 if FramesHitstun > 0 || FramesHitlag > 0
   label hitstunHandler
@@ -54,7 +92,7 @@ if FramesHitstun > 0 || FramesHitlag > 0
   label _hitstunExecutor
   Cmd30
 
-  if FramesHitlag > 2 && Equal LevelValue 100 
+  if FramesHitlag > 1 && Equal LevelValue 100 
     if Rnd < 0.75
       var17 = OPos * -1
       if XDistBackEdge > -10
@@ -67,7 +105,7 @@ if FramesHitstun > 0 || FramesHitlag > 0
       AbsStick var17 var22
     endif
     Return
-  elif Equal FramesHitlag 2 && LevelValue >= 60 && YDistBackEdge > -1
+  elif Equal FramesHitlag 1 && LevelValue >= 60 && YDistBackEdge > -1
     var22 = 0
     var17 = LevelValue * 0.01
     if LevelValue >= 75 && Rnd < var17
@@ -81,28 +119,14 @@ if FramesHitstun > 0 || FramesHitlag > 0
   endif
 endif
 
+if FramesHitlag > 1
+  Seek hitstunHandler
+  Return
+endif
+
 if Equal IsOnStage 0
   if CurrAction < 66 || CurrAction > 73
     Call RecoveryHub
-  endif
-endif
-
-if !(Equal var21 8272)
-  var22 = -1
-  if Equal var21 32769
-    var22 = 8
-  elif Equal var21 32773
-    var22 = 9
-  elif Equal var21 32775
-    var22 = 11
-  endif
-
-  var21 = 8272
-
-  if Equal OCurrAction 60
-    trackOAction var22 3
-  else 
-    trackOAction var22 1
   endif
 endif
 
@@ -114,36 +138,40 @@ if LevelValue >= 21
   endif
 endif
 
-if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= 66 && CurrAction <= 68 && Equal AirGroundState 2 
-  ClearStick
-  if Equal var7 1 || Equal var7 -1.2 || Equal var7 -3
-    if Equal var7 0
-      AbsStick 0.3 0
+if CurrAction < 11 && CurrAction > 16
+  if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= 66 && CurrAction <= 68 && Equal AirGroundState 2 
+    ClearStick
+    if Equal var7 1 || Equal var7 -1.2 || Equal var7 -3
+      if Equal var7 0
+        AbsStick 0.3 0
+        Return
+      endif
+      AbsStick var7 0
       Return
+    elif True
+      if KBAngle >= 80 && KBAngle <= 100
+        var17 = Direction * -1
+        AbsStick var17 (-1)
+      elif Equal IsOnStage 0 || KBSpeed > 3.7
+        // if offstage with high damage, switch to survival DI
+        var7 = TopNX * -1
+        AbsStick var7 1
+      else
+        AbsStick var7 var8
+      endif
+      if Equal LevelValue 75 && YDistBackEdge > -5 && Equal IsOnStage 1
+        ClearStick
+        AbsStick var7 (-1)
+      endif
     endif
-    AbsStick var7 0
+    // until hitstun is 0
+    if LevelValue >= 60
+      Goto _checkMeteorCancel
+    endif
     Return
-  elif True
-    if KBAngle >= 80 && KBAngle <= 100 || Equal KBAngle -1 
-      var17 = Direction * -1
-      AbsStick var17 (-1)
-    elif Equal IsOnStage 0 || KBSpeed > 3.7
-      // if offstage with high damage, switch to survival DI
-      var7 = TopNX * -1
-      AbsStick var7 1
-    else
-      AbsStick var7 var8
-    endif
-    if Equal LevelValue 75 && YDistBackEdge > -5 && Equal IsOnStage 1
-      ClearStick
-      AbsStick var7 (-1)
-    endif
   endif
-  // until hitstun is 0
-  if LevelValue >= 60
-    Goto _checkMeteorCancel
-  endif
-  Return
+elif FramesHitstun > 0 && Equal DistFrontEdge DistBackEdge
+  Call RecoveryHub
 endif
 
 if FramesHitstun > 1 && CurrAction >= 67 && CurrAction <= 69 && LevelValue >= 75
@@ -191,31 +219,23 @@ elif FramesHitstun > 0 && var4 > 3 && LevelValue >= 42
   Jump
 elif Equal FramesHitstun 1 && LevelValue >= 42
   label
-  GetNearestCliff var5
   var17 = 15
   var6 = XSpeed * var17
-  var5 -= TopNX
-  if var5 < 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var5 -= var6
-      if var5 >= 0
-        var5 = 1
-      endif
+  GetYDistFloorOffset var5 var6 5 0
+  // var22 = TopNY - var5 
+  // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
+  if var5 < 4 && !(Equal var5 -1) 
+    var5 = 0
+  elif Equal DistBackEdge DistFrontEdge
+    var5 = 2
+  elif Equal var5 -1
+    if var6 < 0
+      var5 = 1
+    elif var6 > 0
+      var5 = -1
     endif
-  elif var5 > 0
-    if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
-      var5 -= var6
-      if var5 <= 0
-        var5 = -1
-      endif
-    endif
-  endif
-  if !(Equal var5 1) && !(Equal var5 -1)
-    if Equal XDistBackEdge XDistFrontEdge || Equal IsOnStage 0
-      var5 = 2
-    else
-      var5 = 0
-    endif
+  else
+    var5 = 0
   endif
   if !(Equal var5 0)
     Call AIHub
@@ -377,11 +397,16 @@ label Hitstun_End
     Call OnGotDamaged
   endif
   if !(Equal AirGroundState 1) && !(Equal XDistFrontEdge XDistBackEdge) && YDistBackEdge < -20
-    if Rnd < 0.03 && CanJump
+    if Rnd <= 0.02 && CanJump
       Button X
     endif
-    var2 = TopNX - var2
-    AbsStick var2 // the stick X var
+    if XDistLE 70
+      var22 = OPos * -1
+      AbsStick var22
+    else
+      var2 = TopNX - var2
+      AbsStick var2 // the stick X var
+    endif
     if YDistBackEdge > -12 && Rnd < 0.4 && Equal CurrAction 73
       Button R
     endif

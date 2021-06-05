@@ -11,42 +11,46 @@
 
 #snippet DECISION_TREE
   #let tries = var3
-  if Rnd < 0.2
+  if Rnd <= 0.05
     Call Grab
   endif
-
-  if XDistLE 40 && Rnd < 0.35
-    tries = 3
-    label _kill
-    Goto killMoves
+  
+  tries = 10
+  Norm immediateTempVar TopNX TopNY
+  Norm globTempVar OTopNX OTopNY
+  immediateTempVar -= globTempVar
+  Abs immediateTempVar
+  if immediateTempVar < 40 && !(XDistLE 30)
+    label _neutralOption
+    Goto neutralMoves
     tries -= 1
     if tries <= 0
       Seek
     else
-      Seek _kill
-    endif
-    Jump
-    label
-    tries = 3
-    label _startCombo
-    Goto comboStarters
-    tries -= 1
-    if tries <= 0
-      Seek
-    else
-      Seek _startCombo
+      Seek _neutralOption
     endif
     Jump
     label
   endif
-  tries = 10
-  label _neutralOption
-  Goto neutralMoves
+  tries = 5
+  label _kill
+  Goto killMoves
   tries -= 1
   if tries <= 0
     Seek
   else
-    Seek _neutralOption
+    Seek _kill
+  endif
+  Jump
+  label
+  tries = 5
+  label _startCombo
+  Goto comboStarters
+  tries -= 1
+  if tries <= 0
+    Seek
+  else
+    Seek _startCombo
   endif
   Jump
   label
@@ -67,14 +71,26 @@
 $refreshMoves()
 $filterMoveHitFrame(10)
 $filterMoveEndlag(10)
-$outputWithKnockbackThresholds(80, 100, Call)
+$output(Goto)
+#let result = var2
+MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 60, 0, 60)
+if Equal result 1
+  Seek callMove
+  Jump
+endif
 #endsnippet
 
 #snippet KILL_MOVES
 $refreshMoves()
 $filterMoveHitFrame(20)
 $filterMoveEndlag(20)
-$outputWithKnockbackThresholds(130, 300, Call)
+$output(Goto)
+#let result = var2
+KILL_CHECK(result, move_currKnockback, move_angle, OTopNX, OTopNY)
+if Equal result 1
+  Seek callMove
+  Jump
+endif
 #endsnippet
 
 #snippet NEUTRAL_MOVES

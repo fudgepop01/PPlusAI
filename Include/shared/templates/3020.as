@@ -8,13 +8,13 @@ unk 0x00000
 
 //Strings
 
-TRACK_O_HITSTUN_OPTION
+TRACK_O_OPTIONS
 
 if FramesHitstun > 0 || Equal CurrAction hex(0x45)
-    Call AIHub
+    Call OnGotDamaged
 endif
 
-if Rnd < 0.4
+if Rnd < 0.35
     Call FakeOutHub
 endif
 
@@ -27,15 +27,13 @@ if var0 < 20
     Finish
 endif
 
-DEFENSIVE_REACTION_TIME(var0, var1)
-
 if !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
     Finish
 endif
 
 label
 
-if Rnd < 0.5 && Equal LevelValue LV9 && Equal AirGroundState 1 && Damage < 60
+if Rnd < 0.2 && Equal LevelValue LV9 && Equal AirGroundState 1 && Damage < 60
     SetFrame 0
     label
     Stick 0 (-1)

@@ -215,7 +215,7 @@ if !(Equal AirGroundState 3)
         endif
       endif
     else
-      AbsStick var0
+      AbsStick OPos
       if Equal CurrAction 1
         ClearStick
       endif

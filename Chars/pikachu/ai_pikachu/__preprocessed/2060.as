@@ -7,13 +7,13 @@ unk 0x0
 
 //Strings
 
-if Equal var21 8272 && !(Equal AirGroundState 3)
+if Equal var21 8272 && !(Equal AirGroundState 3) && YDistBackEdge < 0
     var18 = 255
     Call OnGotDamaged
 endif
 
 Cmd30
-if Equal var16 7
+if Equal var16 8
     Seek _OL
     Jump
 endif
@@ -77,14 +77,14 @@ if var1 < 35 && Equal Direction OPos
             endif
             if Equal NumFrames 1
                 Stick -1
-                var16 = 7
+                var16 = 8
             endif
         else
             Stick 1
             Button X
             var18 = 1
             var2 = Rnd
-            var16 = 5
+            var16 = 6
     if var2 < 0.4
         Call NAir
     elif var2 < 0.8
@@ -105,7 +105,7 @@ if var1 < 35 && Equal Direction OPos
         endif
         Return
         label
-        var16 = 5
+        var16 = 6
         Stick 0 (-1)
         Call AIHub
     elif Equal CurrAction 117
@@ -117,7 +117,7 @@ elif var1 > 35 && Equal OPos Direction
         Seek ledgedash
         Jump
     elif var2 < 0.8
-        var16 = 5
+        var16 = 6
         Stick 0 (-1)
         Call AIHub
     else
@@ -174,7 +174,7 @@ elif var1 < 50 && !(Equal OPos Direction) && OYDistBackEdge < 35
             SetFrame 0
         endif
         if Equal NumFrames 1
-            var16 = 5
+            var16 = 6
             Stick 0 (-1)
             Call AIHub
         endif
@@ -195,7 +195,7 @@ else
         if Rnd < 0.25
             Seek getupOptions
         else
-            var16 = 5
+            var16 = 6
             Stick 0 (-1)
             Call AIHub
         endif
@@ -213,11 +213,11 @@ if !(True)
         endif
         if Equal NumFrames 1
             Stick -1
-            var16 = 7
+            var16 = 8
         endif
     else
         Stick 1 (-0.3)
-        if YDistBackEdge >= 1
+        if YDistBackEdge >= -1
             Button X
         else
             Button R
@@ -227,7 +227,7 @@ if !(True)
     Return
 endif
 
-if Equal var16 7 && Equal AirGroundState 2
+if Equal var16 8 && Equal AirGroundState 2
     var17 = Rnd
     LOGVAL var17
     if var17 < 1

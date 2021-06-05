@@ -30,6 +30,44 @@ endif
 #let framesOnGround = var4
 #let tempVar = var5
 
+if !(Equal lastScript hex(0x2050))
+  immediateTempVar = -1
+  if Equal lastScript hex(0x8001)
+    immediateTempVar = man_approach
+  elif Equal lastScript hex(0x8005)
+    immediateTempVar = man_defend
+  elif Equal lastScript hex(0x8007)
+    immediateTempVar = man_shield
+  endif
+
+  lastScript = hex(0x2050)
+
+  if Equal OCurrAction hex(0x3C)
+    trackOAction immediateTempVar op_grab
+  else 
+    trackOAction immediateTempVar op_attack
+  endif
+
+  if ODistLE 70
+    // if YDistBackEdge > -3 && YDistBackEdge <= 3
+      immediateTempVar = TopNX - OTopNX
+      Abs immediateTempVar
+      immediateTempVar += 5
+      if immediateTempVar > 126
+        immediateTempVar = 126
+      endif
+      trackOAction man_oXAttackDist immediateTempVar
+      immediateTempVar = TopNY - OTopNY
+      Abs immediateTempVar
+      immediateTempVar += 5
+      if immediateTempVar > 126
+        immediateTempVar = 126
+      endif
+      trackOAction man_oYAttackDist immediateTempVar
+    // endif
+  endif
+endif
+
 // if in hitstun...
 if FramesHitstun > 0 || FramesHitlag > 0
   label hitstunHandler
@@ -60,7 +98,7 @@ if FramesHitstun > 0 || FramesHitlag > 0
   label _hitstunExecutor
   Cmd30
 
-  if FramesHitlag > 2 && Equal LevelValue LV9 
+  if FramesHitlag > 1 && Equal LevelValue LV9 
     if Rnd < 0.75
       globTempVar = OPos * -1
       if XDistBackEdge > -shortEdgeRange
@@ -73,7 +111,7 @@ if FramesHitstun > 0 || FramesHitlag > 0
       AbsStick globTempVar immediateTempVar
     endif
     Return
-  elif Equal FramesHitlag 2 && LevelValue >= LV7 && YDistBackEdge > -1
+  elif Equal FramesHitlag 1 && LevelValue >= LV7 && YDistBackEdge > -1
     immediateTempVar = 0
     globTempVar = LevelValue * 0.01
     if LevelValue >= LV8 && Rnd < globTempVar
@@ -87,28 +125,14 @@ if FramesHitstun > 0 || FramesHitlag > 0
   endif
 endif
 
+if FramesHitlag > 1
+  Seek hitstunHandler
+  Return
+endif
+
 if Equal IsOnStage 0
   if CurrAction < hex(0x42) || CurrAction > hex(0x49)
     Call RecoveryHub
-  endif
-endif
-
-if !(Equal lastScript hex(0x2050))
-  immediateTempVar = -1
-  if Equal lastScript hex(0x8001)
-    immediateTempVar = man_approach
-  elif Equal lastScript hex(0x8005)
-    immediateTempVar = man_defend
-  elif Equal lastScript hex(0x8007)
-    immediateTempVar = man_shield
-  endif
-
-  lastScript = hex(0x2050)
-
-  if Equal OCurrAction hex(0x3C)
-    trackOAction immediateTempVar op_grab
-  else 
-    trackOAction immediateTempVar op_attack
   endif
 endif
 
@@ -120,36 +144,40 @@ if LevelValue >= LV3
   endif
 endif
 
-if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= hex(0x42) && CurrAction <= hex(0x44) && Equal AirGroundState 2 
-  ClearStick
-  if Equal StickX 1 || Equal StickX -1.2 || Equal StickX -3
-    if Equal StickX 0
-      AbsStick 0.3 0
+if CurrAction < hex(0xB) && CurrAction > hex(0x10)
+  if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= hex(0x42) && CurrAction <= hex(0x44) && Equal AirGroundState 2 
+    ClearStick
+    if Equal StickX 1 || Equal StickX -1.2 || Equal StickX -3
+      if Equal StickX 0
+        AbsStick 0.3 0
+        Return
+      endif
+      AbsStick StickX 0
       Return
+    elif True
+      if KBAngle >= 80 && KBAngle <= 100
+        globTempVar = Direction * -1
+        AbsStick globTempVar (-1)
+      elif Equal IsOnStage 0 || KBSpeed > 3.7
+        // if offstage with high damage, switch to survival DI
+        StickX = TopNX * -1
+        AbsStick StickX 1
+      else
+        AbsStick StickX StickY
+      endif
+      if Equal LevelValue LV8 && YDistBackEdge > -5 && Equal IsOnStage 1
+        ClearStick
+        AbsStick StickX (-1)
+      endif
     endif
-    AbsStick StickX 0
+    // until hitstun is 0
+    if LevelValue >= LV7
+      Goto _checkMeteorCancel
+    endif
     Return
-  elif True
-    if KBAngle >= 80 && KBAngle <= 100 || Equal KBAngle -1 
-      globTempVar = Direction * -1
-      AbsStick globTempVar (-1)
-    elif Equal IsOnStage 0 || KBSpeed > 3.7
-      // if offstage with high damage, switch to survival DI
-      StickX = TopNX * -1
-      AbsStick StickX 1
-    else
-      AbsStick StickX StickY
-    endif
-    if Equal LevelValue LV8 && YDistBackEdge > -5 && Equal IsOnStage 1
-      ClearStick
-      AbsStick StickX (-1)
-    endif
   endif
-  // until hitstun is 0
-  if LevelValue >= LV7
-    Goto _checkMeteorCancel
-  endif
-  Return
+elif FramesHitstun > 0 && Equal DistFrontEdge DistBackEdge
+  Call RecoveryHub
 endif
 
 if FramesHitstun > 1 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45) && LevelValue >= LV8
@@ -323,11 +351,16 @@ label Hitstun_End
     Call OnGotDamaged
   endif
   if !(Equal AirGroundState 1) && !(Equal XDistFrontEdge XDistBackEdge) && YDistBackEdge < -20
-    if Rnd < 0.03 && CanJump
+    if Rnd <= 0.02 && CanJump
       Button X
     endif
-    rndX = TopNX - rndX
-    AbsStick rndX // the stick X var
+    if XDistLE 70
+      immediateTempVar = OPos * -1
+      AbsStick immediateTempVar
+    else
+      rndX = TopNX - rndX
+      AbsStick rndX // the stick X var
+    endif
     if YDistBackEdge > -12 && Rnd < 0.4 && Equal CurrAction hex(0x49)
       Button R
     endif

@@ -76,7 +76,7 @@ Jump
 label LOOP_DIST_EXIT
 if !(True)
   label LOOP_DIST_CHECK
-  CALC_TARGET_DISTANCES(var0, var1, loopTempVar, var2, var3, move_hitFrame + loopTempVar, _oCalc, _sCalc)
+  CALC_TARGET_DISTANCES(var0, var1, var2, var3, move_hitFrame)
 
   // targetXDistance and targetYDistance come from the macro
   absTargetXDistance = targetXDistance
@@ -88,7 +88,7 @@ if !(True)
     globTempVar = move_yRange + (OHurtboxSize / 2)
     if absTargetYDistance <= globTempVar
       #let approxDist = var4
-      CALC_SELF_Y_CHANGE_GRAVITY(var4, var3, move_IASA, l_test)
+      CALC_SELF_Y_CHANGE_GRAVITY(var4, move_IASA)
       approxDist = (YDistFrontEdge * -1) - approxDist
 
       #let isGoingOffstage = var2
@@ -136,6 +136,7 @@ endif
 Seek Begin
 Return
 label CallAttacks
+LOGSTR str("calling")
 
 movePart = 1
 if Equal lastAttack hex(0x6041)
@@ -148,6 +149,8 @@ elif Equal lastAttack hex(0x6044)
   Call UAir
 elif Equal lastAttack hex(0x6045)
   Call DAir
+elif Equal lastAttack valGeneral
+  Call ComboHub
 endif
 
 Return

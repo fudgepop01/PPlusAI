@@ -21,143 +21,7 @@ endif
 
 label _begin
 
-if OIsCharOf Bowser
-  var1 = 113
-  var2 = 0.13
-elif OIsCharOf Falcon
-  var1 = 104
-  var2 = 0.13
-elif OIsCharOf Lizardon // Charizard
-  var1 = 106
-  var2 = 0.105
-elif OIsCharOf Diddy
-  var1 = 85
-  var2 = 0.12
-elif OIsCharOf Donkey
-  var1 = 109
-  var2 = 0.1
-elif OIsCharOf Falco
-  var1 = 80
-  var2 = 0.17
-elif OIsCharOf Fox
-  var1 = 75
-  var2 = 0.23
-  // 2.8
-elif OIsCharOf Gamewatch
-  var1 = 75
-  var2 = 0.095
-elif OIsCharOf Ganondorf
-  var1 = 109
-  var2 = 0.13
-// GIGA BOWSER WOULD GO HERE
-// elif OIsCharOf Bowser
-//   var1 = 113
-//   var2 = 0.13
-elif OIsCharOf Nana || OIsCharOf Popo
-  var1 = 88
-  var2 = 0.1
-elif OIsCharOf Ike
-  var1 = 100
-  var2 = 0.103
-elif OIsCharOf Fushigisou // Ivysaur
-  var1 = 85
-  var2 = 0.075
-elif OIsCharOf Purin // Jigglypuff
-  var1 = 62
-  var2 = 0.064
-elif OIsCharOf DDD // King Dedede
-  var1 = 107
-  var2 = 0.095
-elif OIsCharOf Kirby
-  var1 = 74
-  var2 = 0.08
-elif OIsCharOf Knuckles
-  var1 = 90
-  var2 = 0.14
-elif OIsCharOf Link
-  var1 = 104
-  var2 = 0.11
-elif OIsCharOf Lucario
-  var1 = 94
-  var2 = 0.125
-elif OIsCharOf Lucas
-  var1 = 80
-  var2 = 0.125
-elif OIsCharOf Luigi
-  var1 = 100
-  var2 = 0.069 // nice
-  // 1.6
-elif OIsCharOf Mario
-  var1 = 100
-  var2 = 0.095 // 1.7
-elif OIsCharOf Marth
-  var1 = 87
-  var2 = 0.085
-elif OIsCharOf Metaknight
-  var1 = 79
-  var2 = 0.11
-elif OIsCharOf Mewtwo
-  var1 = 90
-  var2 = 0.082
-elif OIsCharOf Ness
-  var1 = 94
-  var2 = 0.09
-elif OIsCharOf Pikmin // Olimar
-  var1 = 90
-  var2 = 0.09
-elif OIsCharOf Peach
-  var1 = 90
-  var2 = 0.08
-elif OIsCharOf Pikachu
-  var1 = 80
-  var2 = 0.11
-elif OIsCharOf Pit
-  var1 = 80
-  var2 = 0.095
-elif OIsCharOf Robot // ROB
-  var1 = 104
-  var2 = 0.09
-elif OIsCharOf Roy
-  var1 = 85
-  var2 = 0.114
-elif OIsCharOf Samus
-  var1 = 110
-  var2 = 0.66
-elif OIsCharOf Shiek
-  var1 = 90
-  var2 = 0.12
-elif OIsCharOf Snake
-  var1 = 105
-  var2 = 0.098
-elif OIsCharOf Sonic
-  var1 = 82
-  var2 = 0.122
-elif OIsCharOf Zenigame // Squirtle
-  var1 = 85
-  var2 = 0.126
-elif OIsCharOf Toonlink
-  var1 = 85
-  var2 = 0.11
-elif OIsCharOf Wario
-  var1 = 102
-  var2 = 0.112
-// WARIO MAN GOES HERE
-// elif OIsCharOf Bowser
-//   var1 = 113
-//   var2 = 0.13
-elif OIsCharOf Wolf
-  var1 = 85
-  var2 = 0.16
-elif OIsCharOf Yoshi
-  var1 = 108
-  var2 = 0.093
-elif OIsCharOf Zelda
-  var1 = 90
-  var2 = 0.073
-elif OIsCharOf ZSS // Zero Suit Samus
-  var1 = 85
-  var2 = 0.135
-endif
+var1 = OWeight
 
 var1 = var1 - 200
 var1 *= -1
@@ -175,172 +39,233 @@ elif Equal CurrAction 57
     Return
   elif True
 
-    if Equal Direction 1
-      var2 = RBoundary - TopNX
-      var3 = LBoundary - TopNX
-    else
-      var3 = RBoundary - TopNX
-      var2 = LBoundary - TopNX
-    endif
-    var4 = TBoundary - TopNY
 
 
-    LOGSTR 1717726976 1970168832 0 0 0
-    if var2 < 120
-var5 = 156
-var8 = 255
-var6 = 169
-var7 = 154
 
-      var4 = 5
-      label
-      var4 -= 1
-      if var4 < 0
-        Seek
-        Jump
-      endif
-      if var5 < var1 && Rnd < 0.4
-        Goto fthrow
-        Seek _begin
-      elif var7 < var1 && Rnd < 0.4
-        Goto uthrow
-        Seek _begin
-      elif var8 < var1 && Rnd < 0.4
-        Goto dthrow
-        Seek _begin
-      elif var6 < var1 && Rnd < 0.4
-        Goto bthrow
-        Seek _begin
-      endif
-      Return
-      label
-      if Rnd < 0.7
-        if Rnd < 0.5
-          Goto dthrow
-        else
-          Goto fthrow
-        endif
-        Seek _begin 
-        Return
-      endif
-    endif
-    LOGSTR 1650618112 1970168832 0 0 0
-    if var3 < 120
-var5 = 156
-var8 = 255
-var6 = 169
-var7 = 154
+var17 = Rnd * 4
+if var17 < 1  && YDistBackEdge > -3 
+var19 = 1
+Goto grab
+Goto fthrow
+elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
+var19 = 2
+Goto grab
+Goto dthrow
+elif 2 < var17 && var17 < 3 && YDistBackEdge > -10 && YDistBackEdge > -10 
+var19 = 3
+Goto grab
+Goto bthrow
+elif 3 < var17 && var17 < 4 && YDistBackEdge > -10 && YDistBackEdge > -10 
+var19 = 4
+Goto grab
+Goto uthrow
+endif
 
-      var4 = 5
-      label
-      var4 -= 1
-      if var4 < 0
-        Seek
-        Jump
-      endif
-      if var6 < var1 && Rnd < 0.4
-        Goto fthrow
-        Seek _begin
-      elif var7 < var1 && Rnd < 0.4
-        Goto uthrow
-        Seek _begin
-      elif var8 < var1 && Rnd < 0.4
-        Goto dthrow
-        Seek _begin
-      elif var5 < var1 && Rnd < 0.4
-        Goto bthrow
-        Seek _begin
-      endif
-      label
-      if Rnd < 0.7
-        if Rnd < 0.5
-          Goto uthrow
-        else
-          Goto bthrow
-        endif
-        Seek _begin 
-        Return
-      endif
+  Goto KCheck
+  if !(True)
+    label KCheck
+    COS var22 var8
+    var22 *= var15
+    var22 *= Direction
+    var22 *= 1.2
+    var17 = RBoundary - (TopNX)
+    if var22 > var17
+      var2 = 1
       Return
     endif
-    LOGSTR 1969385216 1970168832 0 0 0
-    if var4 < 350
-var5 = 236
-var8 = 471
-var6 = 265
-var7 = 271
-
-      var4 = 5
-      label
-      var4 -= 1
-      if var4 < 0
-        Seek
-        Jump
-      endif
-      if var6 < var1 && Rnd < 0.4
-        Goto fthrow
-        Seek _begin
-      elif var7 < var1 && Rnd < 0.4
-        Goto uthrow
-        Seek _begin
-      elif var8 < var1 && Rnd < 0.4
-        Goto dthrow
-        Seek _begin
-      elif var5 < var1 && Rnd < 0.4
-        Goto bthrow
-        Seek _begin
-      endif
-    endif
-    label
-
-    LOGSTR 1634495488 544175360 1946157056 0 0
-var5 = 50
-var8 = -34
-var6 = 42
-var7 = -1
-
-    Seek _begin
-
-    if var1 < var8 && Rnd < 0.4
-      Goto dthrow
-      Return
-    elif var1 < var7 && Rnd < 0.4
-      Goto uthrow
+    var17 = LBoundary - (TopNX)
+    if var22 < var17
+      var2 = 1
       Return
     endif
-
-    if var2 < var3
-      Goto fthrow
-      Return
-    else
-      Goto bthrow
+    var17 = TBoundary - (TopNY)
+    SIN var22 var8
+    var22 *= var15
+    var22 *= 1.2
+    if var22 > var17
+      var2 = 1
       Return
     endif
-    LOGSTR 1701733376 0 0 0 0
+    var2 = 0
+    Return
   endif
-  Return
+    var22 = LevelValue * 0.01
+    if Equal var2 1 && Rnd <= var22
+      LOGSTR 2003397632 1814063872 1768713216 0 0
+      Goto execThrow
+      Return
+    endif
+
+  Goto KBCheck
+  if !(True)
+    label KBCheck
+    if var15 < 60
+      var2 = 0
+      Return
+    endif
+    COS var22 var8
+    var22 *= var15
+    Abs var22
+    var17 = 0
+    var23 = 45
+    if var22 < var17 || var23 < var22
+      var2 = 0
+      Return
+    endif
+    SIN var22 var8
+    var22 *= var15
+    var17 = 20
+    var23 = 180
+    if var22 < var17 || var23 < var22
+      var2 = 0
+      Return
+    endif
+    var2 = 1
+    Return
+  endif
+    if Equal var2 1 && Rnd <= 0.8
+      LOGSTR 1668246784 1651441664 0 0 0
+      Goto execThrow
+      Return
+    endif
+
+  Goto KBCheck
+  if !(True)
+    label KBCheck
+    if var15 < 120
+      var2 = 0
+      Return
+    endif
+    COS var22 var8
+    var22 *= var15
+    Abs var22
+    var17 = 50
+    var23 = 150
+    if var22 < var17 || var23 < var22
+      var2 = 0
+      Return
+    endif
+    SIN var22 var8
+    var22 *= var15
+    var17 = -200
+    var23 = 200
+    if var22 < var17 || var23 < var22
+      var2 = 0
+      Return
+    endif
+    var2 = 1
+    Return
+  endif
+    if Equal var2 1 && Rnd <= 0.8
+  Goto nearBZ
+  if !(True)
+    label nearBZ
+    var17 = var8
+    var22 = LBoundary - TopNX
+    var23 = TopNX - RBoundary
+    Abs var22
+    Abs var23
+    if var17 > 90 && var17 < 270
+      if Equal Direction 1 && var22 < var23
+        var2 = 1
+        Return
+      elif var23 < var22
+        var2 = 1
+        Return
+      endif
+    else
+      if Equal Direction -1 && var22 < var23
+        var2 = 1
+        Return
+      elif var23 < var22
+        var2 = 1
+        Return
+      endif
+    endif
+    var2 = 0
+    Return
+  endif
+      if Equal var2 1
+        LOGSTR 1668247040 1953656576 1811939328 0 0
+        Goto execThrow
+        Return
+      endif
+    elif Equal var2 1 && Rnd <= 0.2
+      LOGSTR 2036688128 1946157056 0 0 0
+      Goto execThrow
+      Return
+    elif Rnd <= 0.02
+      LOGSTR 2036688128 1946157056 0 0 0
+      Goto execThrow
+      Return
+    endif
+  endif
 endif
 Return
 
+label grab
+LOGSTR 1735549184 1644167168 0 0 0
+var20 = 24636
+var9 = 1
+var10 = -3
+var11 = 6
+var12 = 3
+var13 = 7
+var14 = 8
+CalcKnockback var15 ODamage 0 0 0 OWeight 0
+var8 = 0
+Goto __ANGLE_FIX__
+Return
 label fthrow
-  Stick 1 0
-  var19 = 1
+LOGSTR 1718904832 1919907584 0 0 0
+CalcKnockback var15 ODamage 10 20 90 OWeight 0
+var8 = 45
+Goto __ANGLE_FIX__
 Return
-
-label bthrow
-  Stick (-1) 0
-  var19 = 3
-Return
-
-label uthrow
-  Stick 0 1
-  var19 = 4
-Return
-
 label dthrow
-  Stick 0 (-1)
-  var19 = 2
+LOGSTR 1685350400 1919907584 0 0 0
+CalcKnockback var15 ODamage 7 80 44 OWeight 0
+var8 = 70
+Goto __ANGLE_FIX__
 Return
+label bthrow
+LOGSTR 1651795968 1919907584 0 0 0
+CalcKnockback var15 ODamage 10 35 75 OWeight 0
+var8 = 45
+Goto __ANGLE_FIX__
+Return
+label uthrow
+LOGSTR 1970563072 1919907584 0 0 0
+CalcKnockback var15 ODamage 5 60 105 OWeight 0
+var8 = 75
+Goto __ANGLE_FIX__
+Return
+label __ANGLE_FIX__
+if var8 > 180 && Equal OAirGroundState 1
+  if Equal var8 361
+    if var15 < 32
+      var8 = 0
+    else
+      var8 = 44
+    endif
+  else
+    var8 = 180 - var8
+  endif
+elif Equal var8 361
+  var8 = 45
+endif
+Return
+
+label execThrow
+  if Equal var19 1
+    Stick 1 0
+  elif Equal var19 3
+    Stick -1 0
+  elif Equal var19 4
+    Stick 0 1
+  elif Equal var19 2
+    Stick 0 (-1)
+  endif
 Return
 Return
 
