@@ -34,7 +34,7 @@ elif Equal var21 32769 && MeteoChance && Equal var16 3 && !(NoOpponent)
   Call ApproachHub
 endif
 
-if !(OutOfStage)
+if !(OutOfStage) && !(Equal var16 6)
   Call AIHub
 endif
 if Equal var16 8
@@ -53,7 +53,7 @@ label
   var10 = Rnd
 var8 = 0
 label _main
-if !(OutOfStage)
+if !(OutOfStage) && !(Equal var16 6)
   Call AIHub
 endif
 if FramesHitstun > 0 && CurrAction < 11 && CurrAction > 16
@@ -113,9 +113,11 @@ endif
 // var0 += TopNX
 // var1 += TopNY
 
-if FramesHitstun > 0
+if FramesHitstun > 0 && CurrAction < 11 && CurrAction > 16
   Call AIHub
 endif
+LOGSTR 1097887744 1417244672 1694498816 0 0
+LOGVAL var16
 if Equal var16 6
   if var1 < -40 && YSpeed < 0
     if NumJumps > 0
@@ -273,7 +275,7 @@ if YDistBackEdge > 0 && Equal var8 0 && TopNY < var22 && var1 > -58 && Equal OIs
   var8 = 1
   Return
 endif
-if var2 < 0 && Equal var8 0 && Equal NumJumps 0 && Equal var7 0 && YSpeed < 0
+if var2 < 0 && Equal var8 0 && Equal NumJumps 0 && Equal var7 0 && YSpeed < 0 && var2 > -10
   if YDistBackEdge < 0
     Return
   endif

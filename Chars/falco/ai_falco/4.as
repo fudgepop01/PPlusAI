@@ -1,48 +1,68 @@
-#include <Definition_AIMain.h>
-//TrueID=0x4
-id 0x8004
+#snippet USPECIAL_ACTIONS
+  elif Equal CurrAction hex(0x114)
+#endsnippet
 
-//Set Unknown
-unk 0x90000
-
-//Strings
-
-if !(InAir) && Idling && XDistLE 30
-    Seek
-else
-    Finish
-endif
-Return
-//____________________
-label
-var0=OPos*(-1)
-AbsStick var0
-if FrameGE 4
-    Seek
-endif
-Return
-//____________________
-label
-var0=OPos*(-1)
-AbsStick var0
-if FrameGE 0 && !(FrameGE 1)
-    Stick 0 1
-endif
-if FrameGE 7 && !(FrameGE 10)
+#snippet LEDGE_REFRESH
+  globTempVar = 6
+  label 
+  if globTempVar >= 1
     ClearStick
-    Stick (-1)
-endif
-if FrameGE 10 && !(FrameGE 13)
-    ClearStick
+    Stick 0 (-0.7)
     Button B
-endif
-if FrameGE 13 && !(FrameGE 15)
+  elif globTempVar >= 0
+    Button X
+  else
+    approachType = 0
     ClearStick
-endif
-if FrameGE 18
-    Stick 0 (-1)
-endif
-if FrameGE 20 && !(InAir)
-    Finish
-endif
-Return
+    Stick 0 0.7
+    Button B
+    hasTriedToUpB = 1
+    Seek _main
+  endif
+  globTempVar -= 1
+  Return
+#endsnippet
+
+#snippet USPECIAL
+  if Equal isBelowStage 1
+    if nearCliffX > TopNX
+      nearCliffX += 2
+    else
+      nearCliffX -= 2
+    endif
+  endif
+
+  if !(Equal CurrSubaction hex(0x1DF))
+    if !(NoOneHanging) && !(Equal isBelowStage 1)
+      LOGSTR str("hanging")
+      nearCliffY -= 25
+      if nearCliffX > 0
+        nearCliffX += 15
+      else
+        nearCliffX -= 15
+      endif
+    endif
+
+    #let absNCX = var4
+    #let NCY = var3
+    absNCX = nearCliffX
+    NCY = nearCliffY
+
+    Norm globTempVar nearCliffX nearCliffY
+    nearCliffX /= globTempVar
+    nearCliffY /= globTempVar
+    nearCliffX *= -1
+    nearCliffY *= -1
+
+    if 0.1 < nearCliffX && nearCliffX < 0.25
+      AbsStick 0.3 nearCliffY
+    elif -0.25 < nearCliffX && nearCliffX < -0.1
+      AbsStick -0.3 nearCliffY
+    else
+      AbsStick nearCliffX nearCliffY
+    endif
+  else
+    globTempVar = TopNX * -1
+    AbsStick globTempVar
+  endif
+#endsnippet

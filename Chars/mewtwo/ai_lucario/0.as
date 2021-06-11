@@ -18,15 +18,6 @@
   endif
 #endsnippet
 
-#snippet WHIFF_PUNISH_OPTIONS
-  if Rnd < 0.8
-    Call Grab
-  else
-    approachType = at_hover
-    Call FAir
-  endif
-#endsnippet
-
 #snippet DEFENSE_OPTIONS
   if OYDistBackEdge < -20
     Call UAir

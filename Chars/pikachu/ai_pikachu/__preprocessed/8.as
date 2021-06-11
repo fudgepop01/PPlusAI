@@ -30,12 +30,13 @@ if Equal var18 0 && !(XDistLE 15)
   var13 = Rnd * 3
 
   predictAverage var22 3 LevelValue
-  var22 += 5
+  var22 += 15
   predictOOption var17 7 LevelValue
   predictionConfidence var23 7 LevelValue
   var23 *= 3.5
 
-  if Rnd <= 0.75 && Equal var17 1 || Rnd < 0.3 || OCurrActionFreq >= 3
+  var16 = 14
+  if Rnd <= 0.75 && Equal var17 1 || Rnd < 0.3 || OCurrActionFreq >= 3 && !(Equal CurrAction 0)
     Seek
     Jump
   endif
@@ -44,9 +45,12 @@ if Equal var18 0 && !(XDistLE 15)
     var11 = var22 * 2
     var9 = 0
     var13 = Rnd * 3
-    var20 = 25002
-    LOGSTR 1330005504 1162760960 1230390528 0 0
-    LOGSTR 1397246208 1162626048 0 0 0
+    if Rnd < 0.3
+      var20 = 25003
+      var9 += 35
+    else
+      var20 = 25002
+    endif
     Call ApproachHub
   endif
 
@@ -68,6 +72,9 @@ elif True
   Cmd30
   if Equal var20 25002
     Seek offensiveShield
+    Jump
+  elif Equal var20 25003
+    Seek jumpOver
     Jump
   endif
 
@@ -91,11 +98,13 @@ elif True
   endif
 
   var0 = Rnd
-  if var0 < 0.3 && Damage < 60 && !(Equal OCurrAction 52)
+  if var0 <= 0.05
+    Seek jumpOver
+  elif var0 <= 0.25 && Damage < 60 && !(Equal OCurrAction 52)
     Seek crouchCancelPunish
-  elif var0 < 0.4 && Equal CurrAction 3
+  elif var0 <= 0.55 && Equal CurrAction 3
     Seek dashAway
-  elif var0 < 0.45
+  elif var0 <= 0.60
     Seek wavedashBack
 
   else
@@ -109,6 +118,7 @@ Return
 
 label crouchCancelPunish
   Cmd30
+Goto checkHitstun
 var0 = Rnd * 20
 label
 Stick 0 (-1)
@@ -121,6 +131,7 @@ Return
 
 label dashAway
   Cmd30
+Goto checkHitstun
 if Equal Direction OPos
   Stick (-1) 0
 endif
@@ -135,6 +146,7 @@ Return
 
 label wavedashBack
   Cmd30
+Goto checkHitstun
 if CurrAction > 9
   Return
 endif
@@ -151,17 +163,22 @@ Return
 
 label offensiveShield
 Cmd30
-var1 = Rnd * 30 + 40
-var17 = var9 + 10
+Goto checkHitstun
+var1 = Rnd * 50 + 10
+var17 = var9 + var11
 if XDistLE var17 || XDistLE 15
   Seek
   Jump
 else
   AbsStick OPos
+  if Equal CurrAction 1
+    ClearStick 
+  endif
 endif
 Return
 label
 Cmd30
+Goto checkHitstun
 var0 = OPos * 0.5
 AbsStick var0
 Button R
@@ -174,9 +191,36 @@ Return
 
 label jumpOver
 Cmd30
+Goto checkHitstun
+if CurrAction >= 9
+  Return
+endif
+label
+Cmd30
+Goto checkHitstun
+AbsStick OPos
 Button X
 if InAir
   Call AIHub
 endif
+Return
+label checkHitstun
+  if FramesHitstun > 0
+    var22 = LevelValue * 0.01 - 0.1
+    if LevelValue >= 60 && Rnd <= var22
+      if Damage < 80 || Equal FramesHitlag 1
+        ClearStick
+        Stick 0 (-1)
+      elif Rnd < 0.4
+        ClearStick
+        Stick 0 (-1)
+        if LevelValue >= 75 && Rnd <= var22
+          Button R
+        endif
+      endif
+    endif
+    Call OnGotDamaged
+  endif
+
 Return
 Return

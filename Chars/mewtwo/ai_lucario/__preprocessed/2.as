@@ -37,6 +37,7 @@ var1 = OTopNY - TopNY
 
 LOGSTR 1398030592 1381236736 0 0 0
 
+
   if Equal var20 24643
     Goto bair
     var16 = 255
@@ -90,12 +91,12 @@ label techChase_wait
   var4 = 0
   var5 = OCurrAction
   if Equal var5 96 || Equal var5 81
-    if OAnimFrame < 15
+    if OAnimFrame < 17
       var4 = 1
     endif
   endif
   if Equal var5 30 || Equal var5 31 || Equal var5 32 || Equal var5 78 || Equal var5 80 || Equal var5 82 || Equal var5 83 || Equal var5 97
-    if OAnimFrame < 21
+    if OAnimFrame < 22
       var4 = 1
     endif
   endif
@@ -131,13 +132,13 @@ var3 = OTopNY - TopNY
 GetNearestCliff var0
 var0 = TopNX - var0
 var0 *= -1
-var7 = -1
+var21 = -1
 
 var17 = OTopNX - (TopNX + var0) 
 Abs var0
 Abs var17
 
-var23 = 1
+var7 = 1
 Goto clear
 if var17 < var0 && var3 < 70 && var17 < 20 && Equal OXDistBackEdge OXDistFrontEdge
   var6 = 10
@@ -173,15 +174,12 @@ elif Equal OIsOnStage 1 && var3 < 65 && Rnd < 0.8
     var6 = 10
   endif
   label combo
-  LOGSTR 1668246784 1651441664 0 0 0
-  var7 = 2
-  Goto killOptions
-  if var6 < 10
-    var7 = 0
-    Goto analyze
-    Goto clear
+  if var7 <= 3
+    var21 = 2
+    Goto killOptions
+  else 
+    var21 = 0
     Goto comboOptions
-    var7 = 0
   endif
   Seek combo
 elif True
@@ -191,13 +189,11 @@ elif True
     var6 = 10
   endif
   label juggle
-  LOGSTR 1786078976 1735156992 0 0 0
-  var7 = 2
-  Goto killOptions 
-  if var6 < 10
-    var7 = 1
-    Goto analyze
-    Goto clear
+  if var7 <= 3
+    var21 = 2
+    Goto killOptions
+  else 
+    var21 = 1
     Goto juggleOptions
   endif
   Seek juggle
@@ -205,13 +201,14 @@ endif
 Goto analyze
 var6 -= 1
 if var6 <= 0
-  if var23 < 3
-    var23 += 1
-    LOGSTR 1027423488 1027423488 1023410176 0 0
-    LOGSTR 1346912512 1397039104 1431321088 0 0
-    LOGVAL var23
-    LOGSTR 1027423488 1027423488 1023410176 0 0
+  if var7 < 6
+    var7 += 1
+    // LOGSTR 1027423488 1027423488 1023410176 0 0
+    // LOGSTR 1346912512 1397039104 1431321088 0 0
+    // LOGVAL var7
+    // LOGSTR 1027423488 1027423488 1023410176 0 0
     var6 = 10
+    Jump
     Return
   else
     Seek NCombo
@@ -677,25 +674,25 @@ elif var20 <= 24631 || Equal var20 24636 || Equal var20 24638
   endif
 endif
 
-if OFramesHitstun < var13
-  var2 = OFramesHitstun
+var0 = OFramesHitstun + 5
+if var0 < var13
+  var2 = var0
   var1 = var13
   var0 = var14
-elif OFramesHitstun < var14
+elif var0 < var14
   var2 = var13
-  var1 = OFramesHitstun
+  var1 = var0
   var0 = var14
 else
   var2 = var13
   var1 = var14
-  var0 = OFramesHitstun
 endif
 
-if Equal var23 1
+if Equal var7 1 || Equal var7 4
   var5 = var2
-elif Equal var23 2
+elif Equal var7 2 || Equal var7 5
   var5 = var1
-elif Equal var23 3
+elif Equal var7 3 || Equal var7 6
   var5 = var0
 endif
 
@@ -703,11 +700,6 @@ var5 += 3
 
 
 Goto CTD
-
-if !(Equal var18 255)
-  // comboLeniency = 0
-  Return
-endif
 
 // {EXTRA_ANALYSIS}
 
@@ -729,7 +721,7 @@ label CTD
   elif var20 >= 24641 && var20 <= 24655
     var3 = 0
     if Equal AirGroundState 1
-      var3 = 3
+      var3 = 0
     endif
   elif Equal var20 25000
     var3 = OFramesHitstun 
@@ -802,7 +794,7 @@ label CTD
     endif
   elif var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1
-      var22 += 3
+      var22 += 0
     endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
@@ -814,7 +806,7 @@ label CTD
     var1 = OTopNY - var1
     var1 *= -1
     if OCurrAction <= 9 && var20 < 24641
-      var22 *= 0.3
+      var22 *= 0.0
     endif
     var0 = OTopNX + OXSpeed * var22
     // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
@@ -823,7 +815,7 @@ label CTD
     // if the opponent is in an actionable state, lower the estimate of
     // their x offset to prevent dashdancing from setting it off when very far away
     if OCurrAction <= 9 && var20 < 24641
-      var22 *= 0.3
+      var22 *= 0.0
     endif
     EstOXCoord var0 var22
     var1 = var1 - (OSCDBottom - OTopNY)
@@ -841,16 +833,24 @@ label CTD
     //   var0 += var22
     // el
     if Equal var16 13
-      LOGSTR 1414025728 1161909248 1162758400 1313275904 0
+      // LOGSTR 1414025728 1161909248 1162758400 1313275904 0
       predictAverage var22 3 LevelValue
-      var22 += 35
+      var22 += 30
       var22 *= OPos
+      var23 = OXSpeed
+      Abs var23
+      var23 *= 0.5
+      var22 *= var23
       var0 -= var22
     endif
     if Equal var16 12
       predictAverage var22 3 LevelValue
-      var22 += 10
+      var22 += 15
       var22 *= OPos
+      var23 = OXSpeed
+      Abs var23
+      var23 *= 0.5
+      var22 *= var23
       var0 -= var22
     endif
     if LevelValue >= 75 && !(Equal var16 7) && OCurrAction <= 15 && Equal OIsOnStage 1
@@ -861,7 +861,9 @@ label CTD
       elif Equal var22 3
         var0 -= var22
       endif
-      if Equal var20 24636 && Equal CurrAction 4 
+    endif
+    if Equal var20 24636 || Equal var20 24630
+      if CurrAction >= 3 && CurrAction <= 4
         var22 = 10 * OPos
         var0 += var22
       endif
@@ -975,7 +977,7 @@ label CTD
   // var17 = var17 - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir)
+  if !(InAir) || var20 >= 24632 && var20 <= 24635
     var22 = var9 + (var11 * 2)
     var22 /= 2
     if var22 <= 2
@@ -1062,54 +1064,54 @@ label CTD
   if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var1 = 0
   endif
-  // if !(CalledAs ComboHub)
-  //   var0 += TopNX
-  //   var1 += TopNY
-  //   DrawDebugRectOutline var0 var1 var11 var12 0 255 0 136
-  //   var0 -= TopNX
-  //   var1 -= TopNY
-  //   var17 = 0.0 + 1
-  //   var17 = var11 * (1/var17)
-  //   var11 = var17
-  //   var9 = var9 + var17 * 0.0
-  //   var17 = 0.0 + 1
-  //   var17 = var12 * (1/var17)
-  //   var12 = var17
-  //   var10 = var10 - var17 * 0.0
-  //   // var17 = TopNY - var10 + var12 + var22
-  //   // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
-  //   if CalledAs ApproachHub
-  //     var11 -= 2.5
-  //     var9 += 5
-  //   endif
-  //   var22 = (var9 + var11)
-  //   var22 *= Direction
-  //   var22 += TopNX
-  //   var17 = TopNY - var10 + var12
-  //   DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
-  //   var17 += var2
+  if !(CalledAs ComboHub)
+    var0 += TopNX
+    var1 += TopNY
+    DrawDebugRectOutline var0 var1 var11 var12 0 255 0 136
+    var0 -= TopNX
+    var1 -= TopNY
+    var17 = 0.0 + 1
+    var17 = var11 * (1/var17)
+    var11 = var17
+    var9 = var9 + var17 * 0.0
+    var17 = 0.0 + 1
+    var17 = var12 * (1/var17)
+    var12 = var17
+    var10 = var10 - var17 * 0.0
+    // var17 = TopNY - var10 + var12 + var22
+    // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+    if CalledAs ApproachHub
+      var11 -= 2.5
+      var9 += 5
+    endif
+    var22 = (var9 + var11)
+    var22 *= Direction
+    var22 += TopNX
+    var17 = TopNY - var10 + var12
+    DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
+    var17 += var2
     
-  //   // if OTopNX > 0
-  //   //   var22 += var11
-  //   // else
-  //   //   var22 -= var11
-  //   // endif 
-  //   DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
-  //   var22 = OHurtboxSize / 2
-  //   var17 = var22 + OSCDBottom
-  //   DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
+    // if OTopNX > 0
+    //   var22 += var11
+    // else
+    //   var22 -= var11
+    // endif 
+    DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
+    var22 = OHurtboxSize / 2
+    var17 = var22 + OSCDBottom
+    DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
     
-  //   if CalledAs ApproachHub
-  //     var11 += 2.5
-  //     var9 -= 5
-  //   endif
-  //   var17 = var11 * 0.0
-  //   var9 -= var17
-  //   var11 = var11 + var17
-  //   var17 = var12 * 0.0
-  //   var10 += var17
-  //   var12 = var12 + var17
-  // endif
+    if CalledAs ApproachHub
+      var11 += 2.5
+      var9 -= 5
+    endif
+    var17 = var11 * 0.0
+    var9 -= var17
+    var11 = var11 + var17
+    var17 = var12 * 0.0
+    var10 += var17
+    var12 = var12 + var17
+  endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 7) 
   //   var17 = var5 - index
   //   var0 = var0 + OXSpeed * var17 * -2
@@ -1151,16 +1153,23 @@ label CTD
   Goto KCheck
   if !(True)
     label KCheck
+    // LOGSTR 1262708736 1799643392 1952514048 0 0
     COS var22 var8
     var22 *= var15
     var22 *= Direction
     var22 *= 1.2
     var17 = RBoundary - (var0)
+    // LOGSTR 1380057088 0 0 0 0
+    // LOGVAL var22
+    // LOGVAL var17
     if var22 > var17
       var2 = 1
       Return
     endif
     var17 = LBoundary - (var0)
+    // LOGSTR 1279393792 0 0 0 0
+    // LOGVAL var22
+    // LOGVAL var17
     if var22 < var17
       var2 = 1
       Return
@@ -1168,7 +1177,10 @@ label CTD
     var17 = TBoundary - (var1)
     SIN var22 var8
     var22 *= var15
-    var22 *= 1.2
+    var22 *= 0.7
+    // LOGSTR 1413611520 0 0 0 0
+    // LOGVAL var22
+    // LOGVAL var17
     if var22 > var17
       var2 = 1
       Return
@@ -1180,8 +1192,7 @@ label CTD
         Seek callMove
         Jump
       endif
-      
-      if Equal var7 0
+      if Equal var21 0
   Goto KBCheck
   if !(True)
     label KBCheck
@@ -1210,10 +1221,11 @@ label CTD
     Return
   endif
         if Equal var2 1
+          LOGSTR 1665360128 1819044096 1852243968 0 0
           Seek callMove
           Jump
         endif
-      elif Equal var7 1
+      elif Equal var21 1
   Goto KBCheck
   if !(True)
     label KBCheck
@@ -1242,6 +1254,7 @@ label CTD
     Return
   endif
         if Equal var2 1
+          LOGSTR 1782800640 1819044096 1852243968 0 0
           Seek callMove
           Jump
         endif
@@ -1250,6 +1263,8 @@ label CTD
 Return
 
 label callMove
+
+var21 = 32770
 
 if Equal CurrAction 24
   Return

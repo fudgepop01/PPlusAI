@@ -31,7 +31,8 @@
   //     endif
   //   endif
   // endif
-
+  moveType = mt_combo
+  phase = 7
   if !(Equal isImmediateCombo immediate) && Equal HitboxConnected 1
     #let trueLastAttack = var4
     #let frameCounter = var6
@@ -124,9 +125,9 @@
       elif rndChoice < 11
         Goto sspecial
         if ODmgXWeight > 80 && Equal AirGroundState 1
-          moveVariant = mv_sspecial_power
+          Goto sspecial_power
         elif ODmgXWeight > 40 && Equal AirGroundState 2 && Equal OIsOnStage 0
-          moveVariant = mv_sspecial_spike
+          Goto sspecial_spike
         endif
       elif rndChoice < 14 && OKBSpeed > 2.95 && OKBYSpeed > 0 && OKBXSpeed >= -2 && OKBXSpeed <= 2 && !(Equal OXDistBackEdge OXDistFrontEdge)
         Call USpecial

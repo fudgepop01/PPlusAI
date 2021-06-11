@@ -48,6 +48,9 @@ if !(Equal AirGroundState 2)
 endif
 
 ClearStick
+
+// {SPECIAL_PERFORMERS}
+
 if CalledAs NAir
   Button A
 elif CalledAs FAir
@@ -66,13 +69,13 @@ elif CalledAs NSpecialAir
   Button B
 elif CalledAs SSpecialAir
   Button B
-  Stick 1 0
+  AbsStick OPos 0
 elif CalledAs USpecialAir
   Button B
   Stick 0 0.7
 elif CalledAs DSpecialAir
   Button B
-  Stick 0 (-1)
+  Stick 0 (-0.7)
 endif
 label
 Seek 
@@ -173,7 +176,7 @@ label CTD
   elif var20 >= 24641 && var20 <= 24655
     var8 = 0
     if Equal AirGroundState 1
-      var8 = 3
+      var8 = 0
     endif
   elif Equal var20 25000
     var8 = OFramesHitstun 
@@ -246,7 +249,7 @@ label CTD
     endif
   elif var20 >= 24641 && var20 <= 24655
     if Equal AirGroundState 1
-      var22 += 3
+      var22 += 0
     endif
   elif Equal var20 25000
     var22 += OFramesHitstun 
@@ -258,7 +261,7 @@ label CTD
     var6 = OTopNY - var6
     var6 *= -1
     if OCurrAction <= 9 && var20 < 24641
-      var22 *= 0.3
+      var22 *= 0.0
     endif
     var5 = OTopNX + OXSpeed * var22
     // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
@@ -267,7 +270,7 @@ label CTD
     // if the opponent is in an actionable state, lower the estimate of
     // their x offset to prevent dashdancing from setting it off when very far away
     if OCurrAction <= 9 && var20 < 24641
-      var22 *= 0.3
+      var22 *= 0.0
     endif
     EstOXCoord var5 var22
     var6 = var6 - (OSCDBottom - OTopNY)
@@ -285,16 +288,24 @@ label CTD
     //   var5 += var22
     // el
     if Equal var16 13
-      LOGSTR 1414025728 1161909248 1162758400 1313275904 0
+      // LOGSTR 1414025728 1161909248 1162758400 1313275904 0
       predictAverage var22 3 LevelValue
-      var22 += 35
+      var22 += 30
       var22 *= OPos
+      var23 = OXSpeed
+      Abs var23
+      var23 *= 0.5
+      var22 *= var23
       var5 -= var22
     endif
     if Equal var16 12
       predictAverage var22 3 LevelValue
-      var22 += 10
+      var22 += 15
       var22 *= OPos
+      var23 = OXSpeed
+      Abs var23
+      var23 *= 0.5
+      var22 *= var23
       var5 -= var22
     endif
     if LevelValue >= 75 && !(Equal var16 7) && OCurrAction <= 15 && Equal OIsOnStage 1
@@ -305,7 +316,9 @@ label CTD
       elif Equal var22 3
         var5 -= var22
       endif
-      if Equal var20 24636 && Equal CurrAction 4 
+    endif
+    if Equal var20 24636 || Equal var20 24630
+      if CurrAction >= 3 && CurrAction <= 4
         var22 = 10 * OPos
         var5 += var22
       endif
@@ -419,7 +432,7 @@ label CTD
   // var17 = var17 - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir)
+  if !(InAir) || var20 >= 24632 && var20 <= 24635
     var22 = var9 + (var11 * 2)
     var22 /= 2
     if var22 <= 2
@@ -506,54 +519,54 @@ label CTD
   if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
-  // if !(CalledAs ComboHub)
-  //   var5 += TopNX
-  //   var6 += TopNY
-  //   DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
-  //   var5 -= TopNX
-  //   var6 -= TopNY
-  //   var17 = 0.0 + 1
-  //   var17 = var11 * (1/var17)
-  //   var11 = var17
-  //   var9 = var9 + var17 * 0.0
-  //   var17 = 0.0 + 1
-  //   var17 = var12 * (1/var17)
-  //   var12 = var17
-  //   var10 = var10 - var17 * 0.0
-  //   // var17 = TopNY - var10 + var12 + var22
-  //   // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
-  //   if CalledAs ApproachHub
-  //     var11 -= 2.5
-  //     var9 += 5
-  //   endif
-  //   var22 = (var9 + var11)
-  //   var22 *= Direction
-  //   var22 += TopNX
-  //   var17 = TopNY - var10 + var12
-  //   DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
-  //   var17 += var7
+  if !(CalledAs ComboHub)
+    var5 += TopNX
+    var6 += TopNY
+    DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
+    var5 -= TopNX
+    var6 -= TopNY
+    var17 = 0.0 + 1
+    var17 = var11 * (1/var17)
+    var11 = var17
+    var9 = var9 + var17 * 0.0
+    var17 = 0.0 + 1
+    var17 = var12 * (1/var17)
+    var12 = var17
+    var10 = var10 - var17 * 0.0
+    // var17 = TopNY - var10 + var12 + var22
+    // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+    if CalledAs ApproachHub
+      var11 -= 2.5
+      var9 += 5
+    endif
+    var22 = (var9 + var11)
+    var22 *= Direction
+    var22 += TopNX
+    var17 = TopNY - var10 + var12
+    DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
+    var17 += var7
     
-  //   // if OTopNX > 0
-  //   //   var22 += var11
-  //   // else
-  //   //   var22 -= var11
-  //   // endif 
-  //   DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
-  //   var22 = OHurtboxSize / 2
-  //   var17 = var22 + OSCDBottom
-  //   DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
+    // if OTopNX > 0
+    //   var22 += var11
+    // else
+    //   var22 -= var11
+    // endif 
+    DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
+    var22 = OHurtboxSize / 2
+    var17 = var22 + OSCDBottom
+    DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
     
-  //   if CalledAs ApproachHub
-  //     var11 += 2.5
-  //     var9 -= 5
-  //   endif
-  //   var17 = var11 * 0.0
-  //   var9 -= var17
-  //   var11 = var11 + var17
-  //   var17 = var12 * 0.0
-  //   var10 += var17
-  //   var12 = var12 + var17
-  // endif
+    if CalledAs ApproachHub
+      var11 += 2.5
+      var9 -= 5
+    endif
+    var17 = var11 * 0.0
+    var9 -= var17
+    var11 = var11 + var17
+    var17 = var12 * 0.0
+    var10 += var17
+    var12 = var12 + var17
+  endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 7) 
   //   var17 = var14 - var4 - index
   //   var5 = var5 + OXSpeed * var17 * -2
@@ -564,7 +577,7 @@ label checks
   if FramesHitstun > 0
     var22 = LevelValue * 0.01 - 0.1
     if LevelValue >= 60 && Rnd <= var22
-      if Damage < 30
+      if Damage < 80 || Equal FramesHitlag 1
         ClearStick
         Stick 0 (-1)
       elif Rnd < 0.4
@@ -703,7 +716,10 @@ Return
 label movement
   ClearStick
 
-  var17 = var15 - var4
+  if Equal var2 1
+    var0 = 10
+  endif
+  var17 = var15 - var4 - var0
   var1 = XSpeed * var17
   GetYDistFloorOffset var0 var1 5 0
   // var22 = TopNY - var0 
@@ -763,7 +779,10 @@ var11 = 5
 var12 = 5
 var13 = 3
 var14 = 10
-var20 = 24641
+if Equal var19 1
+var13 = 11
+var14 = 28
+endif
 Return
 
 label _FAir

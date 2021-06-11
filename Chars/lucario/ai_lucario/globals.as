@@ -28,7 +28,7 @@
 #const maxYEdgeDistWithJump = 85
 #const maxYEdgeDist = 70
 #const maxYEdgeDistJumpNoUpB = 20
-#const maxXEdgeDist = 45
+#const maxXEdgeDist = 50
 
 #const oWalkingDist = 10
 #const shortEdgeRange = 10
@@ -209,6 +209,8 @@
 #const sspecial_lastHitFrame = 14
 #const sspecial_damage_info = SSpecial|3|40|212|65
 #const sspecial_power_damage_info = SSpecial|5|65|219|65
+// smashThrowAirLw_1
+#const sspecial_spike_damage_info = SSpecial|3|10|212|280
 
 // upB
 #const uspecial_IASA = 50

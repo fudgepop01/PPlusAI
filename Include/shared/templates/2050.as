@@ -30,7 +30,7 @@ endif
 #let framesOnGround = var4
 #let tempVar = var5
 
-if !(Equal lastScript hex(0x2050))
+if !(Equal lastScript hex(0x2050)) && Equal OHitboxConnected 1
   immediateTempVar = -1
   if Equal lastScript hex(0x8001)
     immediateTempVar = man_approach
@@ -144,7 +144,7 @@ if LevelValue >= LV3
   endif
 endif
 
-if CurrAction < hex(0xB) && CurrAction > hex(0x10)
+if CurrAction < hex(0xB) || CurrAction > hex(0x10)
   if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= hex(0x42) && CurrAction <= hex(0x44) && Equal AirGroundState 2 
     ClearStick
     if Equal StickX 1 || Equal StickX -1.2 || Equal StickX -3

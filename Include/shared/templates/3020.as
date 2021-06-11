@@ -15,6 +15,7 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x45)
 endif
 
 if Rnd < 0.35
+    movePart = 1
     Call FakeOutHub
 endif
 

@@ -8,35 +8,6 @@
   Call UAir
 #endsnippet
 
-#snippet WHIFF_PUNISH_OPTIONS
-  #let tries = var0
-  tries = 10
-  label whiffPunish
-  $refreshMoves()
-  $output(Goto)
-
-  if move_hitFrame < OCurrEndlag && lastAttack >= valJab123 && lastAttack <= valDSpecialAir
-    LOGSTR str("PUNISHING WHIFF")
-    if Equal OAirGroundState 2
-      if lastAttack >= valNAir && lastAttack <= valDSpecialAir
-        Seek callMove
-        Jump
-      endif
-    else 
-      Seek callMove
-      Jump
-    endif
-  endif
-  if tries <= 0
-    Seek
-  else
-    Seek whiffPunish
-  endif
-  tries -= 1
-  Jump
-  label
-#endsnippet
-
 #snippet DEFENSE_OPTIONS
   if OYDistBackEdge < -20
     Call UAir
@@ -101,6 +72,7 @@
 #endsnippet
 
 #snippet COMBO_STARTERS
+LOGSTR str("COMBO")
 $refreshMoves()
 $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
 $output(Goto)
@@ -112,6 +84,7 @@ endif
 #endsnippet
 
 #snippet KILL_MOVES
+LOGSTR str("KILL")
 $refreshMoves()
 $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
@@ -125,8 +98,9 @@ endif
 #endsnippet
 
 #snippet NEUTRAL_MOVES
+LOGSTR str("NEUTRAL")
 $refreshMoves()
-$excludeMovesNotOrigin(fair|dair|nair|jab123|grab)
+$excludeMovesNotOrigin(dair|nair)
 $output(Goto)
 #endsnippet
 

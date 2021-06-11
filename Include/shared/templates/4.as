@@ -20,7 +20,7 @@ elif Equal lastScript hex(0x8001) && MeteoChance && Equal approachType at_edgegu
   Call ApproachHub
 endif
 
-if !(OutOfStage)
+if !(OutOfStage) && !(Equal approachType at_ledgeRefresh)
   Call AIHub
 endif
 if Equal approachType at_OFF_LEDGE
@@ -41,7 +41,7 @@ label
 {INITIALIZERS}
 hasTriedToUpB = 0
 label _main
-if !(OutOfStage)
+if !(OutOfStage) && !(Equal approachType at_ledgeRefresh)
   Call AIHub
 endif
 if FramesHitstun > 0 && CurrAction < hex(0xB) && CurrAction > hex(0x10)
@@ -106,9 +106,11 @@ endif
 // nearCliffX += TopNX
 // nearCliffY += TopNY
 
-if FramesHitstun > 0
+if FramesHitstun > 0 && CurrAction < hex(0xB) && CurrAction > hex(0x10)
   Call AIHub
 endif
+LOGSTR str("AppType")
+LOGVAL approachType
 if Equal approachType at_ledgeRefresh
   {LEDGE_REFRESH}
 endif
@@ -240,7 +242,7 @@ if YDistBackEdge > 0 && Equal hasTriedToUpB 0 && TopNY < immediateTempVar && nea
   hasTriedToUpB = 1
   Return
 endif
-if diamondDist < 0 && Equal hasTriedToUpB 0 && Equal NumJumps 0 && Equal isBelowStage 0 && YSpeed < 0
+if diamondDist < 0 && Equal hasTriedToUpB 0 && Equal NumJumps 0 && Equal isBelowStage 0 && YSpeed < 0 && diamondDist > -10
   if YDistBackEdge < recoveryHeight
     Return
   endif

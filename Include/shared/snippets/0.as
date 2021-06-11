@@ -9,6 +9,36 @@
   endif
 #endsnippet
 
+#snippet WHIFF_PUNISH_OPTIONS
+  #let tries = var0
+  tries = 10
+  label whiffPunish
+  $refreshMoves()
+  $output(Goto)
+
+  if move_hitFrame < OCurrEndlag && lastAttack >= valJab123 && lastAttack <= valDSpecialAir
+    LOGSTR str("PUNISHING WHIFF")
+    approachType = at_combo
+    if Equal OAirGroundState 2
+      if lastAttack >= valNAir && lastAttack <= valDSpecialAir
+        Seek callMove
+        Jump
+      endif
+    else 
+      Seek callMove
+      Jump
+    endif
+  endif
+  if tries <= 0
+    Seek
+  else
+    Seek whiffPunish
+  endif
+  tries -= 1
+  Jump
+  label
+#endsnippet
+
 #snippet DECISION_TREE
   #let tries = var3
   if Rnd <= 0.05
@@ -20,8 +50,9 @@
   Norm globTempVar OTopNX OTopNY
   immediateTempVar -= globTempVar
   Abs immediateTempVar
-  if immediateTempVar < 40 && !(XDistLE 30)
+  if immediateTempVar < 60 && !(XDistLE 20)
     label _neutralOption
+    LOGSTR str("neutral")
     Goto neutralMoves
     tries -= 1
     if tries <= 0
@@ -33,17 +64,6 @@
     label
   endif
   tries = 5
-  label _kill
-  Goto killMoves
-  tries -= 1
-  if tries <= 0
-    Seek
-  else
-    Seek _kill
-  endif
-  Jump
-  label
-  tries = 5
   label _startCombo
   Goto comboStarters
   tries -= 1
@@ -51,6 +71,17 @@
     Seek
   else
     Seek _startCombo
+  endif
+  Jump
+  label
+  tries = 5
+  label _kill
+  Goto killMoves
+  tries -= 1
+  if tries <= 0
+    Seek
+  else
+    Seek _kill
   endif
   Jump
   label

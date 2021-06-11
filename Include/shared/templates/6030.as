@@ -57,6 +57,9 @@ if !(Equal AirGroundState 1)
 endif
 
 ClearStick
+
+{SPECIAL_PERFORMERS}
+
 if CalledAs Jab123
   Button A
 elif CalledAs FTilt
@@ -70,13 +73,13 @@ elif CalledAs DTilt
   Stick 0 (-0.7)
 elif CalledAs FSmash
   Button A
-  Stick 1 0
+  AbsStick OPos 0
 elif CalledAs USmash
   Button A
   Stick 0 1
 elif CalledAs DSmash
   Button A
-  Stick 1 0
+  Stick 0 (-1)
 elif CalledAs NSpecial
   Button B
 elif CalledAs SSpecial
@@ -107,7 +110,7 @@ elif CalledAs DashAttack
   endif
   Return
 endif
-label
+label _executed
 Seek 
 Return
 label

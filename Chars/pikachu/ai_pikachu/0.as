@@ -8,14 +8,6 @@
   Call UAir
 #endsnippet
 
-#snippet WHIFF_PUNISH_OPTIONS
-  if Rnd < 0.8
-    Call FSmash
-  else
-    Call Grab
-  endif
-#endsnippet
-
 #snippet DEFENSE_OPTIONS
   if OYDistBackEdge < -20
     Call UAir

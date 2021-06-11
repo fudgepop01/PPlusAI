@@ -113,7 +113,7 @@ endif
 // var0 += TopNX
 // var1 += TopNY
 
-if FramesHitstun > 0
+if FramesHitstun > 0 && CurrAction < 11 && CurrAction > 16
   Call AIHub
 endif
 if Equal var16 6
@@ -273,7 +273,7 @@ if YDistBackEdge > 0 && Equal var8 0 && TopNY < var22 && var1 > -40 && Equal OIs
   var8 = 1
   Return
 endif
-if var2 < 0 && Equal var8 0 && Equal NumJumps 0 && Equal var7 0 && YSpeed < 0
+if var2 < 0 && Equal var8 0 && Equal NumJumps 0 && Equal var7 0 && YSpeed < 0 && var2 > -10
   if YDistBackEdge < 0
     Return
   endif

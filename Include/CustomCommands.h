@@ -52,6 +52,8 @@ cmd SetAutoDefend : 0x45 oneOrZero
 
 cmd SetDisabledMd : 0x46 mdValue
 
+cmd RetrieveFullATKD : 0x47 unkVar startVar endVar xMinVar xMaxVar yMinVar yMaxVar subactionID opponent
+
 //AI TRACKING CODES
 
 /// configurable opponent option tracking

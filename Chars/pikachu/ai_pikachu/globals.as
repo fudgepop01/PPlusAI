@@ -219,7 +219,7 @@
 #const mv_nair_weak = 1
 #const nair_weak_hitFrame = 11
 #const nair_weak_lastHitFrame = 28
-#const app_nair_damage_info = NAir|9|0|100|361
+#const nair_weak_damage_info = NAir|9|0|100|361
 
 
 // FAir

@@ -64,16 +64,23 @@ endif
   Goto KCheck
   if !(True)
     label KCheck
+    // LOGSTR 1262708736 1799643392 1952514048 0 0
     COS var22 var8
     var22 *= var15
     var22 *= Direction
     var22 *= 1.2
     var17 = RBoundary - (TopNX)
+    // LOGSTR 1380057088 0 0 0 0
+    // LOGVAL var22
+    // LOGVAL var17
     if var22 > var17
       var2 = 1
       Return
     endif
     var17 = LBoundary - (TopNX)
+    // LOGSTR 1279393792 0 0 0 0
+    // LOGVAL var22
+    // LOGVAL var17
     if var22 < var17
       var2 = 1
       Return
@@ -81,7 +88,10 @@ endif
     var17 = TBoundary - (TopNY)
     SIN var22 var8
     var22 *= var15
-    var22 *= 1.2
+    var22 *= 0.7
+    // LOGSTR 1413611520 0 0 0 0
+    // LOGVAL var22
+    // LOGVAL var17
     if var22 > var17
       var2 = 1
       Return

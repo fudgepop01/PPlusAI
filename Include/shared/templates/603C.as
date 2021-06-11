@@ -20,6 +20,7 @@ if Equal movePart 0
   endif
   Return
 elif True
+  movePart = 0
   if Equal CurrSubaction JumpSquat
     Button A|R
     Seek execute

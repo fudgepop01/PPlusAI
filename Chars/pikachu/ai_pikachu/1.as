@@ -12,10 +12,6 @@
 #endsnippet
 
 #snippet MIX_DOUBLEJUMP_SECTION
-  elif CanJump && Rnd <= 0.01 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && Equal IsOnStage 1 && TopNY > OTopNY && !(Equal approachType at_combo)
-    Call mix_doubleJump
-  elif CanJump && Rnd <= 0.01 && Equal lastAttack hex(0x8008) && TopNY > OTopNY && !(Equal approachType at_combo)
-    Call mix_doubleJump
 #endsnippet
 
 #snippet ADDITIONAL_MIXUPS

@@ -87,7 +87,7 @@
 // at some point so I'll keep it around.
 #let lastScript = var21
 
-#const techRollVulFrame = 21
+#const techRollVulFrame = 22
 
 #const valJab123 = 24625
 #const valFTilt = 24626
@@ -116,6 +116,7 @@
 #const valGeneral = 25000
 #const valShield = 25001
 #const valOffensiveShield = 25002
+#const valJumpOver = 25003
 
 #const gen_xOffset = -35
 #const gen_yOffset = 35
@@ -176,6 +177,13 @@
 #const op_tech = 1
 #const op_noTech = 2
 
+// situation types
+#const st_floor = 1
+#const st_offstage = 2
+#const st_disadv_above_plat = 3
+#const st_disadv_below_plat = 4
+#const st_disadv_no_plat = 5
+
 // works beacause it isn't approaching - it's used to track what tactics
 // work or fail vs the target opponent
 #let edgeType = var16
@@ -199,6 +207,7 @@
 #const at_retreat = 11
 #const at_poke = 12
 #const at_threaten = 13
+#const at_fakeout = 14
 
 // AI values
 #const LV1 = 0

@@ -5,7 +5,7 @@ unk 0x0
   if FramesHitstun > 0
     var22 = LevelValue * 0.01 - 0.1
     if LevelValue >= 60 && Rnd <= var22
-      if Damage < 30
+      if Damage < 80 || Equal FramesHitlag 1
         ClearStick
         Stick 0 (-1)
       elif Rnd < 0.4

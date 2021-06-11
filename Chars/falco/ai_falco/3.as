@@ -1,73 +1,56 @@
-#include <Definition_AIMain.h>
-//TrueID=0x3
-id 0x8003
+#snippet EDGEGUARD_RADIUS
+  #const rw = 50
+  #const rh = 25
+#endsnippet
 
-//Set Unknown
-unk 0x70000
+#snippet BACKWARD_MOVES
+  if Rnd < 0.3
+    Call BAir
+  else
+    Call DAir
+  endif
+#endsnippet
 
-//Strings
+#snippet FORWARD_MOVES
+  if Rnd < 0.5
+    Call DAir
+  else
+    Call NAir
+  endif
+#endsnippet
 
-if !(InAir) && Idling
-    if ODamage <= 30
-        Seek _1
-    elif ODamage > 30 && ODamage <= 80
-        Seek _1
-    elif ODamage > 80
-        Seek _2
-    endif
-else
-    Finish
-endif
-Return
-//____________________
-label _0
-AbsStick OPos
-if XDistLE 90
-    Button B
-endif
-if FrameGE 30
-    Finish
-endif
-Return
-//____________________
-label _1
-AbsStick OPos
-if XDistLE 90
-    Seek
-endif
-Return
-//____________________
-label
-AbsStick OPos
-if FrameGE 0 && !(FrameGE 1)
-    Stick 1 1
-endif
-if FrameGE 5 && !(FrameGE 6)
-    ClearStick
-    Stick 0 (-1)
-    Button A
-endif
-if FrameGE 10
-    Finish
-endif
-Return
-//____________________
-label _2
-AbsStick OPos
-if XDistLE 90
-    Seek
-endif
-Return
-//____________________
-label
-AbsStick OPos
-if FrameGE 0 && !(FrameGE 1)
-    Stick 1 1
-endif
-if FrameGE 5 && !(FrameGE 6)
-    Button A
-endif
-if FrameGE 10
-    Finish
-endif
-Return
+#snippet STAY_MOVES
+  if OYDistBackEdge < 0
+    Call FTilt
+  elif Rnd < 0.4
+    Call DTilt
+  elif Rnd < 0.6
+    Call DSmash
+  else
+    Call FSmash
+  endif
+#endsnippet
+
+#snippet O_ABOVE_MOVES
+  if Rnd < 0.6
+    Call DAir
+  elif Rnd < 0.4
+    Call BAir
+  else
+    Call NAir
+  endif
+#endsnippet
+
+#snippet DEFAULT_MOVES
+  Button X
+  approachType = at_edgeguard
+  movePart = 0
+  tempVar = OTopNY - TopNY
+  if tempVar > 30 && tempVar < 120 && !(XDistLE 30)
+    Call NAir
+  elif tempVar > 40 && tempVar < 120
+    Call UAir
+  else
+    Call UAir
+  endif
+#endsnippet

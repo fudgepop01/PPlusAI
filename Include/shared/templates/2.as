@@ -39,6 +39,12 @@ OYDistSelf = OTopNY - TopNY
 
 LOGSTR str("START")
 
+#let phase = var7
+#let moveType = var21
+#const mt_combo = 0
+#const mt_juggle = 1
+#const mt_kill = 2
+
 {MOVE_SPECIFIC_COMBOS}
 
 LOGSTR str("AFT_MSC")
@@ -69,8 +75,8 @@ OYDistSelf = OTopNY - TopNY
 GetNearestCliff nearCliffX
 nearCliffX = TopNX - nearCliffX
 nearCliffX *= -1
-#let moveType = var7
-#let phase = var23
+#let phase = var7
+#let moveType = var21
 #const mt_combo = 0
 #const mt_juggle = 1
 #const mt_kill = 2
@@ -96,15 +102,12 @@ elif Equal OIsOnStage 1 && OYDistSelf < 65 && Rnd < 0.8
     testLimit = 10
   endif
   label combo
-  LOGSTR str("combo")
-  moveType = mt_kill
-  Goto killOptions
-  if testLimit < 10
+  if phase <= 3
+    moveType = mt_kill
+    Goto killOptions
+  else 
     moveType = mt_combo
-    Goto analyze
-    Goto clear
     Goto comboOptions
-    moveType = mt_combo
   endif
   Seek combo
 elif True
@@ -114,13 +117,11 @@ elif True
     testLimit = 10
   endif
   label juggle
-  LOGSTR str("juggle")
-  moveType = mt_kill
-  Goto killOptions 
-  if testLimit < 10
+  if phase <= 3
+    moveType = mt_kill
+    Goto killOptions
+  else 
     moveType = mt_juggle
-    Goto analyze
-    Goto clear
     Goto juggleOptions
   endif
   Seek juggle
@@ -128,13 +129,14 @@ endif
 Goto analyze
 testLimit -= 1
 if testLimit <= 0
-  if phase < 3
+  if phase < 6
     phase += 1
-    LOGSTR str("=======")
-    LOGSTR str("PHASE UP:")
-    LOGVAL phase
-    LOGSTR str("=======")
+    // LOGSTR str("=======")
+    // LOGSTR str("PHASE UP:")
+    // LOGVAL phase
+    // LOGSTR str("=======")
     testLimit = 10
+    Jump
     Return
   else
     Seek NCombo
@@ -214,26 +216,27 @@ endif
 #let slowest = var0
 #let mid = var1
 #let fastest = var2
-if OFramesHitstun < move_hitFrame
-  fastest = OFramesHitstun
+#let temp = var0
+temp = OFramesHitstun + 5
+if temp < move_hitFrame
+  fastest = temp
   mid = move_hitFrame
   slowest = move_lastHitFrame
-elif OFramesHitstun < move_lastHitFrame
+elif temp < move_lastHitFrame
   fastest = move_hitFrame
-  mid = OFramesHitstun
+  mid = temp
   slowest = move_lastHitFrame
 else
   fastest = move_hitFrame
   mid = move_lastHitFrame
-  slowest = OFramesHitstun
 endif
 
 #let frameToCalc = var5
-if Equal phase 1
+if Equal phase 1 || Equal phase 4
   frameToCalc = fastest
-elif Equal phase 2
+elif Equal phase 2 || Equal phase 5
   frameToCalc = mid
-elif Equal phase 3
+elif Equal phase 3 || Equal phase 6
   frameToCalc = slowest
 endif
 
@@ -243,11 +246,6 @@ frameToCalc += 3
 #let targetYDistance = var1
 
 Goto CTD
-
-if !(Equal movePart mp_ATK)
-  // comboLeniency = 0
-  Return
-endif
 
 {EXTRA_ANALYSIS}
 
@@ -259,6 +257,8 @@ label CTD
 Return
 
 label callMove
+
+lastScript = hex(0x8002)
 
 if Equal CurrAction hex(0x18)
   Return

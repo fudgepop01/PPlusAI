@@ -1,6 +1,5 @@
 #snippet CTD
   CALC_TARGET_DISTANCES(var0, var1, var2, var3, frameToCalc)
-
   #let calcMoveXRange = var2
   #let calcMoveYRange = var3
 
@@ -51,11 +50,12 @@
         Seek callMove
         Jump
       endif
-      
+
       if Equal moveType mt_combo
         #let result = var2
         MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 50, 0, 70 + comboToleranceOffset, 0, 120)
         if Equal result 1
+          LOGSTR str("cCalling")
           Seek callMove
           Jump
         endif
@@ -63,6 +63,7 @@
         #let result = var2
         MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 50, 0, 30 + comboToleranceOffset, 0, 80)
         if Equal result 1
+          LOGSTR str("jCalling")
           Seek callMove
           Jump
         endif

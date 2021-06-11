@@ -32,12 +32,13 @@ if Equal movePart 0 && !(XDistLE 15)
   move_hitFrame = Rnd * 3
 
   predictAverage immediateTempVar man_oXHitDist LevelValue
-  immediateTempVar += 5
+  immediateTempVar += 15
   predictOOption globTempVar man_approach LevelValue
   predictionConfidence anotherTempVar man_approach LevelValue
   anotherTempVar *= 3.5
 
-  if Rnd <= 0.75 && Equal globTempVar op_attack || Rnd < 0.3 || OCurrActionFreq >= 3
+  approachType = at_fakeout
+  if Rnd <= 0.75 && Equal globTempVar op_attack || Rnd < 0.3 || OCurrActionFreq >= 3 && !(Equal CurrAction hex(0x0))
     Seek
     Jump
   endif
@@ -46,16 +47,20 @@ if Equal movePart 0 && !(XDistLE 15)
     move_xRange = immediateTempVar * 2
     move_xOffset = 0
     move_hitFrame = Rnd * 3
-    lastAttack = valOffensiveShield
-    LOGSTR str("OFFENSIVE")
-    LOGSTR str("SHIELD")
+    if Rnd < 0.3
+      lastAttack = valJumpOver
+      move_xOffset += 35
+    else
+      lastAttack = valOffensiveShield
+    endif
     Call ApproachHub
   endif
 
   Call ApproachHub
 elif Equal AirGroundState 2
   tempVar = OPos * -1
-  if YDistBackEdge < -15
+  globTempVar = TopNY - OTopNY
+  if YDistBackEdge < -3 && globTempVar < 25 && YSpeed < -0.3
     Button X
     AbsStick tempVar
     Call AIHub
@@ -70,6 +75,9 @@ elif True
   Cmd30
   if Equal lastAttack valOffensiveShield
     Seek offensiveShield
+    Jump
+  elif Equal lastAttack valJumpOver
+    Seek jumpOver
     Jump
   endif
 
@@ -93,11 +101,13 @@ elif True
   endif
 
   tempVar = Rnd
-  if tempVar < 0.3 && Damage < 60 && !(Equal OCurrAction hex(0x34))
+  if tempVar <= 0.05
+    Seek jumpOver
+  elif tempVar <= 0.25 && Damage < 60 && !(Equal OCurrAction hex(0x34))
     Seek crouchCancelPunish
-  elif tempVar < 0.4 && Equal CurrAction hex(0x03)
+  elif tempVar <= 0.55 && Equal CurrAction hex(0x03)
     Seek dashAway
-  elif tempVar < 0.45
+  elif tempVar <= 0.60
     Seek wavedashBack
   {ADDITIONAL_FAKEOUTS}
   else
@@ -111,6 +121,7 @@ Return
 
 label crouchCancelPunish
   Cmd30
+Goto checkHitstun
 #let timer = var0
 timer = Rnd * 20
 label
@@ -124,6 +135,7 @@ Return
 
 label dashAway
   Cmd30
+Goto checkHitstun
 #let timer = var0
 if Equal Direction OPos
   Stick (-1) 0
@@ -139,6 +151,7 @@ Return
 
 label wavedashBack
   Cmd30
+Goto checkHitstun
 if CurrAction > hex(0x09)
   Return
 endif
@@ -155,19 +168,24 @@ Return
 
 label offensiveShield
 Cmd30
+Goto checkHitstun
 #let timer = var1
 #let shieldRemaining = var2
-timer = Rnd * 30 + 40
-globTempVar = move_xOffset + 10
+timer = Rnd * 50 + 10
+globTempVar = move_xOffset + move_xRange
 if XDistLE globTempVar || XDistLE 15
   Seek
   Jump
 else
   AbsStick OPos
+  if Equal CurrAction hex(0x1)
+    ClearStick 
+  endif
 endif
 Return
 label
 Cmd30
+Goto checkHitstun
 tempVar = OPos * 0.5
 AbsStick tempVar
 Button R
@@ -180,9 +198,21 @@ Return
 
 label jumpOver
 Cmd30
+Goto checkHitstun
+if CurrAction >= hex(0x9)
+  Return
+endif
+label
+Cmd30
+Goto checkHitstun
+AbsStick OPos
 Button X
 if InAir
   Call AIHub
 endif
+Return
+label checkHitstun
+HITSTUN_CHECK
+
 Return
 Return

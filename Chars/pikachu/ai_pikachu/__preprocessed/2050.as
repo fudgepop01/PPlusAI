@@ -138,7 +138,7 @@ if LevelValue >= 21
   endif
 endif
 
-if CurrAction < 11 && CurrAction > 16
+if CurrAction < 11 || CurrAction > 16
   if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= 66 && CurrAction <= 68 && Equal AirGroundState 2 
     ClearStick
     if Equal var7 1 || Equal var7 -1.2 || Equal var7 -3

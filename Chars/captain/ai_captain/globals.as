@@ -48,8 +48,8 @@
 #const dashCountMax = 20
 #const dashForceTurnFrame = 14
 #const dashDanceMinFrames = 3
-#const DDWaveDash = 0.1
-#const DDMaxRange = 50
+#const DDWaveDash = 0.06
+#const DDMaxRange = 80
 
 // 0 through 21 if defensive things were consistent
 #const minBaseReactionTime = 0
@@ -271,8 +271,8 @@
 
 // DAir
 #const dair_IASA = 38
-#const dair_xOffset = -4
-#const dair_yOffset = 10
+#const dair_xOffset = -3.5
+#const dair_yOffset = 11
 #const dair_xRange = 5
 #const dair_yRange = 12
 #const dair_hitFrame = 16

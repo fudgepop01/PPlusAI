@@ -32,6 +32,14 @@ lastScript = hex(0x8007)
 RetrieveATKD OCurrEndlag OCurrSubaction 1
 
 OCurrEndlag = OEndFrame - OAnimFrame
+if Equal OCurrAction hex(0x33)
+  globTempVar = OTopNY + OYDistBackEdge
+  EstOPassTimeY globTempVar globTempVar
+  globTempVar += 11
+  if globTempVar < OCurrEndlag
+    OCurrEndlag = globTempVar
+  endif
+endif
 if OAttacking && OCurrEndlag > 20 && OAnimFrame >= endDangerFrame 
 elif XDistLE 50 && timer > 0
   Button R
@@ -55,7 +63,8 @@ if Equal CurrAction hex(0x1D)
   Return
 endif
 
-if Equal grabOOS 1 && XDistLE calc(grab_xRange * 2 + grab_xOffset) && Equal OPos Direction && OCurrEndlag > 3
+immediateTempVar = OTopNY - TopNY 
+if Equal grabOOS 1 && XDistLE calc(grab_xRange * 2 + grab_xOffset) && immediateTempVar < 10 && Equal OPos Direction && OCurrEndlag > 3
   Button R
   if Equal CurrAction hex(0x1B)
     Button A|R
@@ -63,12 +72,24 @@ if Equal grabOOS 1 && XDistLE calc(grab_xRange * 2 + grab_xOffset) && Equal OPos
     Call Grab
   endif
   Return
+endif
+
+predictAverage globTempVar man_oXHitDist LevelValue
+globTempVar += 10
+immediateTempVar = globTempVar + 20
+if XDistLE globTempVar immediateTempVar
+  Goto other_GOOS
 elif Equal grabOOS 1
+  Goto other_GOOS
+endif
+
+if !(True)
+  label other_GOOS
   Button R
   if Equal LevelValue LV9 && Equal IsOnPassableGround 1 && Rnd < 0.7
     Seek shieldDropOOS
     Jump
-  elif Equal CurrAction hex(0x1B) && OCurrEndlag > 8 && timer <= 10
+  elif Equal CurrAction hex(0x1B) && OCurrEndlag > 8 && timer <= 10 || XDistLE globTempVar immediateTempVar
     globTempVar = Rnd * 100
     if globTempVar < 78
       Button X

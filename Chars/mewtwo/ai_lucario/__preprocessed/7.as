@@ -26,6 +26,14 @@ var21 = 32775
 RetrieveATKD var4 OCurrSubaction 1
 
 var4 = OEndFrame - OAnimFrame
+if Equal OCurrAction 51
+  var17 = OTopNY + OYDistBackEdge
+  EstOPassTimeY var17 var17
+  var17 += 11
+  if var17 < var4
+    var4 = var17
+  endif
+endif
 if OAttacking && var4 > 20 && OAnimFrame >= var5 
 elif XDistLE 50 && var3 > 0
   Button R
@@ -49,7 +57,8 @@ if Equal CurrAction 29
   Return
 endif
 
-if Equal var1 1 && XDistLE 13 && Equal OPos Direction && var4 > 3
+var22 = OTopNY - TopNY 
+if Equal var1 1 && XDistLE 13 && var22 < 10 && Equal OPos Direction && var4 > 3
   Button R
   if Equal CurrAction 27
     Button A|R
@@ -57,12 +66,24 @@ if Equal var1 1 && XDistLE 13 && Equal OPos Direction && var4 > 3
     Call Grab
   endif
   Return
+endif
+
+predictAverage var17 3 LevelValue
+var17 += 10
+var22 = var17 + 20
+if XDistLE var17 var22
+  Goto other_GOOS
 elif Equal var1 1
+  Goto other_GOOS
+endif
+
+if !(True)
+  label other_GOOS
   Button R
   if Equal LevelValue 100 && Equal IsOnPassableGround 1 && Rnd < 0.7
     Seek shieldDropOOS
     Jump
-  elif Equal CurrAction 27 && var4 > 8 && var3 <= 10
+  elif Equal CurrAction 27 && var4 > 8 && var3 <= 10 || XDistLE var17 var22
     var17 = Rnd * 100
     if var17 < 78
       Button X

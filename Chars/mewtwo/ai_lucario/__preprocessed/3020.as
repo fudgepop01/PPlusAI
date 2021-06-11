@@ -45,6 +45,7 @@ if FramesHitstun > 0 || Equal CurrAction 69
 endif
 
 if Rnd < 0.35
+    var18 = 1
     Call FakeOutHub
 endif
 

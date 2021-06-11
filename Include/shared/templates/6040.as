@@ -44,6 +44,9 @@ if !(Equal AirGroundState 2)
 endif
 
 ClearStick
+
+{SPECIAL_PERFORMERS}
+
 if CalledAs NAir
   Button A
 elif CalledAs FAir
@@ -62,13 +65,13 @@ elif CalledAs NSpecialAir
   Button B
 elif CalledAs SSpecialAir
   Button B
-  Stick 1 0
+  AbsStick OPos 0
 elif CalledAs USpecialAir
   Button B
   Stick 0 0.7
 elif CalledAs DSpecialAir
   Button B
-  Stick 0 (-1)
+  Stick 0 (-0.7)
 endif
 label
 Seek 
@@ -170,7 +173,10 @@ label movement
   ClearStick
 
   #let isGoingOffstage = var0
-  GOING_OFFSTAGE(var0, var1, move_IASA - frameCounter)
+  if Equal shouldFastFall 1
+    isGoingOffstage = 10
+  endif
+  GOING_OFFSTAGE(isGoingOffstage, var1, move_IASA - frameCounter - isGoingOffstage)
 
   if YSpeed <= 0 && Equal IsOnStage 1 && Equal shouldFastFall 1 && Equal isGoingOffstage 0
     LOGSTR str("should_FF")

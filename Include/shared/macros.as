@@ -24,7 +24,7 @@
   elif lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
     gv = 0
     if Equal AirGroundState 1
-      gv = jumpSquatFrames
+      gv = 0
     endif
   elif Equal lastAttack valGeneral
     gv = OFramesHitstun 
@@ -107,7 +107,7 @@
     endif
   elif lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
     if Equal AirGroundState 1
-      immediateTempVar += jumpSquatFrames
+      immediateTempVar += 0
     endif
   elif Equal lastAttack valGeneral
     immediateTempVar += OFramesHitstun 
@@ -119,7 +119,7 @@
     targetY = OTopNY - targetY
     targetY *= -1
     if OCurrAction <= hex(0x9) && lastAttack < valNAir
-      immediateTempVar *= 0.3
+      immediateTempVar *= 0.0
     endif
     targetX = OTopNX + OXSpeed * immediateTempVar
     // DrawDebugRectOutline OTopNX OTopNY 5 5 color(0x00FFFFDD)
@@ -128,7 +128,7 @@
     // if the opponent is in an actionable state, lower the estimate of
     // their x offset to prevent dashdancing from setting it off when very far away
     if OCurrAction <= hex(0x9) && lastAttack < valNAir
-      immediateTempVar *= 0.3
+      immediateTempVar *= 0.0
     endif
     EstOXCoord targetX immediateTempVar
     targetY = targetY - (OSCDBottom - OTopNY)
@@ -148,16 +148,24 @@
     //   targetX += immediateTempVar
     // el
     if Equal approachType at_threaten
-      LOGSTR str("THREATENING")
+      // LOGSTR str("THREATENING")
       predictAverage immediateTempVar man_oXHitDist LevelValue
-      immediateTempVar += 35
+      immediateTempVar += 30
       immediateTempVar *= OPos
+      anotherTempVar = OXSpeed
+      Abs anotherTempVar
+      anotherTempVar *= 0.5
+      immediateTempVar *= anotherTempVar
       targetX -= immediateTempVar
     endif
     if Equal approachType at_poke
       predictAverage immediateTempVar man_oXHitDist LevelValue
-      immediateTempVar += 10
+      immediateTempVar += 15
       immediateTempVar *= OPos
+      anotherTempVar = OXSpeed
+      Abs anotherTempVar
+      anotherTempVar *= 0.5
+      immediateTempVar *= anotherTempVar
       targetX -= immediateTempVar
     endif
     if LevelValue >= LV8 && !(Equal approachType at_combo) && OCurrAction <= hex(0xF) && Equal OIsOnStage 1
@@ -169,8 +177,10 @@
       elif Equal immediateTempVar op_undershoot
         targetX -= immediateTempVar
       endif
+    endif
 
-      if Equal lastAttack valGrab && Equal CurrAction hex(0x4) 
+    if Equal lastAttack valGrab || Equal lastAttack valUSmash
+      if CurrAction >= hex(0x3) && CurrAction <= hex(0x4)
         immediateTempVar = 10 * OPos
         targetX += immediateTempVar
       endif
@@ -295,7 +305,7 @@
   // globTempVar = globTempVar - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir)
+  if !(InAir) || lastAttack >= valNSpecial && lastAttack <= valDSpecial
     immediateTempVar = move_xOffset + (move_xRange * 2)
     immediateTempVar /= 2
     if immediateTempVar <= 2
@@ -391,61 +401,61 @@
     targetYDistance = 0
   endif
 
-  // if !(CalledAs ComboHub)
-  //   targetXDistance += TopNX
-  //   targetYDistance += TopNY
-  //   DrawDebugRectOutline targetXDistance targetYDistance move_xRange move_yRange color(0x00FF0088)
-  //   targetXDistance -= TopNX
-  //   targetYDistance -= TopNY
+  if !(CalledAs ComboHub)
+    targetXDistance += TopNX
+    targetYDistance += TopNY
+    DrawDebugRectOutline targetXDistance targetYDistance move_xRange move_yRange color(0x00FF0088)
+    targetXDistance -= TopNX
+    targetYDistance -= TopNY
 
-  //   globTempVar = hitboxSizeMultiplier + 1
-  //   globTempVar = move_xRange * (1/globTempVar)
-  //   move_xRange = globTempVar
-  //   move_xOffset = move_xOffset + globTempVar * hitboxSizeMultiplier
+    globTempVar = hitboxSizeMultiplier + 1
+    globTempVar = move_xRange * (1/globTempVar)
+    move_xRange = globTempVar
+    move_xOffset = move_xOffset + globTempVar * hitboxSizeMultiplier
 
-  //   globTempVar = hitboxSizeMultiplier + 1
-  //   globTempVar = move_yRange * (1/globTempVar)
-  //   move_yRange = globTempVar
-  //   move_yOffset = move_yOffset - globTempVar * hitboxSizeMultiplier
+    globTempVar = hitboxSizeMultiplier + 1
+    globTempVar = move_yRange * (1/globTempVar)
+    move_yRange = globTempVar
+    move_yOffset = move_yOffset - globTempVar * hitboxSizeMultiplier
 
-  //   // globTempVar = TopNY - move_yOffset + move_yRange + immediateTempVar
-  //   // DrawDebugRectOutline TopNX globTempVar 10 0 color(0x00FFFF88)
+    // globTempVar = TopNY - move_yOffset + move_yRange + immediateTempVar
+    // DrawDebugRectOutline TopNX globTempVar 10 0 color(0x00FFFF88)
 
-  //   if CalledAs ApproachHub
-  //     move_xRange -= 2.5
-  //     move_xOffset += 5
-  //   endif
+    if CalledAs ApproachHub
+      move_xRange -= 2.5
+      move_xOffset += 5
+    endif
 
-  //   immediateTempVar = (move_xOffset + move_xRange)
-  //   immediateTempVar *= Direction
-  //   immediateTempVar += TopNX
-  //   globTempVar = TopNY - move_yOffset + move_yRange
-  //   DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0x88888888)
-  //   globTempVar += localTemp
+    immediateTempVar = (move_xOffset + move_xRange)
+    immediateTempVar *= Direction
+    immediateTempVar += TopNX
+    globTempVar = TopNY - move_yOffset + move_yRange
+    DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0x88888888)
+    globTempVar += localTemp
     
-  //   // if OTopNX > 0
-  //   //   immediateTempVar += move_xRange
-  //   // else
-  //   //   immediateTempVar -= move_xRange
-  //   // endif 
-  //   DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0xFFFFFF88)
+    // if OTopNX > 0
+    //   immediateTempVar += move_xRange
+    // else
+    //   immediateTempVar -= move_xRange
+    // endif 
+    DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0xFFFFFF88)
 
-  //   immediateTempVar = OHurtboxSize / 2
-  //   globTempVar = immediateTempVar + OSCDBottom
-  //   DrawDebugRectOutline OTopNX globTempVar 5 immediateTempVar color(0xFFFF00DD)
+    immediateTempVar = OHurtboxSize / 2
+    globTempVar = immediateTempVar + OSCDBottom
+    DrawDebugRectOutline OTopNX globTempVar 5 immediateTempVar color(0xFFFF00DD)
     
-  //   if CalledAs ApproachHub
-  //     move_xRange += 2.5
-  //     move_xOffset -= 5
-  //   endif
+    if CalledAs ApproachHub
+      move_xRange += 2.5
+      move_xOffset -= 5
+    endif
 
-  //   globTempVar = move_xRange * hitboxSizeMultiplier
-  //   move_xOffset -= globTempVar
-  //   move_xRange = move_xRange + globTempVar
-  //   globTempVar = move_yRange * hitboxSizeMultiplier
-  //   move_yOffset += globTempVar
-  //   move_yRange = move_yRange + globTempVar
-  // endif
+    globTempVar = move_xRange * hitboxSizeMultiplier
+    move_xOffset -= globTempVar
+    move_xRange = move_xRange + globTempVar
+    globTempVar = move_yRange * hitboxSizeMultiplier
+    move_yOffset += globTempVar
+    move_yRange = move_yRange + globTempVar
+  endif
 
   // if !(CalledAs ComboHub) && LevelValue >= LV7 && !(Equal approachType at_combo) 
   //   globTempVar = {frameCount} - index
@@ -518,8 +528,8 @@
 
     // attempts to say each character has a "width" of 4
     if !(Equal lastAttack valGrab)
-      move_xRange += 2.5
-      move_xOffset -= 5
+      // move_xRange += 2.5
+      // move_xOffset -= 5
 
       // if lastAttack <= valDashAttack && !(Equal lastAttack valUSmash)
       //   immediateTempVar = groundFric * 50
@@ -990,7 +1000,7 @@
   #let frameCount = {tempVar2}
   amount = (105 - LevelValue) / 100
   amount = (Rnd * dashCountMax) - dashCountMax * amount
-  frameCount = (Rnd * 10) + dashDanceMinFrames
+  frameCount = (Rnd * 20) + dashDanceMinFrames
 
   // globTempVar = OXSpeed * 3
   // Abs globTempVar
@@ -1002,12 +1012,12 @@
   
   label _dashdance
   Cmd30
+  LOGSTR str("DDAmt")
+  LOGVAL amount
 
   // Goto defendFromO
 
-  if OAttacking && OAnimFrame >= 12 && Rnd <= 0.3
-    amount = 0
-  elif OCurrAction >= hex(0x3B) && OCurrAction <= hex(0x52) && Rnd <= 0.5
+  if OCurrAction >= hex(0x3B) && OCurrAction <= hex(0x52) && Rnd <= 0.5
     amount = 0
   elif OCurrAction >= hex(0x18) && OCurrAction <= hex(0x19) && Rnd <= 0.5
     amount = 0
@@ -1015,9 +1025,9 @@
     amount = 0
   elif OYDistBackEdge < -40 && Rnd <= 0.1
     amount = 0
-  elif XDistFrontEdge < 20 && XDistBackEdge > -20
-    amount = 0
-  elif amount >= 98 && NumFrames >= 5
+  // elif XDistFrontEdge < 20 && XDistBackEdge > -20
+  //   amount = 0
+  elif amount >= 90
     SetFrame 0
     label
     AbsStick OPos
@@ -1057,10 +1067,10 @@
       endif
       Button R
       globTempVar = OPos * -1
-      if ODistLE 30
-        Stick globTempVar (-1)
+      if ODistLE 40
+        AbsStick globTempVar (-0.5)
       else
-        Stick OPos (-1)
+        AbsStick OPos (-0.5)
       endif
       Return
     endif
@@ -1070,7 +1080,6 @@
     elif !(XDistLE DDMaxRange) && !(Equal OPos Direction) && CurrAction <= hex(0x03) && NumFrames > 3
       SetFrame 0
       Stick (-1)
-      amount -= 1
     elif NumFrames >= frameCount && Equal CurrAction hex(0x03)
       Goto _ddSubr
     elif AnimFrame >= dashForceTurnFrame && Equal CurrAction hex(0x03)
@@ -1078,7 +1087,6 @@
     elif Equal CurrAction hex(0x04)
       ClearStick
       Stick 0 (-1)
-      amount -= 1
     elif XDistFrontEdge <= 10
       SetFrame 0
       Stick (-1)
@@ -1091,32 +1099,39 @@
       predictionConfidence immediateTempVar man_dashdance LevelValue
       predictAverage anotherTempVar man_oXHitDist LevelValue
       anotherTempVar += 5
-      if !(Equal ODirection OPos) && Equal globTempVar op_attack && Rnd < immediateTempVar && XDistLE anotherTempVar
-        Call Unk3020
-      elif Equal globTempVar op_defend && Rnd < immediateTempVar
-        lastScript = hex(0x8002)
-        Call Grab
-      elif Equal globTempVar op_grab && Rnd < immediateTempVar
-        amount = 0
-        Return
-      endif 
+      if Rnd < 0.4
+        if Equal globTempVar op_attack && Rnd < immediateTempVar && XDistLE anotherTempVar
+          if !(OAttacking) && move_hitFrame <= 16 && Rnd <= 0.4
+            amount = 0
+          else
+            Call Unk3020
+          endif
+        elif Equal globTempVar op_defend && Rnd < immediateTempVar
+          lastScript = hex(0x8002)
+          Call Grab
+        elif Equal globTempVar op_grab && Rnd < immediateTempVar
+          amount = 0
+          Return
+        endif
+      endif
 
-      if Equal Direction OPos && Rnd < 0.8 && XDistFrontEdge > edgeRange
-        if XDistBackEdge > -25 && Rnd < 0.55 || Rnd < 0.15
+      if Equal Direction OPos && Rnd < 0.3 && XDistFrontEdge > edgeRange
+        if XDistBackEdge > -25 && Rnd < 0.25 || Rnd < 0.15
           Button R
-          immediateTempVar = TopNX * -1
-          AbsStick immediateTempVar 0
+          // immediateTempVar = TopNX * -1
+          // AbsStick immediateTempVar 0
           Call OOSHub
         endif
-        if Rnd < 0.2
+        if Rnd < 0.1
           amount = 100
         endif
+        amount -= 1
         Goto _ddSubr
       elif Equal Direction OPos && XDistBackEdge < -edgeRange && Rnd < 0.7
         SetFrame 0
         Stick (-1)
         amount -= 1
-      elif Equal Direction OPos && Rnd < 0.2
+      elif Equal Direction OPos && Rnd < 0.05
         amount = 0
       else
         Stick 1
@@ -1137,9 +1152,9 @@
   label _ddSubr
   SetFrame 0
   if Equal Direction OPos && Rnd < DDWaveDash && XDistFrontEdge > shortEdgeRange && XDistBackEdge < -shortEdgeRange
+    amount -= 1
     Button X
   endif
-  amount = amount - 1
   if amount > 0 && Rnd < 0.7
     if LevelValue <= LV7
       Stick (-1)
@@ -1147,7 +1162,7 @@
       Stick (-1)
     endif
   endif
-  frameCount = (Rnd * 50) + dashDanceMinFrames
+  frameCount = (Rnd * 20) + dashDanceMinFrames
 
   if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x21) && Rnd < 0.8
     trackOAction man_dashdance op_defend
@@ -1171,7 +1186,7 @@
   isEarlyRoll = 0
   {tempVar} = OCurrAction
   if Equal {tempVar} hex(0x60) || Equal {tempVar} hex(0x51)
-    if OAnimFrame < 15
+    if OAnimFrame < 17
       isEarlyRoll = 1
     endif
   endif
@@ -1415,7 +1430,7 @@ endif
   if FramesHitstun > 0
     immediateTempVar = LevelValue * 0.01 - 0.1
     if LevelValue >= LV7 && Rnd <= immediateTempVar
-      if Damage < 30
+      if Damage < 80 || Equal FramesHitlag 1
         ClearStick
         Stick 0 (-1)
       elif Rnd < 0.4
@@ -1441,16 +1456,23 @@ endif
   Goto KCheck
   if !(True)
     label KCheck
+    // LOGSTR str("KChkData")
     COS immediateTempVar {angle}
     immediateTempVar *= {kb}
     immediateTempVar *= Direction
     immediateTempVar *= 1.2
     globTempVar = RBoundary - ({xCoord})
+    // LOGSTR str("RB")
+    // LOGVAL immediateTempVar
+    // LOGVAL globTempVar
     if immediateTempVar > globTempVar
       {out} = 1
       Return
     endif
     globTempVar = LBoundary - ({xCoord})
+    // LOGSTR str("LB")
+    // LOGVAL immediateTempVar
+    // LOGVAL globTempVar
     if immediateTempVar < globTempVar
       {out} = 1
       Return
@@ -1458,7 +1480,10 @@ endif
     globTempVar = TBoundary - ({yCoord})
     SIN immediateTempVar {angle}
     immediateTempVar *= {kb}
-    immediateTempVar *= 1.2
+    immediateTempVar *= 0.7
+    // LOGSTR str("TB")
+    // LOGVAL immediateTempVar
+    // LOGVAL globTempVar
     if immediateTempVar > globTempVar
       {out} = 1
       Return
@@ -1529,5 +1554,237 @@ endif
     endif
     {out} = 0
     Return
+  endif
+#endmacro
+
+#macro JUMP_HEIGHT_TEST()
+  var0 = 0
+  var1 = 0
+  var2 = 0
+
+  label start
+
+  label shorthop
+  Button X
+  label
+  if Equal AirGroundState 2
+    Seek
+    Jump
+  endif
+  Return
+  label 
+  if YDistBackEdge < var0
+    var0 = YDistBackEdge
+  endif
+  if Equal AirGroundState 1
+    Seek
+    Jump
+  endif
+  Return
+  label fullhop
+  if CurrAction <= hex(0xA)
+    Button X
+  endif
+  if Equal AirGroundState 2
+    Seek
+    Jump
+  endif
+  Return
+  label
+  if YDistBackEdge < var1
+    var1 = YDistBackEdge
+  endif
+  if YSpeed < 0
+    Button X
+    Seek
+    Jump
+  endif
+  Return
+  label djump
+  if YDistBackEdge < var2
+    var2 = YDistBackEdge
+  endif
+  if Equal AirGroundState 1
+    Seek
+    Jump
+  endif
+  Return
+  label output
+
+  LOGSTR str("sh dist")
+  LOGVAL var0
+  LOGSTR str("fh dist")
+  LOGVAL var1
+  LOGSTR str("dj dist")
+  LOGVAL var2
+
+  Seek start
+  Return
+#endmacro
+
+#macro DETECT_O_SITUATION(out, above, left, right, below, currPos)
+  #let out = {out}
+  #let abovePos = {above}
+  #let leftPos = {left}
+  #let rightPos = {right}
+  #let belowPos = {below}
+  GetYDistFloorOffset abovePos 0 70 1
+  GetYDistFloorOffset leftPos (-25) 35 1
+  GetYDistFloorOffset rightPos 25 35 1
+  globTempVar = OYDistBackEdge - 3
+  GetYDistFloorOffset belowPos 0 globTempVar 1
+
+  if Equal abovePos -1
+    abovePos = BBoundary
+  else 
+    abovePos = OTopNY + 70 - abovePos
+  endif
+  if Equal leftPos -1
+    leftPos = BBoundary
+  else 
+    leftPos = OTopNY + 35 - leftPos
+  endif
+  if Equal rightPos -1
+    rightPos = BBoundary
+  else 
+    rightPos = OTopNY + 35 - rightPos
+  endif
+  if Equal belowPos -1
+    belowPos = BBoundary
+  else
+    belowPos = OTopNY - belowPos
+  endif
+
+  #let currPos = {currPos}
+  currPos = OTopNY + OYDistBackEdge  
+
+  globTempVar = leftPos - rightPos
+  immediateTempVar = leftPos - abovePos
+  Abs globTempVar
+  Abs immediateTempVar
+  if globTempVar < 1 && immediateTempVar < 1 && !(Equal leftPos BBoundary) && leftPos < 1
+    // flat ground
+    LOGSTR str("flat ground")
+  elif Equal abovePos BBoundary && Equal belowPos BBoundary
+    // offstage
+    LOGSTR str("offstage")
+  elif Equal leftPos BBoundary
+    // disadvantage L
+    LOGSTR str("disad L")
+    if rightPos < OTopNY || abovePos < OTopNY && !(Equal belowPos BBoundary) 
+      // above platform
+      LOGSTR str("> above plat")
+    elif abovePos > OTopNY
+      // below platform
+      LOGSTR str("> below plat")
+    else
+      // no platform
+      LOGSTR str("> no plat")
+    endif
+  elif Equal rightPos BBoundary
+    // disadvantage R
+    LOGSTR str("disad R")
+    if leftPos < OTopNY || abovePos < OTopNY && !(Equal belowPos BBoundary) 
+      // above platform
+      LOGSTR str("> above plat")
+    elif abovePos > OTopNY
+      // below platform
+      LOGSTR str("> below plat")
+    else
+      // no platform
+      LOGSTR str("> no plat")
+    endif
+  elif !(Equal belowPos BBoundary) 
+    // platform
+    LOGSTR str("plat")
+    globTempVar = currPos - belowPos
+    if globTempVar > 40
+      // high platform
+      LOGSTR str("> high")
+      globTempVar = OTopNY - currPos
+      if globTempVar > 25
+        // camping?
+        LOGSTR str(">> camp")
+      else
+        // regular
+        LOGSTR str(">> reg")
+      endif
+    else
+      // regular platform
+      LOGSTR str("> regular")
+      globTempVar = OTopNY - currPos
+      if globTempVar > 25
+        // camping?
+        LOGSTR str(">> camp")
+      else
+        // regular
+        LOGSTR str(">> reg")
+      endif
+    endif
+  elif abovePos > OTopNY
+    // below platform
+    LOGSTR str("below plat")
+  else
+    // awkward spot, likely between/near platforms or something
+    LOGSTR str("between plat")
+  endif
+
+  // var5 = OTopNX - 25
+  // DrawDebugRectOutline var5 leftPos 5 5 color(0xFF0000DD)
+  // DrawDebugRectOutline OTopNX belowPos 5 5 color(0xFF0000DD)
+  // DrawDebugRectOutline OTopNX abovePos 5 5 color(0xFF0000DD)
+  // DrawDebugRectOutline OTopNX currPos 5 5 color(0x0000FFDD)
+  // var5 = OTopNX + 25
+  // DrawDebugRectOutline var5 rightPos 5 5 color(0xFF0000DD)
+#endmacro
+
+#macro ADJUST_RANGES()
+  #let unkVar = var0
+  #let start = var1
+  #let end = var2
+  #let xmin = var3
+  #let xmax = var4
+  #let ymin = var5
+  #let ymax = var6
+  #let xStart = var7
+  #let yStart = var8
+  RetrieveFullATKD unkVar start end xmin xmax ymin ymax OCurrSubaction 1
+
+  SAFE_WRITE_0 xmin
+  SAFE_WRITE_1 xmax
+  SAFE_WRITE_2 ymin
+  SAFE_WRITE_3 ymax
+
+  SAFE_INJECT_0 xmin
+  SAFE_INJECT_1 xmax
+  SAFE_INJECT_2 ymin
+  SAFE_INJECT_3 ymax
+
+  if Equal OAnimFrame 1
+    xStart = OTopNX
+    yStart = OTopNY
+  endif
+
+  LOGVAL unkVar
+
+  if !(Equal unkVar (-1))
+    #let cx = var9
+    #let cy = var10
+    globTempVar = xmax - xmin
+    globTempVar *= 0.5
+    cx = globTempVar + xmin
+    cx *= ODirection
+    cx += xStart
+    immediateTempVar = ymax - ymin
+    immediateTempVar *= 0.5
+    cy = immediateTempVar + yStart + ymin
+    
+    if OAnimFrame >= start && OAnimFrame <= end
+      DrawDebugRectOutline cx cy globTempVar immediateTempVar color(0xFF0000DD)
+    elif OAnimFrame < unkVar
+      DrawDebugRectOutline cx cy globTempVar immediateTempVar color(0x880000DD)
+    else 
+      DrawDebugRectOutline cx cy globTempVar immediateTempVar color(0x00FF00DD)
+    endif
   endif
 #endmacro

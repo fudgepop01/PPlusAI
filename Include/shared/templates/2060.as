@@ -71,6 +71,8 @@ movePart = 0
 #let rndChoice = var2
 rndChoice = Rnd
 label _OL
+lastScript = hex(0x2060)
+
 if absOCloseness < 35 && Equal Direction OPos
     if rndChoice < 0.3 && LevelValue >= LV4 // offensive option
         label _OL1

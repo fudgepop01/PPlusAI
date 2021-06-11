@@ -106,15 +106,15 @@ endif
 // var0 -= TopNX
 // var0 *= -1
 // var1 -= TopNY
-// DrawDebugRectOutline var0 var1 45 85 255 0 0 136
-// DrawDebugRectOutline var0 var1 45 70 255 136 0 136
-// DrawDebugRectOutline var0 var1 45 20 255 255 0 136
+// DrawDebugRectOutline var0 var1 50 85 255 0 0 136
+// DrawDebugRectOutline var0 var1 50 70 255 136 0 136
+// DrawDebugRectOutline var0 var1 50 20 255 255 0 136
 // DrawDebugRectOutline var0 var1 5 5 0 255 0 221
 // var0 *= -1
 // var0 += TopNX
 // var1 += TopNY
 
-if FramesHitstun > 0
+if FramesHitstun > 0 && CurrAction < 11 && CurrAction > 16
   Call AIHub
 endif
 if Equal var16 5
@@ -196,7 +196,7 @@ if Equal OIsOnStage 0 && Equal var16 3 && !(NoOpponent) && YDistBackEdge < var2
   Call ApproachHub
 endif
 
-if Equal OIsOnStage 0 && var0 <= 45 && var0 >= -45 && var1 >= var17 && !(Equal var18 255) && !(Equal var16 5)
+if Equal OIsOnStage 0 && var0 <= 50 && var0 >= -50 && var1 >= var17 && !(Equal var18 255) && !(Equal var16 5)
   var18 = 0
   Call EdgeguardHub
 endif
@@ -214,7 +214,7 @@ endif
   var22 = var0 
   var17 = var1
   Norm var22 var22 var17
-  var2 = var22 - 45
+  var2 = var22 - 50
 
 var3 = var0
 Abs var3
@@ -279,7 +279,7 @@ if YDistBackEdge > 0 && Equal var8 0 && TopNY < var22 && var1 > -70 && Equal OIs
   var8 = 1
   Return
 endif
-if var2 < 0 && Equal var8 0 && Equal NumJumps 0 && Equal var7 0 && YSpeed < 0
+if var2 < 0 && Equal var8 0 && Equal NumJumps 0 && Equal var7 0 && YSpeed < 0 && var2 > -10
   if YDistBackEdge < -50
     Return
   endif
@@ -300,7 +300,7 @@ if var1 > 15 && var3 > 25 && Equal var9 0 && var10 <= 0.3
   AbsStick var17 (-0.7)
   Button B
   var9 = 1
-elif var1 > 15 && var3 > 65 && Equal var9 0
+elif var1 > 15 && var3 > 70 && Equal var9 0
   ClearStick
   var17 = TopNX * -1
   AbsStick var17 (-0.7)

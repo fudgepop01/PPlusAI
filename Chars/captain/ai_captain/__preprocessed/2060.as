@@ -67,6 +67,8 @@ var18 = 0
 
 var2 = Rnd
 label _OL
+var21 = 8288
+
 if var1 < 35 && Equal Direction OPos
     if var2 < 0.3 && LevelValue >= 31 // offensive option
         label _OL1

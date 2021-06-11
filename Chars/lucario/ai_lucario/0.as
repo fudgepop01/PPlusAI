@@ -21,19 +21,6 @@
   Call UAir
 #endsnippet
 
-#snippet WHIFF_PUNISH_OPTIONS
-  if Rnd < 0.5
-    if ODamage > 80
-      moveVariant = mv_sspecial_power
-    endif
-    Call SSpecial
-  elif Rnd < 0.5
-    Call Grab
-  else
-    Call DashAttack
-  endif
-#endsnippet
-
 #snippet DEFENSE_OPTIONS
   if Rnd < 0.65 && !(Equal Direction OPos)
     Call BAir
@@ -105,12 +92,10 @@
 #endsnippet
 
 #snippet COMBO_STARTERS
-// $refreshMoves()
-// $filterMoveHitFrame()
-// $filterMoveEndlag(20)
-// $excludeMovesOrigin()
-// $outputWithKnockbackThresholds(80, 170, Call)
-$pickRandMove(dair|fair|dashattack|dtilt|utilt|sspecial|uthrow|dthrow, Goto)
+$refreshMoves()
+$excludeMovesNotOrigin(dair|fair|dashattack|dtilt|utilt|sspecial|usmash)
+$excludeMovesNamed(sspecial_power|usmash)
+$output(Goto)
 #let result = var2
 MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 90, 0, 90)
 if Equal result 0
@@ -119,15 +104,9 @@ endif
 #endsnippet
 
 #snippet KILL_MOVES
-// $refreshMoves()
-// $filterMoveHitFrame()
-// $filterMoveEndlag(20)
-// $excludeMovesOrigin()
-// $outputWithKnockbackThresholds(150, 400, Call)
-if Rnd < 0.5 || ODmgXWeight < 60
-  Return
-endif
-$pickRandMove(usmash|dsmash|fsmash|uair|nair|bair|sspecial_power, Goto)
+$refreshMoves()
+$excludeMovesNotOrigin(usmash|dsmash|fsmash|uair|nair|bair|sspecial)
+$output(Goto)
 #let result = var2
 KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
 if Equal result 0
@@ -140,7 +119,7 @@ if ODistLE 20
   movePart = 1
 endif
 
-$pickRandMove(fair|dashattack|dtilt|grab, Goto)
+$pickRandMove(fair|dashattack|dtilt, Goto)
 #endsnippet
 
 #snippet HIGHUP_OPTIONS

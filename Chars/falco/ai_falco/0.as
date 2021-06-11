@@ -1,113 +1,125 @@
-#include <Definition_AIMain.h>
-//TrueID=0x0
-id 0x8000
+#snippet PRE_HOOKS
+#endsnippet
 
-//Set Unknown
-unk 0x20000
+#snippet TECH_CHASE_OPTIONS
+#endsnippet
 
-//Strings
+#snippet O_ON_PLAT_ABOVE
+  Call UAir
+#endsnippet
 
-if PrevAction >= 117 && PrevAction <= 118
-    Stick 1 1
-    Finish
+#snippet DEFENSE_OPTIONS
+  immediateTempVar = Rnd * 8
+  if immediateTempVar < 3
+    Call NSpecial
+  elif immediateTempVar < 4
+    Call DTilt
+  elif immediateTempVar < 5
+    Call FSmash
+  elif immediateTempVar < 6
+    Call USmash
+  endif
+  
+  if Rnd < 0.8 && !(Equal Direction OPos)
+    Call BAir
+  else
+    Call NAir
+  endif
+#endsnippet
+
+#snippet PUNISH_KNOCKDOWN_OPTIONS
+  if Rnd < 0.6
+    Call DSpecial
+  elif Equal AirGroundState 1 && Rnd < 0.3
+    Call DTilt
+  elif Rnd < 0.3
+    Call DAir
+  elif Equal AirGroundState 1 && Rnd < 0.3
+    Call DSmash
+  else
+    Call NAir
+  endif
+#endsnippet
+
+#snippet ADDITIONAL_PREMAIN_OPTIONS
+  if LevelValue >= LV6 && Rnd <= 0.7 && !(XDistLE 20)
+    // approachType = at_laser
+    Call NSpecial
+  endif
+#endsnippet
+
+#snippet MAIN_OPTIONS
+  if OYDistBackEdge > -45
+    {DECISION_TREE}
+  endif
+  if OYDistBackEdge <= -45
+    globTempVar = TopNY - OTopNY
+    Abs globTempVar
+    if TopNY < OTopNY && globTempVar < 30
+      Call UAir
+    else
+      globTempVar = TopNX - OTopNX
+      Abs globTempVar
+      if globTempVar > 20
+        if Equal Direction OPos
+          Call NAir
+        else
+          Call BAir
+        endif
+      endif
+      Call DAir
+    endif
+  endif
+#endsnippet
+
+#snippet COMBO_STARTERS
+$refreshMoves()
+// $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
+// $excludeMovesOrigin(sspecial|sspecialair)
+$excludeMovesNotOrigin(nair|nspecial|dair)
+$output(Goto)
+#let result = var2
+MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 90, 0, 90)
+if Equal result 0
+  Return
 endif
-if OIsOnStage < 1 || IsOnStage < 1
-    Finish
+#endsnippet
+
+#snippet KILL_MOVES
+$refreshMoves()
+// $filterMoveHitFrame(20)
+// $filterMoveEndlag(20)
+$excludeMovesOrigin(sspecial|sspecialair)
+$output(Call)
+#let result = var2
+KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
+if Equal result 0
+  Return
 endif
-if !(InAir)
-    Finish
+#endsnippet
+
+#snippet NEUTRAL_MOVES
+$refreshMoves()
+$excludeMovesNotOrigin(nair|dair|nspecial)
+if !(XDistLE 40)
+  Goto nspecial
 else
-    Seek
+  $output(Goto)
 endif
-Return
-//____________________
-label
-var0=OYCoord
-var1=YCoord
-var2=var1+20
-var3=var1-20
-var10=OXCoord
-var11=XCoord
-var12=var1+30
-var13=var1-30
-if PrevAction >= 117 && PrevAction <= 118
-    Stick 1 1
-    Finish
-endif
-if var0 <= var2 && var0 >= var3 && IsOnStage > 0 && XDistLE 30 && !(YDistFrontEdge > 25)
-    ClearStick
-    Button A
-    Seek
-endif
-if Back
-    var1+=20
-    if var0 <= var2 && var0 >= var3 && IsOnStage > 0 && XDistLE 30 && !(YDistFrontEdge > 25)
-        ClearStick
-        Stick (-1)
-        Button A
-        Seek
-    endif
-endif
-if !(Back)
-    var1+=20
-    if var0 <= var2 && var0 >= var3 && IsOnStage > 0 && XDistLE 30 && !(YDistFrontEdge > 25)
-        ClearStick
-        Button A
-        Seek
-    endif
-endif
-if OYCoord > YCoord
-    var10+=10
-    if var10 <= var12 && var10 >= var13 && IsOnStage > 0 && !(YDistFrontEdge > 25)
-        ClearStick
-        Stick 0 (-1)
-        Button A
-        Seek
-    endif
-endif
-if OYCoord < YCoord
-    var10+=10
-    if var10 <= var12 && var10 >= var13 && IsOnStage > 0 && !(YDistFrontEdge > 25)
-        ClearStick
-        Stick 0 (-1)
-        Button A
-        Seek
-    endif
-endif
-Return
-//____________________
-label
-Goto _0
-if CurrAction >= 51 && CurrAction < 52
-    Seek _1
-endif
-if FrameGE 1 && !(InAir)
-    Finish
-endif
-Return
-//____________________
-label _0
-if FrameGE 4
-    AbsStick OPos
-endif
-Return
-//____________________
-label _1
-var1=0
-//____________________
-label
-if OIsOnStage < 1 || IsOnStage < 1
-    Finish
-endif
-if var1 < 1
-    if CurrAction >= 51 && CurrAction < 52
-        Button R
-    endif
-    var1=1
-else
-    var1=0
-endif
-if !(InAir) || IsOnStage < 1
-    Finish
-endif
-Return
+#endsnippet
+
+#snippet HIGHUP_OPTIONS
+  globTempVar = TopNY - OTopNY
+  immediateTempVar = TopNX - OTopNX
+  if globTempVar > 20
+    Call UAir
+  elif globTempVar < -20
+    Call DAir
+  elif immediateTempVar > 20
+    $pickRandMove(fair|dair, Call)
+  elif immediateTempVar < -20
+    Call BAir
+  else
+    Call DAir
+  endif
+#endsnippet

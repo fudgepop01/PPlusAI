@@ -1,26 +1,42 @@
-#include <Definition_AIMain.h>
-//TrueID=0x1
-id 0x8001
+#snippet SKIP_DASHDANCE_CONDITIONS
+  elif Equal lastAttack valNSpecial
+#endsnippet
 
-//Set Unknown
-unk 0x20000
+#snippet BEGINNING_CHECKS
+  if Equal CurrAction hex(0x114)
+    Call RecoveryHub
+  endif
 
-//Strings
+  if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction hex(0x49)
+    Call AIHub
+  endif
+#endsnippet
 
-if FrameGE 0 && !(FrameGE 6)
-    AbsStick OPos 1
-endif
-if FrameGE 6
-    AbsStick OPos
-    if XDistLE 25 || !(InAir)
-        Finish
+#snippet MIX_DOUBLEJUMP_SECTION
+  // elif CanJump && Rnd <= 0.01 && lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F) && Equal IsOnStage 1 && TopNY > OTopNY && !(Equal approachType at_combo)
+  //   Call mix_doubleJump
+  // elif CanJump && Rnd <= 0.01 && Equal lastAttack hex(0x8008) && TopNY > OTopNY && !(Equal approachType at_combo)
+  //   Call mix_doubleJump
+#endsnippet
+
+#snippet ADDITIONAL_MIXUPS
+#endsnippet
+
+#snippet ADDITIONAL_YDIST_CHECKS
+#endsnippet
+
+#snippet ADDITIONAL_IDLE_HOOK
+  if Equal lastAttack valNSpecial
+    label
+    if Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
+      if CurrAction <= hex(0x9)
+        Button X
+      endif
+    elif !(Equal AirGroundState 1)
+      AbsStick OPos
+      Seek skipPreparation
+      Jump
     endif
-endif
-Return
-//____________________
-label _0
-var20=YCoord+30
-if OYCoord > var20
-    Call ApproachHub
-endif
-Return
+    Return
+  endif
+#endsnippet

@@ -220,31 +220,39 @@ if Equal isEarlyRoll 0
     elif moveSelection < 10
       Call NSpecial
     elif moveSelection < 11
-      Call SSpecial
+      Call USpecial
     elif moveSelection < 12
-      Call DSpecial
+      Call SSpecial
     elif moveSelection < 13
-      Call Grab
+      Call DSpecial
     elif moveSelection < 14
-      Call NAir
+      Call Grab
     elif moveSelection < 15
-      Call FAir
+      Call NAir
     elif moveSelection < 16
-      Call BAir
+      Call FAir
     elif moveSelection < 17
-      Call UAir
+      Call BAir
     elif moveSelection < 18
-      Call DAir
+      Call UAir
     elif moveSelection < 19
-      Call NSpecialAir
+      Call DAir
     elif moveSelection < 20
-      Call SSpecialAir
+      Call NSpecialAir
     elif moveSelection < 21
-      Call USpecialAir
+      Call SSpecialAir
     elif moveSelection < 22
+      Call USpecialAir
+    elif moveSelection < 23
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
+
+
+    if !(XDistLE 70)
+      Seek attack_approaches
+      Jump
+    endif
 
     #let nearCliffX = var0
     #let nearCliffY = var1
@@ -265,17 +273,35 @@ if Equal isEarlyRoll 0
       Call Grab
     endif
 
+    LOGSTR str("HERE 1")
+
+
     if OCurrAction >= hex(0x55) && OCurrAction <= hex(0x5D)
       {PUNISH_BROKEN_SHIELD}
     endif
 
-    RetrieveATKD var0 OCurrSubaction 1
-    #let oDangerStart = var0
-    #let oDangerEnd = var1
-    #let oDangerXMin = var2
-    #let oDangerXMax = var3
-    #let oDangerYMin = var4
-    #let oDangerYMax = var5
+    // if the opponent is lying there doing nothing
+    if LevelValue >= LV6 && Equal waitTeamFlag 0
+      if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D)
+        {PUNISH_KNOCKDOWN_OPTIONS}
+      endif
+    endif
+
+    if LevelValue >= LV5 && Equal OAirGroundState 3
+      Call EdgeguardHub
+    endif
+
+    #let oIASA = var0
+    #let oDangerStart = var1
+    #let oDangerEnd = var2
+    #let oDangerXMin = var23
+    #let oDangerXMax = var23
+    #let oDangerYMin = var23
+    #let oDangerYMax = var23
+    RetrieveFullATKD oIASA oDangerStart oDangerEnd oDangerXMin oDangerXMax oDangerYMin oDangerYMax OCurrSubaction 1
+    if Equal oIASA 0
+      oIASA = OEndFrame
+    endif
 
     #let injected = var7
     injected = 0
@@ -285,30 +311,44 @@ if Equal isEarlyRoll 0
     endif 
 
     #let OCurrEndlag = var4
-    OCurrEndlag = OEndFrame - OAnimFrame 
+    OCurrEndlag = oIASA - OAnimFrame 
+    if Equal OCurrAction hex(0x33)
+      globTempVar = OTopNY + OYDistBackEdge
+      EstOPassTimeY globTempVar globTempVar
+      globTempVar += 3
+      if globTempVar < OCurrEndlag
+        OCurrEndlag = globTempVar
+      endif
+    endif
+    OCurrEndlag -= 5
+
+    LOGSTR str("HERE 2")
+
     OCurrEndlag += oDangerStart
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 1
       if Equal injected 1
         Call FakeOutHub
-      elif OAttacking && oDangerStart < OAnimFrame && OCurrEndlag >= 8 && !(Equal oDangerStart -1) && LevelValue >= LV8 && !(Equal OCurrAction hex(0x1B)) && XDistLE 40
+      elif OAttacking && oDangerStart < OAnimFrame && OCurrEndlag >= 12 && !(Equal oDangerStart -1) && LevelValue >= LV8 && !(Equal OCurrAction hex(0x1B)) && XDistLE 40
         {WHIFF_PUNISH_OPTIONS}
-      elif oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25) || OCurrEndlag < 8
-        if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && XDistLE oDangerXMax
+      elif oDangerEnd < OAnimFrame || Equal OCurrAction hex(0x25) || OCurrEndlag < 12
+        if OAttacking && Rnd < 0.8 && !(Equal lastScript hex(0x8008)) && XDistLE oDangerXMax && !(Equal lastScript hex(0x8007))
           movePart = 1
           Call FakeOutHub
         endif
-      elif OAttacking && OCurrActionFreq >= 3 
+      elif OAttacking && OCurrActionFreq >= 3 && !(Equal lastScript hex(0x8007))
         Call FakeOutHub
-      elif Rnd < 0.1 && !(Equal lastScript hex(0x8008)) 
+      elif Rnd < 0.1 && !(Equal lastScript hex(0x8008)) && !(Equal lastScript hex(0x8007))
         Call FakeOutHub
       endif
     endif
+
+    LOGSTR str("HERE 3")
 
     lastScript = hex(0x8000)
 
     #let defenseMul = var3
     defenseMul = 200 - (ODamage - Damage) * 4
-    defenseMul /= 200
+    defenseMul *= 0.005
 
     predictOOption globTempVar man_dashdance LevelValue
     predictionConfidence immediateTempVar man_dashdance LevelValue
@@ -324,8 +364,11 @@ if Equal isEarlyRoll 0
       defenseMul *= globTempVar
     endif 
 
+    LOGSTR str("HERE 4")
+
     Norm immediateTempVar TopNX TopNY
     Norm globTempVar OTopNX OTopNY
+    immediateTempVar -= 10
     if LevelValue >= LV5 && Equal waitTeamFlag 0 && injected <= 2
       #let tempVar = var0
       #let tempVar2 = var1
@@ -343,6 +386,7 @@ if Equal isEarlyRoll 0
         Call NeutralHub
       endif
     endif
+    LOGSTR str("HERE 5")
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 2
       #let fakeChance = var2
@@ -352,34 +396,34 @@ if Equal isEarlyRoll 0
         fakeChance = defenseMul * 0.10
       endif
       Abs fakeChance
+      if fakeChance > 0.7
+        fakeChance = 0.7
+      endif
       if Rnd < fakeChance
         Call FakeOutHub
       endif
     endif
 
+    LOGSTR str("HERE 6")
     if Equal waitTeamFlag 0 && immediateTempVar < globTempVar && injected <= 3
       #let defenseChance = var2
       defenseChance = defenseMul * 0.28
+      if defenseChance > 0.8
+        defenseChance = 0.8
+      endif
       if Rnd < defenseMul || Rnd <= 0.2 || Equal injected 3
         approachType = at_defend
         {DEFENSE_OPTIONS}
       endif
     endif
+    label attack_approaches
     approachType = at_attack
 
-    // if the opponent is lying there doing nothing
-    if LevelValue >= LV6 && Equal waitTeamFlag 0
-      if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D)
-        {PUNISH_KNOCKDOWN_OPTIONS}
-      endif
-    endif
-
-    if LevelValue >= LV5 && Equal OAirGroundState 3
-      Call EdgeguardHub
-    endif
+    LOGSTR str("HERE 7")
 
     {ADDITIONAL_PREMAIN_OPTIONS}
 
+    LOGSTR str("HERE 8")
     if Equal OCurrAction hex(0x25) && !(Equal ODirection Direction)
       Seek callers
       Jump
@@ -392,6 +436,7 @@ if Equal isEarlyRoll 0
     ODmgXWeight *= -1
     ODmgXWeight /= 100
     ODmgXWeight *= ODamage
+    LOGSTR str("HERE 9")
 
     if LevelValue >= LV3
       {MAIN_OPTIONS}
@@ -471,9 +516,6 @@ Return
 $generateAllMovesGotoKB()
 
 label callMove
-LOGSTR str("L Atk")
-LOGVAL lastAttack
-
 if Equal CurrAction hex(0x18)
   Return
 endif
@@ -530,7 +572,7 @@ label approachTypes
 globTempVar = TopNY - OTopNY
 Abs globTempVar
 if ODistLE 8 && globTempVar < 20 && Equal AirGroundState 1
-  approachType = at_immediate
+  approachType = at_combo
 endif
 predictOOption globTempVar man_approach LevelValue
 predictionConfidence immediateTempVar man_approach LevelValue
@@ -559,16 +601,19 @@ endif
 Return
 
 label approachType_filter
+if lastAttack < valJab123 || lastAttack > valDSpecialAir
+  Return
+endif
 if Equal approachType at_threaten
   if Equal lastAttack valGrab
-    Return
-  elif lastAttack < valNAir && Rnd < 0.4
-  elif lastAttack >= valNAir
-  else
-    Return
+    approachType = 0
+  // elif lastAttack < valNAir && Rnd < 0.4
+  // elif lastAttack >= valNAir
+  // else
+  //   approachType = 0
   endif
 elif Equal approachType at_poke && Equal lastAttack valGrab
-  Return
+  approachType = 0
 endif
 Seek callMove
 Jump

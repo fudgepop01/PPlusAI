@@ -28,7 +28,7 @@ if NoOpponent
   Return
 endif
 
-if !(Equal lastScript hex(0x8F01)) && !(Equal lastScript hex(0x8F00)) && !(Equal lastScript hex(0x8001)) && !(Equal lastScript valOffensiveShield) && !(Equal lastScript valGeneral)
+if !(Equal lastScript hex(0x8F01)) && !(Equal lastScript hex(0x8F00)) && !(Equal lastScript hex(0x8001)) && !(Equal lastScript valOffensiveShield) && !(Equal lastScript valJumpOver) && !(Equal lastScript valGeneral)
   #let shouldRepick = var0
   shouldRepick = 0
   
@@ -88,14 +88,20 @@ IF_O_IS_TECHING
 elif CurrAction >= hex(0x7C) && CurrAction <= hex(0x7D)
 elif XDistLE 10
 elif InAir
-elif move_xRange > 30
 elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x52)
 elif Equal lastScript hex(0x8F00) || Equal lastScript hex(0x2060) || Equal lastScript hex(0x8002) || MeteoChance
 elif Equal approachType at_undershoot && Rnd < 0.3
-elif Equal lastAttack valOffensiveShield && Rnd < 0.8
+elif Equal approachType at_fakeout && Rnd < 0.2
+elif Equal lastAttack valOffensiveShield && Rnd < 0.6
+elif Equal lastAttack valJumpOver && Rnd < 0.4
+elif Equal approachType at_combo
 else
   lastScript = hex(0x8001)
   DASHDANCE(var0, var1)
+endif
+
+if !(XDistLE 80) && Rnd < 0.35 && !(Equal approachType at_fakeout)
+  Call FakeOutHub
 endif
 
 // prevTargetXDistance
@@ -103,6 +109,7 @@ var7 = hex(0xFFFF)
 label BEGIN_MAIN
 Cmd30
 
+Goto checkHitstun
 // globTempVar = move_xOffset + (move_xRange * 2)
 // if Equal AirGroundState 2 && YDistBackEdge < 30 && !(Equal approachType at_edgeguard)
 //   if globTempVar <= -1 && Equal Direction OPos
@@ -529,7 +536,7 @@ endif
 #let gravChangeDist = var1
 CALC_SELF_Y_CHANGE_GRAVITY(gravChangeDist, move_hitFrame)
 
-if !(Equal CurrSubaction JumpSquat)
+// if !(Equal CurrSubaction JumpSquat)
   #let localTempVar = var2
 
   // if one is negative and one is positive, and it's <= move_xRange
@@ -575,6 +582,12 @@ if !(Equal CurrSubaction JumpSquat)
       else
         ClearStick 0
       endif
+    elif targetYDistance <= jumpIfOWithin && OAttacking && OCurrActionFreq >= 3
+      Button X
+      Goto JumpIfInRange
+    // elif Rnd < 0.3 && targetYDistance <= jumpIfOWithin 
+    //   Button X
+    //   Goto JumpIfInRange
     endif
   {MIX_DOUBLEJUMP_SECTION}
   {ADDITIONAL_MIXUPS}
@@ -602,7 +615,7 @@ if !(Equal CurrSubaction JumpSquat)
   //   endif
   //   label
   // endif
-endif
+// endif
 
 if AnimFrame <= 5 && Equal CurrAction hex(0xB) 
 elif YDistBackEdge > -3 && Equal IsOnStage 1 && LevelValue >= LV7 && InAir && XDistBackEdge < -10 && XDistFrontEdge > 10
@@ -801,24 +814,46 @@ elif Equal CurrSubaction JumpSquat
   #let shouldFullHop = var0
   shouldFullHop = Rnd
   label jsquat
-  immediateTempVar = OTopNX - TopNX
+  immediateTempVar = move_hitFrame * XSpeed + TopNX
+  immediateTempVar -= OTopNX
+  Abs immediateTempVar
   globTempVar = (move_xOffset + move_xRange) * Direction
   immediateTempVar += globTempVar
   globTempVar = immediateTempVar
-  Abs globTempVar
-  if globTempVar <= 20
-    ClearStick
-  elif globTempVar <= 35
-    immediateTempVar = OPos * 0.4
-    AbsStick immediateTempVar
-  elif globTempVar <= 50
-    immediateTempVar = OPos * 0.6
-    AbsStick immediateTempVar
-  elif globTempVar <= 60
-    immediateTempVar = OPos * 0.85
-    AbsStick immediateTempVar
-  else
-    AbsStick OPos
+  LOGSTR str("GTV")
+  LOGVAL globTempVar
+  if globTempVar < 0
+    Abs globTempVar
+    if globTempVar <= 5
+      ClearStick
+    elif globTempVar <= 10 
+      immediateTempVar = OPos * -0.4
+      AbsStick immediateTempVar
+    elif globTempVar <= 15
+      immediateTempVar = OPos * -0.6
+      AbsStick immediateTempVar
+    elif globTempVar <= 20
+      immediateTempVar = OPos * -0.85
+      AbsStick immediateTempVar
+    else
+      immediateTempVar = OPos * -1
+      AbsStick immediateTempVar
+    endif
+  elif True
+    if globTempVar <= 5
+      ClearStick
+    elif globTempVar <= 10 
+      immediateTempVar = OPos * 0.4
+      AbsStick immediateTempVar
+    elif globTempVar <= 15
+      immediateTempVar = OPos * 0.6
+      AbsStick immediateTempVar
+    elif globTempVar <= 20
+      immediateTempVar = OPos * 0.85
+      AbsStick immediateTempVar
+    else
+      AbsStick OPos
+    endif
   endif
 
   // adjusts the trajectory of the jump if the
@@ -854,6 +889,10 @@ elif Equal CurrSubaction JumpSquat
       Button X
     endif 
     Seek jsquat
+    Return
+  elif OAttacking && Equal CurrSubaction JumpSquat && OCurrActionFreq >= 3
+    Button X
+    Seek jsquat 
     Return
   endif
 else
@@ -974,6 +1013,7 @@ if absTargetYDistance <= globTempVar
       Call AIHub
     {ADDITIONAL_YDIST_CHECKS}
     else
+      LOGSTR str("attacking")
       shouldAttack = 1
       Return
     endif
@@ -1014,11 +1054,12 @@ if !(Equal approachType at_combo)
 endif
 label
 Goto defendFromO
+Goto checkHitstun
 // if Equal OAirGroundState 1 && OCurrAction <= hex(0x09) && Rnd < 0.3 && Equal AirGroundState 1 && lastAttack < valNAir
 //   lastAttack = hex(0x8008)
 // endif
 
-if Equal lastAttack valGeneral || Equal lastAttack hex(0x8008) || Equal lastAttack valOffensiveShield
+if Equal lastAttack valGeneral || Equal approachType at_fakeout
   Seek skipPreparation
   Jump
 endif
@@ -1029,8 +1070,11 @@ framesOnGround = 0
 {ADDITIONAL_IDLE_HOOK}
 
 // if the action requires us to be stopped,
-if lastAttack >= valJab123 && lastAttack <= valDSpecial && !(Equal lastAttack valUSmash) && !(Equal lastAttack valSSpecial) && CurrAction > hex(0x1)
-  Goto makeIdle
+if lastAttack >= valJab123 && lastAttack <= valDSpecial && !(Equal lastAttack valUSmash) && !(Equal lastAttack valSSpecial) && CurrAction > hex(0x2)
+  if CurrAction >= hex(0x6) || CurrAction <= hex(0x7)
+  else
+    Goto makeIdle
+  endif
   Return
 elif Equal CurrSubaction JumpSquat
   Return
@@ -1125,7 +1169,7 @@ elif Equal lastAttack valUSpecialAir
   Call USpecialAir
 elif Equal lastAttack valDSpecialAir
   Call DSpecialAir
-elif Equal lastAttack hex(0x8008) || Equal lastAttack valOffensiveShield
+elif Equal approachType at_fakeout
   Call FakeOutHub
 elif Equal lastAttack valGeneral
   movePart = mp_ATK
@@ -1205,6 +1249,11 @@ label defendFromO
 
 DEFEND_FROM_O
 TRACK_O_OPTIONS
+
+Return
+label checkHitstun
+
+HITSTUN_CHECK
 
 Return
 Return
