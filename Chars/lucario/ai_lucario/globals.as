@@ -44,11 +44,11 @@
 #const techChaseCloseDist = 10
 #const techChaseFarDist = 25
 
-#const dashCountMax = 25
+#const dashCountMax = 45
 #const dashForceTurnFrame = 10
 #const dashDanceMinFrames = 3
 #const DDWaveDash = 0.2
-#const DDMaxRange = 45
+#const DDMaxRange = 150
 
 #const minBaseReactionTime = 0
 #const maxBaseReactionTime = 21

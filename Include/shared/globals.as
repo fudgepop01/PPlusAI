@@ -89,29 +89,29 @@
 
 #const techRollVulFrame = 22
 
-#const valJab123 = 24625
-#const valFTilt = 24626
-#const valUTilt = 24627
-#const valDTilt = 24628
-#const valFSmash = 24629
-#const valUSmash = 24630
-#const valDSmash = 24631
-#const valNSpecial = 24632
-#const valSSpecial = 24633
-#const valUSpecial = 24634
-#const valDSpecial = 24635
-#const valGrab = 24636
-#const valDashAttack = 24638
+#const valJab123 = hex(0x6031)
+#const valFTilt = hex(0x6032)
+#const valUTilt = hex(0x6033)
+#const valDTilt = hex(0x6034)
+#const valFSmash = hex(0x6035)
+#const valUSmash = hex(0x6036)
+#const valDSmash = hex(0x6037)
+#const valNSpecial = hex(0x6038)
+#const valSSpecial = hex(0x6039)
+#const valUSpecial = hex(0x603A)
+#const valDSpecial = hex(0x603B)
+#const valGrab = hex(0x603C)
+#const valDashAttack = hex(0x603D)
 
-#const valNAir = 24641
-#const valFAir = 24642
-#const valBAir = 24643
-#const valUAir = 24644
-#const valDAir = 24645
-#const valNSpecialAir = 24646
-#const valSSpecialAir = 24647
-#const valUSpecialAir = 24648
-#const valDSpecialAir = 24649
+#const valNAir = hex(0x6041)
+#const valFAir = hex(0x6042)
+#const valBAir = hex(0x6043)
+#const valUAir = hex(0x6044)
+#const valDAir = hex(0x6045)
+#const valNSpecialAir = hex(0x6046)
+#const valSSpecialAir = hex(0x6047)
+#const valUSpecialAir = hex(0x6048)
+#const valDSpecialAir = hex(0x6049)
 
 #const valGeneral = 25000
 #const valShield = 25001
@@ -183,6 +183,12 @@
 #const st_disadv_above_plat = 3
 #const st_disadv_below_plat = 4
 #const st_disadv_no_plat = 5
+#const st_plat_high_camp = 6
+#const st_plat_high_reg = 7
+#const st_plat_reg_camp = 8
+#const st_plat_reg_reg = 9
+#const st_below_plat = 10
+#const st_between_plat = 11
 
 // works beacause it isn't approaching - it's used to track what tactics
 // work or fail vs the target opponent

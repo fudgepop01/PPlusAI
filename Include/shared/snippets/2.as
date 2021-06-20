@@ -25,12 +25,18 @@
 
   // targetXDistance += TopNX
   // targetYDistance += TopNY
-  // DrawDebugRectOutline targetXDistance targetYDistance move_xRange move_yRange color(0x00FF0088)
+  // DrawDebugRectOutline targetXDistance targetYDistance calcMoveXRange calcMoveYRange color(0x00FF0088)
   // targetXDistance -= TopNX
   // targetYDistance -= TopNY
 
   Abs targetXDistance
   Abs targetYDistance
+  // LOGSTR str("TXD / range")
+  // LOGVAL targetXDistance
+  // LOGVAL calcMoveXRange
+  // LOGSTR str("TYD / range")
+  // LOGVAL targetYDistance
+  // LOGVAL calcMoveYRange
 
   if targetXDistance <= calcMoveXRange && targetYDistance <= calcMoveYRange
       Norm immediateTempVar TopNX TopNY
@@ -45,25 +51,44 @@
       #let result = var2
       EstOXCoord targetXDistance frameToCalc
       EstOYCoord targetYDistance frameToCalc
+      LOGSTR str("KB")
+      LOGVAL move_currKnockback
+      COS globTempVar move_angle
+      globTempVar *= move_currKnockback
+      LOGVAL globTempVar
+      SIN globTempVar move_angle
+      globTempVar *= move_currKnockback
+      LOGVAL globTempVar
+
       KILL_CHECK(result, move_currKnockback, move_angle, targetXDistance, targetYDistance)
       if Equal result 1
+        LOGSTR str("k")
         Seek callMove
         Jump
       endif
 
       if Equal moveType mt_combo
+        LOGSTR str("c")
         #let result = var2
-        MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 50, 0, 70 + comboToleranceOffset, 0, 120)
+        MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 40, 0, 120 + comboToleranceOffset, 0, 120)
         if Equal result 1
-          LOGSTR str("cCalling")
+          // LOGSTR str("cCalling")
           Seek callMove
           Jump
         endif
       elif Equal moveType mt_juggle
+        LOGSTR str("j")
         #let result = var2
-        MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 50, 0, 30 + comboToleranceOffset, 0, 80)
+        MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 30, 0, 35 + comboToleranceOffset, 0, 140)
         if Equal result 1
-          LOGSTR str("jCalling")
+          // LOGSTR str("jCalling")
+          Seek callMove
+          Jump
+        endif
+      elif Equal moveType mt_downward
+        LOGSTR str("d")
+        if move_angle >= 180 && move_angle <= 360
+          // LOGSTR str("dCalling")
           Seek callMove
           Jump
         endif
@@ -71,22 +96,116 @@
   endif
 #endsnippet
 
+#snippet GLOB_FILTERS
+#endsnippet
+
+#snippet COMBO_GR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet COMBO_AIR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet JUGGLE_GR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet JUGGLE_AIR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet KILL_GR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet KILL_AIR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet DOWN_GR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
+#snippet DOWN_AIR_FILTERS
+  {GLOB_FILTERS}
+#endsnippet
+
 #snippet COMBO_OPTIONS
-  $refreshMoves()
-  $filterMoveEndlag(30)
-  $outputWithKnockbackThresholds(90, 290, Goto)
+  EstOYCoord globTempVar OFramesHitstun
+  globTempVar -= OTopNY
+  GetYDistFloorOffset globTempVar 0 globTempVar 1
+  // LOGSTR str("ydfo")
+  // LOGVAL globTempVar
+  if globTempVar < 30
+    $refreshMoves()
+    $filterMoveEndlag(30)
+    {COMBO_GR_FILTERS}
+    $output(Goto)
+  else
+    $refreshMoves()
+    $excludeMovesNotOrigin(NAir|BAir|FAir|DAir|UAir|SSpecialAir|DSpecialAir|NSpecialAir|USpecialAir)
+    {COMBO_AIR_FILTERS}
+    $output(Goto)
+  endif
 #endsnippet
 
 #snippet JUGGLE_OPTIONS
-  $refreshMoves()
-  $filterMoveAngle(60, 120)
-  $output(Goto)
+  EstOYCoord globTempVar OFramesHitstun
+  globTempVar -= OTopNY
+  GetYDistFloorOffset globTempVar 0 globTempVar 1
+  // LOGSTR str("ydfo")
+  // LOGVAL globTempVar
+  if globTempVar < 30
+    $refreshMoves()
+    $filterMoveAngle(0, 180)
+    {JUGGLE_GR_FILTERS}
+    $output(Goto)
+  else
+    $refreshMoves()
+    $filterMoveAngle(0, 180)
+    $excludeMovesNotOrigin(NAir|BAir|FAir|DAir|UAir|SSpecialAir|DSpecialAir|NSpecialAir|USpecialAir)
+    {JUGGLE_AIR_FILTERS}
+    $output(Goto)
+  endif
 #endsnippet
 
 #snippet KILL_OPTIONS
-  $refreshMoves()
-  $filterMoveAngle(0, 180)
-  $outputWithKnockbackThresholds(180, 400, Goto)
+  EstOYCoord globTempVar OFramesHitstun
+  globTempVar -= OTopNY
+  GetYDistFloorOffset globTempVar 0 globTempVar 1
+  // LOGSTR str("ydfo")
+  // LOGVAL globTempVar
+  if globTempVar < 30
+    $refreshMoves()
+    {KILL_GR_FILTERS}
+    $output(Goto)
+  else
+    $refreshMoves()
+    $excludeMovesNotOrigin(NAir|BAir|FAir|DAir|UAir|SSpecialAir|DSpecialAir|NSpecialAir|USpecialAir)
+    {KILL_AIR_FILTERS}
+    $output(Goto)
+  endif
+#endsnippet
+
+#snippet DOWNWARD_OPTIONS
+  EstOYCoord globTempVar OFramesHitstun
+  globTempVar -= OTopNY
+  GetYDistFloorOffset globTempVar 0 globTempVar 1
+  // LOGSTR str("ydfo")
+  // LOGVAL globTempVar
+  if globTempVar < 30
+    $refreshMoves()
+    $filterMoveAngle(180, 360)
+    {DOWN_GR_FILTERS}
+    $output(Goto)
+  else
+    $refreshMoves()
+    $filterMoveAngle(180, 360)
+    $excludeMovesNotOrigin(NAir|BAir|FAir|DAir|UAir|SSpecialAir|DSpecialAir|NSpecialAir|USpecialAir)
+    {DOWN_AIR_FILTERS}
+    $output(Goto)
+  endif
 #endsnippet
 
 #snippet MOVE_GENERATION

@@ -8,6 +8,10 @@ label begin
 SetAutoDefend 0
 SetDisabledMd -1
 
+if !(Equal TrainingScript hex(0xFFFF))
+  noCombo = 1
+endif
+
 {PRE_HOOKS}
 
 // if CurrAction >= hex(0x42) && CurrAction <= hex(0x44) || Equal CurrAction hex(0x45) && YDistBackEdge < -7 && !(OutOfStage)
@@ -182,6 +186,8 @@ approachType = 0
 moveVariant = 0
 movePart = 0
 
+{TRAINING_OPTIONS}
+
 if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction hex(0x49) || OCurrAction >= hex(0x4D) && OCurrAction <= hex(0x5F)
   TECHCHASE_SITUATION(var0, var1, var2, var3, var4, var5, Rnd * 40 + 15, _afterTCS, _afterTCS)
 endif
@@ -273,9 +279,6 @@ if Equal isEarlyRoll 0
       Call Grab
     endif
 
-    LOGSTR str("HERE 1")
-
-
     if OCurrAction >= hex(0x55) && OCurrAction <= hex(0x5D)
       {PUNISH_BROKEN_SHIELD}
     endif
@@ -322,8 +325,6 @@ if Equal isEarlyRoll 0
     endif
     OCurrEndlag -= 5
 
-    LOGSTR str("HERE 2")
-
     OCurrEndlag += oDangerStart
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 1
       if Equal injected 1
@@ -341,8 +342,6 @@ if Equal isEarlyRoll 0
         Call FakeOutHub
       endif
     endif
-
-    LOGSTR str("HERE 3")
 
     lastScript = hex(0x8000)
 
@@ -364,8 +363,6 @@ if Equal isEarlyRoll 0
       defenseMul *= globTempVar
     endif 
 
-    LOGSTR str("HERE 4")
-
     Norm immediateTempVar TopNX TopNY
     Norm globTempVar OTopNX OTopNY
     immediateTempVar -= 10
@@ -386,7 +383,6 @@ if Equal isEarlyRoll 0
         Call NeutralHub
       endif
     endif
-    LOGSTR str("HERE 5")
 
     if LevelValue >= LV7 && Equal waitTeamFlag 0 && injected <= 2
       #let fakeChance = var2
@@ -404,7 +400,6 @@ if Equal isEarlyRoll 0
       endif
     endif
 
-    LOGSTR str("HERE 6")
     if Equal waitTeamFlag 0 && immediateTempVar < globTempVar && injected <= 3
       #let defenseChance = var2
       defenseChance = defenseMul * 0.28
@@ -419,11 +414,9 @@ if Equal isEarlyRoll 0
     label attack_approaches
     approachType = at_attack
 
-    LOGSTR str("HERE 7")
 
     {ADDITIONAL_PREMAIN_OPTIONS}
 
-    LOGSTR str("HERE 8")
     if Equal OCurrAction hex(0x25) && !(Equal ODirection Direction)
       Seek callers
       Jump
@@ -436,7 +429,6 @@ if Equal isEarlyRoll 0
     ODmgXWeight *= -1
     ODmgXWeight /= 100
     ODmgXWeight *= ODamage
-    LOGSTR str("HERE 9")
 
     if LevelValue >= LV3
       {MAIN_OPTIONS}

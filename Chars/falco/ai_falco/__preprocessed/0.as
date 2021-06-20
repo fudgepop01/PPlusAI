@@ -8,6 +8,10 @@ label begin
 SetAutoDefend 0
 SetDisabledMd -1
 
+if !(Equal TrainingScript 65535)
+  var19 = 1
+endif
+
 
 
 // if CurrAction >= 66 && CurrAction <= 68 || Equal CurrAction 69 && YDistBackEdge < -7 && !(OutOfStage)
@@ -80,7 +84,7 @@ Cmd30
   GetYDistFloorOffset var0 var1 5 0
   // var22 = TopNY - var0 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var0 < 4 && !(Equal var0 -1) 
+  if !(Equal var0 -1) 
     var0 = 0
   elif Equal DistBackEdge DistFrontEdge
     var0 = 2
@@ -201,6 +205,10 @@ endif
 var16 = 0
 var19 = 0
 var18 = 0
+
+if Equal TrainingScript 33025
+  Call 0x8101
+endif
 
 if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73 || OCurrAction >= 77 && OCurrAction <= 95
   SetTimeout 300
@@ -366,9 +374,6 @@ if Equal var0 0
       Call Grab
     endif
 
-    LOGSTR 1212502528 1159737600 0 0 0
-
-
     if OCurrAction >= 85 && OCurrAction <= 93
 //       {PUNISH_BROKEN_SHIELD}
     endif
@@ -415,8 +420,6 @@ if Equal var0 0
       endif
     endif
     var4 -= 5
-
-    LOGSTR 1212502528 1159737856 0 0 0
 
     var4 += var1
     if LevelValue >= 60 && Equal var6 0 && var7 <= 1
@@ -486,7 +489,7 @@ elif 23 < var17 && var17 < 24
 Goto bair
 elif 24 < var17 && var17 < 25  
 var19 = 1
-Goto nair
+Goto bair
 Goto bair_weak
 elif 25 < var17 && var17 < 26  && OYDistBackEdge < -5
 Goto uair
@@ -496,9 +499,9 @@ Goto uair
 Goto uair_hit2
 elif 27 < var17 && var17 < 28  
 Goto dair
-elif 28 < var17 && var17 < 29  && OYDistBackEdge < -5
+elif 28 < var17 && var17 < 29  
 var19 = 1
-Goto uair
+Goto dair
 Goto dair_weak
 endif
   if var13 < var4 && var20 >= 24625 && var20 <= 24649
@@ -534,8 +537,6 @@ endif
       endif
     endif
 
-    LOGSTR 1212502528 1159738112 0 0 0
-
     var21 = 32768
 
     var3 = 200 - (ODamage - Damage) * 4
@@ -555,8 +556,6 @@ endif
       var3 *= var17
     endif 
 
-    LOGSTR 1212502528 1159738368 0 0 0
-
     Norm var22 TopNX TopNY
     Norm var17 OTopNX OTopNY
     var22 -= 10
@@ -574,7 +573,6 @@ endif
         Call NeutralHub
       endif
     endif
-    LOGSTR 1212502528 1159738624 0 0 0
 
     if LevelValue >= 60 && Equal var6 0 && var7 <= 2
       if var22 < var17
@@ -591,7 +589,6 @@ endif
       endif
     endif
 
-    LOGSTR 1212502528 1159738880 0 0 0
     if Equal var6 0 && var22 < var17 && var7 <= 3
       var2 = var3 * 0.28
       if var2 > 0.8
@@ -620,14 +617,12 @@ endif
     label attack_approaches
     var16 = 1 // default
 
-    LOGSTR 1212502528 1159739136 0 0 0
 
   if LevelValue >= 48 && Rnd <= 0.7 && !(XDistLE 20)
     // var16 = at_laser
     Call NSpecial
   endif
 
-    LOGSTR 1212502528 1159739392 0 0 0
     if Equal OCurrAction 37 && !(Equal ODirection Direction)
       Seek callers
       Jump
@@ -639,7 +634,6 @@ endif
     var2 *= -1
     var2 /= 100
     var2 *= ODamage
-    LOGSTR 1212502528 1159739648 0 0 0
 
     if LevelValue >= 21
   if OYDistBackEdge > -45
@@ -739,7 +733,6 @@ Return
 label comboStarters
 Goto approachTypes
 // $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
-// $excludeMovesOrigin(sspecial|sspecialair)
 var17 = Rnd * 5
 if var17 < 1  
 Goto nspecial
@@ -750,11 +743,11 @@ var19 = 1
 Goto nair
 Goto nair_weak
 elif 3 < var17 && var17 < 4  
-var19 = 1
-Goto nair
-Goto bair_weak
-elif 4 < var17 && var17 < 5  
 Goto dair
+elif 4 < var17 && var17 < 5  
+var19 = 1
+Goto dair
+Goto dair_weak
 endif
   Goto KBCheck
   if !(True)
@@ -793,7 +786,7 @@ label killMoves
 Goto approachTypes
 // $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
-var17 = Rnd * 27
+var17 = Rnd * 26
 if var17 < 1  && YDistBackEdge > -3 
 Call Jab123
 elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
@@ -815,47 +808,45 @@ Call NSpecial
 elif 9 < var17 && var17 < 10  && OYDistBackEdge < -5
 Call NSpecialAir
 elif 10 < var17 && var17 < 11 && YDistBackEdge > -10 && YDistBackEdge > -10 
-Call USpecial
-elif 11 < var17 && var17 < 12 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call DSpecial
-elif 12 < var17 && var17 < 13  && OYDistBackEdge < -5
+elif 11 < var17 && var17 < 12  && OYDistBackEdge < -5
 Call DSpecialAir
-elif 13 < var17 && var17 < 14 && YDistBackEdge > -10 && YDistBackEdge > -10 
+elif 12 < var17 && var17 < 13 && YDistBackEdge > -10 && YDistBackEdge > -10 
 Call Grab
-elif 14 < var17 && var17 < 15 && YDistBackEdge > -10 && YDistBackEdge > -10 
+elif 13 < var17 && var17 < 14 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 2
 Call Grab
-elif 15 < var17 && var17 < 16 && YDistBackEdge > -10 && YDistBackEdge > -10 
+elif 14 < var17 && var17 < 15 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 3
 Call Grab
-elif 16 < var17 && var17 < 17 && YDistBackEdge > -10 && YDistBackEdge > -10 
+elif 15 < var17 && var17 < 16 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 4
 Call Grab
-elif 17 < var17 && var17 < 18 && YDistBackEdge > -10 && YDistBackEdge > -10 
+elif 16 < var17 && var17 < 17 && YDistBackEdge > -10 && YDistBackEdge > -10 
 var19 = 5
 Call Grab
+elif 17 < var17 && var17 < 18  
+Call NAir
 elif 18 < var17 && var17 < 19  
+var19 = 1
 Call NAir
 elif 19 < var17 && var17 < 20  
-var19 = 1
-Call NAir
-elif 20 < var17 && var17 < 21  
 Call FAir
-elif 21 < var17 && var17 < 22  
+elif 20 < var17 && var17 < 21  
 Call BAir
-elif 22 < var17 && var17 < 23  
+elif 21 < var17 && var17 < 22  
 var19 = 1
-Call NAir
+Call BAir
+elif 22 < var17 && var17 < 23  && OYDistBackEdge < -5
+Call UAir
 elif 23 < var17 && var17 < 24  && OYDistBackEdge < -5
-Call UAir
-elif 24 < var17 && var17 < 25  && OYDistBackEdge < -5
 var19 = 1
 Call UAir
-elif 25 < var17 && var17 < 26  
+elif 24 < var17 && var17 < 25  
 Call DAir
-elif 26 < var17 && var17 < 27  && OYDistBackEdge < -5
+elif 25 < var17 && var17 < 26  
 var19 = 1
-Call UAir
+Call DAir
 endif
   Goto KCheck
   if !(True)
@@ -916,11 +907,11 @@ var19 = 1
 Goto nair
 Goto nair_weak
 elif 3 < var17 && var17 < 4  
-var19 = 1
-Goto nair
-Goto bair_weak
-elif 4 < var17 && var17 < 5  
 Goto dair
+elif 4 < var17 && var17 < 5  
+var19 = 1
+Goto dair
+Goto dair_weak
 endif
 endif
 Goto approachType_filter
@@ -939,7 +930,7 @@ if Equal Direction OPos
   label rrFront
 
 
-var17 = Rnd * 23
+var17 = Rnd * 22
 if var17 < 1  && YDistBackEdge > -3 
 Call Jab123
 elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
@@ -981,19 +972,16 @@ var19 = 1
 Call NAir
 elif 17 < var17 && var17 < 18  
 Call FAir
-elif 18 < var17 && var17 < 19  
-var19 = 1
-Call NAir
+elif 18 < var17 && var17 < 19  && OYDistBackEdge < -5
+Call UAir
 elif 19 < var17 && var17 < 20  && OYDistBackEdge < -5
-Call UAir
-elif 20 < var17 && var17 < 21  && OYDistBackEdge < -5
 var19 = 1
 Call UAir
-elif 21 < var17 && var17 < 22  
+elif 20 < var17 && var17 < 21  
 Call DAir
-elif 22 < var17 && var17 < 23  && OYDistBackEdge < -5
+elif 21 < var17 && var17 < 22  
 var19 = 1
-Call UAir
+Call DAir
 endif
   if var0 <= 0
     Seek _main
@@ -1007,7 +995,7 @@ elif True
   label rrBack
 
 
-var17 = Rnd * 11
+var17 = Rnd * 12
 if var17 < 1  && YDistBackEdge > -3 
 Call UTilt
 elif 1 < var17 && var17 < 2 && YDistBackEdge > -10 && YDistBackEdge > -10 
@@ -1022,16 +1010,19 @@ elif 5 < var17 && var17 < 6  && OYDistBackEdge < -5
 Call DSpecialAir
 elif 6 < var17 && var17 < 7  
 Call BAir
-elif 7 < var17 && var17 < 8  && OYDistBackEdge < -5
-Call UAir
+elif 7 < var17 && var17 < 8  
+var19 = 1
+Call BAir
 elif 8 < var17 && var17 < 9  && OYDistBackEdge < -5
+Call UAir
+elif 9 < var17 && var17 < 10  && OYDistBackEdge < -5
 var19 = 1
 Call UAir
-elif 9 < var17 && var17 < 10  
+elif 10 < var17 && var17 < 11  
 Call DAir
-elif 10 < var17 && var17 < 11  && OYDistBackEdge < -5
+elif 11 < var17 && var17 < 12  
 var19 = 1
-Call UAir
+Call DAir
 endif
   if var0 <= 0
     Seek _main
@@ -1059,7 +1050,7 @@ Goto __ANGLE_FIX__
 Return
 label dashattack
 LOGSTR 1684108032 1751217152 1952539392 1795162112 0
-var20 = 24638
+var20 = 24637
 var9 = 1
 var10 = -4
 var11 = 4
@@ -1396,7 +1387,7 @@ endif
 
 if Equal var20 24625
   Call Jab123
-elif Equal var20 24638
+elif Equal var20 24637
   Call DashAttack
 elif Equal var20 24626
   Call FTilt

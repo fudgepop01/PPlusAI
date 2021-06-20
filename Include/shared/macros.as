@@ -30,10 +30,10 @@
     gv = OFramesHitstun 
   endif
 
-  SAFE_WRITE_4 move_xOffset
-  SAFE_WRITE_5 move_yOffset
-  SAFE_WRITE_6 move_xRange
-  SAFE_WRITE_7 move_yRange  
+  // SAFE_WRITE_4 move_xOffset
+  // SAFE_WRITE_5 move_yOffset
+  // SAFE_WRITE_6 move_xRange
+  // SAFE_WRITE_7 move_yRange  
   SAFE_INJECT_4 move_xOffset
   SAFE_INJECT_5 move_yOffset
   SAFE_INJECT_6 move_xRange
@@ -113,7 +113,6 @@
     immediateTempVar += OFramesHitstun 
   endif
 
-
   if OAnimFrame <= 2
     O_CALC_SELF_Y_CHANGE_GRAVITY(targetY, immediateTempVar)
     targetY = OTopNY - targetY
@@ -123,6 +122,7 @@
     endif
     targetX = OTopNX + OXSpeed * immediateTempVar
     // DrawDebugRectOutline OTopNX OTopNY 5 5 color(0x00FFFFDD)
+    // DrawDebugRectOutline targetX targetY 5 5 color(0xFFFF0088)
   else 
     EstOYCoord targetY immediateTempVar
     // if the opponent is in an actionable state, lower the estimate of
@@ -131,7 +131,7 @@
       immediateTempVar *= 0.0
     endif
     EstOXCoord targetX immediateTempVar
-    targetY = targetY - (OSCDBottom - OTopNY)
+    targetY = targetY + (OSCDBottom - OTopNY)
   endif
 
   gv = TopNY + YDistBackEdge
@@ -343,33 +343,33 @@
   targetYDistance = targetY - globTempVar
 
   // adjust for opponent position (aim towards nearest blastzone)
-  if !(Equal lastAttack hex(0x8008)) && !(Equal lastAttack valGeneral) && !(CalledAs ComboHub)
-    immediateTempVar = 0
-    globTempVar = LBoundary - (TopNX + targetXDistance) 
-    if globTempVar < 90 && Equal Direction (-1)
-      globTempVar = hitboxSizeMultiplier + 1
-      globTempVar = move_xRange * (1/globTempVar)
-      globTempVar /= 2
-      immediateTempVar += globTempVar
-    endif
-    globTempVar = RBoundary - (TopNX + targetXDistance)
-    if globTempVar > -90 && Equal Direction 1
-      globTempVar = hitboxSizeMultiplier + 1
-      globTempVar = move_xRange * (1/globTempVar)
-      globTempVar /= 2
-      immediateTempVar -= globTempVar
-    endif
-    targetXDistance += immediateTempVar
+  // if !(Equal lastAttack hex(0x8008)) && !(Equal lastAttack valGeneral) && !(CalledAs ComboHub)
+  //   immediateTempVar = 0
+  //   globTempVar = LBoundary - (TopNX + targetXDistance) 
+  //   if globTempVar < 90 && Equal Direction (-1)
+  //     globTempVar = hitboxSizeMultiplier + 1
+  //     globTempVar = move_xRange * (1/globTempVar)
+  //     globTempVar /= 2
+  //     immediateTempVar += globTempVar
+  //   endif
+  //   globTempVar = RBoundary - (TopNX + targetXDistance)
+  //   if globTempVar > -90 && Equal Direction 1
+  //     globTempVar = hitboxSizeMultiplier + 1
+  //     globTempVar = move_xRange * (1/globTempVar)
+  //     globTempVar /= 2
+  //     immediateTempVar -= globTempVar
+  //   endif
+  //   targetXDistance += immediateTempVar
 
-    if Equal immediateTempVar 0
-      immediateTempVar = Direction
-      globTempVar = hitboxSizeMultiplier + 1
-      globTempVar = move_xRange * (1/globTempVar)
-      immediateTempVar *= globTempVar
-      immediateTempVar /= 2
-      targetXDistance -= immediateTempVar
-    endif
-  endif
+  //   if Equal immediateTempVar 0
+  //     immediateTempVar = Direction
+  //     globTempVar = hitboxSizeMultiplier + 1
+  //     globTempVar = move_xRange * (1/globTempVar)
+  //     immediateTempVar *= globTempVar
+  //     immediateTempVar /= 2
+  //     targetXDistance -= immediateTempVar
+  //   endif
+  // endif
 
   // account for target height
   immediateTempVar = 0
@@ -401,61 +401,61 @@
     targetYDistance = 0
   endif
 
-  if !(CalledAs ComboHub)
-    targetXDistance += TopNX
-    targetYDistance += TopNY
-    DrawDebugRectOutline targetXDistance targetYDistance move_xRange move_yRange color(0x00FF0088)
-    targetXDistance -= TopNX
-    targetYDistance -= TopNY
+  // if !(CalledAs ComboHub)
+  //   targetXDistance += TopNX
+  //   targetYDistance += TopNY
+  //   DrawDebugRectOutline targetXDistance targetYDistance move_xRange move_yRange color(0x00FF0088)
+  //   targetXDistance -= TopNX
+  //   targetYDistance -= TopNY
 
-    globTempVar = hitboxSizeMultiplier + 1
-    globTempVar = move_xRange * (1/globTempVar)
-    move_xRange = globTempVar
-    move_xOffset = move_xOffset + globTempVar * hitboxSizeMultiplier
+  //   globTempVar = hitboxSizeMultiplier + 1
+  //   globTempVar = move_xRange * (1/globTempVar)
+  //   move_xRange = globTempVar
+  //   move_xOffset = move_xOffset + globTempVar * hitboxSizeMultiplier
 
-    globTempVar = hitboxSizeMultiplier + 1
-    globTempVar = move_yRange * (1/globTempVar)
-    move_yRange = globTempVar
-    move_yOffset = move_yOffset - globTempVar * hitboxSizeMultiplier
+  //   globTempVar = hitboxSizeMultiplier + 1
+  //   globTempVar = move_yRange * (1/globTempVar)
+  //   move_yRange = globTempVar
+  //   move_yOffset = move_yOffset - globTempVar * hitboxSizeMultiplier
 
-    // globTempVar = TopNY - move_yOffset + move_yRange + immediateTempVar
-    // DrawDebugRectOutline TopNX globTempVar 10 0 color(0x00FFFF88)
+  //   // globTempVar = TopNY - move_yOffset + move_yRange + immediateTempVar
+  //   // DrawDebugRectOutline TopNX globTempVar 10 0 color(0x00FFFF88)
 
-    if CalledAs ApproachHub
-      move_xRange -= 2.5
-      move_xOffset += 5
-    endif
+  //   if CalledAs ApproachHub
+  //     move_xRange -= 2.5
+  //     move_xOffset += 5
+  //   endif
 
-    immediateTempVar = (move_xOffset + move_xRange)
-    immediateTempVar *= Direction
-    immediateTempVar += TopNX
-    globTempVar = TopNY - move_yOffset + move_yRange
-    DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0x88888888)
-    globTempVar += localTemp
+  //   immediateTempVar = (move_xOffset + move_xRange)
+  //   immediateTempVar *= Direction
+  //   immediateTempVar += TopNX
+  //   globTempVar = TopNY - move_yOffset + move_yRange
+  //   DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0x88888888)
+  //   globTempVar += localTemp
     
-    // if OTopNX > 0
-    //   immediateTempVar += move_xRange
-    // else
-    //   immediateTempVar -= move_xRange
-    // endif 
-    DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0xFFFFFF88)
+  //   // if OTopNX > 0
+  //   //   immediateTempVar += move_xRange
+  //   // else
+  //   //   immediateTempVar -= move_xRange
+  //   // endif 
+  //   DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0xFFFFFF88)
 
-    immediateTempVar = OHurtboxSize / 2
-    globTempVar = immediateTempVar + OSCDBottom
-    DrawDebugRectOutline OTopNX globTempVar 5 immediateTempVar color(0xFFFF00DD)
+  //   immediateTempVar = OHurtboxSize / 2
+  //   globTempVar = immediateTempVar + OSCDBottom
+  //   DrawDebugRectOutline OTopNX globTempVar 5 immediateTempVar color(0xFFFF00DD)
     
-    if CalledAs ApproachHub
-      move_xRange += 2.5
-      move_xOffset -= 5
-    endif
+  //   if CalledAs ApproachHub
+  //     move_xRange += 2.5
+  //     move_xOffset -= 5
+  //   endif
 
-    globTempVar = move_xRange * hitboxSizeMultiplier
-    move_xOffset -= globTempVar
-    move_xRange = move_xRange + globTempVar
-    globTempVar = move_yRange * hitboxSizeMultiplier
-    move_yOffset += globTempVar
-    move_yRange = move_yRange + globTempVar
-  endif
+  //   globTempVar = move_xRange * hitboxSizeMultiplier
+  //   move_xOffset -= globTempVar
+  //   move_xRange = move_xRange + globTempVar
+  //   globTempVar = move_yRange * hitboxSizeMultiplier
+  //   move_yOffset += globTempVar
+  //   move_yRange = move_yRange + globTempVar
+  // endif
 
   // if !(CalledAs ComboHub) && LevelValue >= LV7 && !(Equal approachType at_combo) 
   //   globTempVar = {frameCount} - index
@@ -658,7 +658,7 @@
   GetYDistFloorOffset goingOffstage xPosOffs 5 0
   // immediateTempVar = TopNY - goingOffstage 
   // DrawDebugLine TopNX TopNY TopNX immediateTempVar color(0xFF0000DD)
-  if goingOffstage < 4 && !(Equal goingOffstage -1) 
+  if !(Equal goingOffstage -1) 
     goingOffstage = 0
   elif Equal DistBackEdge DistFrontEdge
     goingOffstage = 2
@@ -1000,6 +1000,7 @@
   #let frameCount = {tempVar2}
   amount = (105 - LevelValue) / 100
   amount = (Rnd * dashCountMax) - dashCountMax * amount
+  OR amount amount amount
   frameCount = (Rnd * 20) + dashDanceMinFrames
 
   // globTempVar = OXSpeed * 3
@@ -1012,8 +1013,6 @@
   
   label _dashdance
   Cmd30
-  LOGSTR str("DDAmt")
-  LOGVAL amount
 
   // Goto defendFromO
 
@@ -1043,7 +1042,7 @@
   Abs globTempVar
   predictAverage immediateTempVar man_oXAttackDist LevelValue
   globTempVar += immediateTempVar
-  globTempVar += 10
+  globTempVar += 25
   // DrawDebugRectOutline TopNX TopNY globTempVar 20 color(0xFF880088)
 
   // predictOOption immediateTempVar man_aim LevelValue
@@ -1066,8 +1065,8 @@
         endif
       endif
       Button R
-      globTempVar = OPos * -1
-      if ODistLE 40
+      if ODistLE globTempVar
+        globTempVar = OPos * -1
         AbsStick globTempVar (-0.5)
       else
         AbsStick OPos (-0.5)
@@ -1099,17 +1098,19 @@
       predictionConfidence immediateTempVar man_dashdance LevelValue
       predictAverage anotherTempVar man_oXHitDist LevelValue
       anotherTempVar += 5
-      if Rnd < 0.4
+      if Rnd <= 0.2
         if Equal globTempVar op_attack && Rnd < immediateTempVar && XDistLE anotherTempVar
-          if !(OAttacking) && move_hitFrame <= 16 && Rnd <= 0.4
+          if Rnd <= 0.55
+            Call DefendHub
+          elif !(OAttacking) && move_hitFrame <= 16 && Rnd <= 0.4
             amount = 0
           else
             Call Unk3020
           endif
-        elif Equal globTempVar op_defend && Rnd < immediateTempVar
+        elif Equal globTempVar op_defend && Rnd < immediateTempVar && Rnd <= 0.5
           lastScript = hex(0x8002)
           Call Grab
-        elif Equal globTempVar op_grab && Rnd < immediateTempVar
+        elif Equal globTempVar op_grab && Rnd < immediateTempVar && Rnd <= 0.3
           amount = 0
           Return
         endif
@@ -1372,7 +1373,7 @@ endif
           immediateTempVar = man_approach
         endif
         
-        if !(OAttacking) && Rnd <= 0.1
+        if !(OAttacking) && Rnd <= 0.05
           trackOAction immediateTempVar 0
           predictAverage globTempVar man_oXAttackDist LevelValue
           globTempVar *= 0.5
@@ -1404,6 +1405,15 @@ endif
         endif
       endif
     endif
+  endif
+  if OAttacking && OAnimFrame < 2 && ODistLE 90
+    immediateTempVar = TopNX - OTopNX
+    Abs immediateTempVar
+    immediateTempVar += 10
+    if immediateTempVar > 126
+      immediateTempVar = 126
+    endif
+    trackOAction man_oXAttackDist immediateTempVar
   endif
 #endmacro
 
@@ -1629,8 +1639,8 @@ endif
   #let rightPos = {right}
   #let belowPos = {below}
   GetYDistFloorOffset abovePos 0 70 1
-  GetYDistFloorOffset leftPos (-25) 35 1
-  GetYDistFloorOffset rightPos 25 35 1
+  GetYDistFloorOffset leftPos (-35) 35 1
+  GetYDistFloorOffset rightPos 35 35 1
   globTempVar = OYDistBackEdge - 3
   GetYDistFloorOffset belowPos 0 globTempVar 1
 
@@ -1664,69 +1674,83 @@ endif
   Abs immediateTempVar
   if globTempVar < 1 && immediateTempVar < 1 && !(Equal leftPos BBoundary) && leftPos < 1
     // flat ground
-    LOGSTR str("flat ground")
+    // LOGSTR str("flat ground")
+    out = st_floor
   elif Equal abovePos BBoundary && Equal belowPos BBoundary
     // offstage
-    LOGSTR str("offstage")
+    // LOGSTR str("offstage")
+    out = st_offstage
   elif Equal leftPos BBoundary
     // disadvantage L
-    LOGSTR str("disad L")
+    // LOGSTR str("disad L")
     if rightPos < OTopNY || abovePos < OTopNY && !(Equal belowPos BBoundary) 
       // above platform
-      LOGSTR str("> above plat")
+      // LOGSTR str("> above plat")
+      out = st_disadv_above_plat
     elif abovePos > OTopNY
       // below platform
-      LOGSTR str("> below plat")
+      // LOGSTR str("> below plat")
+      out = st_disadv_below_plat
     else
       // no platform
-      LOGSTR str("> no plat")
+      // LOGSTR str("> no plat")
+      out = st_disadv_no_plat
     endif
   elif Equal rightPos BBoundary
     // disadvantage R
-    LOGSTR str("disad R")
+    // LOGSTR str("disad R")
     if leftPos < OTopNY || abovePos < OTopNY && !(Equal belowPos BBoundary) 
       // above platform
-      LOGSTR str("> above plat")
+      // LOGSTR str("> above plat")
+      out = st_disadv_above_plat
     elif abovePos > OTopNY
       // below platform
-      LOGSTR str("> below plat")
+      // LOGSTR str("> below plat")
+      out = st_disadv_below_plat
     else
       // no platform
-      LOGSTR str("> no plat")
+      // LOGSTR str("> no plat")
+      out = st_disadv_no_plat
     endif
   elif !(Equal belowPos BBoundary) 
     // platform
-    LOGSTR str("plat")
+    // LOGSTR str("plat")
     globTempVar = currPos - belowPos
     if globTempVar > 40
       // high platform
-      LOGSTR str("> high")
+      // LOGSTR str("> high")
       globTempVar = OTopNY - currPos
-      if globTempVar > 25
+      if globTempVar > 30
         // camping?
-        LOGSTR str(">> camp")
+        // LOGSTR str(">> camp")
+        out = st_plat_high_camp
       else
         // regular
-        LOGSTR str(">> reg")
+        // LOGSTR str(">> reg")
+        out = st_plat_high_reg
       endif
     else
       // regular platform
       LOGSTR str("> regular")
       globTempVar = OTopNY - currPos
-      if globTempVar > 25
+      if globTempVar > 30
         // camping?
-        LOGSTR str(">> camp")
+        // LOGSTR str(">> camp")
+        out = st_reg_camp
       else
         // regular
-        LOGSTR str(">> reg")
+        // LOGSTR str(">> reg")
+        out = st_reg_reg
       endif
     endif
   elif abovePos > OTopNY
     // below platform
-    LOGSTR str("below plat")
+    // LOGSTR str("below plat")
+    out = st_below_plat
   else
     // awkward spot, likely between/near platforms or something
-    LOGSTR str("between plat")
+    // LOGSTR str("between plat")
+    out = st_between_plat
   endif
 
   // var5 = OTopNX - 25

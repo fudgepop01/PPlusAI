@@ -37,7 +37,7 @@ if !(Equal var21 36609) && !(Equal var21 36608) && !(Equal var21 32769) && !(Equ
     if !(Equal var20 24636)
       // var11 += 2.5
       // var9 -= 5
-      // if var20 <= 24638 && !(Equal var20 24630)
+      // if var20 <= 24637 && !(Equal var20 24630)
       //   var22 = 0.04 * 50
       //   var11 += var22
       //   var22 *= 2
@@ -126,10 +126,10 @@ if !(True)
   elif Equal var20 25000
     var3 = OFramesHitstun 
   endif
-  SAFE_WRITE_4 var9
-  SAFE_WRITE_5 var10
-  SAFE_WRITE_6 var11
-  SAFE_WRITE_7 var12  
+  // SAFE_WRITE_4 var9
+  // SAFE_WRITE_5 var10
+  // SAFE_WRITE_6 var11
+  // SAFE_WRITE_7 var12  
   SAFE_INJECT_4 var9
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
@@ -210,6 +210,7 @@ if !(True)
     endif
     var0 = OTopNX + OXSpeed * var22
     // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
+    // DrawDebugRectOutline var0 var1 5 5 255 255 0 136
   else 
     EstOYCoord var1 var22
     // if the opponent is in an actionable state, lower the estimate of
@@ -218,7 +219,7 @@ if !(True)
       var22 *= 0.0
     endif
     EstOXCoord var0 var22
-    var1 = var1 - (OSCDBottom - OTopNY)
+    var1 = var1 + (OSCDBottom - OTopNY)
   endif
   var3 = TopNY + YDistBackEdge
   if SamePlane && var1 <= var3 && !(MeteoChance)
@@ -409,32 +410,32 @@ if !(True)
   var0 = var2 - var0
   var1 = var1 - var17
   // adjust for opponent position (aim towards nearest blastzone)
-  if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
-    var22 = 0
-    var17 = LBoundary - (TopNX + var0) 
-    if var17 < 90 && Equal Direction (-1)
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var17 /= 2
-      var22 += var17
-    endif
-    var17 = RBoundary - (TopNX + var0)
-    if var17 > -90 && Equal Direction 1
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var17 /= 2
-      var22 -= var17
-    endif
-    var0 += var22
-    if Equal var22 0
-      var22 = Direction
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var22 *= var17
-      var22 /= 2
-      var0 -= var22
-    endif
-  endif
+  // if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
+  //   var22 = 0
+  //   var17 = LBoundary - (TopNX + var0) 
+  //   if var17 < 90 && Equal Direction (-1)
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var17 /= 2
+  //     var22 += var17
+  //   endif
+  //   var17 = RBoundary - (TopNX + var0)
+  //   if var17 > -90 && Equal Direction 1
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var17 /= 2
+  //     var22 -= var17
+  //   endif
+  //   var0 += var22
+  //   if Equal var22 0
+  //     var22 = Direction
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var22 *= var17
+  //     var22 /= 2
+  //     var0 -= var22
+  //   endif
+  // endif
   // account for target height
   var22 = 0
   SAFE_INJECT_D var22
@@ -464,54 +465,54 @@ if !(True)
   if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var1 = 0
   endif
-  if !(CalledAs ComboHub)
-    var0 += TopNX
-    var1 += TopNY
-    DrawDebugRectOutline var0 var1 var11 var12 0 255 0 136
-    var0 -= TopNX
-    var1 -= TopNY
-    var17 = 0.0 + 1
-    var17 = var11 * (1/var17)
-    var11 = var17
-    var9 = var9 + var17 * 0.0
-    var17 = 0.0 + 1
-    var17 = var12 * (1/var17)
-    var12 = var17
-    var10 = var10 - var17 * 0.0
-    // var17 = TopNY - var10 + var12 + var22
-    // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
-    if CalledAs ApproachHub
-      var11 -= 2.5
-      var9 += 5
-    endif
-    var22 = (var9 + var11)
-    var22 *= Direction
-    var22 += TopNX
-    var17 = TopNY - var10 + var12
-    DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
-    var17 += var2
+  // if !(CalledAs ComboHub)
+  //   var0 += TopNX
+  //   var1 += TopNY
+  //   DrawDebugRectOutline var0 var1 var11 var12 0 255 0 136
+  //   var0 -= TopNX
+  //   var1 -= TopNY
+  //   var17 = 0.0 + 1
+  //   var17 = var11 * (1/var17)
+  //   var11 = var17
+  //   var9 = var9 + var17 * 0.0
+  //   var17 = 0.0 + 1
+  //   var17 = var12 * (1/var17)
+  //   var12 = var17
+  //   var10 = var10 - var17 * 0.0
+  //   // var17 = TopNY - var10 + var12 + var22
+  //   // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //   if CalledAs ApproachHub
+  //     var11 -= 2.5
+  //     var9 += 5
+  //   endif
+  //   var22 = (var9 + var11)
+  //   var22 *= Direction
+  //   var22 += TopNX
+  //   var17 = TopNY - var10 + var12
+  //   DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
+  //   var17 += var2
     
-    // if OTopNX > 0
-    //   var22 += var11
-    // else
-    //   var22 -= var11
-    // endif 
-    DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
-    var22 = OHurtboxSize / 2
-    var17 = var22 + OSCDBottom
-    DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
+  //   // if OTopNX > 0
+  //   //   var22 += var11
+  //   // else
+  //   //   var22 -= var11
+  //   // endif 
+  //   DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
+  //   var22 = OHurtboxSize / 2
+  //   var17 = var22 + OSCDBottom
+  //   DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
     
-    if CalledAs ApproachHub
-      var11 += 2.5
-      var9 -= 5
-    endif
-    var17 = var11 * 0.0
-    var9 -= var17
-    var11 = var11 + var17
-    var17 = var12 * 0.0
-    var10 += var17
-    var12 = var12 + var17
-  endif
+  //   if CalledAs ApproachHub
+  //     var11 += 2.5
+  //     var9 -= 5
+  //   endif
+  //   var17 = var11 * 0.0
+  //   var9 -= var17
+  //   var11 = var11 + var17
+  //   var17 = var12 * 0.0
+  //   var10 += var17
+  //   var12 = var12 + var17
+  // endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 7) 
   //   var17 = var13 - index
   //   var0 = var0 + OXSpeed * var17 * -2
@@ -540,7 +541,7 @@ if !(True)
   GetYDistFloorOffset var2 var3 5 0
   // var22 = TopNY - var2 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var2 < 4 && !(Equal var2 -1) 
+  if !(Equal var2 -1) 
     var2 = 0
   elif Equal DistBackEdge DistFrontEdge
     var2 = 2

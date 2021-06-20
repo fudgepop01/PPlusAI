@@ -24,7 +24,7 @@ endif
 // Rand DI / tech "smart" implementation
 // randomly DIs unless conditions are met for survival DI
 
-if !(Equal var21 8272)
+if !(Equal var21 8272) && Equal OHitboxConnected 1
   var22 = -1
   if Equal var21 32769
     var22 = 7
@@ -42,7 +42,7 @@ if !(Equal var21 8272)
     trackOAction var22 1
   endif
 
-  if ODistLE 70
+  if ODistLE 100
     // if YDistBackEdge > -3 && YDistBackEdge <= 3
       var22 = TopNX - OTopNX
       Abs var22
@@ -50,7 +50,11 @@ if !(Equal var21 8272)
       if var22 > 126
         var22 = 126
       endif
+      trackOAction 3 var22
       trackOAction 4 var22
+      LOGSTR 1347568896 1145651968 1409286144 0 0
+      LOGVAL var17
+
       var22 = TopNY - OTopNY
       Abs var22
       var22 += 5
@@ -222,7 +226,7 @@ elif Equal FramesHitstun 1 && LevelValue >= 42
   GetYDistFloorOffset var5 var6 5 0
   // var22 = TopNY - var5 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var5 < 4 && !(Equal var5 -1) 
+  if !(Equal var5 -1) 
     var5 = 0
   elif Equal DistBackEdge DistFrontEdge
     var5 = 2

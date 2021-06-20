@@ -75,7 +75,7 @@
 #snippet COMBO_STARTERS
 $refreshMoves()
 // $excludeMovesNotOrigin(nair|uair|fair|dair|dtilt|bair|grab|jab123)
-// $excludeMovesOrigin(sspecial|sspecialair)
+$excludeMovesOrigin(sspecial|sspecialair|USpecial)
 $excludeMovesNotOrigin(nair|nspecial|dair)
 $output(Goto)
 #let result = var2
@@ -89,7 +89,7 @@ endif
 $refreshMoves()
 // $filterMoveHitFrame(20)
 // $filterMoveEndlag(20)
-$excludeMovesOrigin(sspecial|sspecialair)
+$excludeMovesOrigin(sspecial|sspecialair|USpecial)
 $output(Call)
 #let result = var2
 KILL_CHECK(result, move_currKnockback, move_angle, 0, 0)
@@ -122,4 +122,12 @@ endif
   else
     Call DAir
   endif
+#endsnippet
+
+#snippet TRAINING_OPTIONS
+
+if Equal TrainingScript tr_laser_still
+  Call sc_laser_still
+endif
+
 #endsnippet

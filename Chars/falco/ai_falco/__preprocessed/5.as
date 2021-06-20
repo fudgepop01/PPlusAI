@@ -269,7 +269,7 @@ ClearStick
 var18 = 1
 if Equal var20 24625
   Call Jab123
-elif Equal var20 24638
+elif Equal var20 24637
   Call DashAttack
 elif Equal var20 24626
   Call FTilt
@@ -350,7 +350,7 @@ label defend_from_o
           var22 = 7
         endif
         
-        if !(OAttacking) && Rnd <= 0.1
+        if !(OAttacking) && Rnd <= 0.05
           trackOAction var22 0
           predictAverage var17 4 LevelValue
           var17 *= 0.5
@@ -380,6 +380,15 @@ label defend_from_o
         endif
       endif
     endif
+  endif
+  if OAttacking && OAnimFrame < 2 && ODistLE 90
+    var22 = TopNX - OTopNX
+    Abs var22
+    var22 += 10
+    if var22 > 126
+      var22 = 126
+    endif
+    trackOAction 4 var22
   endif
 if OAnimFrame > 1 && OAnimFrame <= 2 && ODistLE 80
   if OPrevAction >= 66 && OPrevAction <= 69 || Equal OPrevAction 73 || Equal var16 7

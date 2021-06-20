@@ -48,7 +48,7 @@ if !(Equal lastScript hex(0x2050)) && Equal OHitboxConnected 1
     trackOAction immediateTempVar op_attack
   endif
 
-  if ODistLE 70
+  if ODistLE 100
     // if YDistBackEdge > -3 && YDistBackEdge <= 3
       immediateTempVar = TopNX - OTopNX
       Abs immediateTempVar
@@ -56,7 +56,11 @@ if !(Equal lastScript hex(0x2050)) && Equal OHitboxConnected 1
       if immediateTempVar > 126
         immediateTempVar = 126
       endif
+      trackOAction man_oXHitDist immediateTempVar
       trackOAction man_oXAttackDist immediateTempVar
+      LOGSTR str("PREDICT")
+      LOGVAL globTempVar
+
       immediateTempVar = TopNY - OTopNY
       Abs immediateTempVar
       immediateTempVar += 5

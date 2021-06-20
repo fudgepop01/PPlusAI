@@ -80,7 +80,7 @@ Cmd30
   GetYDistFloorOffset var0 var1 5 0
   // var22 = TopNY - var0 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var0 < 4 && !(Equal var0 -1) 
+  if !(Equal var0 -1) 
     var0 = 0
   elif Equal DistBackEdge DistFrontEdge
     var0 = 2
@@ -341,6 +341,12 @@ if Equal var0 0
     endif
   elif YDistBackEdge > -40
 
+
+    if !(XDistLE 70)
+      Seek attack_approaches
+      Jump
+    endif
+
   GetNearestCliff var0
   var0 = TopNX - var0
   var0 *= -1
@@ -364,7 +370,27 @@ if Equal var0 0
 //       {PUNISH_BROKEN_SHIELD}
     endif
 
-    RetrieveATKD var0 OCurrSubaction 1
+    // if the opponent is lying there doing nothing
+    if LevelValue >= 48 && Equal var6 0
+      if Equal OCurrAction 74 || Equal OCurrAction 77
+  if Equal AirGroundState 1 && Rnd < 0.3
+    Call DTilt
+  elif Equal AirGroundState 1 && Rnd < 0.3
+    Call FSmash
+  else
+    Call NAir
+  endif
+      endif
+    endif
+
+    if LevelValue >= 42 && Equal OAirGroundState 3
+      Call EdgeguardHub
+    endif
+
+    RetrieveFullATKD var0 var1 var2 var23 var23 var23 var23 OCurrSubaction 1
+    if Equal var0 0
+      var0 = OEndFrame
+    endif
 
     var7 = 0
     SAFE_INJECT_1 var7
@@ -372,7 +398,7 @@ if Equal var0 0
   Call UAir
     endif 
 
-    var4 = OEndFrame - OAnimFrame 
+    var4 = var0 - OAnimFrame 
     if Equal OCurrAction 51
       var17 = OTopNY + OYDistBackEdge
       EstOPassTimeY var17 var17
@@ -383,11 +409,11 @@ if Equal var0 0
     endif
     var4 -= 5
 
-    var4 += var0
+    var4 += var1
     if LevelValue >= 60 && Equal var6 0 && var7 <= 1
       if Equal var7 1
         Call FakeOutHub
-      elif OAttacking && var0 < OAnimFrame && var4 >= 12 && !(Equal var0 -1) && LevelValue >= 75 && !(Equal OCurrAction 27) && XDistLE 40
+      elif OAttacking && var1 < OAnimFrame && var4 >= 12 && !(Equal var1 -1) && LevelValue >= 75 && !(Equal OCurrAction 27) && XDistLE 40
   var0 = 10
   label whiffPunish
 var17 = Rnd * 20
@@ -467,8 +493,8 @@ endif
   var0 -= 1
   Jump
   label
-      elif var1 < OAnimFrame || Equal OCurrAction 37 || var4 < 12
-        if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && XDistLE var3 && !(Equal var21 32775)
+      elif var2 < OAnimFrame || Equal OCurrAction 37 || var4 < 12
+        if OAttacking && Rnd < 0.8 && !(Equal var21 32776) && XDistLE var23 && !(Equal var21 32775)
           var18 = 1
           Call FakeOutHub
         endif
@@ -482,7 +508,7 @@ endif
     var21 = 32768
 
     var3 = 200 - (ODamage - Damage) * 4
-    var3 /= 200
+    var3 *= 0.005
 
     predictOOption var17 6 LevelValue
     predictionConfidence var22 6 LevelValue
@@ -500,6 +526,7 @@ endif
 
     Norm var22 TopNX TopNY
     Norm var17 OTopNX OTopNY
+    var22 -= 10
     if LevelValue >= 42 && Equal var6 0 && var7 <= 2
 
       var2 = var3 * 0.20
@@ -522,6 +549,9 @@ endif
         var2 = var3 * 0.10
       endif
       Abs var2
+      if var2 > 0.7
+        var2 = 0.7
+      endif
       if Rnd < var2
         Call FakeOutHub
       endif
@@ -529,6 +559,9 @@ endif
 
     if Equal var6 0 && var22 < var17 && var7 <= 3
       var2 = var3 * 0.28
+      if var2 > 0.8
+        var2 = 0.8
+      endif
       if Rnd < var3 || Rnd <= 0.2 || Equal var7 3
         var16 = 2
   if OYDistBackEdge < -20
@@ -552,24 +585,9 @@ endif
   endif
       endif
     endif
+    label attack_approaches
     var16 = 1 // default
 
-    // if the opponent is lying there doing nothing
-    if LevelValue >= 48 && Equal var6 0
-      if Equal OCurrAction 74 || Equal OCurrAction 77
-  if Equal AirGroundState 1 && Rnd < 0.3
-    Call DTilt
-  elif Equal AirGroundState 1 && Rnd < 0.3
-    Call FSmash
-  else
-    Call NAir
-  endif
-      endif
-    endif
-
-    if LevelValue >= 42 && Equal OAirGroundState 3
-      Call EdgeguardHub
-    endif
 
   if LevelValue >= 60 && Rnd < 0.2
     var16 = 4
@@ -1277,16 +1295,13 @@ endif
 Return
 
 label callMove
-LOGSTR 1277182208 1953169408 0 0 0
-LOGVAL var20
-
 if Equal CurrAction 24
   Return
 endif
 
 if Equal var20 24625
   Call Jab123
-elif Equal var20 24638
+elif Equal var20 24637
   Call DashAttack
 elif Equal var20 24626
   Call FTilt

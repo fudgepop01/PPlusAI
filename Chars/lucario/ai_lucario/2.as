@@ -181,23 +181,39 @@
 
 #endsnippet
 
-#snippet COMBO_OPTIONS
-  $refreshMoves()
-  $filterMoveEndlag(30)
-  $excludeMovesNotOrigin(bair|uair|fair|dashattack|dtilt|utilt|usmash)
-  $output(Goto)
+#snippet COMBO_GR_FILTERS
+  $excludeMovesOrigin(NAir)
 #endsnippet
 
-#snippet KILL_OPTIONS
-  $refreshMoves()
-  $output(Goto)
+#snippet COMBO_AIR_FILTERS
+  $excludeMovesOrigin(NAir)
 #endsnippet
 
-#snippet JUGGLE_OPTIONS
-  $refreshMoves()
-  $excludeMovesNotOrigin(uair|usmash|utilt)
-  $output(Goto)
+#snippet JUGGLE_GR_FILTERS
+  $excludeMovesOrigin(NAir)
 #endsnippet
+
+#snippet JUGGLE_AIR_FILTERS
+  $excludeMovesOrigin(NAir)
+#endsnippet
+
+// #snippet COMBO_OPTIONS
+//   $refreshMoves()
+//   $filterMoveEndlag(30)
+//   $excludeMovesNotOrigin(bair|uair|fair|dashattack|dtilt|utilt|usmash)
+//   $output(Goto)
+// #endsnippet
+
+// #snippet KILL_OPTIONS
+//   $refreshMoves()
+//   $output(Goto)
+// #endsnippet
+
+// #snippet JUGGLE_OPTIONS
+//   $refreshMoves()
+//   $excludeMovesNotOrigin(uair|usmash|utilt)
+//   $output(Goto)
+// #endsnippet
 
 #snippet EDGEGUARD_OPTIONS
   $pickRandMove(nair|fair|dair|bair|dtilt|utilt|dsmash|sspecial, Goto)

@@ -157,7 +157,7 @@ endif
   GetYDistFloorOffset var2 var3 5 0
   // var22 = TopNY - var2 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var2 < 4 && !(Equal var2 -1) 
+  if !(Equal var2 -1) 
     var2 = 0
   elif Equal DistBackEdge DistFrontEdge
     var2 = 2

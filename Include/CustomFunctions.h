@@ -230,3 +230,7 @@ func OFastFallSpeed : 0x158
 /// endframe of O's current animation
 func EndFrame : 0x59
 func OEndFrame : 0x159
+
+/// current training script selected
+/// 0xFFFF = default
+func TrainingScript : 0x60

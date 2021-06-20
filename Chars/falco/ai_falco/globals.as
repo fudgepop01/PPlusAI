@@ -1,8 +1,5 @@
-// globals are preprocessed variables that can be used anywhere
-// they'll automatically be substituted for the variable or value
-// they stand for.
-//
-// ex. in here, "move_xOffset" will always be replaced with "var9"
+#const sc_laser_still = 0x8101
+#const tr_laser_still = hex(0x8101)
 
 // defining attributes here as constants (just in case)
 #const walkInitVel = 0.2
@@ -37,18 +34,18 @@
 
 #const jumpIfOWithin = 100
 #const SHIfOBeyond = 7
-#const FHIfOBeyond = 45
-#const DJIfOWithin = 45
-#const DJIfOBeyond = 30
+#const FHIfOBeyond = 23
+#const DJIfOWithin = 55
+#const DJIfOBeyond = 40
 
 #const techChaseCloseDist = 20
 #const techChaseFarDist = 40
 
-#const dashCountMax = 11
+#const dashCountMax = 30
 #const dashForceTurnFrame = 10
 #const dashDanceMinFrames = 2
 #const DDWaveDash = 0.6
-#const DDMaxRange = 60
+#const DDMaxRange = 150
 
 // 0 through 21 if defensive things were consistent
 #const minBaseReactionTime = 0
@@ -302,7 +299,7 @@
 #const mv_bair_weak = 1
 #const bair_weak_hitFrame = 8
 #const bair_weak_lastHitFrame = 19
-#const bair_weak_damage_info = NAir|9|0|100|361
+#const bair_weak_damage_info = BAir|9|0|100|361
 
 // UAir
 #const uair_IASA = 36
@@ -332,4 +329,4 @@
 #const mv_dair_weak = 1
 #const dair_weak_hitFrame = 15
 #const dair_weak_lastHitFrame = 24
-#const dair_weak_damage_info = UAir|8|20|107|290
+#const dair_weak_damage_info = DAir|8|20|107|290

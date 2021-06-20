@@ -52,28 +52,32 @@
   endif
 #endsnippet
 
-#snippet COMBO_OPTIONS
-  $refreshMoves()
-  $filterMoveEndlag(20)
-  // $excludeMovesNotOrigin(nair|bair|dair|uair|fair|dtilt|ftilt|sspecial)
-  $excludeMovesOrigin(sspecial|sspecialair)
-  $output(Goto)
+#snippet GLOB_FILTERS
+  $excludeMovesOrigin(sspecial|sspecialair|USpecial|USpecialAir)
 #endsnippet
 
-#snippet KILL_OPTIONS
-  $refreshMoves()
-  // $excludeMovesOrigin(dair)
-  $excludeMovesOrigin(sspecial|sspecialair)
-  $output(Goto)
-#endsnippet
+// #snippet COMBO_OPTIONS
+//   $refreshMoves()
+//   $filterMoveEndlag(20)
+//   // $excludeMovesNotOrigin(nair|bair|dair|uair|fair|dtilt|ftilt|sspecial)
+//   $excludeMovesOrigin(sspecial|sspecialair)
+//   $output(Goto)
+// #endsnippet
 
-#snippet JUGGLE_OPTIONS
-  $refreshMoves()
-  // $excludeMovesNotOrigin(uair|uair|usmash|dair)
-  // $excludeMovesNamed(uair_tipman|fair)
-  $excludeMovesOrigin(sspecial|sspecialair)
-  $output(Goto)
-#endsnippet
+// #snippet KILL_OPTIONS
+//   $refreshMoves()
+//   // $excludeMovesOrigin(dair)
+//   $excludeMovesOrigin(sspecial|sspecialair)
+//   $output(Goto)
+// #endsnippet
+
+// #snippet JUGGLE_OPTIONS
+//   $refreshMoves()
+//   // $excludeMovesNotOrigin(uair|uair|usmash|dair)
+//   // $excludeMovesNamed(uair_tipman|fair)
+//   $excludeMovesOrigin(sspecial|sspecialair)
+//   $output(Goto)
+// #endsnippet
 
 #snippet EDGEGUARD_OPTIONS
   $pickRandMove(nspecial|sspecial|dair|ftilt|dtilt|dsmash, Goto)

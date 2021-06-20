@@ -57,7 +57,8 @@ if Equal var18 0 && !(XDistLE 15)
   Call ApproachHub
 elif Equal AirGroundState 2
   var0 = OPos * -1
-  if YDistBackEdge < -15
+  var17 = TopNY - OTopNY
+  if YDistBackEdge < -3 && var17 < 25 && YSpeed < -0.3
     Button X
     AbsStick var0
     Call AIHub

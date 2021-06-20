@@ -34,7 +34,7 @@ elif Equal var21 32769 && MeteoChance && Equal var16 3 && !(NoOpponent)
   Call ApproachHub
 endif
 
-if !(OutOfStage)
+if !(OutOfStage) && !(Equal var16 6)
   Call AIHub
 endif
 if Equal var16 8
@@ -53,7 +53,7 @@ label
 // {INITIALIZERS}
 var8 = 0
 label _main
-if !(OutOfStage)
+if !(OutOfStage) && !(Equal var16 6)
   Call AIHub
 endif
 if FramesHitstun > 0 && CurrAction < 11 && CurrAction > 16
@@ -116,6 +116,8 @@ endif
 if FramesHitstun > 0 && CurrAction < 11 && CurrAction > 16
   Call AIHub
 endif
+LOGSTR 1097887744 1417244672 1694498816 0 0
+LOGVAL var16
 if Equal var16 6
   if var1 < -40 && YSpeed < 0
     if NumJumps > 0
@@ -155,7 +157,7 @@ endif
   GetYDistFloorOffset var2 var3 5 0
   // var22 = TopNY - var2 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var2 < 4 && !(Equal var2 -1) 
+  if !(Equal var2 -1) 
     var2 = 0
   elif Equal DistBackEdge DistFrontEdge
     var2 = 2

@@ -246,10 +246,10 @@ var1 = 0
   elif Equal var20 25000
     var8 = OFramesHitstun 
   endif
-  SAFE_WRITE_4 var9
-  SAFE_WRITE_5 var10
-  SAFE_WRITE_6 var11
-  SAFE_WRITE_7 var12  
+  // SAFE_WRITE_4 var9
+  // SAFE_WRITE_5 var10
+  // SAFE_WRITE_6 var11
+  // SAFE_WRITE_7 var12  
   SAFE_INJECT_4 var9
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
@@ -330,6 +330,7 @@ var1 = 0
     endif
     var5 = OTopNX + OXSpeed * var22
     // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
+    // DrawDebugRectOutline var5 var6 5 5 255 255 0 136
   else 
     EstOYCoord var6 var22
     // if the opponent is in an actionable state, lower the estimate of
@@ -338,7 +339,7 @@ var1 = 0
       var22 *= 0.0
     endif
     EstOXCoord var5 var22
-    var6 = var6 - (OSCDBottom - OTopNY)
+    var6 = var6 + (OSCDBottom - OTopNY)
   endif
   var8 = TopNY + YDistBackEdge
   if SamePlane && var6 <= var8 && !(MeteoChance)
@@ -529,32 +530,32 @@ var1 = 0
   var5 = var7 - var5
   var6 = var6 - var17
   // adjust for opponent position (aim towards nearest blastzone)
-  if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
-    var22 = 0
-    var17 = LBoundary - (TopNX + var5) 
-    if var17 < 90 && Equal Direction (-1)
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var17 /= 2
-      var22 += var17
-    endif
-    var17 = RBoundary - (TopNX + var5)
-    if var17 > -90 && Equal Direction 1
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var17 /= 2
-      var22 -= var17
-    endif
-    var5 += var22
-    if Equal var22 0
-      var22 = Direction
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var22 *= var17
-      var22 /= 2
-      var5 -= var22
-    endif
-  endif
+  // if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
+  //   var22 = 0
+  //   var17 = LBoundary - (TopNX + var5) 
+  //   if var17 < 90 && Equal Direction (-1)
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var17 /= 2
+  //     var22 += var17
+  //   endif
+  //   var17 = RBoundary - (TopNX + var5)
+  //   if var17 > -90 && Equal Direction 1
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var17 /= 2
+  //     var22 -= var17
+  //   endif
+  //   var5 += var22
+  //   if Equal var22 0
+  //     var22 = Direction
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var22 *= var17
+  //     var22 /= 2
+  //     var5 -= var22
+  //   endif
+  // endif
   // account for target height
   var22 = 0
   SAFE_INJECT_D var22
@@ -584,54 +585,54 @@ var1 = 0
   if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
-  if !(CalledAs ComboHub)
-    var5 += TopNX
-    var6 += TopNY
-    DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
-    var5 -= TopNX
-    var6 -= TopNY
-    var17 = 0.0 + 1
-    var17 = var11 * (1/var17)
-    var11 = var17
-    var9 = var9 + var17 * 0.0
-    var17 = 0.0 + 1
-    var17 = var12 * (1/var17)
-    var12 = var17
-    var10 = var10 - var17 * 0.0
-    // var17 = TopNY - var10 + var12 + var22
-    // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
-    if CalledAs ApproachHub
-      var11 -= 2.5
-      var9 += 5
-    endif
-    var22 = (var9 + var11)
-    var22 *= Direction
-    var22 += TopNX
-    var17 = TopNY - var10 + var12
-    DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
-    var17 += var7
+  // if !(CalledAs ComboHub)
+  //   var5 += TopNX
+  //   var6 += TopNY
+  //   DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
+  //   var5 -= TopNX
+  //   var6 -= TopNY
+  //   var17 = 0.0 + 1
+  //   var17 = var11 * (1/var17)
+  //   var11 = var17
+  //   var9 = var9 + var17 * 0.0
+  //   var17 = 0.0 + 1
+  //   var17 = var12 * (1/var17)
+  //   var12 = var17
+  //   var10 = var10 - var17 * 0.0
+  //   // var17 = TopNY - var10 + var12 + var22
+  //   // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //   if CalledAs ApproachHub
+  //     var11 -= 2.5
+  //     var9 += 5
+  //   endif
+  //   var22 = (var9 + var11)
+  //   var22 *= Direction
+  //   var22 += TopNX
+  //   var17 = TopNY - var10 + var12
+  //   DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
+  //   var17 += var7
     
-    // if OTopNX > 0
-    //   var22 += var11
-    // else
-    //   var22 -= var11
-    // endif 
-    DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
-    var22 = OHurtboxSize / 2
-    var17 = var22 + OSCDBottom
-    DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
+  //   // if OTopNX > 0
+  //   //   var22 += var11
+  //   // else
+  //   //   var22 -= var11
+  //   // endif 
+  //   DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
+  //   var22 = OHurtboxSize / 2
+  //   var17 = var22 + OSCDBottom
+  //   DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
     
-    if CalledAs ApproachHub
-      var11 += 2.5
-      var9 -= 5
-    endif
-    var17 = var11 * 0.0
-    var9 -= var17
-    var11 = var11 + var17
-    var17 = var12 * 0.0
-    var10 += var17
-    var12 = var12 + var17
-  endif
+  //   if CalledAs ApproachHub
+  //     var11 += 2.5
+  //     var9 -= 5
+  //   endif
+  //   var17 = var11 * 0.0
+  //   var9 -= var17
+  //   var11 = var11 + var17
+  //   var17 = var12 * 0.0
+  //   var10 += var17
+  //   var12 = var12 + var17
+  // endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 7) 
   //   var17 = var14 - var4 - index
   //   var5 = var5 + OXSpeed * var17 * -2

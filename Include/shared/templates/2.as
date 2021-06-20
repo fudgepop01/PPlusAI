@@ -80,12 +80,12 @@ nearCliffX *= -1
 #const mt_combo = 0
 #const mt_juggle = 1
 #const mt_kill = 2
+#const mt_downward = 3
 moveType = -1
 
 globTempVar = OTopNX - (TopNX + nearCliffX) 
 Abs nearCliffX
 Abs globTempVar
-
 phase = 1
 Goto clear
 if globTempVar < nearCliffX && OYDistSelf < 70 && globTempVar < 20 && Equal OXDistBackEdge OXDistFrontEdge
@@ -105,7 +105,10 @@ elif Equal OIsOnStage 1 && OYDistSelf < 65 && Rnd < 0.8
   if phase <= 3
     moveType = mt_kill
     Goto killOptions
-  else 
+  elif Rnd <= 0.3 && OYDistBackEdge < -20 && !(Equal OAirGroundState 1)
+    moveType = mt_downward
+    Goto downwardOptions
+  else
     moveType = mt_combo
     Goto comboOptions
   endif
@@ -120,7 +123,10 @@ elif True
   if phase <= 3
     moveType = mt_kill
     Goto killOptions
-  else 
+  elif Rnd <= 0.3 && OYDistBackEdge > -30 && !(Equal OAirGroundState 1)
+    moveType = mt_downward
+    Goto downwardOptions
+  else
     moveType = mt_juggle
     Goto juggleOptions
   endif
@@ -132,12 +138,11 @@ if testLimit <= 0
   if phase < 6
     phase += 1
     // LOGSTR str("=======")
-    // LOGSTR str("PHASE UP:")
-    // LOGVAL phase
+    LOGSTR str("PHASE UP:")
+    LOGVAL phase
     // LOGSTR str("=======")
     testLimit = 10
     Jump
-    Return
   else
     Seek NCombo
   endif
@@ -146,7 +151,7 @@ endif
 // if Equal movePart mp_ATK
 //   comboLeniency = 15
 // endif
-LOGSTR str("=====")
+// LOGSTR str("=====")
 Goto clear
 Jump
 Return
@@ -175,6 +180,10 @@ label killOptions
 {KILL_OPTIONS}
 Return
 
+label downwardOptions
+{DOWNWARD_OPTIONS}
+Return
+
 {MOVE_GENERATION}
 
 label clear
@@ -191,8 +200,6 @@ label analyze
 
 if Equal lastAttack valGeneral
   Return
-elif valJab123 <= lastAttack && lastAttack <= valDashAttack && OYDistBackEdge < -40 && OTotalYSpeed > -0.2
-  Return
 endif
 
 // globTempVar = OFramesHitstun + comboLeniency
@@ -205,11 +212,6 @@ if lastAttack >= hex(0x6041) && lastAttack <= hex(0x604F)
   if !(InAir)
     move_hitFrame += jumpSquatFrames
     move_lastHitFrame += jumpSquatFrames
-  endif
-elif lastAttack <= valDSmash || Equal lastAttack valGrab || Equal lastAttack valDashAttack
-  if OYDistSelf > 20
-    // comboLeniency = 0
-    Return
   endif
 endif
 
@@ -231,6 +233,8 @@ else
   mid = move_lastHitFrame
 endif
 
+  LOGSTR str("phaze")
+  LOGVAL phase
 #let frameToCalc = var5
 if Equal phase 1 || Equal phase 4
   frameToCalc = fastest

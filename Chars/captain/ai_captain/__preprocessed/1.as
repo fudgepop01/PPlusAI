@@ -93,7 +93,7 @@ if !(Equal var21 36609) && !(Equal var21 36608) && !(Equal var21 32769) && !(Equ
     if !(Equal var20 24636)
       // var11 += 2.5
       // var9 -= 5
-      // if var20 <= 24638 && !(Equal var20 24630)
+      // if var20 <= 24637 && !(Equal var20 24630)
       //   var22 = 0.08 * 50
       //   var11 += var22
       //   var22 *= 2
@@ -120,13 +120,17 @@ if Equal CurrAction 4 || Equal CurrAction 3
   Stick 1
 endif
 
+if var21 > 65536
+  Seek forceDD
+  Jump
+endif
+
 // these work together to only dashdance if not in a tech-chase or combo situation
   if Equal OCurrAction 78 || Equal OCurrAction 80 || Equal OCurrAction 82 || Equal OCurrAction 96 || Equal OCurrAction 97
 
 // elif OAttacking && Rnd < 0.6 && XDistLE 20
 elif CurrAction >= 124 && CurrAction <= 125
 elif XDistLE 10
-elif InAir
 elif OCurrAction >= 66 && OCurrAction <= 82
 elif Equal var21 36608 || Equal var21 8288 || Equal var21 32770 || MeteoChance
 elif Equal var16 4 && Rnd < 0.3
@@ -135,9 +139,10 @@ elif Equal var20 25002 && Rnd < 0.6
 elif Equal var20 25003 && Rnd < 0.4
 elif Equal var16 7
 else
-  var21 = 32769
+  label forceDD
   var0 = (105 - LevelValue) / 100
   var0 = (Rnd * 20) - 20 * var0
+  OR var0 var0 var0
   var1 = (Rnd * 20) + 3
   // var17 = OXSpeed * 3
   // Abs var17
@@ -149,8 +154,6 @@ else
   
   label _dashdance
   Cmd30
-  LOGSTR 1145323776 1836318720 0 0 0
-  LOGVAL var0
   // Goto defendFromO
   if OCurrAction >= 59 && OCurrAction <= 82 && Rnd <= 0.5
     var0 = 0
@@ -177,7 +180,7 @@ else
   Abs var17
   predictAverage var22 4 LevelValue
   var17 += var22
-  var17 += 10
+  var17 += 25
   // DrawDebugRectOutline TopNX TopNY var17 20 255 136 0 136
   // predictOOption var22 13 LevelValue
   // if Equal var22 1
@@ -199,8 +202,8 @@ else
         endif
       endif
       Button R
-      var17 = OPos * -1
-      if ODistLE 40
+      if ODistLE var17
+        var17 = OPos * -1
         AbsStick var17 (-0.5)
       else
         AbsStick OPos (-0.5)
@@ -232,17 +235,19 @@ else
       predictionConfidence var22 6 LevelValue
       predictAverage var23 3 LevelValue
       var23 += 5
-      if Rnd < 0.4
+      if Rnd <= 0.2
         if Equal var17 1 && Rnd < var22 && XDistLE var23
-          if !(OAttacking) && var13 <= 16 && Rnd <= 0.4
+          if Rnd <= 0.55
+            Call DefendHub
+          elif !(OAttacking) && var13 <= 16 && Rnd <= 0.4
             var0 = 0
           else
             Call Unk3020
           endif
-        elif Equal var17 2 && Rnd < var22
+        elif Equal var17 2 && Rnd < var22 && Rnd <= 0.5
           var21 = 32770
           Call Grab
-        elif Equal var17 3 && Rnd < var22
+        elif Equal var17 3 && Rnd < var22 && Rnd <= 0.3
           var0 = 0
           Return
         endif
@@ -305,6 +310,7 @@ else
   endif
   Return
   label _dashdanceEnd
+  var21 = 32769
 endif
 
 if !(XDistLE 80) && Rnd < 0.35 && !(Equal var16 14)
@@ -333,7 +339,7 @@ else
   EstOYCoord var22 10
 endif
 var22 = var22 - TopNY
-if SamePlane && var22 >= 60 && var20 <= 24638
+if SamePlane && var22 >= 60 && var20 <= 24637
   var16 = 10
   Call AIHub
 endif
@@ -566,10 +572,10 @@ if !(True)
   elif Equal var20 25000
     var4 = OFramesHitstun 
   endif
-  SAFE_WRITE_4 var9
-  SAFE_WRITE_5 var10
-  SAFE_WRITE_6 var11
-  SAFE_WRITE_7 var12  
+  // SAFE_WRITE_4 var9
+  // SAFE_WRITE_5 var10
+  // SAFE_WRITE_6 var11
+  // SAFE_WRITE_7 var12  
   SAFE_INJECT_4 var9
   SAFE_INJECT_5 var10
   SAFE_INJECT_6 var11
@@ -650,6 +656,7 @@ if !(True)
     endif
     var5 = OTopNX + OXSpeed * var22
     // DrawDebugRectOutline OTopNX OTopNY 5 5 0 255 255 221
+    // DrawDebugRectOutline var5 var6 5 5 255 255 0 136
   else 
     EstOYCoord var6 var22
     // if the opponent is in an actionable state, lower the estimate of
@@ -658,7 +665,7 @@ if !(True)
       var22 *= 0.0
     endif
     EstOXCoord var5 var22
-    var6 = var6 - (OSCDBottom - OTopNY)
+    var6 = var6 + (OSCDBottom - OTopNY)
   endif
   var4 = TopNY + YDistBackEdge
   if SamePlane && var6 <= var4 && !(MeteoChance)
@@ -849,32 +856,32 @@ if !(True)
   var5 = var3 - var5
   var6 = var6 - var17
   // adjust for opponent position (aim towards nearest blastzone)
-  if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
-    var22 = 0
-    var17 = LBoundary - (TopNX + var5) 
-    if var17 < 90 && Equal Direction (-1)
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var17 /= 2
-      var22 += var17
-    endif
-    var17 = RBoundary - (TopNX + var5)
-    if var17 > -90 && Equal Direction 1
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var17 /= 2
-      var22 -= var17
-    endif
-    var5 += var22
-    if Equal var22 0
-      var22 = Direction
-      var17 = 0.0 + 1
-      var17 = var11 * (1/var17)
-      var22 *= var17
-      var22 /= 2
-      var5 -= var22
-    endif
-  endif
+  // if !(Equal var20 32776) && !(Equal var20 25000) && !(CalledAs ComboHub)
+  //   var22 = 0
+  //   var17 = LBoundary - (TopNX + var5) 
+  //   if var17 < 90 && Equal Direction (-1)
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var17 /= 2
+  //     var22 += var17
+  //   endif
+  //   var17 = RBoundary - (TopNX + var5)
+  //   if var17 > -90 && Equal Direction 1
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var17 /= 2
+  //     var22 -= var17
+  //   endif
+  //   var5 += var22
+  //   if Equal var22 0
+  //     var22 = Direction
+  //     var17 = 0.0 + 1
+  //     var17 = var11 * (1/var17)
+  //     var22 *= var17
+  //     var22 /= 2
+  //     var5 -= var22
+  //   endif
+  // endif
   // account for target height
   var22 = 0
   SAFE_INJECT_D var22
@@ -904,54 +911,54 @@ if !(True)
   if Equal AirGroundState 1 && Equal OAirGroundState 1 && var20 >= 24641 && var20 <= 24645 && SamePlane
     var6 = 0
   endif
-  if !(CalledAs ComboHub)
-    var5 += TopNX
-    var6 += TopNY
-    DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
-    var5 -= TopNX
-    var6 -= TopNY
-    var17 = 0.0 + 1
-    var17 = var11 * (1/var17)
-    var11 = var17
-    var9 = var9 + var17 * 0.0
-    var17 = 0.0 + 1
-    var17 = var12 * (1/var17)
-    var12 = var17
-    var10 = var10 - var17 * 0.0
-    // var17 = TopNY - var10 + var12 + var22
-    // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
-    if CalledAs ApproachHub
-      var11 -= 2.5
-      var9 += 5
-    endif
-    var22 = (var9 + var11)
-    var22 *= Direction
-    var22 += TopNX
-    var17 = TopNY - var10 + var12
-    DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
-    var17 += var3
+  // if !(CalledAs ComboHub)
+  //   var5 += TopNX
+  //   var6 += TopNY
+  //   DrawDebugRectOutline var5 var6 var11 var12 0 255 0 136
+  //   var5 -= TopNX
+  //   var6 -= TopNY
+  //   var17 = 0.0 + 1
+  //   var17 = var11 * (1/var17)
+  //   var11 = var17
+  //   var9 = var9 + var17 * 0.0
+  //   var17 = 0.0 + 1
+  //   var17 = var12 * (1/var17)
+  //   var12 = var17
+  //   var10 = var10 - var17 * 0.0
+  //   // var17 = TopNY - var10 + var12 + var22
+  //   // DrawDebugRectOutline TopNX var17 10 0 0 255 255 136
+  //   if CalledAs ApproachHub
+  //     var11 -= 2.5
+  //     var9 += 5
+  //   endif
+  //   var22 = (var9 + var11)
+  //   var22 *= Direction
+  //   var22 += TopNX
+  //   var17 = TopNY - var10 + var12
+  //   DrawDebugRectOutline var22 var17 var11 var12 136 136 136 136
+  //   var17 += var3
     
-    // if OTopNX > 0
-    //   var22 += var11
-    // else
-    //   var22 -= var11
-    // endif 
-    DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
-    var22 = OHurtboxSize / 2
-    var17 = var22 + OSCDBottom
-    DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
+  //   // if OTopNX > 0
+  //   //   var22 += var11
+  //   // else
+  //   //   var22 -= var11
+  //   // endif 
+  //   DrawDebugRectOutline var22 var17 var11 var12 255 255 255 136
+  //   var22 = OHurtboxSize / 2
+  //   var17 = var22 + OSCDBottom
+  //   DrawDebugRectOutline OTopNX var17 5 var22 255 255 0 221
     
-    if CalledAs ApproachHub
-      var11 += 2.5
-      var9 -= 5
-    endif
-    var17 = var11 * 0.0
-    var9 -= var17
-    var11 = var11 + var17
-    var17 = var12 * 0.0
-    var10 += var17
-    var12 = var12 + var17
-  endif
+  //   if CalledAs ApproachHub
+  //     var11 += 2.5
+  //     var9 -= 5
+  //   endif
+  //   var17 = var11 * 0.0
+  //   var9 -= var17
+  //   var11 = var11 + var17
+  //   var17 = var12 * 0.0
+  //   var10 += var17
+  //   var12 = var12 + var17
+  // endif
   // if !(CalledAs ComboHub) && LevelValue >= 60 && !(Equal var16 7) 
   //   var17 = var13 + (var14 - var13) / 2 - index
   //   var5 = var5 + OXSpeed * var17 * -2
@@ -1019,7 +1026,7 @@ if !(True)
     Abs var2
 
   var22 = var11 * 2
-  if Equal AirGroundState 2 && var0 <= var22 && LevelValue >= 75 && !(Equal XDistBackEdge XDistFrontEdge)  && !(Equal var16 14)
+  if Equal AirGroundState 2 && var0 <= var22 && LevelValue >= 75 && !(Equal XDistBackEdge XDistFrontEdge)  && !(Equal var16 14) && !(Equal CurrAction 12)
   var17 = var13 + (var14 - var13) / 2
   if Equal CurrSubaction JumpSquat
     var22 = -2.03
@@ -1388,7 +1395,7 @@ endif
 var22 = XSpeed * 8
 GetYDistFloorOffset var17 var22 40 0
 if !(Equal var17 -1) && var17 < 20 && Rnd < 0.15
-  if !(Equal var16 7) && var20 > 24638 || !(SamePlane)
+  if !(Equal var16 7) && var20 > 24637 || !(SamePlane)
     if XDistLE 25 && Rnd < 0.3 || XDistLE 25 60
       label 
       if !(CurrAction <= 11)
@@ -1461,7 +1468,7 @@ label
   GetYDistFloorOffset var2 var3 5 0
   // var22 = TopNY - var2 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var2 < 4 && !(Equal var2 -1) 
+  if !(Equal var2 -1) 
     var2 = 0
   elif Equal DistBackEdge DistFrontEdge
     var2 = 2
@@ -1576,8 +1583,6 @@ elif Equal CurrSubaction JumpSquat
   var17 = (var9 + var11) * Direction
   var22 += var17
   var17 = var22
-  LOGSTR 1196709376 0 0 0 0
-  LOGVAL var17
   if var17 < 0
     Abs var17
     if var17 <= 5
@@ -1771,7 +1776,7 @@ if var1 <= var17
   GetYDistFloorOffset var2 var3 5 0
   // var22 = TopNY - var2 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var2 < 4 && !(Equal var2 -1) 
+  if !(Equal var2 -1) 
     var2 = 0
   elif Equal DistBackEdge DistFrontEdge
     var2 = 2
@@ -1931,7 +1936,7 @@ if var20 >= 24632 && var20 <= 24635
   endif
 endif
 // DashAttack
-if Equal var20 24638 && !(Equal CurrAction 3) && !(Equal CurrAction 4)
+if Equal var20 24637 && !(Equal CurrAction 3) && !(Equal CurrAction 4)
   if Equal CurrAction 1
     ClearStick
   else
@@ -1947,7 +1952,7 @@ label skipPreparation
 var18 = 1
 if Equal var20 24625
   Call Jab123
-elif Equal var20 24638
+elif Equal var20 24637
   Call DashAttack
 elif Equal var20 24626
   Call FTilt
@@ -2019,7 +2024,7 @@ endif
   GetYDistFloorOffset var2 var3 5 0
   // var22 = TopNY - var2 
   // DrawDebugLine TopNX TopNY TopNX var22 255 0 0 221
-  if var2 < 4 && !(Equal var2 -1) 
+  if !(Equal var2 -1) 
     var2 = 0
   elif Equal DistBackEdge DistFrontEdge
     var2 = 2
@@ -2107,7 +2112,7 @@ label defendFromO
           var22 = 7
         endif
         
-        if !(OAttacking) && Rnd <= 0.1
+        if !(OAttacking) && Rnd <= 0.05
           trackOAction var22 0
           predictAverage var17 4 LevelValue
           var17 *= 0.5
@@ -2137,6 +2142,15 @@ label defendFromO
         endif
       endif
     endif
+  endif
+  if OAttacking && OAnimFrame < 2 && ODistLE 90
+    var22 = TopNX - OTopNX
+    Abs var22
+    var22 += 10
+    if var22 > 126
+      var22 = 126
+    endif
+    trackOAction 4 var22
   endif
 if OAnimFrame > 1 && OAnimFrame <= 2 && ODistLE 80
   if OPrevAction >= 66 && OPrevAction <= 69 || Equal OPrevAction 73 || Equal var16 7

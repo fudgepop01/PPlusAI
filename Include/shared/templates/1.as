@@ -81,13 +81,17 @@ if Equal CurrAction hex(0x04) || Equal CurrAction hex(0x03)
   Stick 1
 endif
 
+if lastScript > hex(0x10000)
+  Seek forceDD
+  Jump
+endif
+
 // these work together to only dashdance if not in a tech-chase or combo situation
 IF_O_IS_TECHING
 {SKIP_DASHDANCE_CONDITIONS}
 // elif OAttacking && Rnd < 0.6 && XDistLE 20
 elif CurrAction >= hex(0x7C) && CurrAction <= hex(0x7D)
 elif XDistLE 10
-elif InAir
 elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x52)
 elif Equal lastScript hex(0x8F00) || Equal lastScript hex(0x2060) || Equal lastScript hex(0x8002) || MeteoChance
 elif Equal approachType at_undershoot && Rnd < 0.3
@@ -96,8 +100,9 @@ elif Equal lastAttack valOffensiveShield && Rnd < 0.6
 elif Equal lastAttack valJumpOver && Rnd < 0.4
 elif Equal approachType at_combo
 else
-  lastScript = hex(0x8001)
+  label forceDD
   DASHDANCE(var0, var1)
+  lastScript = hex(0x8001)
 endif
 
 if !(XDistLE 80) && Rnd < 0.35 && !(Equal approachType at_fakeout)
@@ -820,8 +825,6 @@ elif Equal CurrSubaction JumpSquat
   globTempVar = (move_xOffset + move_xRange) * Direction
   immediateTempVar += globTempVar
   globTempVar = immediateTempVar
-  LOGSTR str("GTV")
-  LOGVAL globTempVar
   if globTempVar < 0
     Abs globTempVar
     if globTempVar <= 5
