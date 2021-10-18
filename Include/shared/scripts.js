@@ -144,6 +144,296 @@ export const generateAllMovesGotoKB = () => {
   return _out; 
 }
 
+export const generateAllMovesGotoKBONLY = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
+  for (const {origin, moveName, IASA_src, xOffset, yOffset, xRange, yRange, hitFrame, lastHitFrame, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`label ${mn}`)
+    out(`LOGSTR str("${moveName}")`);
+    out(`hitFrame = ${hitFrame}`)
+    out(`duration = ${hitFrame - lastHitFrame}`)
+    // shoutouts to preprocessing
+    let dirX = 0;
+    if (xOffset + xRange > 5) dirX = 1
+    else if (xOffset + xRange < -3) dirX = -1
+    console.log(`${moveName}; ${xOffset + xRange}; ${dirX}`);
+    out(`dirX = ${dirX}`)
+    let dirY = 0;
+    if (yOffset * -1 + yRange > 7) dirY = 1
+    else if (yOffset * -1 + yRange < 3) dirY = -1
+    out(`dirY = ${dirY}`)
+    out(`CalcKnockback move_currKnockback ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
+    out(`LOGVAL move_currKnockback`)
+    out(`move_angle = ${angle}`)
+    out(`Goto __ANGLE_FIX__`)
+    out("Return")
+  }
+  out("")
+  out("label __ANGLE_FIX__")
+  out(`if move_angle > 180 && Equal OAirGroundState 1`);
+  out(`  if Equal move_angle 361`)
+  out(`    if move_currKnockback < 32`)
+  out(`      move_angle = 0`)
+  out(`    else`)
+  out(`      move_angle = 44`)
+  out(`    endif`)
+  out(`  endif`)
+  out(`elif Equal move_angle 361`);
+  out(`  move_angle = 45`);
+  out(`endif`);
+  out("Return");
+  return _out; 
+}
+
+export const generateAllMovesGotoLocONLY = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
+  for (const {origin, moveName, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`label ${mn}`)
+    if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
+    if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
+    if (hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${hitFrame_src}`)
+    if (lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${lastHitFrame_src}`)
+    out("Return")
+  }
+  return _out;
+}
+
+export const generateAllMovesGotoLocRange = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  // for (const move of moves) {
+  //   console.log(move)
+  // }
+  for (const {origin, moveName, moveVariant, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`label ${mn}`)
+    if (IASA_src.startsWith(mn)) out(`move_IASA = ${IASA_src}`)
+    if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
+    if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
+    if (xRange_src.startsWith(mn)) out(`move_xRange = ${xRange_src}`)
+    if (yRange_src.startsWith(mn)) out(`move_yRange = ${yRange_src}`)
+    if (hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${hitFrame_src}`)
+    if (lastHitFrame_src.startsWith(mn)) out(`move_lastHitFrame = ${lastHitFrame_src}`)
+    out(`moveVariant = ${moveVariant}`);
+    out("Return")
+  }
+  return _out;
+}
+
+
+export const generateMoveSnippets = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
+    switch(origin.toLowerCase()) {
+      case 'nair':
+      case 'jab123': out('Button A'); break;
+      case 'dashattack': out('Goto execDA'); break;
+      case 'ftilt': out('Button A'); out('Stick 0.7'); break;
+      case 'utilt': out('Button A'); out('Stick 0 0.7'); break;
+      case 'dair': out('Button A'); out('Stick 0 (-0.6)'); break;
+      case 'dtilt': out('Button A'); out('Stick 0 (-0.7)'); break;
+      case 'fair':
+      case 'fsmash': out('Button A'); out('Stick 1'); break;
+      case 'uair':
+      case 'usmash': out('Button A'); out('Stick 0 1'); break;
+      case 'bair': out('Button A'); out('Stick (-1) 0'); break;
+      case 'dsmash': out('Button A'); out('Stick 0 (-1)'); break;
+      case 'nspecialair':
+      case 'nspecial': out('Button B'); break;
+      case 'sspecialair':
+      case 'sspecial': out('Button B'); out('AbsStick OPos'); break;
+      case 'uspecialair':
+      case 'uspecial': out('Button B'); out('Stick 0 1'); break;
+      case 'dspecialair':
+      case 'dspecial': out('Button B'); out('Stick 0 (-0.7)'); break;
+      case 'grab': out('Button R|A'); break;
+    }
+    if (moveVariant !== 0) {
+      out(`Seek ${moveName.toLowerCase()}`);
+    } else {
+      out(`Seek ${origin.toLowerCase()}`);
+    }
+    out('Return');
+  }
+  out('endif');
+  out('');
+  out('// IMPLEMENTATIONS');
+  out('if !(True)')
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    if (moveVariant !== 0) {
+      out(`label ${moveName.toLowerCase()}`);
+      out('Goto PFC')
+      out(`{${moveName.toUpperCase()}}`);
+      out('Goto common_checks')
+      out(`Seek ${moveName.toLowerCase()}`);
+    } else {
+      out(`label ${origin.toLowerCase()}`);
+      out('Goto PFC')
+      out(`{${origin.toUpperCase()}}`);
+      out('Goto common_checks')
+      out(`Seek ${origin.toLowerCase()}`);
+    }
+    out ('Return');
+  }
+  out('endif')
+
+  return _out;
+}
+
+export const ifMoveRequiresIdleGround = () => {
+  clearOut();
+  let str = "if !(True) ";
+  const moves = Object.values(getMoveData());
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    switch (origin.toLowerCase()) {
+      case 'jab123':
+      case 'ftilt':
+      case 'dtilt':
+      case 'utilt':
+      case 'dsmash':
+      case 'fsmash':
+      case 'nspecial':
+      case 'dspecial':
+        str += ` || Equal lastAttack ${idx}`;
+        break;
+      default:
+        break;
+    } 
+  }
+  
+  out(str);
+  return _out;
+}
+
+export const generateChecks = (labelName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    if (moveName.toLowerCase() == "grab") continue;
+    out(`lastAttack = ${idx}`);
+    out(`Goto ${origin.toLowerCase()}`);
+    if (moveVariant !== 0) {
+      out(`Goto ${moveName.toLowerCase()}`);
+    }
+    out(`Goto ${labelName}`);
+  }
+  return _out;
+}
+
+export const generateAerialChecks = (labelName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    if (origin.toLowerCase() == "grab") continue;
+    else if (!origin.toLowerCase().endsWith("air")) continue;
+    out(`lastAttack = ${idx}`);
+    out(`Goto ${origin.toLowerCase()}`);
+    if (moveVariant !== 0) {
+      out(`Goto ${moveName.toLowerCase()}`);
+    }
+    out(`Goto ${labelName}`);
+  }
+  return _out;
+}
+
+export const ifLastAttack = (moveName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
+
+  out(`if Equal lastAttack ${idx}`);
+  return _out;
+}
+
+export const addToDice = (moveName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
+
+  out(`DynamicDiceAdd ${idx}`);
+  return _out;
+}
+
+export const elifLastAttack = (moveName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
+
+  out(`elif Equal lastAttack ${idx}`);
+  return _out;
+}
+
+export const getMoveLocationParams = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
+    out(`Goto ${origin.toLowerCase()}`);
+    if (moveVariant !== 0) {
+      out(`Goto ${moveName.toLowerCase()}`);
+    }
+  }
+  out ('endif')
+  return _out;
+}
+
+export const ifAerialAttack = () => {
+  clearOut();
+  let str = "if !(True) ";
+  const moves = Object.values(getMoveData());
+
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    if (origin.toLowerCase().endsWith('air')) {
+      str += `|| Equal lastAttack ${idx}`;
+    }
+  }
+  
+  out(str);
+  return _out;
+}
+
+export const printMoveName = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
+    if (moveVariant !== 0) {
+      out(`LOGSTR str("${moveName}")`)
+      out(`LOGSTR str("${moveName}")`)
+      out(`LOGSTR str("${moveName}")`)
+      out(`LOGSTR str("${moveName}")`)
+      out(`LOGSTR str("${moveName}")`)
+    } else {
+      out(`LOGSTR str("${origin}")`)
+      out(`LOGSTR str("${origin}")`)
+      out(`LOGSTR str("${origin}")`)
+      out(`LOGSTR str("${origin}")`)
+      out(`LOGSTR str("${origin}")`)
+    }
+  }
+  out ('endif')
+  return _out;
+}
+
 let _moveData = undefined;
 const getMoveData = () => {
   if (_moveData) return _moveData;
@@ -241,14 +531,16 @@ const updateTrackedMoves = (moves) => {
 
 const commonRecoveryBase = (AIHubConditions) => `
   if ${AIHubConditions}
-    Call AIHub
+    currGoal = cg_nothing
+    Call MainHub
   endif
   {COMMON_RECOVERY_BASE}
 `;
 
 const customRecoveryBase = (AIHubConditions) => `
   if ${AIHubConditions}
-    Call AIHub
+    currGoal = cg_nothing
+    Call MainHub
   endif
   {CUSTOM_RECOVERY_BASE}
 `;
@@ -312,7 +604,7 @@ const outputRandMove = (moves, context) => {
       out(`elif ${idx} < globTempVar && globTempVar < ${idx + 1} ${!(origin.toLowerCase().endsWith("air")) ? "&& YDistBackEdge > -10 && YDistBackEdge > -10" : ""} ${append}`);
     }
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
-    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
+    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `CallI ${origin}`);
     if (context === "Goto" && moveVariant !== 0) {
       out(`Goto ${moveName.toLowerCase()}`);
     }
@@ -465,7 +757,7 @@ export const outputWithKnockbackThresholds = (min, max, context) => {
     if (!(origin.toLowerCase().endsWith("air") || origin.toLowerCase().endsWith("special"))) append += ` && YDistBackEdge > -6`;
     out(`if ${conditional} ${append}`);
     if (moveVariant !== 0) out(`moveVariant = mv_${moveName}`);
-    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `Call ${origin}`);
+    out(context === "Goto" ? `Goto ${origin.toLowerCase()}` : `CallI ${origin}`);
     if (context === "Goto" && moveVariant !== 0) {
       out(`Goto ${moveName.toLowerCase()}`);
     }

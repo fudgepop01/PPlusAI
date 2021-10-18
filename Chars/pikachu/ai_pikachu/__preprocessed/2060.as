@@ -6,6 +6,7 @@ id 0x2060
 unk 0x0
 
 //Strings
+SetDisabledMd -1
 
 if Equal var21 8272 && !(Equal AirGroundState 3) && YDistBackEdge < 0
     var18 = 255

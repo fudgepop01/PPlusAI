@@ -1,5 +1,5 @@
-#const sc_laser_still = 0x8101
-#const tr_laser_still = hex(0x8101)
+#const shortHopHeight = 16
+#const djumpHeight = 38
 
 // defining attributes here as constants (just in case)
 #const walkInitVel = 0.2

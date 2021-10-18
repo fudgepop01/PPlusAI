@@ -16,6 +16,7 @@ cmd GetLaBasic : 0x39 variable index opponent
 cmd GetLaFloat : 0x3A variable index opponent
 
 cmd GetYDistFloorOffset : 0x3B variable xOffset yOffset opponent
+cmd GetYDistFloorAbsPos : 0x3C variable xPos yPos
 
 // cmd GetMoveFrequency : 0x3D variable move stale opponent
 
@@ -23,7 +24,7 @@ cmd GetYDistFloorOffset : 0x3B variable xOffset yOffset opponent
 /// this will return 1
 cmd GetIsTeammateCloser : 0x3E variable
 
-cmd CalcYChangeWithGravity : 0x3F variable framecount opponent
+cmd GetAttribute : 0x3F variable offset opponent
 
 //AI COMMAND CODES
 
@@ -52,7 +53,20 @@ cmd SetAutoDefend : 0x45 oneOrZero
 
 cmd SetDisabledMd : 0x46 mdValue
 
-cmd RetrieveFullATKD : 0x47 unkVar startVar endVar xMinVar xMaxVar yMinVar yMaxVar subactionID opponent
+cmd SetDisabledSwitch : 0x47 oneOrZero
+
+cmd RetrieveFullATKD : 0x48 unkVar startVar endVar xMinVar xMaxVar yMinVar yMaxVar subactionID opponent
+
+///Estimates the AI's x coordinate after "time" passes
+cmd EstXCoord : 0x49 variable time
+
+///Estimates the AI's y coordinate after "time" passes
+cmd EstYCoord : 0x4A variable time
+
+cmd GetColDistPosAbs : 0x4B colXVar colYVar startX startY destX destY detectPlats
+cmd GetColDistPosRel : 0x4C colXVar colYVar startX startY relDestX relDestY detectPlats
+
+cmd SetDebugMode : 0x4D value
 
 //AI TRACKING CODES
 
@@ -71,13 +85,13 @@ cmd trackOAction : 0x50 managertype actiontype
 /// 2 = "grab"
 /// 3 = "defend"
 /// lookamount = value / 100 (for LevelValue support)
-cmd predictOOption : 0x51 variable managertype lookamount 
+cmd predictOOption : 0x51 variable managertype LevelValue 
 
 /// returns how confident the prediction is 
-cmd predictionConfidence : 0x52 variable managertype lookamount
+cmd predictionConfidence : 0x52 variable managertype LevelValue
 
 /// averages the prediction values
-cmd predictAverage : 0x53 variable managertype lookamount
+cmd predictAverage : 0x53 variable managertype LevelValue
 
 /// adds 1 to the current prediction (effectively treats as a counter)
 cmd incrementPrediction : 0x54 managertype
@@ -85,6 +99,8 @@ cmd incrementPrediction : 0x54 managertype
 /// obtains the current value stored in the prediction
 cmd getCurrentPredictValue : 0x55 variable managerType
 
+/// predicts the chance that a target will attack based on their prior actions
+cmd GetCommitPredictChance : 0x58 variable LevelValue
 
 // MISSING OPERATOR CODES
 cmd OR : 0x60 variable op1 op2
@@ -99,6 +115,17 @@ cmd SIN : 0x66 variable value
 cmd GetItemLocFromIdx : 0x70 variable1 variable2 idx
 cmd GetArticleOfTypeAtTarget : 0x71 variable1 variable2 type opponent
 cmd GetArticleOfTypeLoc : 0x72 variable1 variable2 type
+
+// CONTROL FLOW CODES
+cmd CallI : 0x80 @AIID
+cmd XGoto : 0x81 @AIID
+cmd NoRepeat : 0x82 
+/// literally just a noop
+/// makes XGoto play nice
+cmd XReciever : 0x83
+cmd DynamicDiceAdd : 0x84 value
+cmd DynamicDiceRoll : 0x85 variable
+cmd DynamicDiceClear : 0x86
 
 //DEBUGGING CODES
 

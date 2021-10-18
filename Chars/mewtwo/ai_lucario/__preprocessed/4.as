@@ -8,6 +8,8 @@ unk 0x0
 label
 Cmd30
 
+SetDisabledMd -1
+
 if CurrAction >= 66 && CurrAction <= 69 && !(OutOfStage)
   Call OnGotDamaged
 endif

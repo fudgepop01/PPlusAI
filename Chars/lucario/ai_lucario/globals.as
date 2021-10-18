@@ -1,8 +1,5 @@
-// globals are preprocessed variables that can be used anywhere
-// they'll automatically be substituted for the variable or value
-// they stand for.
-//
-// ex. in here, "move_xOffset" will always be replaced with "var9"
+#const shortHopHeight = 24
+#const djumpHeight = 25
 
 // defining attributes here as constants (just in case)
 #const walkInitVel = 0.3

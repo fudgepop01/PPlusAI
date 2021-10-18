@@ -34,7 +34,9 @@ if Equal OCurrAction 51
     var4 = var17
   endif
 endif
-if OAttacking && var4 > 20 && OAnimFrame >= var5 
+if OAttacking && var4 > 15 && OAnimFrame >= var5 
+  AbsStick OPos
+  Call AIHub
 elif XDistLE 50 && var3 > 0
   Button R
 elif OAttacking && OAnimFrame > 15 && OAnimFrame < var5 && XDistLE 50
@@ -83,7 +85,7 @@ if !(True)
   if Equal LevelValue 100 && Equal IsOnPassableGround 1 && Rnd < 0.7
     Seek shieldDropOOS
     Jump
-  elif Equal CurrAction 27 && var4 > 8 && var3 <= 10 || XDistLE var17 var22
+  elif Equal CurrAction 27 && var4 > 8 && var3 <= 10 || XDistLE var17 var22 && !(OAttacking)
     var17 = Rnd * 100
     if var17 < 78
       Button X

@@ -6,6 +6,7 @@ id 0x8003
 unk 0x0
 
 // LOGSTR 1667329024 1818584064 0 0 0
+SetDisabledMd 4
 
 if Equal var21 4384
   Call ComboHub
@@ -125,11 +126,11 @@ endif
 
 // #let OConsecutiveLedgeGrabs = var5
 // GetLaBasic var0 79 1
-if var3 <= 5 && LevelValue >= 48 && NoOneHanging && var4 > 10
+if var3 <= 3 && LevelValue >= 48 && NoOneHanging && var4 > 10
   var18 = 255
   Goto WDBackGrabLedge
   Return
-elif Equal IsOnStage 1 && var3 <= 5 && var5 > 30 && !(True)
+elif Equal IsOnStage 1 && var3 <= 7
   var18 = 0
   var16 = 3
   if OYDistBackEdge < 0

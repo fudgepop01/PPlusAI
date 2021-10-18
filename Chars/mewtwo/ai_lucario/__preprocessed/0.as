@@ -8,6 +8,10 @@ label begin
 SetAutoDefend 0
 SetDisabledMd -1
 
+if !(Equal TrainingScript 65535)
+  var19 = 1
+endif
+
   if Equal CurrAction 288
     Button X
     Call ChrSpecific1 // mewtwo hover handler
@@ -57,7 +61,10 @@ if Equal LevelValue 100
   endif
 endif
 
-if FramesHitstun > 1
+if FramesHitstun > 1 || Equal CurrAction 66
+  // if Equal CurrSubaction ThrownLw && AnimFrame >= 15 && Rnd < 0.5
+  //   Button R
+  // endif 
   Call OnGotDamaged
 endif
 
@@ -205,9 +212,17 @@ var16 = 0
 var19 = 0
 var18 = 0
 
+if Equal TrainingScript 33281
+  Call 0x8201
+elif Equal TrainingScript 33537
+  Call 0x8301
+endif
+
+// {TRAINING_OPTIONS}
+
 if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73 || OCurrAction >= 77 && OCurrAction <= 95
   SetTimeout 300
-  var0 = Rnd * 40 + 15
+  var0 = Rnd * 100 + 15
   var1 = 0
   if Damage < 80
     var2 = 10
@@ -226,15 +241,15 @@ if OYSpeed < 0 && OYDistBackEdge > -5 && Equal OCurrAction 73 || OCurrAction >= 
   elif Equal AirGroundState 1
     // force crouch cancel
     Stick 0 (-1)
-    if var0 <= 20
-      if var17 < 0.3 && var20 >= 24641 && var20 <= 24655
-        Button X
-      elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 19
-        ClearStick
-        Stick -1 0
-      elif var17 >= 0.6
-        Button R
-      endif
+    if var17 < 0.3 && var20 >= 24641 && var20 <= 24655 && var0 <= 30
+      Button X
+    elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 15
+      ClearStick
+      Stick -1 0
+      Seek _afterTCS
+      Jump
+    elif var17 >= 0.6 && var0 <= 80
+      Button R
     endif
   endif
   var4 = 0
@@ -343,8 +358,6 @@ if Equal var0 0
       Call DSpecialAir
     endif
   elif YDistBackEdge > -40
-
-
     if !(XDistLE 70)
       Seek attack_approaches
       Jump
@@ -424,7 +437,7 @@ if Equal var0 0
     if LevelValue >= 60 && Equal var6 0 && var7 <= 1
       if Equal var7 1
         Call FakeOutHub
-      elif OAttacking && var1 < OAnimFrame && var4 >= 12 && !(Equal var1 -1) && LevelValue >= 75 && !(Equal OCurrAction 27) && XDistLE 40
+      elif OAttacking && var1 < OAnimFrame && var4 >= 12 && !(Equal var1 -1) && LevelValue >= 75 && !(Equal OCurrAction 27) && XDistLE 40 && OCurrActionFreq >= 3
   var0 = 10
   label whiffPunish
 var17 = Rnd * 20
@@ -510,10 +523,8 @@ endif
       endif
     endif
 
-    var21 = 32768
-
     var3 = 200 - (ODamage - Damage) * 4
-    var3 *= 0.005
+    var3 *= 0.01
 
     predictOOption var17 6 LevelValue
     predictionConfidence var22 6 LevelValue
@@ -532,20 +543,6 @@ endif
     Norm var22 TopNX TopNY
     Norm var17 OTopNX OTopNY
     var22 -= 10
-    if LevelValue >= 42 && Equal var6 0 && var7 <= 2
-
-      var2 = var3 * 0.20
-      predictAverage var22 3 LevelValue
-
-      if XDistLE var22 && Rnd < 0.4 && Equal AirGroundState 1
-        if Rnd < var2 || Rnd < 0.04
-          var16 = 2
-        endif
-        Call NeutralHub
-      elif Equal var7 2
-        Call NeutralHub
-      endif
-    endif
 
     if LevelValue >= 60 && Equal var6 0 && var7 <= 2
       if var22 < var17
@@ -559,6 +556,23 @@ endif
       endif
       if Rnd < var2
         Call FakeOutHub
+      endif
+    endif
+
+    var21 = 32768
+
+    if LevelValue >= 42 && Equal var6 0 && var7 <= 2
+
+      var2 = var3 * 0.20
+      predictAverage var22 3 LevelValue
+
+      if XDistLE var22 && Rnd < 0.4 && Equal AirGroundState 1
+        if Rnd < var2 || Rnd < 0.04
+          var16 = 2
+        endif
+        Call NeutralHub
+      elif Equal var7 2
+        Call NeutralHub
       endif
     endif
 
@@ -594,7 +608,6 @@ endif
     endif
     label attack_approaches
     var16 = 1 // default
-
 
   if !(XDistLE 40) && LevelValue >= 60 && Rnd < 0.3
     var16 = 255
@@ -849,7 +862,7 @@ endif
     COS var22 var8
     var22 *= var15
     var22 *= Direction
-    var22 *= 1.2
+    var22 *= 3.2
     var17 = RBoundary - (0)
     // LOGSTR 1380057088 0 0 0 0
     // LOGVAL var22
@@ -869,7 +882,7 @@ endif
     var17 = TBoundary - (0)
     SIN var22 var8
     var22 *= var15
-    var22 *= 0.7
+    var22 *= 0.9
     // LOGSTR 1413611520 0 0 0 0
     // LOGVAL var22
     // LOGVAL var17

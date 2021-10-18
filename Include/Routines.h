@@ -193,7 +193,7 @@ act SSpecial : 0x6039
 act USpecial : 0x603A
 act DSpecial : 0x603B
 act Grab : 0x603C
-act Nothing : 0x603D
+// act Nothing : 0x603D
 
 act AerialBase : 0x6040
 act NAir : 0x6041
@@ -336,29 +336,77 @@ act TurnWDBack : 0x7010
 
 // Custom routines
 
-// [DOES NOT YET WORK / EXIST]
+// 8/12/2021 CUSTOM ROUTINES
+act NoTarget : 0x2080
+
+act GoalChoiceHub : 0x8500
+act PerFrameChecks : 0x8501
+act RandomizeGoal : 0x8502
+act CalcAttackGoal : 0x8503
+act CircleCampGoal : 0x8504
+act GetChrSpecific : 0x8505
+act MoveToGoal : 0x850C
+act CheckAttackWillHit : 0x850D
+act SetAttackGoal : 0x850E
+act UpdateGoal : 0x850F
+
+act Init : 0x8000
+act MainHub : 0x8100
+act AttackedHub : 0x8101
+act DefendHub : 0x8102
+act RecoveryHub : 0x8103
+act EdgeguardHub : 0x8104
+act NeutralHub : 0x8104
+act CampHub : 0x8105
+act BaitHub : 0x8106
+act PunishEndlag : 0x8107
+
+act DashScr : 0x8201
+act Roll : 0x8202
+act JumpScr : 0x8203
+act Shield : 0x8204
+act Wavedash : 0x8205
+act AerialDrift : 0x8206
+act BoardPlatform : 0x8207
+act ShieldDrop : 0x8208
+act LyingDown : 0x8209
+act OnLedge : 0x820A
+act Respawn : 0x820B
+
+act FastAerial : 0x8401
+act ExecuteAttack : 0x840F
+
+
+act DashAttack : 0x603E
+
+// OLD CUSTOM ROUTINES
+
+// [DOES NOT TRULY EXIST]
 // thanks to a code, the game will force
 // the AI into this script when no opponent
 // is around
-act NoTarget : 0x2080
+// act | NoTarget : 0x2080
 
-act Landing : 0x59
+// act | Landing : 0x59
 
-act AIHub : 0x8000
-act ApproachHub : 0x8001
-act ComboHub : 0x8002
-act EdgeguardHub : 0x8003
-act RecoveryHub : 0x8004
-act DefendHub : 0x8005
-act NeutralHub : 0x8006
-act OOSHub : 0x8007
-act FakeOutHub : 0x8008
-act EdgeEscapeHub : 0x8009
+// act | AIHub : 0x8000
+// act | ApproachHub : 0x8001
+// act | ComboHub : 0x8002
+// act | EdgeguardHub : 0x8003
+// act | RecoveryHub : 0x8004
+// act | DefendHub : 0x8005
+// act | NeutralHub : 0x8006
+// act | OOSHub : 0x8007
+// act | FakeOutHub : 0x8008
+// act | EdgeEscapeHub : 0x8009
 
-act mix_tomhawkJump : 0x8F00
-act mix_doubleJump : 0x8F01
+// act | mix_tomhawkJump : 0x8F00
+// act | mix_doubleJump : 0x8F01
 
-act DashAttack : 0x603E
+
+
+
+// FOR COMPATIBILITY
 
 act ChrSpecific1 : 0x8101
 act ChrSpecific2 : 0x8102

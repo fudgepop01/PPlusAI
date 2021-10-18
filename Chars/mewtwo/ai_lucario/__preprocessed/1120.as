@@ -68,7 +68,7 @@ endif
     COS var22 var8
     var22 *= var15
     var22 *= Direction
-    var22 *= 1.2
+    var22 *= 3.2
     var17 = RBoundary - (TopNX)
     // LOGSTR 1380057088 0 0 0 0
     // LOGVAL var22
@@ -88,7 +88,7 @@ endif
     var17 = TBoundary - (TopNY)
     SIN var22 var8
     var22 *= var15
-    var22 *= 0.7
+    var22 *= 0.9
     // LOGSTR 1413611520 0 0 0 0
     // LOGVAL var22
     // LOGVAL var17
@@ -99,7 +99,7 @@ endif
     var2 = 0
     Return
   endif
-    var22 = LevelValue * 0.01
+    var22 = LevelValue * 0.7
     if Equal var2 1 && Rnd <= var22
       LOGSTR 2003397632 1814063872 1768713216 0 0
       Goto execThrow

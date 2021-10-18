@@ -53,16 +53,16 @@ if !(Equal var21 36609) && !(Equal var21 36608) && !(Equal var21 32769) && !(Equ
     endif
   endif
 
-  if Equal var0 1 && YDistBackEdge < 0
-    LOGSTR 1919250432 1768123136 540082176 0 0
-    if Equal var21 32770
-      var16 = 10
-      Call ComboHub
-    else
-      var16 = 10
-      Call AIHub
-    endif
-  endif 
+  // if Equal var0 1 && !(Equal DistBackEdge DistFrontEdge)
+  //   LOGSTR 1919250432 1768123136 540082176 0 0
+  //   if Equal var21 32770
+  //     var16 = 10
+  //     Call ComboHub
+  //   else
+  //     var16 = 10
+  //     Call AIHub
+  //   endif
+  // endif 
 
   if LevelValue <= 60
     var17 = (100 - LevelValue) / 3
@@ -143,7 +143,7 @@ else
   var0 = (105 - LevelValue) / 100
   var0 = (Rnd * 11) - 11 * var0
   OR var0 var0 var0
-  var1 = (Rnd * 20) + 3
+  var1 = (Rnd * 12) + 3
   // var17 = OXSpeed * 3
   // Abs var17
   // var17 += 20
@@ -155,7 +155,19 @@ else
   label _dashdance
   Cmd30
   // Goto defendFromO
-  if OCurrAction >= 59 && OCurrAction <= 82 && Rnd <= 0.5
+  RetrieveFullATKD var22 var23 var17 var23 var23 var23 var23 OCurrSubaction 1
+  if Equal var22 0
+    var22 = OEndFrame
+  endif
+  var22 = var22 - var17 - OAnimFrame
+  // LOGSTR 758983936 1026374912 758983936 0 0
+  // LOGVAL var17
+  // LOGVAL OAnimFrame
+  // LOGVAL var22
+  // LOGVAL var13
+  if OAttacking && OAnimFrame > var17 && var22 > var13 && XDistLE 50
+    var0 = 0
+  elif OCurrAction >= 59 && OCurrAction <= 82 && Rnd <= 0.5
     var0 = 0
   elif OCurrAction >= 24 && OCurrAction <= 25 && Rnd <= 0.5
     var0 = 0
@@ -210,7 +222,7 @@ else
       endif
       Return
     endif
-  elif Equal AirGroundState 1 && var0 > 0 && Equal OFramesHitstun 0
+  elif Equal AirGroundState 1 && var0 > 1 && Equal OFramesHitstun 0
     if Equal CurrAction 1 && !(Equal CurrAction 7)
       ClearStick
     elif !(XDistLE 35) && !(Equal OPos Direction) && CurrAction <= 3 && NumFrames > 3
@@ -235,30 +247,31 @@ else
       predictionConfidence var22 6 LevelValue
       predictAverage var23 3 LevelValue
       var23 += 5
-      if Rnd <= 0.2
+      if Rnd <= 0.03
         if Equal var17 1 && Rnd < var22 && XDistLE var23
+          LOGSTR 1145390592 1162757120 1229866752 541344768 0
           if Rnd <= 0.55
             Call DefendHub
           elif !(OAttacking) && var13 <= 16 && Rnd <= 0.4
             var0 = 0
-          else
+          elif Rnd <= 0.05
             Call Unk3020
           endif
-        elif Equal var17 2 && Rnd < var22 && Rnd <= 0.5
+        elif Equal var17 2 && Rnd < var22 && Rnd <= 0.05
           var21 = 32770
           Call Grab
-        elif Equal var17 3 && Rnd < var22 && Rnd <= 0.3
+        elif Equal var17 3 && Rnd < var22 && Rnd <= 0.7
           var0 = 0
           Return
         endif
       endif
       if Equal Direction OPos && Rnd < 0.3 && XDistFrontEdge > 25
-        if XDistBackEdge > -25 && Rnd < 0.25 || Rnd < 0.15
-          Button R
-          // var22 = TopNX * -1
-          // AbsStick var22 0
-          Call OOSHub
-        endif
+        // if XDistBackEdge > -25 && Rnd < 0.25 || Rnd < 0.15
+        //   Button R
+        //   // var22 = TopNX * -1
+        //   // AbsStick var22 0
+        //   Call OOSHub
+        // endif
         if Rnd < 0.1
           var0 = 100
         endif
@@ -287,6 +300,13 @@ else
   Return
   label _ddSubr
   SetFrame 0
+  if XDistLE 35 && Rnd < 0.35
+    Seek _dashdanceEnd
+    Jump
+  elif Rnd <= 0.05
+    Seek _dashdanceEnd
+    Jump
+  endif
   if Equal Direction OPos && Rnd < 0.1 && XDistFrontEdge > 10 && XDistBackEdge < -10
     var0 -= 1
     Button X
@@ -298,7 +318,7 @@ else
       Stick (-1)
     endif
   endif
-  var1 = (Rnd * 20) + 3
+  var1 = (Rnd * 12) + 3
   if OCurrAction >= 26 && OCurrAction <= 33 && Rnd < 0.8
     trackOAction 6 2
   elif OCurrAction >= 52 && OCurrAction <= 56
@@ -308,6 +328,7 @@ else
   elif Rnd < 0.1
     trackOAction 6 0
   endif
+  // HIGHLIGHT_GUESSES(6, LevelValue)
   Return
   label _dashdanceEnd
   var21 = 32769
@@ -315,12 +336,17 @@ endif
 
 if !(XDistLE 80) && Rnd < 0.35 && !(Equal var16 14)
   Call FakeOutHub
-endif
+endif 
 
 // var7
 var7 = 65535
 label BEGIN_MAIN
 Cmd30
+if Equal DistFrontEdge DistBackEdge
+  SetDisabledMd 4
+else
+  SetDisabledMd 6
+endif
 
 Goto checkHitstun
 // var17 = var9 + (var11 * 2)
@@ -575,14 +601,14 @@ if !(True)
   elif Equal var20 25000
     var4 = OFramesHitstun 
   endif
-  // SAFE_WRITE_4 var9
-  // SAFE_WRITE_5 var10
-  // SAFE_WRITE_6 var11
-  // SAFE_WRITE_7 var12  
-  SAFE_INJECT_4 var9
-  SAFE_INJECT_5 var10
-  SAFE_INJECT_6 var11
-  SAFE_INJECT_7 var12
+  // SAFE_WRITE_C var9
+  // SAFE_WRITE_D var10
+  // SAFE_WRITE_E var11
+  // SAFE_WRITE_F var12  
+  SAFE_INJECT_C var9
+  SAFE_INJECT_D var10
+  SAFE_INJECT_E var11
+  SAFE_INJECT_F var12
   var3 = 0
   // calculate own estimated position
   var17 = var13 + (var14 - var13) / 2 + var4
@@ -827,15 +853,19 @@ if !(True)
   // var17 = var17 - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir) || var20 >= 24632 && var20 <= 24635
-    var22 = var9 + (var11 * 2)
-    var22 /= 2
-    if var22 <= 2
-      var3 = var3 - (var9 * OPos)
-    else 
-      var3 = var3 + (var11 * OPos)
-      var3 = var3 + (var9 * OPos)
-    endif 
+  if var20 > 24637 || var20 >= 24632 && var20 <= 24635
+    if !(InAir) && var20 <= 24649
+      var22 = var9 + (var11 * 2)
+      if var22 <= 2
+        var3 = var3 - (var9 * OPos)
+      else 
+        var3 = var3 + (var11 * OPos)
+        var3 = var3 + (var9 * OPos)
+      endif 
+    else
+      var3 = var3 + (var11 * Direction)
+      var3 = var3 + (var9 * Direction)
+    endif
   else
     var3 = var3 + (var11 * Direction)
     var3 = var3 + (var9 * Direction)
@@ -989,7 +1019,13 @@ if !(True)
           var6 -= 20
         endif
       elif Equal var17 3 && Rnd < var22 && XDistLE 25
-        if Rnd < 0.7
+        if Rnd < 0.3
+          var17 = OPos * -1
+          AbsStick var17
+        elif Rnd < 0.3
+          AbsStick OPos
+          Button R
+        elif Rnd < 0.5
           Call Unk3020
         else
           ClearStick
@@ -1199,7 +1235,13 @@ if !(True)
               if Equal AirGroundState 2 && NumJumps > 0
                 Button X
                 Seek BEGIN_MAIN
-              elif Rnd < 0.7
+              elif Rnd < 0.3
+                var17 = OPos * -1
+                AbsStick var17
+              elif Rnd < 0.3
+                AbsStick OPos
+                Button R
+              elif Rnd < 0.5
                 Call Unk3020
               else
                 ClearStick
@@ -1208,7 +1250,7 @@ if !(True)
                 Seek BEGIN_MAIN
                 Return
               endif
-            elif Equal var17 2 && Rnd < var22 && Rnd < 0.55
+            elif Equal var17 2 && Rnd < var22 && Rnd < 0.55 && !(Equal var20 24636)
               if Rnd < 0.8
                 var21 = 32770
                 var16 = 0
@@ -1242,25 +1284,25 @@ if !(True)
           //   Call AIHub
           // endif
         endif
-      elif var2 <= var11
-        var2 = 0
-        Goto XDistCheckPassed
-        if Equal var2 1
-          LOGSTR 1280262912 1095499776 0 0 0
-          var2 = 0
-          Seek CallAttacks
-          Jump
-        elif Equal var2 2
-          Seek BEGIN_MAIN
-          Return
-        elif Equal var2 3
-          Seek
-          Return
-          label
-          Button X
-          Seek BEGIN_MAIN
-          Return
-        endif
+      // elif var2 <= var11
+      //   var2 = 0
+      //   Goto XDistCheckPassed
+      //   if Equal var2 1
+      //     LOGSTR 1280262912 1095499776 0 0 0
+      //     var2 = 0
+      //     Seek CallAttacks
+      //     Jump
+      //   elif Equal var2 2
+      //     Seek BEGIN_MAIN
+      //     Return
+      //   elif Equal var2 3
+      //     Seek
+      //     Return
+      //     label
+      //     Button X
+      //     Seek BEGIN_MAIN
+      //     Return
+      //   endif
       endif
     endif
   endif
@@ -1536,8 +1578,15 @@ elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
   predictionConfidence var23 7 LevelValue
   var23 *= 2
   if OCurrAction <= 23 && XDistLE var22 && Rnd < var23 && Equal var17 1 
-    Button R
-    Call Unk3020
+    if Rnd < 0.3
+      var17 = OPos * -1
+      AbsStick var17
+    elif Rnd < 0.3
+      AbsStick OPos
+      Button R
+    elif Rnd < 0.5
+      Call Unk3020
+    endif
   endif
 
   var17 = var5
@@ -1802,12 +1851,18 @@ if var1 <= var17
     if Equal AirGroundState 1 && CurrAction <= 23
       predictOOption var17 7 LevelValue
       predictionConfidence var22 7 LevelValue
-      var22 *= 0.5
+      var22 *= 0.25
       predictAverage var17 3 LevelValue
       var17 += 10
       if Equal var17 1 && Rnd < var22 && !(Equal var16 7) && XDistLE var17
-        if Rnd < 0.5
-          Button Unk3020
+        if Rnd < 0.3
+          var17 = OPos * -1
+          AbsStick var17
+        elif Rnd < 0.3
+          AbsStick OPos
+          Button R
+        elif Rnd < 0.5
+          Call Unk3020
         else
           var18 = 1
           Call FakeOutHub
@@ -1855,12 +1910,12 @@ if !(Equal var16 7)
   predictOOption var17 11 LevelValue
   predictionConfidence var22 11 LevelValue
 
-  if Equal AirGroundState 1 && Rnd < 0.5 && Rnd < var22
+  if Equal AirGroundState 1 && Rnd < 0.25 && Rnd < var22
     predictAverage var22 3 LevelValue
     if Equal var17 1 && XDistLE var22 
       Stick 1
       Call Unk3020
-    elif Equal var17 2
+    elif Equal var17 2 && !(Equal var20 24636)
       var18 = 1
       Call FakeOutHub
     elif Equal var17 3
@@ -1896,7 +1951,7 @@ var0 = 0
 
 // if the action requires us to be stopped,
 if var20 >= 24625 && var20 <= 24635 && !(Equal var20 24630) && !(Equal var20 24633) && CurrAction > 2
-  if CurrAction >= 6 || CurrAction <= 7
+  if CurrAction >= 6 && CurrAction <= 7
   else
     Goto makeIdle
   endif
@@ -2003,10 +2058,12 @@ endif
 Return
 
 label makeIdle
+LOGSTR 1296124672 1229866752 541672448 1279590400 0
 if Equal CurrAction 3
   // stops the dash
   ClearStick
   Button X
+  LOGSTR 1398034176 1346650368 1397227520 0 0
   Return
 endif
 if Equal CurrAction 4
@@ -2112,7 +2169,7 @@ label defendFromO
           var22 = 7
         endif
         
-        if !(OAttacking) && Rnd <= 0.05
+        if !(OAttacking) && Rnd <= 0.04
           trackOAction var22 0
           predictAverage var17 4 LevelValue
           var17 *= 0.5
@@ -2125,19 +2182,32 @@ label defendFromO
         if Equal var17 1 && Rnd <= var22
           var22 = OPos * OXSpeed
           if var22 < 0 
-            LOGSTR 1684366848 1701733376 540082176 0 0
-            Call Unk3020
+            if Rnd < 0.3
+              var17 = OPos * -1
+              AbsStick var17
+            elif Rnd < 0.3
+              AbsStick OPos
+              Button R
+            elif Rnd < 0.5
+              Call Unk3020
+            endif
           endif
         elif Equal var17 1 && Rnd <= var22 && Rnd < 0.2
           var18 = 1
-          LOGSTR 1684366848 1701733376 540147712 0 0
           Call FakeOutHub
         endif
         if Equal var17 1 && Rnd <= var22 && OAttacking && OAnimFrame > 10 && OAnimFrame < 20
           var22 = OPos * OXSpeed
           if var22 < 0 
-            LOGSTR 1684366848 1701733376 540213248 0 0
-            Call Unk3020
+            if Rnd < 0.3
+              var17 = OPos * -1
+              AbsStick var17
+            elif Rnd < 0.3
+              AbsStick OPos
+              Button R
+            elif Rnd < 0.5
+              Call Unk3020
+            endif
           endif
         endif
       endif

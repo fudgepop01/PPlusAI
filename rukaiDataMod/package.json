@@ -1,0 +1,16 @@
+{
+  "name": "rukaiDataMod",
+  "version": "1.0.0",
+  "description": "",
+  "main": "rukaiMod.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/three": "^0.131.0",
+    "typescript": "^4.4.2"
+  }
+}

@@ -38,7 +38,7 @@ endif
           var22 = 7
         endif
         
-        if !(OAttacking) && Rnd <= 0.05
+        if !(OAttacking) && Rnd <= 0.04
           trackOAction var22 0
           predictAverage var17 4 LevelValue
           var17 *= 0.5
@@ -51,19 +51,32 @@ endif
         if Equal var17 1 && Rnd <= var22
           var22 = OPos * OXSpeed
           if var22 < 0 
-            LOGSTR 1684366848 1701733376 540082176 0 0
-            Call Unk3020
+            if Rnd < 0.3
+              var17 = OPos * -1
+              AbsStick var17
+            elif Rnd < 0.3
+              AbsStick OPos
+              Button R
+            elif Rnd < 0.5
+              Call Unk3020
+            endif
           endif
         elif Equal var17 1 && Rnd <= var22 && Rnd < 0.2
           var18 = 1
-          LOGSTR 1684366848 1701733376 540147712 0 0
           Call FakeOutHub
         endif
         if Equal var17 1 && Rnd <= var22 && OAttacking && OAnimFrame > 10 && OAnimFrame < 20
           var22 = OPos * OXSpeed
           if var22 < 0 
-            LOGSTR 1684366848 1701733376 540213248 0 0
-            Call Unk3020
+            if Rnd < 0.3
+              var17 = OPos * -1
+              AbsStick var17
+            elif Rnd < 0.3
+              AbsStick OPos
+              Button R
+            elif Rnd < 0.5
+              Call Unk3020
+            endif
           endif
         endif
       endif

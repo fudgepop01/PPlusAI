@@ -1,76 +1,190 @@
-#const walkInitVel = 9999.9999
-#const walkAcc = 9999.9999
-#const walkMaxVel = 9999.9999
-#const groundFric = 9999.9999
-#const dashInitVel = 9999.9999
-#const dashRunTermVel = 9999.9999
-#const groundedMaxXVel = 9999.9999
-#const dashCancelFrameWindow = 9999.9999
-#const guardOnMaxMomentum = 9999.9999
-#const jumpSquatFrames = 9999.9999
-#const jumpXInitVel = 9999.9999
-#const jumpYInitVel = 9999.9999
-#const jumpXGroundMult = 9999.9999
-#const fastFallSpeed = 9999.9999
-#const gravity = 9999.9999
-#const weight = 9999.9999
-#const shieldSize = 9999.9999
+// "PERSONALITY" traits
+#const pt_jumpiness = 0.05
+#const pt_djumpiness = 0.2
+#const pt_riskReactionBalance = 1.0
+#const pt_aggression = 0.7
+#const pt_baitChance = 0.85
+#const pt_bait_dashAwayChance = 0.85
+#const pt_bait_wdashAwayChance = 0.35
+#const pt_wall_chance = 0.3
+#const pt_braveChance = 0.7
+// 0.15
+#const pt_platChance = 0.05
+// 0.4
+#const pt_circleCampChance = 0.05
 
-#const recoveryHeight = 0
-#const sweetSpotYRange = 4
-#const ledgeRefreshDist = 40
-#const maxYEdgeDistWithJump = 9999.9999
-#const maxYEdgeDist = 9999.9999
-#const maxYEdgeDistJumpNoUpB = 9999.9999
-#const maxXEdgeDist = 9999.9999
-#const minXEdgeDist = 15
+#const pt_SDIChance = 0.35
 
-#const oWalkingDist = 9999.9999
-#const oJumpingDist = 15
-#const shortEdgeRange = 9999.9999
-#const edgeRange = 9999.9999
-#const calloutSpeed = 9999.9999
+#const pt_dashForceTurnFrame = 8
+#const pt_dashDanceMinFrames = 4
+#const pt_shortHopHeight = 25.344
+#const pt_djumpHeight = 39.514
+#const pt_wavedashDist = 25
 
-#const jumpIfOWithin = 9999.9999
-#const SHIfOBeyond = 9999.9999
-#const FHIfOBeyond = 9999.9999
-#const DJIfOWithin = 9999.9999
-#const DJIfOBeyond = 9999.9999
+// used with common ai pac
+#let chr_trait_select = var10
+#let chr_trait_return = var10
+#const chr_pt_jumpiness = 0
+#const chr_pt_djumpiness = 1
+#const chr_pt_riskReactionBalance = 2
+#const chr_pt_aggression = 3
+#const chr_pt_baitChance = 4
+#const chr_pt_bait_dashAwayChance = 5
+#const chr_pt_bait_wdashAwayChance = 6
+#const chr_pt_wall_chance = 7
+#const chr_pt_braveChance = 8
+#const chr_pt_platChance = 9
+#const chr_pt_circleCampChance = 10
+#const chr_pt_SDIChance = 11
+#const chr_pt_dashForceTurnFrame = 12
+#const chr_pt_dashDanceMinFrames = 13
+#const chr_pt_shortHopHeight = 14
+#const chr_pt_djumpHeight = 15
+#const chr_pt_wavedashDist = 16
 
-#const techChaseCloseDist = 9999.9999
-#const techChaseFarDist = 9999.9999
+#const chr_chk_isAerialAttack = 100
 
-#const dashCountMax = 9999.9999
-#const dashForceTurnFrame = 9999.9999
-#const dashDanceMinFrames = 9999.9999
-#const DDWaveDash = 9999.9999
-#const DDMaxRange = 9999.9999
+#const shortEdgeRange = 15
 
-#const minBaseReactionTime = 9999.9999
-#const maxBaseReactionTime = 9999.9999
-#const hitboxSizeMultiplier = 0.0
 
+// ATTRIBUTES
+#const attr_walkInitVel = 0
+#const attr_walkAcc = 1
+#const attr_walkMaxVel = 2
+#const attr_groundFriction = 3
+#const attr_dashInitVel = 4
+#const attr_dashRunAccA = 5
+#const attr_dashRunAccB = 6
+#const attr_dashRunTermVel = 7
+// #const ] = 8
+#const attr_groundedMaxXVel = 9
+#const attr_dashCancelFrameWindow = 10
+#const attr_guardOnMaxMomentum = 11
+#const attr_jumpSquatFrames = 12
+#const attr_jumpXInitVel = 13
+#const attr_jumpYInitVel = 14
+#const attr_jumpXVelGroundMult = 15
+#const attr_jumpXInitTermVel = 16
+#const attr_jumpYInitVelShort = 17
+#const attr_airJumpXMult = 18
+#const attr_airJumpYMult = 19
+#const attr_footstoolInitVel = 20
+#const attr_footstoolInitVelShort = 21
+// #const ] = 22
+#const attr_meteorCancelDelay = 23
+#const attr_numJumps = 24
+#const attr_gravity = 25
+#const attr_maxFallSpeed = 26
+#const attr_airFrictionY = 27
+#const attr_airYTermVel = 28
+#const attr_airMobilityA = 29
+#const attr_airMobilityB = 30
+#const attr_airXTermVel = 31
+#const attr_airFrictionX = 32
+#const attr_fastFallSpeed = 33
+#const attr_airXTermVelHard = 34
+#const attr_glideFrameWindow = 35
+// #const ] = 36
+#const attr_jab2Window = 37
+#const attr_jab3Window = 38
+#const attr_ftilt2Window = 39
+#const attr_ftilt3Window = 40
+#const attr_fsmash2Window = 41
+#const attr_flipDirFrame = 42
+// #const ] = 43
+#const attr_weight = 44
+#const attr_size = 45
+#const attr_resultsScreenSize = 46
+// #const ] = 47
+#const attr_shieldSize = 48
+#const attr_shieldBreakVel = 49
+#const attr_shieldStrength = 50
+// #const ] = 51
+#const attr_respawnPlatformSize = 52
+// #const ] = 53
+#const attr_edgeJumpXVel = 54
+#const attr_edgeJumpYVel = 55
+// #const ] = 56
+#const attr_itemThrowStrength = 57
+// #const ] = 58
+#const attr_projectileItemMoveSpeed = 59
+#const attr_projectileItemMoveSpeedDashF = 60
+#const attr_projectileItemMoveSpeedDashB = 61
+// #const ] = 62
+#const attr_lightLandingLag = 63
+#const attr_normalLandingLag = 64
+#const attr_nairLandingLag = 65
+#const attr_fairLandingLag = 66
+#const attr_bairLandingLag = 67
+#const attr_uairLandingLag = 68
+#const attr_dairLandingLag = 69
+#const attr_termVelHardFrames = 70
+
+#const OAttackCond = OCurrAction >= hex(0x24) && OCurrAction <= hex(0x34)
+
+// ACTION CATEGORIES N' STUFF
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114)
+#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+
+// global temporary variables
 #let globTempVar = var17
-
-
-// THIS IS TO BE USED IMMEDIATELY WITH SIMPLE OPERATIONS OTHERWISE SIDE EFFECTS MAY OCCUR
 #let immediateTempVar = var22
+// THIS IS TO BE USED IMMEDIATELY WITH SIMPLE OPERATIONS OTHERWISE SIDE EFFECTS MAY OCCUR
 #let anotherTempVar = var23
 
-// used when planning / executing moves
+
+// until then, these variables are free for use in general movement
+#let goalX = var8
+#let goalY = var9
+
+// used when a move has been chosen for execution
 #let move_angle = var8
-#let move_xOffset = var9
-#let move_yOffset = var10
-#let move_xRange = var11
-#let move_yRange = var12
-#let move_hitFrame = var13
-#let move_lastHitFrame = var14
-#let move_IASA = var15
-#let move_currKnockback = var15
+#let move_xOffset = var10
+#let move_yOffset = var11
+#let move_xRange = var12
+#let move_yRange = var13
+#let move_hitFrame = var14
+#let move_lastHitFrame = var15
+#let move_IASA = var16
+
+// used to tell the AI to skip the initialization of a new
+// goal when moving to mainHub
+#let skipMainInit = var15
+#const mainInitSkip = -1
+#const sm_execAttack = -2
+
 
 // recorded after the move is executed / hits;
 // will not interfere with move position type
-#let hit_knockback = var16
+#let scriptVariant = var16
+#const sv_none = 0
+
+#const sv_wavedash_in = 1
+#const sv_wavedash_out = 2
+#const sv_wavedash_neutral = 3
+#const sv_wavedash_awayFromLedge = 4
+
+#const sv_jump_over = 1
+#const sv_jump_neutral = 2
+#const sv_jump_away = 3
+#const svp_jump_fullhop = 0.1
+
+#const sv_roll_through = 1
+#const sv_roll_away = 2
+#const sv_roll_toCenter = 3
+
+#const sv_dash_towards = 1
+#const sv_dash_away = 2
+#const sv_dash_toCenter = 3
+#const sv_dash_through = 4
+
+#const sv_aerialdrift_towards = 1
+#const sv_aerialdrift_away = 2
+
+#const sv_attackgoal_justy = 1
 
 
 // used in various places to tell what part the routine should jump to
@@ -83,9 +197,29 @@
 // used in many places to store what the last attack was.
 // must be set manually.
 #let lastAttack = var20
-// I don't think I've used this once - but it might be important
-// at some point so I'll keep it around.
-#let lastScript = var21
+
+// #goals
+#let currGoal = var21
+#const cg_nothing = 0
+#const cg_runAway = 1
+#const cg_edgeguard = 2
+#const cg_recover = 3
+#const cg_combo = 4
+#const cg_circleCamp = 7
+#const cg_avoidAttack = 8
+#const cg_returnToCenter = 9
+#const cg_bait = 10
+#const cg_bait_attack = 10.1
+#const cg_string = 11
+#const cg_inHitstun = 12
+#const cg_defend = 13
+#const cg_special = 14
+#const cg_ledge = 15
+#const cg_attack = 16
+#const cg_attack_overshoot = 16.1
+#const cg_attack_undershoot = 16.2
+#const cg_attack_wall = 16.3
+#const cg_attack_reversal = 16.4
 
 #const techRollVulFrame = 22
 
@@ -139,43 +273,49 @@
 #const dtaunt = 3
 
 // AI Tracker Values (0-15)
-#const man_oXHitDist = 3
-#const man_oXAttackDist = 4
-#const man_oYAttackDist = 5
-#const man_dashdance = 6
-#const man_approach = 7
-#const man_defend = 8
-#const man_techchase = 9
-#const man_shield = 10
-#const man_attacking = 11
-#const man_atEdgeInit = 12
-#const man_aim = 13
-#const man_outOfHitstun = 14
-#const man_willTech = 15
+
+#const man_ODefendOption = 7
+#const man_OBaitDirection = 8
+#const man_OBaitOption = 9
+#const man_OXHitDist = 10
+#const man_OXAttackDist = 11
+#const man_OGetupOption = 12
+#const man_OTechOption = 13
+#const man_OOOSOption = 14
+#const man_OOutOfHitstun = 15
 
 #const op_null = 0
 #const op_attack = 1
 #const op_defend = 2
 #const op_grab = 3
 
-#const op_towards = 1
-#const op_neutral = 2
-#const op_away = 3
+#const op_hitstun_jump = 1
+#const op_hitstun_attack = 2
+#const op_hitstun_fall = 3
 
-#const op_threat = 1
-#const op_wait = 2
-#const op_commit = 3
+#const op_OOOS_WD = 1
+#const op_OOOS_attack = 2
+#const op_OOOS_grab = 3
 
-#const op_overshoot = 1
-// #const op_neutral = 2
-#const op_undershoot = 3
+#const op_tech_in = 1
+#const op_tech_neutral = 2
+#const op_tech_out = 3
 
-#const op_jump = 1
-// #const op_neutral = 2
-#const op_hitstun_attack = 3
+#const op_getup_in = 1
+#const op_getup_attack = 2
+#const op_getup_out = 3
 
-#const op_tech = 1
-#const op_noTech = 2
+#const op_bait_move = 1
+#const op_bait_grab = 2
+#const op_bait_shield = 3
+
+#const op_defend_attack = 1
+#const op_defend_grab = 2
+#const op_defend_shield = 3
+
+#const op_baitdir_neutral = 1
+#const op_baitdir_overshoot = 2
+#const op_baitdir_undershoot = 3
 
 // situation types
 #const st_floor = 1
@@ -189,31 +329,6 @@
 #const st_plat_reg_reg = 9
 #const st_below_plat = 10
 #const st_between_plat = 11
-
-// works beacause it isn't approaching - it's used to track what tactics
-// work or fail vs the target opponent
-#let edgeType = var16
-#const et_threat = 101
-#const et_wait = 102
-#const et_commit = 103
-
-// controls the approach the AI uses. It's okay because MOVES shouldn't care
-// about what script was called previously - only what move they are.
-#let approachType = var16
-#const at_attack = 1 // default
-#const at_defend = 2
-#const at_edgeguard = 3
-#const at_undershoot = 4
-#const at_overshoot = 5
-#const at_ledgeRefresh = 6
-#const at_combo = 7
-#const at_OFF_LEDGE = 8
-#const at_immediate = 9
-#const at_reroll = 10
-#const at_retreat = 11
-#const at_poke = 12
-#const at_threaten = 13
-#const at_fakeout = 14
 
 // AI values
 #const LV1 = 0

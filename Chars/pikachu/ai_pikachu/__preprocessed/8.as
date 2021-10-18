@@ -16,12 +16,21 @@ if YDistBackEdge < -25 && YDistBackEdge > 1
   Call AIHub
 endif
 
+LOGSTR 1819501312 1919512576 1946157056 0 0
+LOGVAL var21
+if Equal var21 8272 && Rnd < 0.50 && ODistLE 45 && Equal OAirGroundState 1 && SamePlane 
+  LOGSTR 1163412736 1126191872 1347376128 1146045440 1195720448
+  Button R
+  Stick 0 (-1)
+  Call AIHub
+endif
+
 // sets up offsets to get to target position
-if Equal var18 0 && !(XDistLE 15)
+if Equal var18 0 && !(XDistLE 15) && !(Equal var21 8272)
   predictAverage var0 3 LevelValue
 
   var21 = 32776
-  var20 = 25002
+  var20 = -1
   var9 = 0
   var11 = 15 + var0
   Abs var11
@@ -36,7 +45,13 @@ if Equal var18 0 && !(XDistLE 15)
   var23 *= 3.5
 
   var16 = 14
-  if Rnd <= 0.75 && Equal var17 1 || Rnd < 0.3 || OCurrActionFreq >= 3 && !(Equal CurrAction 0)
+  if Rnd <= 0.3 && Equal var17 1
+    Seek
+    Jump
+  elif Rnd < 0.05
+    Seek
+    Jump
+  elif OCurrActionFreq >= 3 && !(Equal CurrAction 0)
     Seek
     Jump
   endif
@@ -45,7 +60,7 @@ if Equal var18 0 && !(XDistLE 15)
     var11 = var22 * 2
     var9 = 0
     var13 = Rnd * 3
-    if Rnd < 0.3
+    if Rnd < 0.7
       var20 = 25003
       var9 += 35
     else
@@ -62,22 +77,31 @@ elif Equal AirGroundState 2
     Button X
     AbsStick var0
     Call AIHub
-  elif XDistFrontEdge > 10 && XDistBackEdge < -10 && Equal IsOnStage 1
-    AbsStick var0 (-1)
-    Button R
-    Call AIHub
+  // elif XDistFrontEdge > 10 && XDistBackEdge < -10 && Equal IsOnStage 1
+  //   AbsStick var0 (-1)
+  //   Button R
+  //   Call AIHub
   endif
   Call AIHub
 elif True
   label
   Cmd30
-  if Equal var20 25002
+  if Equal var21 8304 && Rnd < 0.70 && ODistLE 45 && Equal OAirGroundState 1 && SamePlane
+    Button R
+    Stick 0 (-1)
+    Call AIHub
+  elif Equal var21 8272 && Rnd < 0.50 && ODistLE 45 && Equal OAirGroundState 1 && SamePlane 
+    Button R
+    Stick 0 (-1)
+    Call AIHub
+  elif Equal var20 25002 
     Seek offensiveShield
     Jump
   elif Equal var20 25003
     Seek jumpOver
     Jump
   endif
+  var20 = -1
 
   if FramesHitstun > 0 && Equal AirGroundState 1 && NumFrames < 4
     Return
@@ -99,13 +123,13 @@ elif True
   endif
 
   var0 = Rnd
-  if var0 <= 0.05
+  if var0 <= 0.1
     Seek jumpOver
   elif var0 <= 0.25 && Damage < 60 && !(Equal OCurrAction 52)
     Seek crouchCancelPunish
-  elif var0 <= 0.55 && Equal CurrAction 3
+  elif var0 <= 0.60 && Equal CurrAction 3
     Seek dashAway
-  elif var0 <= 0.60
+  elif var0 <= 0.70
     Seek wavedashBack
 
   else
@@ -163,6 +187,7 @@ endif
 Return
 
 label offensiveShield
+var20 = -1
 Cmd30
 Goto checkHitstun
 var1 = Rnd * 50 + 10

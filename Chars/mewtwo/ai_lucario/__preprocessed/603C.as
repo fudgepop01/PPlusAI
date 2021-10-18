@@ -20,6 +20,7 @@ if Equal var18 0
   endif
   Return
 elif True
+  label
   var18 = 0
   if Equal CurrSubaction JumpSquat
     Button A|R
@@ -37,7 +38,7 @@ Return
 
 label techChase_wait
   SetTimeout 300
-  var0 = Rnd * 75 + 25
+  var0 = Rnd * 125
   var1 = 0
   if Damage < 80
     var2 = 10
@@ -56,15 +57,15 @@ label techChase_wait
   elif Equal AirGroundState 1
     // force crouch cancel
     Stick 0 (-1)
-    if var0 <= 20
-      if var17 < 0.3 && var20 >= 24641 && var20 <= 24655
-        Button X
-      elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 19
-        ClearStick
-        Stick -1 0
-      elif var17 >= 0.6
-        Button R
-      endif
+    if var17 < 0.3 && var20 >= 24641 && var20 <= 24655 && var0 <= 30
+      Button X
+    elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 15
+      ClearStick
+      Stick -1 0
+      Seek _AIHub
+      Jump
+    elif var17 >= 0.6 && var0 <= 80
+      Button R
     endif
   endif
   var4 = 0
@@ -144,14 +145,14 @@ label execute
   elif Equal var20 25000
     var1 = OFramesHitstun 
   endif
-  // SAFE_WRITE_4 var9
-  // SAFE_WRITE_5 var10
-  // SAFE_WRITE_6 var11
-  // SAFE_WRITE_7 var12  
-  SAFE_INJECT_4 var9
-  SAFE_INJECT_5 var10
-  SAFE_INJECT_6 var11
-  SAFE_INJECT_7 var12
+  // SAFE_WRITE_C var9
+  // SAFE_WRITE_D var10
+  // SAFE_WRITE_E var11
+  // SAFE_WRITE_F var12  
+  SAFE_INJECT_C var9
+  SAFE_INJECT_D var10
+  SAFE_INJECT_E var11
+  SAFE_INJECT_F var12
   var0 = 0
   // calculate own estimated position
   var17 = var14 + var1
@@ -396,15 +397,19 @@ label execute
   // var17 = var17 - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir) || var20 >= 24632 && var20 <= 24635
-    var22 = var9 + (var11 * 2)
-    var22 /= 2
-    if var22 <= 2
-      var0 = var0 - (var9 * OPos)
-    else 
-      var0 = var0 + (var11 * OPos)
-      var0 = var0 + (var9 * OPos)
-    endif 
+  if var20 > 24637 || var20 >= 24632 && var20 <= 24635
+    if !(InAir) && var20 <= 24649
+      var22 = var9 + (var11 * 2)
+      if var22 <= 2
+        var0 = var0 - (var9 * OPos)
+      else 
+        var0 = var0 + (var11 * OPos)
+        var0 = var0 + (var9 * OPos)
+      endif 
+    else
+      var0 = var0 + (var11 * Direction)
+      var0 = var0 + (var9 * Direction)
+    endif
   else
     var0 = var0 + (var11 * Direction)
     var0 = var0 + (var9 * Direction)

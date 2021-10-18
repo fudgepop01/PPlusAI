@@ -227,14 +227,14 @@ label CTD
   elif Equal var20 25000
     var8 = OFramesHitstun 
   endif
-  // SAFE_WRITE_4 var9
-  // SAFE_WRITE_5 var10
-  // SAFE_WRITE_6 var11
-  // SAFE_WRITE_7 var12  
-  SAFE_INJECT_4 var9
-  SAFE_INJECT_5 var10
-  SAFE_INJECT_6 var11
-  SAFE_INJECT_7 var12
+  // SAFE_WRITE_C var9
+  // SAFE_WRITE_D var10
+  // SAFE_WRITE_E var11
+  // SAFE_WRITE_F var12  
+  SAFE_INJECT_C var9
+  SAFE_INJECT_D var10
+  SAFE_INJECT_E var11
+  SAFE_INJECT_F var12
   var7 = 0
   // calculate own estimated position
   var17 = var14 - var4 + var8
@@ -479,15 +479,19 @@ label CTD
   // var17 = var17 - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir) || var20 >= 24632 && var20 <= 24635
-    var22 = var9 + (var11 * 2)
-    var22 /= 2
-    if var22 <= 2
-      var7 = var7 - (var9 * OPos)
-    else 
-      var7 = var7 + (var11 * OPos)
-      var7 = var7 + (var9 * OPos)
-    endif 
+  if var20 > 24637 || var20 >= 24632 && var20 <= 24635
+    if !(InAir) && var20 <= 24649
+      var22 = var9 + (var11 * 2)
+      if var22 <= 2
+        var7 = var7 - (var9 * OPos)
+      else 
+        var7 = var7 + (var11 * OPos)
+        var7 = var7 + (var9 * OPos)
+      endif 
+    else
+      var7 = var7 + (var11 * Direction)
+      var7 = var7 + (var9 * Direction)
+    endif
   else
     var7 = var7 + (var11 * Direction)
     var7 = var7 + (var9 * Direction)

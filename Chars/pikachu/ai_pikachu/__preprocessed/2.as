@@ -101,7 +101,7 @@ Return
 
 label techChase_wait
   SetTimeout 300
-  var0 = Rnd * 50
+  var0 = Rnd * 20
   var1 = 0
   if Damage < 80
     var2 = 20
@@ -120,15 +120,15 @@ label techChase_wait
   elif Equal AirGroundState 1
     // force crouch cancel
     Stick 0 (-1)
-    if var0 <= 20
-      if var17 < 0.3 && var20 >= 24641 && var20 <= 24655
-        Button X
-      elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 19
-        ClearStick
-        Stick -1 0
-      elif var17 >= 0.6
-        Button R
-      endif
+    if var17 < 0.3 && var20 >= 24641 && var20 <= 24655 && var0 <= 30
+      Button X
+    elif var17 < 0.6 && XDistBackEdge < -25 && var0 >= 15
+      ClearStick
+      Stick -1 0
+      Seek _AIHub
+      Jump
+    elif var17 >= 0.6 && var0 <= 80
+      Button R
     endif
   endif
   var4 = 0
@@ -200,9 +200,9 @@ endif
   Seek edgeguard
 elif Equal OIsOnStage 1 && var3 < 65 && Rnd < 0.8
   if Equal LevelValue 100 
-    var6 = 15
-  else
     var6 = 10
+  else
+    var6 = 7
   endif
   label combo
   if var7 <= 3
@@ -218,9 +218,9 @@ elif Equal OIsOnStage 1 && var3 < 65 && Rnd < 0.8
   Seek combo
 elif True
   if Equal LevelValue 100 
-    var6 = 15
-  else
     var6 = 10
+  else
+    var6 = 7
   endif
   label juggle
   if var7 <= 3
@@ -244,7 +244,7 @@ if var6 <= 0
     LOGSTR 1346912512 1397039104 1431321088 0 0
     LOGVAL var7
     // LOGSTR 1027423488 1027423488 1023410176 0 0
-    var6 = 10
+    var6 = 7
     Jump
   else
     Seek NCombo
@@ -754,14 +754,14 @@ label CTD
   elif Equal var20 25000
     var3 = OFramesHitstun 
   endif
-  // SAFE_WRITE_4 var9
-  // SAFE_WRITE_5 var10
-  // SAFE_WRITE_6 var11
-  // SAFE_WRITE_7 var12  
-  SAFE_INJECT_4 var9
-  SAFE_INJECT_5 var10
-  SAFE_INJECT_6 var11
-  SAFE_INJECT_7 var12
+  // SAFE_WRITE_C var9
+  // SAFE_WRITE_D var10
+  // SAFE_WRITE_E var11
+  // SAFE_WRITE_F var12  
+  SAFE_INJECT_C var9
+  SAFE_INJECT_D var10
+  SAFE_INJECT_E var11
+  SAFE_INJECT_F var12
   var2 = 0
   // calculate own estimated position
   var17 = var5 + var3
@@ -1006,15 +1006,19 @@ label CTD
   // var17 = var17 - OHurtboxSize * 0.5
   
   // adjust for the move parameters
-  if !(InAir) || var20 >= 24632 && var20 <= 24635
-    var22 = var9 + (var11 * 2)
-    var22 /= 2
-    if var22 <= 2
-      var2 = var2 - (var9 * OPos)
-    else 
-      var2 = var2 + (var11 * OPos)
-      var2 = var2 + (var9 * OPos)
-    endif 
+  if var20 > 24637 || var20 >= 24632 && var20 <= 24635
+    if !(InAir) && var20 <= 24649
+      var22 = var9 + (var11 * 2)
+      if var22 <= 2
+        var2 = var2 - (var9 * OPos)
+      else 
+        var2 = var2 + (var11 * OPos)
+        var2 = var2 + (var9 * OPos)
+      endif 
+    else
+      var2 = var2 + (var11 * Direction)
+      var2 = var2 + (var9 * Direction)
+    endif
   else
     var2 = var2 + (var11 * Direction)
     var2 = var2 + (var9 * Direction)
@@ -1200,7 +1204,7 @@ label CTD
     COS var22 var8
     var22 *= var15
     var22 *= Direction
-    var22 *= 1.2
+    var22 *= 3.2
     var17 = RBoundary - (var0)
     // LOGSTR 1380057088 0 0 0 0
     // LOGVAL var22
@@ -1220,7 +1224,7 @@ label CTD
     var17 = TBoundary - (var1)
     SIN var22 var8
     var22 *= var15
-    var22 *= 0.7
+    var22 *= 0.9
     // LOGSTR 1413611520 0 0 0 0
     // LOGVAL var22
     // LOGVAL var17

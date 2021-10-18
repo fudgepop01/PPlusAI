@@ -23,6 +23,7 @@ endif
 //______________________________________
 // Rand DI / tech "smart" implementation
 // randomly DIs unless conditions are met for survival DI
+var6 = 9999.9999
 
 if !(Equal var21 8272) && Equal OHitboxConnected 1
   var22 = -1
@@ -36,10 +37,12 @@ if !(Equal var21 8272) && Equal OHitboxConnected 1
 
   var21 = 8272
 
-  if Equal OCurrAction 60
-    trackOAction var22 3
-  else 
-    trackOAction var22 1
+  if !(Equal var22 -1)
+    if Equal OCurrAction 60
+      trackOAction var22 3
+    else 
+      trackOAction var22 1
+    endif
   endif
 
   if ODistLE 100
@@ -96,8 +99,18 @@ if FramesHitstun > 0 || FramesHitlag > 0
   label _hitstunExecutor
   Cmd30
 
-  if FramesHitlag > 1 && Equal LevelValue 100 
-    if Rnd < 0.75
+  if var2 > 1 && !(Equal var6 9999.9999) && Equal AirGroundState 2 && !(Equal DistBackEdge DistFrontEdge)
+    AbsStick var6
+    var2 -= 1
+    Return
+  endif
+
+  if FramesHitlag > 1 && LevelValue >= 75
+    var22 = 0.25
+    if Equal LevelValue 100
+      var22 = 0.4
+    endif 
+    if Rnd < var22
       var17 = OPos * -1
       if XDistBackEdge > -10
         var17 = OPos
@@ -142,8 +155,19 @@ if LevelValue >= 21
   endif
 endif
 
-if CurrAction < 11 || CurrAction > 16
-  if FramesHitstun > 1 && Equal AirGroundState 2 || CurrAction >= 66 && CurrAction <= 68 && Equal AirGroundState 2 
+if CurrAction < 11 || 16 < CurrAction
+  if !(Equal AirGroundState 1)
+    if FramesHitstun > 1
+      Goto exec_DI
+      Return
+    elif CurrAction >= 66 && CurrAction <= 69
+      Goto exec_DI
+      Return
+    endif
+  endif
+  if !(True)
+    label exec_DI
+    LOGVAL var7
     ClearStick
     if Equal var7 1 || Equal var7 -1.2 || Equal var7 -3
       if Equal var7 0
@@ -155,6 +179,12 @@ if CurrAction < 11 || CurrAction > 16
     elif True
       if KBAngle >= 80 && KBAngle <= 100
         var17 = Direction * -1
+        if KBAngle > 90
+          var17 *= -1
+        endif
+        if Rnd < 0.15
+          var17 *= -1
+        endif
         AbsStick var17 (-1)
       elif Equal IsOnStage 0 || KBSpeed > 3.7
         // if offstage with high damage, switch to survival DI
@@ -183,7 +213,7 @@ if FramesHitstun > 1 && CurrAction >= 67 && CurrAction <= 69 && LevelValue >= 75
   if XDistBackEdge > -10
     var17 = OPos
   endif
-  Stick var17 (-1)
+  AbsStick var17 (-1)
   Return
 endif
 
@@ -283,10 +313,17 @@ Return
 // makes the AI input R every 41 frames 80% (base) of the time
 label _checkTech
 if var2 <= 0
-  if CurrAction >= 69 && CurrAction <= 77 && FramesSinceShield > 40
+  if CurrAction >= 66 && CurrAction <= 77 && FramesSinceShield > 40
+    var17 = OEndFrame - 15
+    if Equal CurrAction 66 && OAnimFrame < var17
+      Return
+    endif
     var5 = (100 - LevelValue) / 100 * -1
-    var5 += 0.95
+    var5 += 0.85
     if Rnd < var5
+      if YSpeed <= 0.05
+        var6 = Rnd * 4 - 2
+      endif
       Button R
     endif
     var2 = 41

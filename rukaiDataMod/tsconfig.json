@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["es2020", "DOM"],
+    "downlevelIteration": true
+  },
+  "include": [
+    "./rukaiMod.ts"
+  ]
+}
