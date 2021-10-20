@@ -12,7 +12,6 @@ label setup
 OHasHitShield = 0
 timer = 0
 patience = Rnd * 110 + 40
-Button R
 Seek shield
 Return
 label shield

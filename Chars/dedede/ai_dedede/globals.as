@@ -4,23 +4,23 @@
 //
 // ex. in here, "move_xOffset" will always be replaced with "var9"
 
-#const shortHopHeight = 15
-#const djumpHeight = 22
-#const wavedashDist = 8
+#const pt_shortHopHeight = 15
+#const pt_djumpHeight = 22
+#const pt_wavedashDist = 8
 
 #const pt_jumpiness = 0.07
 #const pt_djumpiness = 0.12
-#const pt_bait_dashAwayChance = 0.55
-#const pt_bait_wdashAwayChance = 0.65
-#const pt_wall_chance = 0.6
-#const pt_platChance = 0.02
-#const pt_baitChance = 0.55
-#const pt_aggression = 0.6
-#const pt_braveChance = 0.2
-#const pt_circleCampChance = 0.18
+#const pt_bait_dashAwayChance = 0.15
+#const pt_bait_wdashAwayChance = 0.75
+#const pt_wall_chance = 0.65
+#const pt_platChance = 0.04
+#const pt_baitChance = 0.8
+#const pt_aggression = 0.65
+#const pt_braveChance = 0.75
+#const pt_circleCampChance = 0.25
 
-#const dashForceTurnFrame = 8
-#const dashDanceMinFrames = 3
+#const pt_dashForceTurnFrame = 8
+#const pt_dashDanceMinFrames = 3
 
 #const sweetSpotYRange = 4
 #const maxYEdgeDistWithJump = 75

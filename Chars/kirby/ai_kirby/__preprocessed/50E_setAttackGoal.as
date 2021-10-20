@@ -6,6 +6,7 @@ XReciever
 Cmd30
 
 var0 = var8
+var1 = var9
 
 if Equal var20 0
 Goto jab123
@@ -166,7 +167,7 @@ var9 += TopNY
 
 
 // if OYDistBackEdge < -30
-//   var9 -= 22.344
+//   var9 -= 12
 // endif
 
 // var17 = TopNY + YDistBackEdge
@@ -177,41 +178,16 @@ var9 += TopNY
 var23 = var11 + var13
 var9 += var23
 
-// adjust for char height
-// top of Opponent
-var22 = OTopNY + OHurtboxSize
-if var9 > var22
-  var9 -= OHurtboxSize
-  var9 -= OHurtboxSize
-elif var9 < OTopNY
-  // nothing
-else 
-  var17 = var22 - var9
-  var9 -= var17
-  var9 -= var17
-endif
-
-// adjust for char "width" 
-var22 = OTopNX - 3
-var23 = OTopNX + 3
-if var8 > var23
-  var8 += 3
-elif var8 < var22
-  var8 -= 3
-else
-  var22 = var8 - OTopNX
-  if var22 < 0
-    var8 += var22
-  else
-    var8 -= var22
-  endif
-endif
-
 if !(True) || Equal var20 13|| Equal var20 15|| Equal var20 16|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
-  if var9 < 25.344 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane
-    var9 = 25.344
+  if NumJumps > 0 && var9 > 28
+    var22 = var9 - 28
+    var22 = 28 - var22
+    var9 -= var22
   endif
-elif SamePlane && OYDistBackEdge < -79.028 
+  if var9 < 15 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane
+    var9 = 15
+  endif
+elif SamePlane && OYDistBackEdge < -56 
   if Equal OAirGroundState 2 && Rnd < 0.1
     Call MainHub
   endif
@@ -240,6 +216,8 @@ endif
 
 if Equal CurrAction 10 || Equal var16 1
   var8 = var0
+elif Equal var16 2
+  var9 = var1
 endif
 
 Cmd30

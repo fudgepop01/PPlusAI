@@ -4,10 +4,19 @@ unk 0x0
 
 XReciever
 
+label
 if Equal IsOnStage 0
   Call MainHub
   Return
 endif
+
+var0 = LevelValue * 0.01
+if var0 < 0.2
+  var0 = 0.2
+endif
+
+XGoto PerFrameChecks
+XReciever
 
 if Equal AirGroundState 1
   var22 = var10 + var12
@@ -22,125 +31,230 @@ if Equal AirGroundState 1
   endif
 endif
 
+if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
+  if Equal AirGroundState 1
+  if Equal CurrAction 22 
+    if Equal PrevAction 33
+      Return
+    elif AnimFrame <= 3
+      Return
+    endif
+  elif CurrAction >= 66 && CurrAction <= 73
+  elif Equal CanCancelAttack 1
+  elif CurrAction >= 24
+    Return
+  endif
+
+    if !(Equal CurrSubaction JumpSquat)
+      Button X
+    endif
+    Return
+  endif
+endif
+
+if Rnd > var0
+  Return
+endif
+
 Cmd30
 ClearStick
+// {SKIP_EXEC}
+
 if Equal var20 0
 Button A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1784766976 825373440 0 0 0
 Seek jab123
 Return
 elif Equal var20 1
 Goto execDA
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1684108032 1751217152 1952539392 1795162112 0
 Seek dashattack
 Return
 elif Equal var20 2
 Button A
 Stick 0.7
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1718905088 1819541504 0 0 0
 Seek ftilt
 Return
 elif Equal var20 3
 Button A
 Stick 0 0.7
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1970563328 1819541504 0 0 0
 Seek utilt
 Return
 elif Equal var20 4
 Button A
 Stick 0 (-0.7)
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1685350656 1819541504 0 0 0
 Seek dtilt
 Return
 elif Equal var20 5
 Button A
 Stick 1
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1718840576 1634953216 0 0 0
 Seek fsmash
 Return
 elif Equal var20 6
 Button A
 Stick 0 1
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1970498816 1634953216 0 0 0
 Seek usmash
 Return
 elif Equal var20 7
 Button A
 Stick 0 (-1)
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1685286144 1634953216 0 0 0
 Seek dsmash
 Return
 elif Equal var20 8
 Button A
 Stick 0 (-1)
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1685286144 1634953216 1600678144 1949433856 0
 Seek dsmash_hit2
 Return
 elif Equal var20 9
 Button B
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1853059072 1701013760 1634467840 0 0
 Seek nspecial
 Return
 elif Equal var20 10
 Button B
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1853059072 1701013760 1634492672 1769078784 0
 Seek nspecialair
 Return
 elif Equal var20 11
 Button B
 Stick 0 (-0.7)
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1685286912 1701013760 1634467840 0 0
 Seek dspecial
 Return
 elif Equal var20 12
 Button B
 AbsStick OPos
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1936945152 1701013760 1634467840 0 0
 Seek sspecial
 Return
 elif Equal var20 13
 Button B
 AbsStick OPos
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1936945152 1701013760 1634492672 1769078784 0
 Seek sspecialair
 Return
 elif Equal var20 14
 Button R|A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1735549184 1644167168 0 0 0
 Seek grab
 Return
 elif Equal var20 15
 Button R|A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1718904832 1919907584 0 0 0
 Seek fthrow
 Return
 elif Equal var20 16
 Button R|A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1685350400 1919907584 0 0 0
 Seek dthrow
 Return
 elif Equal var20 17
 Button R|A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1651795968 1919907584 0 0 0
 Seek bthrow
 Return
 elif Equal var20 18
 Button R|A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1970563072 1919907584 0 0 0
 Seek uthrow
 Return
 elif Equal var20 19
 Button A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1851877632 1912602624 0 0 0
 Seek nair
 Return
 elif Equal var20 20
 Button A
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1851877632 1918859008 1700883200 0 0
 Seek nair_weak
 Return
 elif Equal var20 21
 Button A
 Stick 1
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1717659904 1912602624 0 0 0
 Seek fair
 Return
 elif Equal var20 22
 Button A
 Stick (-1) 0
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1650551040 1912602624 0 0 0
 Seek bair
 Return
 elif Equal var20 23
 Button A
 Stick (-1) 0
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1650551040 1918859008 1700883200 0 0
 Seek bair_weak
 Return
 elif Equal var20 24
 Button A
 Stick 0 1
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1969318144 1912602624 0 0 0
 Seek uair
 Return
 elif Equal var20 25
 Button A
 Stick 0 (-0.6)
+LOGSTR 757935360 757935360 754974720 0 0
+LOGVAL PlayerNum
+LOGSTR 1684105472 1912602624 0 0 0
 Seek dair
 Return
 endif
@@ -211,7 +325,9 @@ Goto PFC
   var22 = TopNY - OTopNY 
   if var22 < -20
     AbsStick OPos 1
-  elif var22 > 8
+  elif var22 > 30
+    AbsStick OPos (-1)
+  elif var22 >= 0 && XDistLE 20
     AbsStick OPos (-1)
   endif
 Goto common_checks
@@ -222,7 +338,9 @@ Goto PFC
   var22 = TopNY - OTopNY 
   if var22 < -20
     AbsStick OPos 1
-  elif var22 > 8
+  elif var22 > 30
+    AbsStick OPos (-1)
+  elif var22 >= 0 && XDistLE 20
     AbsStick OPos (-1)
   endif
 Goto common_checks
@@ -294,6 +412,7 @@ Call MainHub
 Return 
 label execDA
   label
+  Goto PFC
   if Equal CurrAction 1
     ClearStick
   elif Equal CurrAction 4
@@ -309,6 +428,7 @@ label execDA
   else
     Call MainHub
   endif
+  Seek execDA
   Return
 label PFC
   XGoto PerFrameChecks
@@ -322,9 +442,16 @@ if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|
 Return
 label common_checks
   if Equal CanCancelAttack 1 && CurrAction >= 36 && CurrAction <= 52
+    var16 = 0
     Call MainHub
   elif CurrAction <= 32
+    var16 = 0
     Call MainHub
+  endif
+
+  if Equal var16 1 && Equal AirGroundState 2 && YSpeed <= 0
+    AbsStick 0 (-1)
+    var16 = 0
   endif
 Return
 Return

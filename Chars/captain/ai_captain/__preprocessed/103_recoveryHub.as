@@ -187,6 +187,18 @@ Return
 
 label handleUSpecial
   Seek reroll
+  if !(Equal CurrSubaction 470) && !(Equal CurrSubaction 471)
+    var21 = 0
+    Call MainHub
+  endif
+  if Equal var16 0 && var1 > 0
+    GetRndPointOnStage var0
+    var17 = var0 - TopNX
+    AbsStick var17
+  else
+    var17 = var0 * -1
+    AbsStick var17
+  endif
 Return
 
 label handleDSpecial

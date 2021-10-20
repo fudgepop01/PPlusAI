@@ -8,7 +8,6 @@ label setup
 var0 = 0
 var2 = 0
 var3 = Rnd * 110 + 40
-Button R
 Seek shield
 Return
 label shield
@@ -39,21 +38,26 @@ Button R
       GetAttribute var17 69 1
     endif
     var17 -= OYDistBackEdge
-    var17 *= 0.5
+    var17 *= 0.7
     var1 = var17
   elif Equal OCurrAction 24
     var1 = OEndFrame - OAnimFrame
-  elif Equal OCurrAction 26 || Equal OCurrAction 27
-    var1 = 20
+  elif Equal OCurrAction 33 && OYDistBackEdge < -15
+    var1 = 35
+  elif Equal OCurrAction 26 || Equal OCurrAction 27 || Equal OCurrAction 16
+    var17 = OTopNX - TopNX
+    Abs var17
+    var17 = 10 - var17
+    var1 = 30 + var17
   elif OAttacking 
-    RetrieveFullATKD var22 var23 var17 var23 var23 var23 var23 OCurrSubaction 1
+    RetrieveFullATKD var22 var17 var23 var23 var23 var23 var23 OCurrSubaction 1
     if Equal var22 0
       var22 = OEndFrame
     endif 
     if OAnimFrame >= var17
       var1 = var22 - OAnimFrame
     endif
-  elif Rnd < 0.7 && Rnd < 0.7  && Rnd < 0.3
+  elif Rnd < 0.7 && Rnd < 0.7 && Rnd < 0.1
     var1 = 20
   endif
 

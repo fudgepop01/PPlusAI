@@ -1,6 +1,5 @@
 #snippet COMBO_MOVES
   $addToDice(dspecial)
-  $addToDice(dspecialair)
 #endsnippet
 
 #snippet PANIC_MOVES
@@ -16,4 +15,15 @@
 
 #snippet BREAKCC_MOVES
   $addToDice(dspecial)
+#endsnippet
+
+#snippet BAIT_MOVES
+  $addToDice(nspecialair)
+#endsnippet
+
+#snippet CAMP_MOVES
+  $addToDice(nspecialair)
+  $addToDice(nspecialair)
+  $addToDice(nspecialair)
+  $addToDice(nspecial)
 #endsnippet

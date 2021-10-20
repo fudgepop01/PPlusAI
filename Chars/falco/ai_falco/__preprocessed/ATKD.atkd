@@ -2,18 +2,18 @@
 #include <Subactions_Stub.h>
 flag1=0x1CE
 flag2=0x1E
-Attack11 unk=16,start=2,end=3,xmin=0.00,xmax=19.00,ymin=4.00,ymax=13.00
-Attack12 unk=19,start=3,end=4,xmin=4.00,xmax=19.00,ymin=2.00,ymax=13.00
+Attack11 unk=15,start=2,end=3,xmin=7.72,xmax=19.08,ymin=4.33,ymax=11.51
+Attack12 unk=18,start=3,end=4,xmin=8.15,xmax=22.11,ymin=1.46,ymax=12.87
 Attack100 unk=22,start=3,end=21,xmin=1.00,xmax=17.00,ymin=4.50,ymax=14.00
-AttackDash unk=36,start=4,end=17,xmin=5.00,xmax=27.00,ymin=3.00,ymax=13.00
+AttackDash unk=35,start=4,end=17,xmin=8.24,xmax=30.86,ymin=3.90,ymax=13.31
 AttackS3Hi_AttackS3S_ unk=27,start=5,end=9,xmin=7.00,xmax=19.00,ymin=8.00,ymax=19.50
-AttackS3S unk=27,start=5,end=9,xmin=7.00,xmax=22.00,ymin=5.00,ymax=13.00
+AttackS3S unk=26,start=5,end=9,xmin=0.64,xmax=21.94,ymin=5.66,ymax=12.78
 AttackS3Lw_AttackS3S_ unk=27,start=5,end=9,xmin=7.00,xmax=21.00,ymin=-0.50,ymax=8.00
-AttackHi3 unk=23,start=5,end=11,xmin=-10.00,xmax=10.00,ymin=0.00,ymax=22.00
-AttackLw3 unk=28,start=7,end=9,xmin=2.00,xmax=17.00,ymin=0.00,ymax=7.00
-AttackS4S unk=38,start=9,end=18,xmin=12.00,xmax=33.00,ymin=2.00,ymax=18.00
-AttackHi4 unk=43,start=5,end=14,xmin=-12.00,xmax=14.00,ymin=2.00,ymax=28.00
-AttackLw4 unk=44,start=4,end=8,xmin=-14.00,xmax=11.00,ymin=-4.00,ymax=6.00
+AttackHi3 unk=22,start=5,end=11,xmin=-10.36,xmax=10.54,ymin=-0.66,ymax=22.29
+AttackLw3 unk=27,start=7,end=9,xmin=2.06,xmax=17.92,ymin=0.27,ymax=6.53
+AttackS4S unk=0,start=9,end=18,xmin=11.62,xmax=34.46,ymin=1.21,ymax=19.16
+AttackHi4 unk=0,start=5,end=14,xmin=-12.26,xmax=13.75,ymin=1.07,ymax=28.26
+AttackLw4 unk=43,start=4,end=8,xmin=-14.66,xmax=12.09,ymin=-4.08,ymax=6.30
 AttackAirN unk=42,start=4,end=31,xmin=-3.00,xmax=10.00,ymin=1.00,ymax=10.00
 AttackAirF unk=53,start=6,end=45,xmin=1.00,xmax=15.00,ymin=3.00,ymax=15.00
 AttackAirB unk=38,start=4,end=19,xmin=5.00,xmax=-14.00,ymin=2.00,ymax=15.00

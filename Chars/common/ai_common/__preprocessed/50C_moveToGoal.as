@@ -4,14 +4,16 @@ unk 0x0
 
 XReciever
 
+XGoto PerFrameChecks
+XReciever
 if CalledAs ExecuteAttack
   Goto stickMovement
   Return
 endif
 
 var0 = LevelValue * 0.01
-if var0 < 0
-  var0 = 0.05
+if var0 < 0.1
+  var0 = 0.1
 endif
 
 var22 = TopNX - var8
@@ -61,14 +63,18 @@ GetAttribute var17 25 0
 var22 = var22 - var17 * 3.5
 GetYDistFloorOffset var17 0 4 0
 if Equal AirGroundState 2 && YSpeed < var22 && YDistBackEdge > -3 && !(Equal var17 -1) && !(Equal YSpeed 0) && Rnd < var0
-  if CurrAction >= 11 && CurrAction <= 13
-    if AnimFrame >= 4
+  var22 = TopNX - var8
+  Abs var22
+  if var22 > 15 && Equal IsOnStage 1
+    if CurrAction >= 11 && CurrAction <= 13
+      if AnimFrame >= 4
+        Goto handleWaveland
+        Return
+      endif
+    else
       Goto handleWaveland
       Return
     endif
-  else
-    Goto handleWaveland
-    Return
   endif
 endif
 Goto stickMovement
@@ -210,7 +216,7 @@ label stickMovement
   endif
   var22 = TopNX - var8
   Abs var22
-  if var22 <= 15 && Equal AirGroundState 1 && !(Equal CurrAction 10)
+  if var22 <= 8 && Equal AirGroundState 1 && !(Equal CurrAction 10)
     if CurrAction < 3 || Equal CurrAction 22 || Equal CurrAction 23 || Equal CurrAction 24 
       ClearStick
       if TopNX > var8

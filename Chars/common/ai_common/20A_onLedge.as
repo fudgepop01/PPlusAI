@@ -3,6 +3,7 @@ id 0x820A
 unk 0x0
 
 XReciever
+currGoal = cg_ledge
 label begin
 XGoto PerFrameChecks
 XReciever

@@ -25,7 +25,7 @@ XGoto PerFrameChecks
 XReciever
 Seek hitlag
 
-if FramesHitlag > 1
+if FramesHitlag > 2
   // SDI input frequency:
   // level 9: once per 20 frames
   // level 1: once per 50 frames
@@ -49,7 +49,7 @@ if FramesHitlag > 1
     AbsStick var17 var22
   endif
   Return
-elif FramesHitlag > 0 && YDistBackEdge > -4
+elif FramesHitlag > 1 && YDistBackEdge > -4
   var22 = 0
   var17 = LevelValue * 0.01
   if LevelValue >= 60 && Rnd < var17
@@ -70,7 +70,7 @@ elif FramesHitlag > 0 && YDistBackEdge > -4
     AbsStick var22
   endif
   Return
-elif FramesHitlag > 0
+elif FramesHitlag > 1
   Return
 endif
 
@@ -107,11 +107,6 @@ if FramesHitstun > 0 || Equal CurrAction 66
   XGoto PerFrameChecks
   XReciever
   Seek HSHandler
-  
-  if FramesHitlag > 1
-    Seek hitlag
-    Jump
-  endif
 
   if LevelValue >= 21
     if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
@@ -123,7 +118,7 @@ if FramesHitstun > 0 || Equal CurrAction 66
     endif
   endif
 
-  if !(Equal var5 -2)
+  if !(Equal var5 -2) && !(Equal CurrAction 66) && TotalYSpeed < 0
     if var5 < -0.5
       AbsStick -1
     elif 0.5 < var5
@@ -153,15 +148,21 @@ if FramesHitstun > 0 || Equal CurrAction 66
         AbsStick var0 0
         Return
       elif True
-        if KBAngle >= 80 && KBAngle <= 100
-          var17 = Direction * -1
-          if KBAngle > 90
-            var17 *= -1
+        if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0 && Damage > 80
+          var0 = TotalXSpeed * 10
+          if Equal var0 0
+            var0 = Rnd * 2 - 1
+            var0 *= 100
           endif
-          if Rnd < 0.15
-            var17 *= -1
+          // if Rnd < 0.15
+          //   var17 *= -1
+          // endif
+          ClearStick
+          if Damage >= 90
+            AbsStick var0 (-1)
+          else
+            AbsStick var0
           endif
-          AbsStick var17 (-1)
         elif Equal IsOnStage 0 || KBSpeed > 3.7
           // if offstage with high damage, switch to survival DI
           var0 = TopNX * -1

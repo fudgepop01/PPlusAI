@@ -1,17 +1,23 @@
-#const shortHopHeight = 15
-#const djumpHeight = 28
-#const wavedashDist = 25
+#const pt_shortHopHeight = 15
+#const pt_djumpHeight = 28
+#const pt_wavedashDist = 25
 
 #const dashForceTurnFrame = 14
 #const dashDanceMinFrames = 2
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.2
-#const pt_aggression = 0.75
+#const pt_aggression = 0.8
 #const pt_bait_wdashAwayChance = 0.05
-#const pt_wall_chance = 0.4
+#const pt_wall_chance = 0.5
 #const pt_platChance = 0.1
-#const pt_baitChance = 0.95
+#const pt_baitChance = 0.8
+#const pt_braveChance = 0.75
+
+#const recovery_moves = uspecial|sspecial
+
+#const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
+#const uspecial_recovery_info = common|60
 
 // jab123
 #const mv_gentlemen = 0

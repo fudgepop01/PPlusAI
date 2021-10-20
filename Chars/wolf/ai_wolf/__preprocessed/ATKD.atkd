@@ -2,23 +2,23 @@
 #include <Subactions_Stub.h>
 flag1=0x1CE
 flag2=0x20
-Attack11 unk=0,start=4,end=5,xmin=5.00,xmax=19.50,ymin=1.00,ymax=11.00
-Attack12 unk=0,start=4,end=5,xmin=5.00,xmax=12.00,ymin=3.00,ymax=8.00
-Attack13 unk=15,start=4,end=5,xmin=7.00,xmax=15.00,ymin=2.00,ymax=6.00
-AttackDash unk=40,start=10,end=15,xmin=20.00,xmax=35.00,ymin=4.00,ymax=26.00
+Attack11 unk=14,start=4,end=5,xmin=5.44,xmax=19.65,ymin=1.02,ymax=11.42
+Attack12 unk=19,start=4,end=5,xmin=6.81,xmax=23.35,ymin=2.18,ymax=13.51
+Attack13 unk=34,start=4,end=5,xmin=15.84,xmax=27.43,ymin=-1.18,ymax=11.63
+AttackDash unk=39,start=11,end=15,xmin=22.13,xmax=37.66,ymin=4.76,ymax=26.90
 AttackS3Hi_AttackS3S_ unk=0,start=7,end=10,xmin=4.00,xmax=13.00,ymin=2.00,ymax=9.00
-AttackS3S unk=32,start=7,end=10,xmin=2.00,xmax=22.00,ymin=0.00,ymax=13.00
+AttackS3S unk=31,start=7,end=10,xmin=2.00,xmax=22.00,ymin=0.50,ymax=12.50
 AttackS3Lw_AttackS3S_ unk=0,start=7,end=10,xmin=4.00,xmax=13.00,ymin=-3.00,ymax=5.00
-AttackHi3 unk=27,start=6,end=10,xmin=-3.00,xmax=12.00,ymin=0.00,ymax=27.00
-AttackLw3 unk=27,start=9,end=10,xmin=3.00,xmax=25.00,ymin=-1.00,ymax=9.00
-AttackS4S unk=42,start=4,end=10,xmin=-2.00,xmax=38.00,ymin=-1.00,ymax=10.00
-AttackHi4 unk=46,start=8,end=21,xmin=-22.00,xmax=20.00,ymin=0.00,ymax=27.00
-AttackLw4 unk=41,start=6,end=13,xmin=-18.00,xmax=21.00,ymin=-2.00,ymax=7.00
+AttackHi3 unk=26,start=6,end=10,xmin=-2.94,xmax=12.51,ymin=0.02,ymax=26.77
+AttackLw3 unk=26,start=9,end=10,xmin=2.99,xmax=24.05,ymin=-1.09,ymax=9.28
+AttackS4S unk=41,start=4,end=10,xmin=0.68,xmax=39.81,ymin=0.00,ymax=10.00
+AttackHi4 unk=0,start=8,end=21,xmin=-23.36,xmax=20.37,ymin=-0.97,ymax=26.87
+AttackLw4 unk=0,start=6,end=13,xmin=-18.24,xmax=20.76,ymin=-2.25,ymax=8.44
 
 AttackAirN unk=40,start=7,end=24,xmin=-6.00,xmax=7.00,ymin=-1.00,ymax=15.00
-AttackAirF unk=30,start=11,end=14,xmin=-6.00,xmax=15.00,ymin=-7.00,ymax=20.00
-AttackAirB unk=29,start=7,end=10,xmin=-16.00,xmax=1.00,ymin=1.00,ymax=12.00
-AttackAirHi unk=30,start=7,end=11,xmin=-13.00,xmax=16.00,ymin=1.00,ymax=25.00
+AttackAirF unk=29,start=11,end=14,xmin=-0.91,xmax=17.04,ymin=-1.35,ymax=13.30
+AttackAirB unk=28,start=7,end=10,xmin=-16.58,xmax=1.11,ymin=1.86,ymax=11.58
+AttackAirHi unk=29,start=7,end=11,xmin=-14.58,xmax=16.24,ymin=0.49,ymax=26.44
 AttackAirLw unk=37,start=13,end=15,xmin=-5.00,xmax=6.00,ymin=-10.00,ymax=4.00
 Catch unk=0,start=5,end=7,xmin=2.00,xmax=13.00,ymin=1.00,ymax=10.00
 CatchDash unk=0,start=10,end=12,xmin=9.00,xmax=14.00,ymin=3.00,ymax=6.70

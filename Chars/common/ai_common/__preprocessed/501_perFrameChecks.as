@@ -44,10 +44,20 @@ if Equal OAnimFrame 0 && OFramesSinceShield < 20
   elif Equal OCurrAction 52
     trackOAction 14 3
   endif
-elif OAttacking && Equal OAnimFrame 0
+elif OCurrAction >= 36 && OCurrAction <= 52 && Equal OAnimFrame 0
   var17 = TopNX - OTopNX
   Abs var17
-  trackOAction 11 var17
+  predictAverage var22 10 LevelValue
+  
+  var22 += 10
+  var23 = var22 + 20
+  if var17 < var22
+    trackOAction 11 1
+  elif var17 < var23
+    trackOAction 11 2
+  else
+    trackOAction 11 3
+  endif
 endif
 // O Tech Option
 if Equal OAnimFrame 10
@@ -126,29 +136,25 @@ endif
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
   Stick -0.78
-elif !(CalledAs LyingDown) && Equal CurrAction 77
+elif Equal CurrAction 77 && !(Equal var21 17) 
   CallI LyingDown
-elif !(CalledAs OnLedge) && CurrAction >= 115 && CurrAction <= 117
+elif !(Equal var21 15) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 endif
 
 //--- switch tactic if conditions are met
-if !(CalledAs AttackedHub) && CurrAction >= 66 && CurrAction <= 69 && !(Equal var21 12)
+if CurrAction >= 66 && CurrAction <= 69 && !(Equal var21 12)
   if FramesHitstun > 0
     CallI AttackedHub
   elif Equal CurrAction 66
     CallI AttackedHub
   endif
 endif
-if !(Equal var21 2) && !(Equal var21 3) && !(CalledAs OnLedge) && Equal FramesHitstun 0
-  if OutOfStage 
-    var17 = SCDBottom + 5
-    GetColDistPosRel var17 var17 TopNX var17 25 -150 0
-    if Equal var17 -1 || var17 < -5
-      GetColDistPosRel var17 var17 TopNX var17 -25 -150 0
-      if Equal var17 -1 || var17 < -5
-        CallI RecoveryHub
-      endif
+if !(Equal var21 2) && !(Equal var21 3) && !(Equal var21 15) && Equal FramesHitstun 0
+  if Equal IsOnStage 0
+    GetYDistFloorOffset var22 0 25 0
+    if Equal var22 -1
+      CallI RecoveryHub
     endif
   elif MeteoChance
     // CallI EdgeguardHub
@@ -161,6 +167,10 @@ endif
 
 if Equal CurrAction 29 && !(CalledAs Shield)
   CallI Shield
+endif
+
+if FramesHitlag > 0 || FramesHitstun > 0
+  Return
 endif
 
   if Equal CurrAction 22 

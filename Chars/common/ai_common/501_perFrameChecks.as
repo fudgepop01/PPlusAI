@@ -44,10 +44,20 @@ if Equal OAnimFrame 0 && OFramesSinceShield < 20
   elif Equal OCurrAction hex(0x34)
     trackOAction man_OOOSOption op_OOOS_grab
   endif
-elif OAttacking && Equal OAnimFrame 0
+elif OAttackCond && Equal OAnimFrame 0
   globTempVar = TopNX - OTopNX
   Abs globTempVar
-  trackOAction man_OXAttackDist globTempVar
+  predictAverage immediateTempVar man_OXHitDist LevelValue
+  
+  immediateTempVar += 10
+  anotherTempVar = immediateTempVar + 20
+  if globTempVar < immediateTempVar
+    trackOAction man_OXAttackDist op_attack_close
+  elif globTempVar < anotherTempVar
+    trackOAction man_OXAttackDist op_attack_mid
+  else
+    trackOAction man_OXAttackDist op_attack_far
+  endif
 endif
 // O Tech Option
 if Equal OAnimFrame 10
@@ -126,29 +136,25 @@ endif
 //--- special state switches
 if Equal CurrAction hex(0x7C) || Equal CurrAction hex(0x7D)
   Stick -0.78
-elif !(CalledAs LyingDown) && Equal CurrAction hex(0x4D)
+elif Equal CurrAction hex(0x4D) && !(Equal currGoal cg_lying) 
   CallI LyingDown
-elif !(CalledAs OnLedge) && CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
+elif !(Equal currGoal cg_ledge) && CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
   CallI OnLedge
 endif
 
 //--- switch tactic if conditions are met
-if !(CalledAs AttackedHub) && CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal currGoal cg_inHitstun)
+if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal currGoal cg_inHitstun)
   if FramesHitstun > 0
     CallI AttackedHub
   elif Equal CurrAction hex(0x42)
     CallI AttackedHub
   endif
 endif
-if !(Equal currGoal cg_edgeguard) && !(Equal currGoal cg_recover) && !(CalledAs OnLedge) && Equal FramesHitstun 0
-  if OutOfStage 
-    globTempVar = SCDBottom + 5
-    GetColDistPosRel globTempVar globTempVar TopNX globTempVar 25 -150 0
-    if Equal globTempVar -1 || globTempVar < -5
-      GetColDistPosRel globTempVar globTempVar TopNX globTempVar -25 -150 0
-      if Equal globTempVar -1 || globTempVar < -5
-        CallI RecoveryHub
-      endif
+if !(Equal currGoal cg_edgeguard) && !(Equal currGoal cg_recover) && !(Equal currGoal cg_ledge) && Equal FramesHitstun 0
+  if Equal IsOnStage 0
+    GetYDistFloorOffset immediateTempVar 0 25 0
+    if Equal immediateTempVar -1
+      CallI RecoveryHub
     endif
   elif MeteoChance
     // CallI EdgeguardHub
@@ -161,6 +167,10 @@ endif
 
 if Equal CurrAction hex(0x1D) && !(CalledAs Shield)
   CallI Shield
+endif
+
+if FramesHitlag > 0 || FramesHitstun > 0
+  Return
 endif
 
 ACTIONABLE_ON_GROUND

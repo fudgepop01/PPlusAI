@@ -4,12 +4,6 @@ unk 0x0
 
 XReciever
 
-  LOGSTR 757935360 757939456 1027419392 757935360 754974720
-  LOGSTR 1195725824 541280256 1377850112 1346716416 0
-  LOGVAL var10
-  LOGSTR 757935360 757939456 1027419392 757935360 754974720
-
-
 if Equal var10 0
   var10 = 0.08
 elif Equal var10 1
@@ -31,29 +25,23 @@ elif Equal var10 8
 elif Equal var10 9
   var10 = 0.02
 elif Equal var10 10
-  var10 = 0.02
+  var10 = 0.2
 elif Equal var10 11
   var10 = 0.35
 elif Equal var10 12
-  var10 = 8
+  var10 = 10
 elif Equal var10 13
-  var10 = 4
+  var10 = 3
 elif Equal var10 14
-  var10 = 25.344
+  var10 = 15
 elif Equal var10 15
-  var10 = 39.514
+  var10 = 28
 elif Equal var10 16
-  var10 = 25
+  var10 = 8
 elif Equal var10 100
-  LOGSTR 757935360 757939456 1027419392 757935360 754974720
-  LOGSTR 757935360 757939456 1027419392 757935360 754974720
-  LOGSTR 1230184448 1095062016 1229016064 1061109504 0
 if !(True) || Equal var20 13|| Equal var20 15|| Equal var20 16|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
-    LOGSTR 1497715456 0 0 0 0
     var10 = 1
   endif
-  LOGSTR 757935360 757939456 1027419392 757935360 754974720
-  LOGSTR 757935360 757939456 1027419392 757935360 754974720
 endif
 
 Return

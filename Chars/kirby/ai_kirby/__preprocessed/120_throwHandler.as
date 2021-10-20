@@ -15,12 +15,12 @@ elif Equal var20 20
 elif Equal var20 21
     Stick 0 1
   else
-    GetYDistFloorOffset var22 20 0 0
+    GetYDistFloorOffset var22 30 0 0
     if Equal var22 -1
       AbsStick 1 0
       Return
     endif
-    GetYDistFloorOffset var22 -20 0 0
+    GetYDistFloorOffset var22 -30 0 0
     if Equal var22 -1
       AbsStick -1 0
       Return

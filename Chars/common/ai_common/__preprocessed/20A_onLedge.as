@@ -3,6 +3,7 @@ id 0x820A
 unk 0x0
 
 XReciever
+var21 = 15
 label begin
 XGoto PerFrameChecks
 XReciever

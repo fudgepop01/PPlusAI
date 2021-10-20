@@ -3,12 +3,14 @@ id 0x8500
 unk 0x0
 
 XReciever
-if Equal currGoal cg_circleCamp
+if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
   XGoto CircleCampGoal
   XReciever
-elif Equal currGoal cg_attack
+elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
   XGoto CalcAttackGoal
   XReciever
+elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
+  Return
 else
   currGoal = cg_nothing
   XGoto RandomizeGoal

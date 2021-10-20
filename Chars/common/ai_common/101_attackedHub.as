@@ -25,7 +25,7 @@ XGoto PerFrameChecks
 XReciever
 Seek hitlag
 
-if FramesHitlag > 1
+if FramesHitlag > 2
   // SDI input frequency:
   // level 9: once per 20 frames
   // level 1: once per 50 frames
@@ -46,7 +46,7 @@ if FramesHitlag > 1
     AbsStick globTempVar immediateTempVar
   endif
   Return
-elif FramesHitlag > 0 && YDistBackEdge > -4
+elif FramesHitlag > 1 && YDistBackEdge > -4
   immediateTempVar = 0
   globTempVar = LevelValue * 0.01
   if LevelValue >= LV7 && Rnd < globTempVar
@@ -67,7 +67,7 @@ elif FramesHitlag > 0 && YDistBackEdge > -4
     AbsStick immediateTempVar
   endif
   Return
-elif FramesHitlag > 0
+elif FramesHitlag > 1
   Return
 endif
 
@@ -110,11 +110,6 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
   XGoto PerFrameChecks
   XReciever
   Seek HSHandler
-  
-  if FramesHitlag > 1
-    Seek hitlag
-    Jump
-  endif
 
   if LevelValue >= LV3
     if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
@@ -126,7 +121,7 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     endif
   endif
 
-  if !(Equal techDirection -2)
+  if !(Equal techDirection -2) && !(Equal CurrAction hex(0x42)) && TotalYSpeed < 0
     if techDirection < -0.5
       AbsStick -1
     elif 0.5 < techDirection
@@ -156,15 +151,21 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
         AbsStick stickX 0
         Return
       elif True
-        if KBAngle >= 80 && KBAngle <= 100
-          globTempVar = Direction * -1
-          if KBAngle > 90
-            globTempVar *= -1
+        if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0 && Damage > 80
+          stickX = TotalXSpeed * 10
+          if Equal stickX 0
+            stickX = Rnd * 2 - 1
+            stickX *= 100
           endif
-          if Rnd < 0.15
-            globTempVar *= -1
+          // if Rnd < 0.15
+          //   globTempVar *= -1
+          // endif
+          ClearStick
+          if Damage >= 90
+            AbsStick stickX (-1)
+          else
+            AbsStick stickX
           endif
-          AbsStick globTempVar (-1)
         elif Equal IsOnStage 0 || KBSpeed > 3.7
           // if offstage with high damage, switch to survival DI
           stickX = TopNX * -1

@@ -4,6 +4,8 @@ unk 0x0
 
 XReciever
 
+XGoto PerFrameChecks
+XReciever
 if CalledAs ExecuteAttack
   Goto stickMovement
   Return
@@ -11,8 +13,8 @@ endif
 
 #let techSkill = var0
 techSkill = LevelValue * 0.01
-if techSkill < 0
-  techSkill = 0.05
+if techSkill < 0.1
+  techSkill = 0.1
 endif
 
 immediateTempVar = TopNX - goalX
@@ -60,14 +62,18 @@ GetAttribute globTempVar attr_gravity 0
 immediateTempVar = immediateTempVar - globTempVar * 3.5
 GetYDistFloorOffset globTempVar 0 4 0
 if Equal AirGroundState 2 && YSpeed < immediateTempVar && YDistBackEdge > -3 && !(Equal globTempVar -1) && !(Equal YSpeed 0) && Rnd < techSkill
-  if CurrAction >= hex(0xB) && CurrAction <= hex(0xD)
-    if AnimFrame >= 4
+  immediateTempVar = TopNX - goalX
+  Abs immediateTempVar
+  if immediateTempVar > 15 && Equal IsOnStage 1
+    if CurrAction >= hex(0xB) && CurrAction <= hex(0xD)
+      if AnimFrame >= 4
+        Goto handleWaveland
+        Return
+      endif
+    else
       Goto handleWaveland
       Return
     endif
-  else
-    Goto handleWaveland
-    Return
   endif
 endif
 Goto stickMovement
@@ -185,7 +191,7 @@ label stickMovement
   endif
   immediateTempVar = TopNX - goalX
   Abs immediateTempVar
-  if immediateTempVar <= 15 && Equal AirGroundState 1 && !(Equal CurrAction hex(0xA))
+  if immediateTempVar <= 8 && Equal AirGroundState 1 && !(Equal CurrAction hex(0xA))
     if CurrAction < hex(0x3) || Equal CurrAction hex(0x16) || Equal CurrAction hex(0x17) || Equal CurrAction hex(0x18) 
       ClearStick
       if TopNX > goalX

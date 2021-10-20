@@ -3,7 +3,14 @@ id 0x8203
 unk 0x0
 
 XReciever
+
+
 label setup
+XGoto PerFrameChecks
+XReciever
+Seek setup
+ACTIONABLE_ON_GROUND
+
 #let savedOPos = var0
 savedOPos = OPos
 #let shouldFullHop = var1
@@ -29,7 +36,10 @@ if Equal CurrSubaction JumpSquat
   Button X
 endif
 if Equal scriptVariant sv_jump_over
-  AbsStick OPos
+  if Equal AirGroundState 1
+    Return
+  endif
+  AbsStick savedOPos
   if !(Equal savedOPos OPos) || YSpeed < 0
     CallI MainHub
   endif
@@ -40,7 +50,7 @@ elif Equal scriptVariant sv_jump_neutral
 elif Equal scriptVariant sv_jump_away
   immediateTempVar = OPos * -1
   AbsStick immediateTempVar
-  if YSpeed < 0.6
+  if YSpeed < 0 && Equal AirGroundState 2
     CallI MainHub
   endif
 else

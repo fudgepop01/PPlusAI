@@ -5,7 +5,7 @@ unk 0x0
 XReciever
 SetAutoDefend 0
 SetDisabledSwitch 1
-SetDebugMode 1
+SetDebugMode 0
 
 if ODistLE 180
   SetDisabledMd 6
@@ -13,7 +13,7 @@ else
   SetDisabledMd -1
 endif
 
-label
+label start
 
 DisableDebugOverlay
 if Equal var21 3
@@ -22,14 +22,20 @@ endif
 
 // JUMP_HEIGHT_TEST
 
+Goto PFC
+Seek start
+
 if Equal var15 -1
   var15 = -100
-  if Rnd < 0.45 && !(Equal var21 16.4)
+  if Rnd < 0.45 && !(Equal var21 16.4) && OFramesHitstun <= 0
     var21 = 10
   endif
   Seek initial
   Jump
 elif Equal var15 -2
+  label empty_0
+  Goto PFC
+  Seek empty_0
 
   if Equal CurrAction 22 
     if Equal PrevAction 33
@@ -46,6 +52,9 @@ elif Equal var15 -2
 
   CallI ExecuteAttack
 elif Equal var21 16.3 && Rnd < 0.9 && Rnd > 0.65 && OCurrAction <= 21
+  label empty_1
+  Goto PFC
+  Seek empty_1
 
   if Equal CurrAction 22 
     if Equal PrevAction 33
@@ -84,6 +93,24 @@ elif Equal var21 16.3 && Rnd < 0.9 && Rnd > 0.65 && OCurrAction <= 21
   endif
   var0 -= 1
   Return
+elif Equal var21 7.1 && Rnd < 0.5 && Rnd < 0.65
+  label empty_2
+  Goto PFC
+  Seek empty_2
+
+  if Equal CurrAction 22 
+    if Equal PrevAction 33
+      Return
+    elif AnimFrame <= 3
+      Return
+    endif
+  elif CurrAction >= 66 && CurrAction <= 73
+  elif Equal CanCancelAttack 1
+  elif CurrAction >= 24
+    Return
+  endif
+  Seek initial
+  Jump
 endif
 
 Goto PFC
@@ -94,7 +121,7 @@ var16 = 0
 var20 = -1
 
 DynamicDiceClear
-if Rnd < 0.00 && Rnd < 0.00
+if Rnd < 0.25
   DynamicDiceAdd 7
 endif
 if Rnd < 0.8
@@ -107,7 +134,9 @@ if Rnd < 0.65
   endif
 endif
 DynamicDiceRoll var21
-if OFramesHitstun > 5 || ODistLE OHurtboxSize || Equal OCurrAction 73 || Equal HitboxConnected 1
+if OFramesHitstun > 5 || ODistLE OHurtboxSize || Equal OCurrAction 73 || Equal HitboxConnected 1 || Equal PrevAction 60
+  var21 = 16
+elif OCurrAction >= 77 && OCurrAction <= 89
   var21 = 16
 endif
 if Equal var21 -1

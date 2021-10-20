@@ -6,6 +6,7 @@ XReciever
 Cmd30
 
 var0 = var8
+var1 = var9
 
 if Equal var20 0
 Goto dashattack
@@ -64,7 +65,7 @@ Goto dair
 Goto dair_spike
 endif
 
-if OFramesHitstun > 0
+if True
   var22 = OTopNX - TopNX
   var17 = OTopNY - TopNY
   Norm var17 var22 var17
@@ -73,9 +74,7 @@ if OFramesHitstun > 0
   if var17 < 0
     var17 = 0
   endif
-  var17 *= 0.5
-else
-  var17 = 0
+  var17 *= 0.1
 endif
 var17 += var14
 
@@ -163,35 +162,12 @@ var9 += TopNY
 var23 = var11 + var13
 var9 += var23
 
-// adjust for char height
-// top of Opponent
-var22 = OTopNY + OHurtboxSize
-if var9 > var22
-  var9 -= OHurtboxSize
-elif var9 < OTopNY
-  // nothing
-else 
-  var17 = var22 - var9
-  var9 -= var17
-endif
-
-// adjust for char "width" 
-var22 = OTopNX - 3
-var23 = OTopNX + 3
-if var8 > var23
-  var8 += 3
-elif var8 < var22
-  var8 -= 3
-else
-  var22 = var8 - OTopNX
-  if var22 < 0
-    var8 += var22
-  else
-    var8 -= var22
-  endif
-endif
-
 if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
+  if NumJumps > 0 && var9 > 28
+    var22 = var9 - 28
+    var22 = 28 - var22
+    var9 -= var22
+  endif
   if var9 < 15 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane
     var9 = 15
   endif
@@ -210,20 +186,22 @@ elif True
     var22 = OXSpeed * OPos
     if OCurrAction >= 2 && OCurrAction <= 25 && var22 > 0
     else
-      var22 *= OPos * var15 * 0.5
+      var22 *= OPos * var15 * 0.4
       var8 += var22
     endif
   elif Equal var21 16.3
-    var22 *= OPos * var15 * 0.2
+    var22 *= OPos * var15 * 0.6
     var8 -= var22
   elif Equal var21 16.2
-    var22 *= OPos * var15 * 0.5
+    var22 *= OPos * var15 * 0.4
     var8 -= var22
   endif 
 endif
 
 if Equal CurrAction 10 || Equal var16 1
   var8 = var0
+elif Equal var16 2
+  var9 = var1
 endif
 
 Cmd30

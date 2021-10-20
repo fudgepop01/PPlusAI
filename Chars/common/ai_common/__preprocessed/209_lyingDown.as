@@ -9,23 +9,24 @@ label begin
 XGoto PerFrameChecks
 XReciever
 Seek begin
+var21 = 17
 
 if CurrAction <= 32
   CallI MainHub
 endif
 
 // react to/read the opponent's attack patterns
-var22 = (1 - (LevelValue / 100)) * 30 + 7
+var22 = (1 - (LevelValue / 100)) * 30 + 4
 MOD var22 AnimFrame var22
 if Equal var22 0
   predictAverage var22 10 LevelValue
-  var22 += 30
+  var22 += 35
   if ODistLE var22
     GetCommitPredictChance var17 LevelValue
-    var17 *= 1.5
+    var17 *= 2
     var22 = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
     if Rnd < var17
-      if ODistLE 10 && Rnd < 0.4
+      if ODistLE 30 && Rnd < 0.3
         Button A
       else
         var22 = Rnd * 2 - 1
@@ -34,7 +35,7 @@ if Equal var22 0
       endif
       Return
     elif OAnimFrame >= var22 && OAttacking
-      if ODistLE 18 && Rnd < 0.4
+      if ODistLE 35 && Rnd < 0.4
         Button A
       else
         var22 = Rnd * 2 - 1
@@ -46,7 +47,7 @@ if Equal var22 0
   endif
 endif
 
-if var0 >= 35 && Rnd <= 0.05 && Equal CurrAction 77
+if var0 >= 10 && Rnd <= 0.1 && Equal CurrAction 77
   if Rnd < 0.4
     Button A
   else

@@ -3,6 +3,7 @@ id 0x850F
 unk 0x0
 
 XReciever
+var16 = 0
 if Equal var9 BBoundary
   XGoto GoalChoiceHub
   XReciever
@@ -21,13 +22,26 @@ elif Equal var20 21
   endif
 endif
 
-if Equal var21 7
+Goto EndlagCheck
+if var21 >= 7 && var21 < 8
   var22 = (1 - (LevelValue / 100)) * 30 + 10
   MOD var22 AnimFrame var22
-  if Equal var22 1 && Rnd < 0.15
-    var21 = 10
-    Return
+  if Equal var22 1
+    if Rnd < 0.86
+      var21 = 7.1
+      XGoto CalcAttackGoal
+      XReciever
+      
+      if !(Equal var20 -1)
+        var15 = -2
+        CallI MainHub
+      endif
+    endif
   endif
+  // if Equal var22 1 && Rnd < 0.15
+  //   var21 = 10
+  //   Return
+  // endif
 
   Goto getODist
   if var22 <= 32
@@ -46,14 +60,16 @@ if Equal var21 7
     var22 = (1 - (LevelValue / 100)) * 30 + 10
     MOD var22 AnimFrame var22
     if Equal var22 1
+      // Goto EndlagCheck
+
       if Equal AirGroundState 1 && Rnd < 0.08
-        var9 += 22.344 
+        var9 += 12 
         if Rnd < 0.08 && Rnd < 0.08
           var9 += 5
         endif
       elif Equal AirGroundState 2 && YDistBackEdge < -5
         if Rnd < 0.12 && NumJumps > 0
-          var9 += 39.514
+          var9 += 28
         else
           var9 += 1
           GetYDistFloorAbsPos var22 var8 var9
@@ -67,18 +83,46 @@ elif var21 >= 10 && var21 < 11
     var22 = (1 - (LevelValue / 100)) * 30 + 12
     MOD var22 AnimFrame var22
     if Equal var22 1
-      predictAverage var22 10 LevelValue
-      var22 += 5
-      if XDistLE var22 && Rnd < 0.43
-        if Rnd < 0.7
-          var21 = 10.1
-          XGoto CalcAttackGoal
-          XReciever
-          
-          var15 = -2
-          CallI MainHub
+
+      if !(Equal var21 16.2)
+        predictOOption var22 11 LevelValue 
+        predictionConfidence var23 11 LevelValue
+        if Equal var22 1 && Rnd < var23
+          if Rnd < 0.2
+            if Rnd < 0.86 && Rnd < 0.86
+              Call FastAerial
+            else 
+              var21 = 7
+            endif
+          endif
+          var22 = 1
+          Return
+        elif Equal var22 2 && Rnd < var23 && Rnd > 0.7
+          var22 = 1
+        else
+          var22 = 0
         endif
-        var21 = 16
+
+        if Equal var22 1
+          predictAverage var22 11 LevelValue
+        else
+          predictAverage var22 10 LevelValue
+        endif
+        var22 += 15
+        var23 = var22 - 5
+        if XDistLE var22 && !(XDistLE var23) && Rnd < 0.43
+          if Rnd < 0.7
+            var21 = 10.1
+            XGoto CalcAttackGoal
+            XReciever
+            
+            if !(Equal var20 -1)
+              var15 = -2
+              CallI MainHub
+            endif
+          endif
+          var21 = 16
+        endif
       endif
       if Rnd < 0.7 && Rnd < 0.7
       else 
@@ -87,6 +131,10 @@ elif var21 >= 10 && var21 < 11
       endif
       var17 = var22 + 15
       if ODistLE var22
+        if Equal var21 16.2
+          CallI Shield
+        endif
+
         DynamicDiceClear
         if Equal AirGroundState 1
           DynamicDiceAdd 1
@@ -132,10 +180,12 @@ elif var21 >= 10 && var21 < 11
           endif
           Call JumpScr
         endif
-      elif ODistLE var17 && Rnd < 0.08
+      elif ODistLE var17 && Rnd < 0.08 && Rnd < 0.08
         if Rnd < 0.08
           var16 = 1
           var16 += 0.1
+        elif Rnd < 0.08
+          var16 = 3
         else
           var16 = 2
         endif
@@ -144,41 +194,7 @@ elif var21 >= 10 && var21 < 11
         Goto OPosGoal
       endif
 
-  var0 = -1
-  if Equal OCurrAction 51 && OYDistBackEdge > -25
-    if Equal OCurrSubaction AttackAirN
-      GetAttribute var17 65 1
-    elif Equal OCurrSubaction AttackAirF
-      GetAttribute var17 66 1
-    elif Equal OCurrSubaction AttackAirB
-      GetAttribute var17 67 1
-    elif Equal OCurrSubaction AttackAirHi
-      GetAttribute var17 68 1
-    elif Equal OCurrSubaction AttackAirLw
-      GetAttribute var17 69 1
-    endif
-    var17 -= OYDistBackEdge
-    var17 *= 0.5
-    var0 = var17
-  elif Equal OCurrAction 24
-    var0 = OEndFrame - OAnimFrame
-  elif Equal OCurrAction 26 || Equal OCurrAction 27
-    var0 = 20
-  elif OAttacking 
-    RetrieveFullATKD var22 var23 var17 var23 var23 var23 var23 OCurrSubaction 1
-    if Equal var22 0
-      var22 = OEndFrame
-    endif 
-    if OAnimFrame >= var17
-      var0 = var22 - OAnimFrame
-    endif
-  elif Rnd < 0.86 && Rnd < 0.86  && Rnd < 0.3
-    var0 = 20
-  endif
-      if var0 >= 10
-        var21 = 16
-      endif
-
+      // Goto EndlagCheck
     endif
     predictAverage var22 10 LevelValue
     var22 += 25
@@ -427,6 +443,11 @@ endif
       endif
     endif
   endif
+  var22 += 35
+  if !(ODistLE var22) && Rnd < 0.2 && Rnd < 0.2 && OFramesHitstun <= 0
+    var21 = 7
+    Return
+  endif
 
   if Equal var23 var17 && var22 > 55
     XGoto GoalChoiceHub
@@ -455,8 +476,11 @@ endif
       endif
 
       var16 = 1
-      XGoto SetAttackGoal
-      XReciever
+      if OCurrAction >= 11 && OCurrAction <= 13 && OAnimFrame < 14
+      else
+        XGoto SetAttackGoal
+        XReciever
+      endif
     endif
   // otherwise carry on as normal
   elif Equal var0 1 || Equal CurrAction 10 || Equal OCurrAction 73 || OFramesHitstun > 1 || Equal HitboxConnected 1
@@ -467,9 +491,13 @@ endif
     endif
 
     if var22 > var23
-      if !(SamePlane) && Rnd < 0.6 && Rnd < 0.2 && Equal var0 1
+      if !(SamePlane) && Rnd < 0.6 && Rnd < 0.2 && Equal var0 1 && OFramesHitstun <= 0
         var21 = 10
         Return
+      endif
+      
+      if OCurrAction >= 11 && OCurrAction <= 13 && OAnimFrame < 14
+        var16 = 2
       endif
       
       XGoto SetAttackGoal
@@ -488,6 +516,57 @@ else
   endif
 endif
 Return
+label EndlagCheck
+  var0 = -1
+  if Equal OCurrAction 51 && OYDistBackEdge > -25
+    if Equal OCurrSubaction AttackAirN
+      GetAttribute var17 65 1
+    elif Equal OCurrSubaction AttackAirF
+      GetAttribute var17 66 1
+    elif Equal OCurrSubaction AttackAirB
+      GetAttribute var17 67 1
+    elif Equal OCurrSubaction AttackAirHi
+      GetAttribute var17 68 1
+    elif Equal OCurrSubaction AttackAirLw
+      GetAttribute var17 69 1
+    endif
+    var17 -= OYDistBackEdge
+    var17 *= 0.7
+    var0 = var17
+  elif Equal OCurrAction 24
+    var0 = OEndFrame - OAnimFrame
+  elif Equal OCurrAction 33 && OYDistBackEdge < -15
+    var0 = 35
+  elif Equal OCurrAction 26 || Equal OCurrAction 27 || Equal OCurrAction 16
+    var17 = OTopNX - TopNX
+    Abs var17
+    var17 = 10 - var17
+    var0 = 30 + var17
+  elif OAttacking 
+    RetrieveFullATKD var22 var17 var23 var23 var23 var23 var23 OCurrSubaction 1
+    if Equal var22 0
+      var22 = OEndFrame
+    endif 
+    if OAnimFrame >= var17
+      var0 = var22 - OAnimFrame
+    endif
+  elif Rnd < 0.86 && Rnd < 0.86 && Rnd < 0.1
+    var0 = 20
+  endif
+predictAverage var22 10 LevelValue
+var22 += var0 + 10
+if var0 >= 12 && ODistLE var22 && OFramesHitstun <= 0
+  predictOOption var22 9 LevelValue
+  predictionConfidence var17 9 LevelValue
+  var17 *= 2
+  var17 = var17 + Damage * 0.02
+  if Rnd < var17 && Equal var22 1 
+    var21 = 16.2
+  else
+    var21 = 16.4
+  endif
+endif
+Return
 label OPosGoal
 if OAnimFrame < 2
   var8 = OTopNX + OTotalXSpeed * 10 * OPos * ODirection * -1
@@ -498,9 +577,9 @@ else
   var8 += OTopNX
 endif
 var9 = OYDistBackEdge + OTopNY
-if OYDistBackEdge < -30
-  var9 += 22.344 
-endif
+// if OYDistBackEdge < -30
+//   var9 += 12 
+// endif
 Return
 label getDist
 var22 = TopNX - var8

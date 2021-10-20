@@ -2,321 +2,190 @@
 //Attack dice roll table
 //_____On ground_____
 slot0 {
-    FTiltAttack 30,30
+    NoAttack 30,30
 }
 
 slot1 {
-    JabAttack 20,20
-    FTiltAttack 100,100
-    UTiltAttack 50,50
-    DTiltAttack 80,80
-    FSmashAttack 30,6
-    DSmashAttack 5,1
-    NBGroundAttack 10,10
-    FBGroundAttack 20,40
-    DBGroundAttack 20,40
     NoAttack 0,30
 }
 
 slot2 {
-    JabAttack 20,20
-    FTiltAttack 50,50
-    FBGroundAttack 10,20
-    DBGroundAttack 60,80
     NoAttack 0,50
 }
 
 slot3 {
-    UTiltAttack 50,50
-    FSmashAttack 100,20
-    NBGroundAttack 5,5
-    FBGroundAttack 1,1
-    DBGroundAttack 10,30
-    NoAttack 0,20
+    NoAttack 30,30
 }
 
 slot4 {
-    UTiltAttack 10,10
-    DTiltAttack 50,50
-    FSmashAttack 50,10
-    USmashAttack 70,14
-    FBGroundAttack 1,1
-    DBGroundAttack 5,5
     NoAttack 0,20
 }
 
 slot5 {
-    UTiltAttack 20,20
-    USmashAttack 100,20
-    UBGroundAttack 10,10
     NoAttack 0,30
 }
 
 slot6 {
-    DSmashAttack 100,20
     NoAttack 0,50
 }
 
 slot8 {
-    JabAttack 100,50
-    USmashAttack 50,5
-    GrabAttack 100,10
-    NoAttack 0,100
-    NAirAttack 10,0
-    FAirAttack 10,0
-    BAirAttack 5,0
-    UAirAttack 100,0
+    NoAttack 30,30
 }
 
 slot9 {
-    DTiltAttack 50,50
-    FSmashAttack 100,20
-    FBGroundAttack 100,100
+    NoAttack 30,30
 }
 
 slot10 {
-    FSmashAttack 100,20
-    NBGroundAttack 100,100
+    NoAttack 30,30
 }
 
 //_____In air_____
 slot11 {
-    NAirAttack 50,50
-    FAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot12 {
-    NAirAttack 100,100
-    FAirAttack 50,50
-    NSpecialAirAttack 2,2
+    NoAttack 30,30
 }
 
 slot13 {
-    BAirAttack 100,100
-    UAirAttack 10,10
-    NSpecialAirAttack 2,2
+    NoAttack 30,30
 }
 
 slot14 {
-    NAirAttack 20,20
-    UAirAttack 100,100
-    USpecialAirAttack 30,30
+    NoAttack 30,30
 }
 
 slot15 {
-    NAirAttack 10,10
-    FAirAttack 20,20
-    DAirAttack 100,100
-    DSpecialAirAttack 20,20
+    NoAttack 30,30
 }
 
 slot17 {
-    FAirAttack 100,100
-    BAirAttack 100,100
-    NSpecialAirAttack 10,10
+    NoAttack 30,30
 }
 
 slot18 {
-    UAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot19 {
-    FAirAttack 50,50
-    BAirAttack 50,50
-    DAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot21 {
-    USpecialAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot22 {
-    SSpecialAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot23 {
-    DAirAttack 50,50
-    SSpecialAirAttack 50,50
-    USpecialAirAttack 10,10
-    DSpecialAirAttack 30,30
+    NoAttack 30,30
 }
 
 
-//Routine call table
+//Routine Call table
 //_____Section1 starts_____
 //Entry number : 0x0
 JumpRecoverRange&&CanJump {
-    AIHub 0,0,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 0,0,0,0
-    EdgeguardHub 0,0,0,0
-    AerialBase 0,0,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1
 CanJump {
-    AIHub 0,0,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 0,0,0,0
-    EdgeguardHub 0,0,0,0
-    AerialBase 0,0,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x2
 True {
-    AIHub 0,0,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 0,0,0,0
-    EdgeguardHub 0,0,0,0
-    AerialBase 0,0,0,0
+    MainHub 0,0,0,0
 }
 
 //_____Section1 ends_____
 //_____Section2 starts_____
 //Entry number : 0x3
 MeteoChance {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x4
 Lying&&SamePlane {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x5
 Not1_4_9_12And2 {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x6
 OInHigh&&XVeryClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x7
 Back&&OInHigh {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x8
 OInHigh&&!fVeryClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x9
 InAir {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xA
 ev3 {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xB
 Back {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xC
 fXFar&&!FullCharge {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xD
 fXFar {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xE
 fXMiddle {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xF
 fVeryClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x10
 fXClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //_____Section2 ends_____
 //_____Section3 starts_____
 //Entry number : 0x11
 InAir {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x12
 MeteoChance {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x13
@@ -324,56 +193,32 @@ if !SamePlane
 
 //Entry number : 0x14
 fXClose&&ev3 {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x15
 fXClose&&OInHigh {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x16
 fXClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x17
 !FullCharge {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x18
 Far {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x19
 True {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1A
@@ -381,56 +226,32 @@ endif
 
 //Entry number : 0x1B
 Back {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1C
 fVeryClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1D
 fXClose {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1E
 fXMiddle {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1F
 !FullCharge {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x20
 True {
-    AIHub 100,100,0,0
-    RecoveryHub 100,100,0,0
-    ApproachHub 100,100,0,0
-    EdgeguardHub 100,100,0,0
-    AerialBase 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Threshold values

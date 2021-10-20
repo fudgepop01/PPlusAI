@@ -4,7 +4,9 @@
 #const pt_aggression = 0.65
 #const pt_wall_chance = 0.45
 #const pt_bait_wdashAwayChance = 0.15
-#const pt_circleCampChance = 0.00
+#const pt_circleCampChance = 0.25
+#const pt_jumpiness = 0.35
+#const pt_djumpiness = 0.07
 
 #const pt_dashForceTurnFrame = 9
 #const pt_dashDanceMinFrames = 6
@@ -95,14 +97,35 @@
 #const dsmash_damage_info = DSmash|15|20|65|25
 
 // noochB
-// #const nspecial_IASA = 101
-// #const nspecial_xOffset = 4.05
-// #const nspecial_yOffset = -4.98
-// #const nspecial_xRange = 11.32
-// #const nspecial_yRange = 4.93
-// #const nspecial_hitFrame = 53
-// #const nspecial_lastHitFrame = 57
-// #const nspecial_damage_info = NSpecial|25|30|102|361
+#const nspecial_IASA = 80
+#const nspecial_xOffset = 5
+#const nspecial_yOffset = -2
+#const nspecial_xRange = 200
+#const nspecial_yRange = 2
+#const nspecial_hitFrame = 20
+#const nspecial_lastHitFrame = 30
+#const nspecial_damage_info = NSpecial|3|0|0|0
+
+#const nspecialair_IASA = 80
+#const nspecialair_xOffset = 5
+#const nspecialair_yOffset = -2
+#const nspecialair_xRange = 20
+#const nspecialair_yRange = 2
+#const nspecialair_hitFrame = 10
+#const nspecialair_lastHitFrame = 30
+#const nspecialair_damage_info = NSpecialAir|3|0|0|0
+
+#const mv_nspecial_air1 = 1
+#const nspecialair_xOffset = 40
+#const nspecialair_hitFrame = 30
+
+#const mv_nspecial_air2 = 2
+#const nspecialair_xOffset = 60
+#const nspecialair_hitFrame = 40
+
+#const mv_nspecial_air4 = 3
+#const nspecialair_xOffset = 80
+#const nspecialair_hitFrame = 50
 
 // upB
 #const uspecial_IASA = 74
@@ -115,7 +138,7 @@
 // #const uspecial_damage_info = USpecial|14|60|60|80
 
 // downB
-#const dspecial_IASA = 5
+#const dspecial_IASA = 7
 #const dspecial_xOffset = -8
 #const dspecial_yOffset = 1.5
 #const dspecial_xRange = 8
@@ -124,7 +147,7 @@
 #const dspecial_lastHitFrame = 1
 #const dspecial_damage_info = DSpecial|5|w80|100|0
 
-#const dspecialair_IASA = 5
+#const dspecialair_IASA = 20
 #const dspecialair_xOffset = -8
 #const dspecialair_yOffset = 1.5
 #const dspecialair_xRange = 8

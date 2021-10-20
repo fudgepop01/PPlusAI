@@ -8,16 +8,25 @@ str "move"
 str "priority"
 
 predictOOption var22 8 LevelValue 
-if !(Equal var22 2) && !(CalledAs FastAerial) && Equal var21 16
+var23 = 0
+if OCurrAction >= 66 && OCurrAction <= 100
+  var23 = 1
+endif
+if !(Equal var22 2) && !(CalledAs FastAerial) && Equal var21 16 && OFramesHitstun <= 0 && Equal var23 0
   predictOOption var22 7 LevelValue 
   predictionConfidence var17 7 LevelValue
   var17 *= 2
-  if !(Equal var22 3) && Rnd < var17 && Rnd < 1.2
+  if !(Equal var22 3) && Rnd < var17 && Rnd < 1.3
     var21 = 16.3
   endif
 endif
 
-if !(Equal var21 16.3) || OFramesHitstun >= 1
+if var21 >= 16 && var21 <= 17
+elif Equal var21 7.1 || Equal var21 10.1 || Equal var21 16.2
+elif !(Equal var21 16.3)
+  var21 = 16
+endif
+if OFramesHitstun >= 1
   var21 = 16
 endif
 
@@ -68,29 +77,30 @@ elif OFramesHitstun <= 0 && var22 < 30 && Equal HitboxConnected 0
     DynamicDiceAdd 1
     DynamicDiceAdd 2
   endif
+  DynamicDiceAdd 5
+  DynamicDiceAdd 5
+  DynamicDiceAdd 5
   DynamicDiceAdd 2
   DynamicDiceAdd 3
 else
   DynamicDiceAdd 2
   DynamicDiceAdd 2
-  DynamicDiceAdd 1
+  DynamicDiceAdd 3
   GetYDistFloorOffset var22 40 5 1
   GetYDistFloorOffset var17 (-40) 5 1
   if Equal var22 -1 || Equal var17 -1
     DynamicDiceAdd 8
     DynamicDiceAdd 1
   endif
-  if OYDistBackEdge < -59.271
+  if OYDistBackEdge < -33
     DynamicDiceAdd 3
     DynamicDiceAdd 3
-    DynamicDiceAdd 1
-    if OYDistBackEdge < -79.028
+    DynamicDiceAdd 2
+    if OYDistBackEdge < -44
       DynamicDiceAdd 3
-      DynamicDiceAdd 1
-      DynamicDiceAdd 1
     endif
   endif
-  if OYDistBackEdge > -45.101
+  if OYDistBackEdge > -26
     DynamicDiceAdd 2
     DynamicDiceAdd 3
     DynamicDiceAdd 3
@@ -120,11 +130,48 @@ DynamicDiceRoll var7
 if Equal var21 16.3
   var7 = 9 
 elif Equal var21 10.1
-  var7 = 11
+  if Rnd < 0.75 && Rnd < 0.65 && Rnd < 0.5
+    var7 = 5
+  else
+    var7 = 11
+  endif
+elif Equal var21 7.1
+  var7 = 12
 endif
 DynamicDiceClear
 
 
+if YDistBackEdge < -45 || OYDistBackEdge < -20
+var20 = 10
+Goto nspecialair
+Goto check_hub
+var20 = 13
+Goto sspecialair
+Goto check_hub
+var20 = 19
+Goto nair
+Goto check_hub
+var20 = 20
+Goto nair
+Goto nair_weak
+Goto check_hub
+var20 = 21
+Goto fair
+Goto check_hub
+var20 = 22
+Goto bair
+Goto check_hub
+var20 = 23
+Goto bair
+Goto bair_weak
+Goto check_hub
+var20 = 24
+Goto uair
+Goto check_hub
+var20 = 25
+Goto dair
+Goto check_hub
+else
 var20 = 0
 Goto jab123
 Goto check_hub
@@ -207,11 +254,12 @@ Goto check_hub
 var20 = 25
 Goto dair
 Goto check_hub
+endif
 
 if Equal var7 1
 //   {KILL_MOVES}
 elif Equal var7 2
-DynamicDiceAdd 12
+
 elif Equal var7 3
 //   {JUGGLE_MOVES}
 elif Equal var7 4
@@ -219,21 +267,25 @@ DynamicDiceAdd 12
 elif Equal var7 5
 DynamicDiceAdd 12
 DynamicDiceAdd 21
+DynamicDiceAdd 21
 elif Equal var7 6
 DynamicDiceAdd 12
 elif Equal var7 7
+  if !(ODistLE 10)
 DynamicDiceAdd 12
 DynamicDiceAdd 13
+  endif
 elif Equal var7 8
 DynamicDiceAdd 12
-DynamicDiceAdd 12
 elif Equal var7 9
-DynamicDiceAdd 12
+  if !(ODistLE 10)
 DynamicDiceAdd 12
 DynamicDiceAdd 13
-DynamicDiceAdd 13
+  endif
+DynamicDiceAdd 21
+DynamicDiceAdd 21
 
-  if Rnd < 0.8999999999999999 && OYDistBackEdge > -30 && OFramesHitstun <= 0 && Equal HitboxConnected 0
+  if Rnd < 0.9750000000000001 && OYDistBackEdge > -30 && OFramesHitstun <= 0 && Equal HitboxConnected 0
     var21 = 16.3
   endif
 elif Equal var7 10
@@ -269,19 +321,32 @@ Goto fastCheck
 //   {PANIC_MOVES}
   LOGSTR 1346457088 1229127680 0 0 0
 elif Equal var7 11
-//   {BAIT_MOVES}
+  if !(ODistLE 10)
+DynamicDiceAdd 12
+DynamicDiceAdd 13
+  endif
+DynamicDiceAdd 21
+DynamicDiceAdd 21
   LOGSTR 1111574784 1409286144 0 0 0
+elif Equal var7 12
+DynamicDiceAdd 12
+DynamicDiceAdd 13
+  LOGSTR 1128353024 1342177280 0 0 0
 endif
 
 DynamicDiceRoll var20
 
-if Equal var7 11 && !(Equal var20 -1)
+if Equal var7 12 && !(Equal var20 -1)
+  Return
+elif Equal var7 11 && !(Equal var20 -1)
   Return
 elif Equal var7 10 && !(Equal var20 -1)
   var15 = -1
   var21 = 16.4
   CallI MainHub
 endif
+
+// {ADDITIONAL_FILTERS}
 
 predictionConfidence var22 9 LevelValue
 predictOOption var17 9 LevelValue
@@ -300,7 +365,7 @@ endif
 
 var22 *= 2
 if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
-  // if OYDistBackEdge < -79.028
+  // if OYDistBackEdge < -44
   //   var20 = -1
   // endif
 elif YDistBackEdge < -45 || OYDistBackEdge < -20
@@ -315,7 +380,7 @@ elif Equal var20 16
   endif
 endif
 
-if Rnd < 0.6 && Equal var21 16
+if Rnd < 0.65 && Equal var21 16
   var22 = TopNX
   var17 = OTopNX
   Abs var22
@@ -663,7 +728,7 @@ label check_hub
     LOGSTR 1397768448 1128595456 0 0 0
   elif Equal var7 10
     Goto fastCheck
-  elif Equal 11
+  elif Equal var7 11
     Goto bait_check
   endif
 Return
@@ -747,7 +812,7 @@ label combo_check
     endif
     SIN var22 var8
     var22 *= var0
-    var17 = -80
+    var17 = -185
     var23 = 185
     if var22 < var17 || var23 < var22
       var1 = 0
@@ -763,8 +828,9 @@ label combo_check
     endif
     Goto fastCheck
     Goto dirCheck
-  elif var8 > 180 && OYDistBackEdge > -30
+  elif var8 > 240 && var8 < 300 && OYDistBackEdge > -30
     DynamicDiceAdd var20
+    Goto dirCheck
   endif
 Return
 label juggle_check
@@ -780,7 +846,7 @@ label juggle_check
   Goto KBCheck
   if !(True)
     label KBCheck
-    if var0 < 30
+    if var0 < 40
       var1 = 0
       Return
     endif
@@ -795,7 +861,7 @@ label juggle_check
     endif
     SIN var22 var8
     var22 *= var0
-    var17 = 0
+    var17 = 35
     var23 = 185
     if var22 < var17 || var23 < var22
       var1 = 0
@@ -813,23 +879,22 @@ label juggle_check
 Return
 label techchase_check
   if var8 >= 180 && var8 <= 360
-    DynamicDiceAdd var20
     Goto dirCheck
   endif
 Return
 label pressure_check
-  if var0 >= 25 && var0 <= 85
+if Equal var20 -1
     DynamicDiceAdd var20
-elif Equal var20 18
+elif Equal var20 -1
     DynamicDiceAdd var20
-elif Equal var20 17
+elif Equal var20 -1
     DynamicDiceAdd var20
-elif Equal var20 16
-    DynamicDiceAdd var20
-elif Equal var20 15
+elif Equal var20 -1
     DynamicDiceAdd var20
   elif var2 <= 12
-    DynamicDiceAdd var20
+    Goto dirCheck
+  elif var2 <= 18 && var8 >= 10
+    Goto dirCheck
   elif var8 > 180 && OYDistBackEdge > -30
     DynamicDiceAdd var20
   endif
@@ -841,7 +906,7 @@ label breakCC_check
   endif
 Return
 label space_check
-  if var2 > 10 || var0 < 60
+  if var2 > 15 || var0 < 60
   elif var16 > 30
   elif var8 < 6
 elif Equal var20 18
@@ -878,8 +943,8 @@ label launch_check
     COS var22 var8
     var22 *= var0
     Abs var22
-    var17 = 0
-    var23 = 100
+    var17 = -150
+    var23 = 150
     if var22 < var17 || var23 < var22
       var1 = 0
       Return
@@ -888,6 +953,39 @@ label launch_check
     var22 *= var0
     var17 = 50
     var23 = 250
+    if var22 < var17 || var23 < var22
+      var1 = 0
+      Return
+    endif
+    var1 = 1
+    Return
+  endif
+    if Equal var1 1
+      DynamicDiceAdd var20
+      Goto fastCheck
+      Goto dirCheck
+    endif
+  else
+  Goto KBCheck
+  if !(True)
+    label KBCheck
+    if var0 < 100
+      var1 = 0
+      Return
+    endif
+    COS var22 var8
+    var22 *= var0
+    Abs var22
+    var17 = -150
+    var23 = 150
+    if var22 < var17 || var23 < var22
+      var1 = 0
+      Return
+    endif
+    SIN var22 var8
+    var22 *= var0
+    var17 = -250
+    var23 = 10
     if var22 < var17 || var23 < var22
       var1 = 0
       Return

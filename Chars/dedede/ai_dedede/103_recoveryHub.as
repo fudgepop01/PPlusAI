@@ -37,13 +37,13 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(djumpHeight - 6)
+    if YDistBackEdge > calc(pt_djumpHeight - 6)
       Button X
       Goto handleJumpToStage
       jumpValue *= 1.25
       Return
     endif
-  elif YDistBackEdge > calc(djumpHeight + UpBYDist - 20) || globTempVar < 18
+  elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 20) || globTempVar < 18
     if NumJumps > 0
       Button X
       Goto handleJumpToStage

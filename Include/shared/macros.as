@@ -43,21 +43,26 @@
       GetAttribute globTempVar attr_dairLandingLag 1
     endif
     globTempVar -= OYDistBackEdge
-    globTempVar *= 0.5
+    globTempVar *= 0.7
     {targetVar} = globTempVar
   elif Equal OCurrAction hex(0x18)
     {targetVar} = OEndFrame - OAnimFrame
-  elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B)
-    {targetVar} = 20
+  elif Equal OCurrAction hex(0x21) && OYDistBackEdge < -15
+    {targetVar} = 35
+  elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B) || Equal OCurrAction hex(0x10)
+    globTempVar = OTopNX - TopNX
+    Abs globTempVar
+    globTempVar = 10 - globTempVar
+    {targetVar} = 30 + globTempVar
   elif OAttacking 
-    RetrieveFullATKD immediateTempVar anotherTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
+    RetrieveFullATKD immediateTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
     if Equal immediateTempVar 0
       immediateTempVar = OEndFrame
     endif 
     if OAnimFrame >= globTempVar
       {targetVar} = immediateTempVar - OAnimFrame
     endif
-  elif Rnd < pt_aggression && Rnd < pt_aggression  && Rnd < 0.3
+  elif Rnd < pt_aggression && Rnd < pt_aggression && Rnd < 0.1
     {targetVar} = 20
   endif
 #endmacro
@@ -695,7 +700,8 @@
 #macro CALC_FASTFALL_DIST(outVar, frameCount)
   globTempVar = {frameCount}
   if Equal CurrSubaction JumpSquat
-    immediateTempVar = -jumpYInitVelShort
+    GetAttribute immediateTempVar attr_jumpYInitVelShort 0
+    immediateTempVar *= -1
   else
     immediateTempVar = YSpeed * -1
   endif

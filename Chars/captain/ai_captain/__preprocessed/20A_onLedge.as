@@ -96,7 +96,12 @@ if Equal var22 0 && Equal var0 1
   Return
 endif
 
-var22 = 28 + HurtboxSize
+  var10 = 15
+  XGoto GetChrSpecific
+  XReciever
+  var1 = var10
+  Seek lrExec
+var22 = var1
 if YDistBackEdge >= var22
   Button X
 endif
@@ -113,7 +118,12 @@ if Equal var22 0 && Equal var0 1
   Return
 endif
 
-var22 = 28 - HurtboxSize + 1
+  var10 = 15
+  XGoto GetChrSpecific
+  XReciever
+  var1 = var10
+  Seek lrExec
+var22 = var1 + 1
 if YDistBackEdge >= var22
   Button X
   Return

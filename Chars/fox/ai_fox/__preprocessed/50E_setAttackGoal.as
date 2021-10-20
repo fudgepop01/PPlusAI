@@ -6,6 +6,7 @@ XReciever
 Cmd30
 
 var0 = var8
+var1 = var9
 
 if Equal var20 0
 Goto jab123
@@ -24,41 +25,45 @@ Goto usmash
 elif Equal var20 7
 Goto dsmash
 elif Equal var20 8
-Goto dspecial
+Goto nspecial
 elif Equal var20 9
-Goto dspecialair
+Goto nspecialair
 elif Equal var20 10
-Goto grab
+Goto dspecial
 elif Equal var20 11
-Goto grab
-Goto fthrow
+Goto dspecialair
 elif Equal var20 12
 Goto grab
-Goto dthrow
 elif Equal var20 13
 Goto grab
-Goto bthrow
+Goto fthrow
 elif Equal var20 14
 Goto grab
-Goto uthrow
+Goto dthrow
 elif Equal var20 15
-Goto nair
+Goto grab
+Goto bthrow
 elif Equal var20 16
+Goto grab
+Goto uthrow
+elif Equal var20 17
+Goto nair
+elif Equal var20 18
 Goto nair
 Goto nair_weak
-elif Equal var20 17
-Goto fair
-elif Equal var20 18
-Goto bair
 elif Equal var20 19
+Goto fair
+elif Equal var20 20
+Goto bair
+elif Equal var20 21
 Goto bair
 Goto bair_weak
-elif Equal var20 20
+elif Equal var20 22
 Goto uair
-elif Equal var20 21
+elif Equal var20 23
 Goto uair
 Goto uair_weak
-elif Equal var20 22
+elif Equal var20 24
 Goto dair
 endif
 
@@ -75,7 +80,7 @@ if True
 endif
 var17 += var14
 
-if !(True) || Equal var20 9|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
+if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
   if Equal AirGroundState 1
     GetAttribute var23 12 0
     var17 -= var23 - 1
@@ -98,7 +103,7 @@ else
   DrawDebugRectOutline var8 OTopNY 5 5 255 255 0 136
 endif
 
-if !(True) || Equal var20 9|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
+if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
   var23 = var17
   if Equal CurrAction 6 || Equal CurrAction 7
     var23 *= 0.35
@@ -121,7 +126,7 @@ endif
 var8 -= var23
 var23 = var10 + var12
 
-if !(True) || Equal var20 9|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
+if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
   var23 *= Direction
 else
   var23 *= OPos
@@ -159,37 +164,12 @@ var9 += TopNY
 var23 = var11 + var13
 var9 += var23
 
-// adjust for char height
-// top of Opponent
-var22 = OTopNY + OHurtboxSize
-if var9 > var22
-  var9 -= OHurtboxSize
-  var9 -= OHurtboxSize
-elif var9 < OTopNY
-  // nothing
-else 
-  var17 = var22 - var9
-  var9 -= var17
-  var9 -= var17
-endif
-
-// adjust for char "width" 
-var22 = OTopNX - 3
-var23 = OTopNX + 3
-if var8 > var23
-  var8 += 3
-elif var8 < var22
-  var8 -= 3
-else
-  var22 = var8 - OTopNX
-  if var22 < 0
-    var8 += var22
-  else
-    var8 -= var22
+if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
+  if NumJumps > 0 && var9 > 39.514
+    var22 = var9 - 39.514
+    var22 = 39.514 - var22
+    var9 -= var22
   endif
-endif
-
-if !(True) || Equal var20 9|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
   if var9 < 25.344 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane
     var9 = 25.344
   endif
@@ -222,6 +202,8 @@ endif
 
 if Equal CurrAction 10 || Equal var16 1
   var8 = var0
+elif Equal var16 2
+  var9 = var1
 endif
 
 Cmd30
@@ -275,6 +257,18 @@ var10 = -13.68
 var11 = 3.73
 var14 = 7
 var15 = 11
+Return
+label nspecial
+var10 = 5
+var11 = -2
+var14 = 20
+var15 = 30
+Return
+label nspecialair
+var10 = 80
+var11 = -2
+var14 = 50
+var15 = 30
 Return
 label dspecial
 var10 = -8

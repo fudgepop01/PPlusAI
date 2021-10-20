@@ -215,13 +215,18 @@ export const generateAllMovesGotoLocRange = () => {
   // for (const move of moves) {
   //   console.log(move)
   // }
-  for (const {origin, moveName, moveVariant, IASA_src, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
+  for (const {origin, moveName, moveVariant, IASA_src, xOffset, xRange, xOffset_src, yOffset_src, xRange_src, yRange_src, hitFrame_src, lastHitFrame_src, dmg, angle, bkb, kbg, isWeightDependent} of moves) {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
     if (IASA_src.startsWith(mn)) out(`move_IASA = ${IASA_src}`)
     if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
     if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
+    let dirX = 0;
+    if (xOffset + xRange > 5) dirX = 1
+    else if (xOffset + xRange < -3) dirX = -1
+    console.log(`${moveName}; ${xOffset + xRange}; ${dirX}`);
+    out(`dirX = ${dirX}`)
     if (xRange_src.startsWith(mn)) out(`move_xRange = ${xRange_src}`)
     if (yRange_src.startsWith(mn)) out(`move_yRange = ${yRange_src}`)
     if (hitFrame_src.startsWith(mn)) out(`move_hitFrame = ${hitFrame_src}`)
@@ -263,8 +268,14 @@ export const generateMoveSnippets = () => {
       case 'grab': out('Button R|A'); break;
     }
     if (moveVariant !== 0) {
+      out(`LOGSTR str("-------")`);
+      out(`LOGVAL PlayerNum`);
+      out(`LOGSTR str("${moveName.toLowerCase()}")`);
       out(`Seek ${moveName.toLowerCase()}`);
     } else {
+      out(`LOGSTR str("-------")`);
+      out(`LOGVAL PlayerNum`);
+      out(`LOGSTR str("${moveName.toLowerCase()}")`);
       out(`Seek ${origin.toLowerCase()}`);
     }
     out('Return');
@@ -277,12 +288,22 @@ export const generateMoveSnippets = () => {
     if (moveVariant !== 0) {
       out(`label ${moveName.toLowerCase()}`);
       out('Goto PFC')
+      if (origin.endsWith("special")) {
+        out("if AnimFrame <= 7")
+        out("  AbsStick OPos")
+        out("endif")
+      }
       out(`{${moveName.toUpperCase()}}`);
       out('Goto common_checks')
       out(`Seek ${moveName.toLowerCase()}`);
     } else {
       out(`label ${origin.toLowerCase()}`);
       out('Goto PFC')
+      if (origin.endsWith("special")) {
+        out("if AnimFrame <= 7")
+        out("  AbsStick OPos")
+        out("endif")
+      }
       out(`{${origin.toUpperCase()}}`);
       out('Goto common_checks')
       out(`Seek ${origin.toLowerCase()}`);
@@ -359,6 +380,16 @@ export const ifLastAttack = (moveName) => {
   const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
 
   out(`if Equal lastAttack ${idx}`);
+  return _out;
+}
+
+export const setLastAttack = (moveName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
+
+  out(`lastAttack = ${idx}`);
   return _out;
 }
 

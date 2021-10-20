@@ -1,17 +1,17 @@
 
-#const shortHopHeight = 15
-#const djumpHeight = 28
-#const wavedashDist = 8
+#const pt_shortHopHeight = 15
+#const pt_djumpHeight = 28
+#const pt_wavedashDist = 8
 
 #const pt_jumpiness = 0.08
 #const pt_djumpiness = 0.12
 #const pt_aggression = 0.86
 #const pt_baitChance = 0.6
 #const pt_platChance = 0.02
-#const pt_circleCampChance = 0.02
+#const pt_circleCampChance = 0.2
 
-#const dashForceTurnFrame = 10
-#const dashDanceMinFrames = 3
+#const pt_dashForceTurnFrame = 10
+#const pt_dashDanceMinFrames = 3
 
 #const sweetSpotYRange = 4
 #const maxYEdgeDistWithJump = 75

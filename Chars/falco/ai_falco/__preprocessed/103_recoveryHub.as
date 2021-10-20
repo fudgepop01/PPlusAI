@@ -27,7 +27,7 @@ GetReturnGoal var1
 
 
 var17 = var1 - var0 
-var8 = 0
+var16 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
     var2 = 5
@@ -42,7 +42,12 @@ elif TopNY < var2
   else
     var2 = -6
   endif
-  var8 = 1
+  var16 = 1
+endif
+
+GetColDistPosRel var17 var22 TopNX TopNY 0 150 0
+if !(Equal var17 -1) || !(Equal var22 -1)
+  var16 = 1
 endif
 
   GetNearestCliff var0
@@ -172,7 +177,7 @@ label handleSSpecial
 Return
 
 label handleUSpecial
-  if Equal var8 1
+  if Equal var16 1
     if var0 > TopNX
       var0 += 2
     else
@@ -180,7 +185,7 @@ label handleUSpecial
     endif
   endif
   if !(Equal CurrSubaction 479)
-    if !(NoOneHanging) && !(Equal var8 1)
+    if !(NoOneHanging) && !(Equal var16 1)
       var1 -= 25
       if var0 > 0
         var0 += 15
@@ -220,8 +225,9 @@ Return
 
 label handleJumpToStage
   ClearStick
-  if Equal var8 1
-    AbsStick var0
+  if Equal var16 1
+    var17 = var0 * -1
+    AbsStick var17
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17

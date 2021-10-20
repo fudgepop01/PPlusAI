@@ -185,6 +185,11 @@
 #const sv_aerialdrift_away = 2
 
 #const sv_attackgoal_justy = 1
+#const sv_attackgoal_justx = 2
+
+#const sv_checkHit = 1
+#const sv_execute_fastfall = 1
+#const sv_execute_willhit = 2
 
 
 // used in various places to tell what part the routine should jump to
@@ -206,10 +211,13 @@
 #const cg_recover = 3
 #const cg_combo = 4
 #const cg_circleCamp = 7
+#const cg_camp_attack = 7.1
 #const cg_avoidAttack = 8
 #const cg_returnToCenter = 9
 #const cg_bait = 10
 #const cg_bait_attack = 10.1
+#const cg_bait_shield = 10.2
+#const cg_bait_center = 10.3
 #const cg_string = 11
 #const cg_inHitstun = 12
 #const cg_defend = 13
@@ -220,6 +228,7 @@
 #const cg_attack_undershoot = 16.2
 #const cg_attack_wall = 16.3
 #const cg_attack_reversal = 16.4
+#const cg_lying = 17
 
 #const techRollVulFrame = 22
 
@@ -316,6 +325,10 @@
 #const op_baitdir_neutral = 1
 #const op_baitdir_overshoot = 2
 #const op_baitdir_undershoot = 3
+
+#const op_attack_close = 1
+#const op_attack_mid = 2
+#const op_attack_far = 3
 
 // situation types
 #const st_floor = 1
