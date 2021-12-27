@@ -49,20 +49,25 @@ if FramesHitlag > 2
     AbsStick var17 var22
   endif
   Return
-elif FramesHitlag > 1 && YDistBackEdge > -4
+elif FramesHitlag > 1
   var22 = 0
   var17 = LevelValue * 0.01
-  if LevelValue >= 60 && Rnd < var17
+  if LevelValue >= 48 && Rnd < var17
     var22 = TopNX * -1
-    if FramesSinceShield > 100
-      Button R
+    if FramesSinceShield > 40
+      if FramesSinceShield > 100
+        Button R
+      elif YDistBackEdge > -10 && Rnd < 0.45
+        Button R
+      endif
     endif
   endif
 
   predictionConfidence var17 7 LevelValue
   var17 *= 2
   predictOOption var23 7 LevelValue 
-  if Rnd < 0.6
+
+  if Rnd < 0.75
     AbsStick var22 (-1)
   elif Rnd < var17 && Equal var23 1 
     AbsStick OPos (-1)
@@ -92,7 +97,10 @@ if FramesHitstun > 0 || Equal CurrAction 66
     var0 = (Rnd * 2) - 1
   endif
   if LevelValue >= 48
-    var1 = Rnd - 1.5
+    var1 = (Rnd * 2) - 1
+    if Rnd < 0.5
+      var1 -= 0.5
+    endif
   else
     var1 = (Rnd * 2) - 1
   endif
@@ -148,21 +156,24 @@ if FramesHitstun > 0 || Equal CurrAction 66
         AbsStick var0 0
         Return
       elif True
-        if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0 && Damage > 80
-          var0 = TotalXSpeed * 10
-          if Equal var0 0
-            var0 = Rnd * 2 - 1
-            var0 *= 100
+        if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
+          var0 = TotalXSpeed
+          if var0 > -1 && var0 < 1
+            var0 = Rnd * 4 - 2
+            var0 *= 10
           endif
           // if Rnd < 0.15
-          //   var17 *= -1
+          //   var0 *= -1
           // endif
           ClearStick
           if Damage >= 90
-            AbsStick var0 (-1)
+            var1 = -1
+            AbsStick var0 var1
           else
-            AbsStick var0
+            var1 = 0
+            AbsStick var0 var1
           endif
+          Return
         elif Equal IsOnStage 0 || KBSpeed > 3.7
           // if offstage with high damage, switch to survival DI
           var0 = TopNX * -1
@@ -170,7 +181,14 @@ if FramesHitstun > 0 || Equal CurrAction 66
         else
           AbsStick var0 var1
         endif
-        if Equal LevelValue 75 && YDistBackEdge > -5 && Equal IsOnStage 1
+        // techskill
+        var22 = LevelValue * 0.01
+        if var22 < 0.05
+          var22 = 0.05
+        elif var22 > 0.8
+          var22 = 0.8
+        endif
+        if YDistBackEdge > -10 && Equal IsOnStage 1 && !(Equal CurrAction 66) && Rnd < var22
           ClearStick
           AbsStick var0 (-1)
         endif
@@ -188,15 +206,17 @@ if FramesHitstun > 0 || Equal CurrAction 66
     Jump
   elif FramesHitstun > 0 && var4 > 3 && LevelValue >= 42
     label
-    // tempVar = Damage / 100
-    // tempVar *= 0.75
-    // if Rnd < tempVar
-    //   var18 = 1
-    //   Call FakeOutHub
-    // endif
 
-    
-    
+    // techskill
+    var22 = LevelValue * 0.01
+    var22 -= 0.1
+    if var22 < 0.05
+      var22 = 0.05
+    endif
+
+    if Rnd > var22
+      Return
+    endif
     Goto _hitstunEnd
 
     Seek
@@ -232,6 +252,16 @@ if FramesHitstun > 0 || Equal CurrAction 66
     //   Call FakeOutHub
     // endif
 
+    // techskill
+    var22 = LevelValue * 0.01
+    var22 -= 0.1
+    if var22 < 0.05
+      var22 = 0.05
+    endif
+
+    if Rnd > var22
+      Return
+    endif
     Goto _hitstunEnd
 
     CallI MainHub
@@ -279,7 +309,7 @@ label _checkTech
         endif
       endif
       var17 = (100 - LevelValue) / 100 * -1
-      var17 += 0.85
+      var17 += 0.50
       if Rnd < var17
         if TotalYSpeed <= 0.03 || Equal CurrAction 66
           var5 = Rnd * 4 - 2

@@ -32,9 +32,9 @@ if Equal CurrAction 4 || Equal CurrAction 5
 endif
 
 
-var0 = var3 * 2 - var4
-var0 = Rnd * var0 + var4
-var2 = 1
+var0 = var3 * 2 - var4 + Rnd * 20
+var0 = Rnd * var0 + var4 
+var2 = OPos
 if Equal var16 2
   var0 += 3
   if var0 >= var3
@@ -52,7 +52,7 @@ elif XDistBackEdge > -25
   var16 = 1
 endif
 
-if var1 < var3
+if var1 < var3 && !(Equal var16 4)
   if Equal var16 1
     AbsStick OPos
   elif Equal var16 2
@@ -66,13 +66,27 @@ if var1 < var3
   elif Equal var16 3
     var22 = TopNX * -1
     AbsStick var22
-  elif Equal var16 4
-    AbsStick OPos
-    if !(Equal var2 OPos)
-      Call MainHub
-    endif
-    Return
   endif
+elif Equal var16 4
+  if TopNX < 0 && OTopNX > 0
+  elif TopNX > 0 && OTopNX < 0
+  else
+    var22 = OTopNX
+    var17 = TopNX 
+    Abs var22
+    Abs var17
+    if var17 < var22 && var17 > 20
+      var16 = 3
+      AbsStick OPos
+      Return
+    endif
+  endif
+
+  AbsStick OPos
+  if !(Equal var2 OPos)
+    Call MainHub
+  endif
+  Return
 endif
 var1 += 1
 if var1 > var0

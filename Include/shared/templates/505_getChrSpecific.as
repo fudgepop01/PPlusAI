@@ -38,6 +38,10 @@ elif Equal chr_trait_select chr_pt_djumpHeight
   chr_trait_return = pt_djumpHeight
 elif Equal chr_trait_select chr_pt_wavedashDist
   chr_trait_return = pt_wavedashDist
+elif Equal chr_trait_select chr_pt_recoveryDistX
+  chr_trait_return = pt_recoveryDistX
+elif Equal chr_trait_select chr_pt_recoveryDistY
+  chr_trait_return = pt_recoveryDistY
 elif Equal chr_trait_select chr_chk_isAerialAttack
   $ifAerialAttack()
     chr_trait_return = 1

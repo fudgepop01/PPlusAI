@@ -15,7 +15,7 @@ else
   var21 = 0
   XGoto RandomizeGoal
   XReciever
-  if Rnd < 0.85
+  if Rnd < 0.65
     var21 = 10
   endif
 endif

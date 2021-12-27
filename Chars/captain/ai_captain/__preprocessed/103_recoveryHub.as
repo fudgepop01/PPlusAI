@@ -59,16 +59,16 @@ endif
 if Equal CurrAction 16
   Goto handleSFall
   Return
-elif Equal CurrAction 276
+elif Equal CurrAction 276 || Equal CurrAction 297 || Equal CurrAction 299
   Goto handleUSpecial
   Return
-elif Equal CurrAction 274
+elif Equal CurrAction 274 || Equal CurrAction 279
   Goto handleNSpecial
   Return
 elif Equal CurrAction 275
   Goto handleSSpecial
   Return
-elif Equal CurrAction 277
+elif Equal CurrAction 277 || Equal CurrAction 283
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
@@ -131,13 +131,13 @@ endif
     AbsStick 0 (-1)
     Return
   elif Equal var4 1 || var5 <= 0.3
-    if YDistBackEdge > 22
+    if YDistBackEdge > 23 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 66 || var17 < 18
-    if NumJumps > 0
+  elif YDistBackEdge > 67 || var17 < 18
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return

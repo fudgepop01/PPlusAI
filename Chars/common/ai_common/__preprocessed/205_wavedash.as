@@ -12,7 +12,7 @@ label setup
   var0 = 1 - var0
   var0 *= Rnd * 4
   if Equal AirGroundState 2
-    if YDistBackEdge < -5
+    if YDistBackEdge < -15
       CallI MainHub
     endif
     Seek landing
@@ -45,7 +45,7 @@ label landing
   XReciever
   Seek landing
 
-  if var0 <= 0
+  if var0 <= 0 || YSpeed < 0
     Button R
     if Equal XDistBackEdge XDistFrontEdge
       var17 = TopNX * -1

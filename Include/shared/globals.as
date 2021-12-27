@@ -1,17 +1,23 @@
+// MOVE RANGE STUFF
+#const DIRY_ABOVE = 10
+#const DIRY_BELOW = 5
+#const DIRX_FRONT = 5
+#const DIRX_BACK = -3
+
 // "PERSONALITY" traits
-#const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.2
-#const pt_riskReactionBalance = 1.0
-#const pt_aggression = 0.7
-#const pt_baitChance = 0.85
+#const pt_braveChance = 0.65
+#const pt_baitChance = 0.65
+#const pt_aggression = 0.85
+#const pt_wall_chance = 0.45
+#const pt_circleCampChance = 0.45
+
 #const pt_bait_dashAwayChance = 0.85
 #const pt_bait_wdashAwayChance = 0.35
-#const pt_wall_chance = 0.3
-#const pt_braveChance = 0.7
-// 0.15
+#const pt_jumpiness = 0.05
+#const pt_djumpiness = 0.07
+#const pt_riskReactionBalance = 1.0
 #const pt_platChance = 0.05
-// 0.4
-#const pt_circleCampChance = 0.05
+// 0.15
 
 #const pt_SDIChance = 0.35
 
@@ -20,6 +26,8 @@
 #const pt_shortHopHeight = 25.344
 #const pt_djumpHeight = 39.514
 #const pt_wavedashDist = 25
+#const pt_recoveryDistY = -40
+#const pt_recoveryDistX = 50
 
 // used with common ai pac
 #let chr_trait_select = var10
@@ -41,6 +49,8 @@
 #const chr_pt_shortHopHeight = 14
 #const chr_pt_djumpHeight = 15
 #const chr_pt_wavedashDist = 16
+#const chr_pt_recoveryDistX = 17
+#const chr_pt_recoveryDistY = 18
 
 #const chr_chk_isAerialAttack = 100
 
@@ -66,8 +76,8 @@
 #const attr_jumpXVelGroundMult = 15
 #const attr_jumpXInitTermVel = 16
 #const attr_jumpYInitVelShort = 17
-#const attr_airJumpXMult = 18
-#const attr_airJumpYMult = 19
+#const attr_airJumpYMult = 18
+// #const attr_airJumpYMult = 19
 #const attr_footstoolInitVel = 20
 #const attr_footstoolInitVelShort = 21
 // #const ] = 22
@@ -166,6 +176,7 @@
 #const sv_wavedash_out = 2
 #const sv_wavedash_neutral = 3
 #const sv_wavedash_awayFromLedge = 4
+#const sv_wavedash_goal = 5
 
 #const sv_jump_over = 1
 #const sv_jump_neutral = 2
@@ -186,6 +197,7 @@
 
 #const sv_attackgoal_justy = 1
 #const sv_attackgoal_justx = 2
+#const sv_attackgoal_self = 3
 
 #const sv_checkHit = 1
 #const sv_execute_fastfall = 1
@@ -207,7 +219,6 @@
 #let currGoal = var21
 #const cg_nothing = 0
 #const cg_runAway = 1
-#const cg_edgeguard = 2
 #const cg_recover = 3
 #const cg_combo = 4
 #const cg_circleCamp = 7
@@ -218,6 +229,8 @@
 #const cg_bait_attack = 10.1
 #const cg_bait_shield = 10.2
 #const cg_bait_center = 10.3
+#const cg_bait_wait = 10.4
+#const cg_bait_dashdance = 10.5
 #const cg_string = 11
 #const cg_inHitstun = 12
 #const cg_defend = 13
@@ -228,6 +241,7 @@
 #const cg_attack_undershoot = 16.2
 #const cg_attack_wall = 16.3
 #const cg_attack_reversal = 16.4
+#const cg_edgeguard = 16.5
 #const cg_lying = 17
 
 #const techRollVulFrame = 22
@@ -353,6 +367,7 @@
 #const LV7 = 60
 #const LV8 = 75
 #const LV9 = 100
+#const LV10 = 101
 
 // this works because it's used exclusively in 1.as and aerial attacks
 // where it's used IMMEDIATELY before being modified

@@ -231,6 +231,18 @@ func OFastFallSpeed : 0x158
 func EndFrame : 0x59
 func OEndFrame : 0x159
 
+/// width of ECB
+func Width : 0x5A
+func OWidth : 0x15A
+
+/// centerX
+func CenterX : 0x5B
+func OCenterX : 0x15B
+
+/// centerY
+func CenterY : 0x5C
+func OCenterY : 0x15C
+
 /// current training script selected
 /// 0xFFFF = default
 func TrainingScript : 0x60

@@ -27,9 +27,17 @@
 
 #snippet BAIT_MOVES
   $addToDice(nspecialair)
+  $addToDice(nspecialair)
+#endsnippet
+
+#snippet SPACING_MOVES
+  $addToDice(nspecialair)
+  $addToDice(nspecialair)
+  $addToDice(nspecialair)
 #endsnippet
 
 #snippet CAMP_MOVES
+  $addToDice(nspecialair)
   $addToDice(nspecialair)
   $addToDice(nspecialair)
 #endsnippet

@@ -21,9 +21,22 @@ if Equal AirGroundState 1
   XReciever
   var0 = var10
 
+  var10 = 4
+  XGoto GetChrSpecific
+  XReciever
+  var1 = var10
+
+  var22 = var0 * 0.5
+  if !(Equal OCurrAction 0) && Rnd < var22
+    if !(Equal var20 -1) && Rnd < var0
+      CallI ExecuteAttack
+    elif Rnd < var0 && Rnd < var0 && Rnd < 0.45
+      CallI CalcAttackGoal
+    endif 
+  endif
+
   predictOOption var22 7 LevelValue
   predictionConfidence var17 7 LevelValue
-  var0 *= 0.8
   var17 *= 2
   if Rnd > var0 && Rnd < var17 && Equal var22 1
     CallI Shield
@@ -34,13 +47,16 @@ if Equal AirGroundState 1
 
   GetAttribute var22 4 0
 
+  var21 = 10.5
+  var15 = -1
+
   var10 = 5
   XGoto GetChrSpecific
   XReciever
   var0 = var10
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= 60
     CallI Shield
-  elif var22 > 0.8 && Rnd < var0 && Rnd < var0 && LevelValue >= 42 && Rnd < 0.65 && !(ODistLE var23)
+  elif var22 > 0.8 && Rnd < var0 && LevelValue >= 42 && Rnd < 0.85 && !(ODistLE var23)
     var16 = 2
     CallI DashScr
   endif
@@ -62,21 +78,21 @@ if Equal AirGroundState 1
         var16 = 4
         CallI DashScr
       endif
-    elif Rnd < 0.45
+    elif Rnd < 0.2
   var10 = 1
   XGoto GetChrSpecific
   XReciever
   var0 = var10
-      if Rnd < 0.5
+      if Rnd < 0.2
         var16 = 1
         CallI Roll
-      elif Rnd < 0.8 && Rnd < var0
+      elif Rnd < 0.4 && Rnd < var0
         var16 = 1
         CallI JumpScr
       endif
       GetAttribute var22 4 0
       var22 *= 8
-      if Rnd < 0.6 && var22 > var0
+      if Rnd < 0.2 && var22 > var0
         var16 = 4
         CallI DashScr
       endif
@@ -85,7 +101,7 @@ if Equal AirGroundState 1
 
   GetAttribute var22 12 0
   var22 *= 0.1
-  var22 = 0.8 - var22
+  var22 = 0.7 - var22
   var10 = 6
   XGoto GetChrSpecific
   XReciever
@@ -109,8 +125,6 @@ if Equal AirGroundState 1
     var16 = 2
     CallI DashScr
   endif
-
-  CallI Shield
 endif
 
 // maybe make driftAway based on air mobility?
@@ -129,7 +143,9 @@ if Rnd < 0.1 && !(ODistLE var0)
   endif
 endif
 
+if Equal AirGroundState 1
+  CallI Shield
+endif
 CallI FastAerial
-
 Return
 Return

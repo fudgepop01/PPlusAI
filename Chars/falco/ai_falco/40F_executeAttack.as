@@ -29,17 +29,16 @@
 #snippet NSPECIALAIR
   ClearStick
   AbsStick OPos
-  if CurrAction <= hex(0x20) && Equal AirGroundState 2
-    if Rnd < 0.2
-      scriptVariant = sv_execute_fastfall
-    endif
-    AbsStick OPos
-    if Rnd < 0.4 && AnimFrame > 3
+  Seek nspecialair
+  if !(Equal CurrSubaction hex(0x1d2)) && Equal AirGroundState 2
+    if !(Equal CurrSubaction JumpSquat) && AnimFrame >= 9 && Rnd < 0.8
       ClearStick
       Button B
     endif
-  endif
-  if !(ODistLE 5) && AnimFrame > 3 && Equal CurrSubaction hex(0x1d2) && Equal IsOnStage 1 && Equal AirGroundState 2
-    Button B
+    Return
+  elif True
+    if AnimFrame >= 2 && Rnd <= 0.35 && Equal IsOnStage 1 && Equal AirGroundState 2
+      scriptVariant = sv_execute_fastfall
+    endif
   endif
 #endsnippet

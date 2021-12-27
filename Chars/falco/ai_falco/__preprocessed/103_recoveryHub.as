@@ -122,13 +122,13 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if Equal var4 1 || var5 <= 0.3
-    if YDistBackEdge > 32
+    if YDistBackEdge > 32 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
   elif YDistBackEdge > 78 || var17 < 18
-    if NumJumps > 0
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return

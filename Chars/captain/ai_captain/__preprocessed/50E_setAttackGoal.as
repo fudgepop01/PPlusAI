@@ -8,6 +8,9 @@ Cmd30
 var0 = var8
 var1 = var9
 
+var2 = (1 - (LevelValue / 100)) * 30 + 1
+MOD var2 AnimFrame var2
+
 if Equal var20 0
 Goto dashattack
 elif Equal var20 1
@@ -94,12 +97,17 @@ elif Equal OPrevAction 6 || Equal OPrevAction 7
     var23 *= 0.35
   endif
 endif
+if Equal var16 3
+  var23 -= var2
+  var23 += 1
+endif
 if OAnimFrame < 2
   var8 = OTopNX + OTotalXSpeed * var23
 else
   EstOXCoord var8 var23
   DrawDebugRectOutline var8 OTopNY 5 5 255 255 0 136
 endif
+// var8 = OTopNX
 
 if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
   var23 = var17
@@ -125,7 +133,17 @@ var8 -= var23
 var23 = var10 + var12
 
 if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
-  var23 *= Direction
+if !(True)
+    var23 *= OPos
+elif !(True)
+    var23 *= OPos
+elif !(True)
+    var23 *= OPos
+elif !(True)
+    var23 *= OPos
+  else
+    var23 *= Direction
+  endif
 else
   var23 *= OPos
 endif
@@ -134,21 +152,34 @@ var8 -= var23
 var8 += TopNX
 
 // TODO: under/overshoot
-
-if OAnimFrame < 2
+if Equal var16 3
+  var17 -= var2
+  var17 += 1
+endif
+if OAnimFrame < 2 && !(Equal OYSpeed 0)
   var9 = OSCDBottom + OTotalYSpeed * var17
 else
   EstOYCoord var9 var17
 endif
+if Equal OCurrAction 84
+  var9 = OTopNY
+endif
+if Equal var16 3
+  var17 -= 1
+  var17 += var2
+endif
+
 if AnimFrame < 2
-  var23 = TopNY + TotalYSpeed * var17
+  if TotalYSpeed > 0
+    var23 = TopNY + TotalYSpeed * var17 - Gravity * var17
+  else
+    var23 = TopNY + TotalYSpeed * var17
+  endif
 else
   EstYCoord var23 var17
 endif
 var9 -= var23
 var9 += TopNY
-
-
 
 // if OYDistBackEdge < -30
 //   var9 -= 12
@@ -159,41 +190,45 @@ var9 += TopNY
 //   var9 = var17
 // endif
 
-var23 = var11 + var13
-var9 += var23
+var23 = (var11 * -1) + var13
+var9 -= var23
 
 if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
-  if NumJumps > 0 && var9 > 28
-    var22 = var9 - 28
-    var22 = 28 - var22
-    var9 -= var22
+  if var9 < 15 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane && OYDistBackEdge >= -30
+    var9 = TopNY + 15
   endif
-  if var9 < 15 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane
-    var9 = 15
+
+  if SamePlane && OYDistBackEdge >= -30 && Equal AirGroundState 1 && !(Equal CurrAction 10)
+    var9 = TopNY + 15
   endif
-elif SamePlane && OYDistBackEdge < -56 
-  if Equal OAirGroundState 2 && Rnd < 0.1
-    Call MainHub
-  endif
+
+  // if Equal AirGroundState 1
+  //   var9 = TopNY + 15 * 4
+  // endif
+elif SamePlane
   var9 = TopNY + YDistBackEdge
 endif
 
-if OCurrAction >= 67 && OCurrAction <= 73
-elif OXDistBackEdge > -30 && OXDistFrontEdge < 30
-elif True
-  GetAttribute var22 7 0 
+var17 = OTopNY - TopNY
+if var17 > 30 || OYDistBackEdge < -35
+elif OCurrAction >= 66 && OCurrAction <= 89
+elif Equal HitboxConnected 1 || Equal PrevAction 60
+elif !(Equal var21 16.4) && OYDistFloor < 30
+  GetAttribute var22 7 1
   if Equal var21 16.1
-    var22 = OXSpeed * OPos
-    if OCurrAction >= 2 && OCurrAction <= 25 && var22 > 0
-    else
-      var22 *= OPos * var15 * 0.4
-      var8 += var22
+    if OXDistBackEdge > -20 && OXDistFrontEdge < 20
+      var17 = OXSpeed * OPos
+      if OCurrAction >= 2 && OCurrAction <= 25 && var17 > 0
+      else
+        var22 *= OPos * var15 * 0.7
+        var8 += var22
+      endif
     endif
   elif Equal var21 16.3
-    var22 *= OPos * var15 * 0.6
+    var22 *= OPos * var15 * 0.9
     var8 -= var22
   elif Equal var21 16.2
-    var22 *= OPos * var15 * 0.4
+    var22 *= OPos * var15 * 0.6
     var8 -= var22
   endif 
 endif

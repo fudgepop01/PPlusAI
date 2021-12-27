@@ -1,18 +1,25 @@
+#const DIRY_ABOVE = 15
+#const DIRY_BELOW = 3
+#const DIRX_FRONT = 4
+#const DIRX_BACK = 0
+
 #const pt_shortHopHeight = 16
 #const pt_djumpHeight = 38
-
-#const pt_bait_dashAwayChance = 0.25
-#const pt_braveChance = 0.85
-#const pt_baitChance = 0.8
-#const pt_aggression = 0.6
-#const pt_wall_chance = 0.45
-#const pt_bait_wdashAwayChance = 0.15
-#const pt_circleCampChance = 0.15
-#const pt_jumpiness = 0.15
-#const pt_djumpiness = 0.03
+#const pt_wavedashDist = 30
 
 #const pt_dashForceTurnFrame = 9
 #const pt_dashDanceMinFrames = 6
+
+#const pt_jumpiness = 0.4
+#const pt_djumpiness = 0.04
+#const pt_aggression = 0.7
+#const pt_bait_dashAwayChance = 0.05
+#const pt_bait_wdashAwayChance = 0.45
+#const pt_wall_chance = 0.9
+#const pt_platChance = 0.1
+#const pt_baitChance = 0.8
+#const pt_braveChance = 0.85
+#const pt_circlecampChancce = 0.65
 
 // the following is the data that I give the AI that allows it to determine
 // where it should be before performing an attack.
@@ -134,8 +141,8 @@
 // noochB
 #const nspecial_IASA = 80
 #const nspecial_xOffset = 5
-#const nspecial_yOffset = -1
-#const nspecial_xRange = 200
+#const nspecial_yOffset = 5
+#const nspecial_xRange = 10
 #const nspecial_yRange = 1
 #const nspecial_hitFrame = 20
 #const nspecial_lastHitFrame = 30
@@ -143,24 +150,12 @@
 
 #const nspecialair_IASA = 80
 #const nspecialair_xOffset = 5
-#const nspecialair_yOffset = 0
-#const nspecialair_xRange = 60
-#const nspecialair_yRange = 8
+#const nspecialair_yOffset = 5
+#const nspecialair_xRange = 80
+#const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 13
 #const nspecialair_lastHitFrame = 30
 #const nspecialair_damage_info = NSpecialAir|3|0|0|0
-
-#const mv_nspecial_air1 = 1
-#const nspecialair_xOffset = 40
-#const nspecialair_hitFrame = 15
-
-#const mv_nspecial_air2 = 2
-#const nspecialair_xOffset = 60
-#const nspecialair_hitFrame = 16
-
-#const mv_nspecial_air4 = 3
-#const nspecialair_xOffset = 80
-#const nspecialair_hitFrame = 17
 
 // upB
 #const uspecial_IASA = 9999.9999

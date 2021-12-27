@@ -113,8 +113,9 @@ cmd SIN : 0x66 variable value
 
 // ITEM CODES
 cmd GetItemLocFromIdx : 0x70 variable1 variable2 idx
-cmd GetArticleOfTypeAtTarget : 0x71 variable1 variable2 type opponent
-cmd GetArticleOfTypeLoc : 0x72 variable1 variable2 type
+cmd GetArticleOfTypeAtTargetLoc : 0x71 variable1 variable2 type opponent
+cmd GetArticleOfTypeAtTargetSpeed : 0x72 variable1 variable2 type opponent
+// cmd GetArticleOfTypeLoc : 0x72 variable1 variable2 type
 
 // CONTROL FLOW CODES
 cmd CallI : 0x80 @AIID
@@ -178,9 +179,20 @@ cmd DisableDebugOverlay : 0xE1
 cmd SetDebugOverlayColor : 0xE2 red green blue alpha
 
 ///logs a value to the console
-cmd LOGVAL : 0xF0 value
+cmd LOGVAL_NL : 0xF0 value
 
 ///logs up to 16 ASCII characters to the console
 ///every 3 characters are encoded as a number. just use the
 ///preprocessor str() function
-cmd LOGSTR : 0xF1 p1 p2 p3 p4 p5
+cmd LOGSTR_NL : 0xF1 p1 p2 p3 p4 p5
+
+///logs a value to the console
+cmd LOGVAL : 0xF2 value
+
+///logs up to 16 ASCII characters to the console
+///every 3 characters are encoded as a number. just use the
+///preprocessor str() function
+cmd LOGSTR : 0xF3 p1 p2 p3 p4 p5
+
+///logs a value to the console
+cmd PRINTLN : 0xF4

@@ -62,16 +62,16 @@ endif
 if Equal CurrAction 16
   Goto handleSFall
   Return
-elif Equal CurrAction 276
+elif Equal CurrAction 276 || Equal CurrAction 279 || Equal CurrAction 280
   Goto handleUSpecial
   Return
 elif Equal CurrAction 274
   Goto handleNSpecial
   Return
-elif Equal CurrAction 275
+elif Equal CurrAction 275 || Equal CurrAction 297
   Goto handleSSpecial
   Return
-elif Equal CurrAction 277
+elif Equal CurrAction 277 || Equal CurrAction 282
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
@@ -125,13 +125,13 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if Equal var4 1 || var5 <= 0.3
-    if YDistBackEdge > 27.514000000000003
+    if YDistBackEdge > 27.514000000000003 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
   elif YDistBackEdge > 84.51400000000001 || var17 < 18
-    if NumJumps > 0
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
@@ -186,7 +186,7 @@ label handleSSpecial
   endif
   if var8 < 0.7
     Abs var0
-    if Equal CurrSubaction 469 && var0 < 25
+    if Equal CurrSubaction 469 && var0 < 50
       Button B
     endif
   endif

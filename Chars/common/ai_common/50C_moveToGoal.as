@@ -25,13 +25,15 @@ if immediateTempVar <= 8 && Equal AirGroundState 1
   ClearStick
   Return
 endif
-immediateTempVar = XSpeed * 10
+GetAttribute globTempVar attr_jumpXVelGroundMult 0
+immediateTempVar = XSpeed * 10 * globTempVar
 GetYDistFloorOffset globTempVar immediateTempVar 110 0
 GetYDistFloorOffset immediateTempVar immediateTempVar 3 0
 if globTempVar > 0
   immediateTempVar = TopNY + 3 - immediateTempVar
   globTempVar = TopNY + 100 - globTempVar
-  if immediateTempVar < globTempVar && !(Equal currGoal cg_attack)
+  if currGoal <= cg_attack && currGoal <= calc(cg_attack + 1)
+  elif immediateTempVar < globTempVar
     #let platChance = var0
     GET_CHAR_TRAIT(platChance, chr_pt_platChance)
     if Rnd < platChance && Rnd < platChance
@@ -80,10 +82,11 @@ Goto stickMovement
 if Equal AirGroundState 2 && !(OutOfStage) || Equal CurrAction hex(0xA)
   #let isGoingOffstage = var1
   #let throwaway = var2
-  GOING_OFFSTAGE(isGoingOffstage, throwaway, 16)
-  if !(Equal isGoingOffstage 0) && Rnd < techSkill
+  GOING_OFFSTAGE(isGoingOffstage, throwaway, 20)
+  if !(Equal isGoingOffstage 0) && !(Equal currGoal cg_edgeguard)
     AbsStick isGoingOffstage
     AbsStick isGoingOffstage
+    Return
   endif
 elif Equal AirGroundState 1
   immediateTempVar = XSpeed * 10
@@ -94,10 +97,11 @@ elif Equal AirGroundState 1
     AbsStick immediateTempVar
   endif
 endif
-immediateTempVar = XSpeed * 9 + TopNX
+GetAttribute globTempVar attr_jumpXVelGroundMult 0
+immediateTempVar = XSpeed * 9 * globTempVar + TopNX
 immediateTempVar -= goalX
 Abs immediateTempVar
-if immediateTempVar <= 15 && TopNY < goalY
+if immediateTempVar <= 25 || Equal CurrSubaction JumpSquat && TopNY < goalY
   immediateTempVar = goalY - TopNY
   if Equal AirGroundState 1
     immediateTempVar = goalY
@@ -119,18 +123,24 @@ if immediateTempVar <= 15 && TopNY < goalY
     #let totalJumpHeight = var1
     #let djumpHeight = var2
     GET_CHAR_TRAIT(djumpHeight, chr_pt_djumpHeight)
-    totalJumpHeight = djumpHeight * NumJumps
+    totalJumpHeight = djumpHeight * NumJumps * 2
     if globTempVar < anotherTempVar && immediateTempVar < totalJumpHeight && !(Equal YSpeed 0)
-      globTempVar = GetJumpHeight / GetJumpLength
+      GetAttribute globTempVar attr_airXTermVel 0
+      GetAttribute immediateTempVar attr_airJumpYMult 0
+      GetAttribute anotherTempVar attr_jumpYInitVel 0
+      immediateTempVar *= anotherTempVar
+      globTempVar = globTempVar / immediateTempVar
       immediateTempVar = goalX - TopNX
       Abs immediateTempVar
-      anotherTempVar = goalY - TopNY
+      EstYCoord anotherTempVar 10
+      anotherTempVar *= -1
+      anotherTempVar += goalY 
       immediateTempVar /= anotherTempVar
-      if immediateTempVar <= globTempVar
+      if immediateTempVar >= globTempVar
         #let isAerialAttack = var0
         GET_CHAR_TRAIT(isAerialAttack, chr_chk_isAerialAttack)
         if Equal isAerialAttack 1 || Equal lastAttack -1
-          Button X
+          Goto jumpDirHandler
         endif
       endif
     endif
@@ -150,7 +160,7 @@ elif immediateTempVar <= 15 && TopNY > goalY && Equal IsOnPassableGround 1
   #let aggression = var1
   GET_CHAR_TRAIT(aggression, chr_pt_aggression)
 
-  if globTempVar <= goalX && goalX <= immediateTempVar && Rnd < djumpiness && Rnd < aggression
+  if globTempVar <= goalX && goalX <= immediateTempVar && Rnd < aggression
     label empty_2
     Goto PFC
     Seek empty_2
@@ -167,27 +177,9 @@ XReciever
 Return
 label stickMovement
   if TopNX > goalX
-    if Equal Direction 1 && Equal CurrAction hex(0x4) && LevelValue >= LV6
-      scriptVariant = sv_wavedash_in
-      CallI Wavedash
-    endif
-    GetYDistFloorOffset immediateTempVar -8 0 0
-    if !(Equal immediateTempVar -1) 
-      AbsStick -1
-    elif XDistBackEdge > -4
-      AbsStick 0.65
-    endif
-  elif True
-    if Equal Direction -1 && Equal CurrAction hex(0x4) && LevelValue >= LV6
-      scriptVariant = sv_wavedash_in
-      CallI Wavedash
-    endif
-    GetYDistFloorOffset immediateTempVar 8 0 0
-    if !(Equal immediateTempVar -1) 
-      AbsStick 1
-    elif XDistBackEdge > -4
-      AbsStick -0.65
-    endif
+    AbsStick -1
+  else
+    AbsStick 1
   endif
   immediateTempVar = TopNX - goalX
   Abs immediateTempVar
@@ -200,19 +192,29 @@ label stickMovement
         AbsStick 0.65
       endif
     endif
-  elif Equal CurrAction hex(0x1) && YDistBackEdge < -10 && YDistFrontEdge > 10
+  elif Equal CurrAction hex(0x1) && XDistBackEdge < -10 && XDistFrontEdge > 10
     ClearStick
   endif
-  immediateTempVar = CharXSpeed * 8 + 5 * Direction
-  GetYDistFloorOffset immediateTempVar immediateTempVar 10 0
-  if Equal immediateTempVar -1 && CurrAction > hex(0x2) && FramesHitstun <= 0 && Equal AirGroundState 1
-    ClearStick
-    scriptVariant = sv_wavedash_awayFromLedge
-    Call Wavedash
+  if !(Equal currGoal cg_edgeguard) && Equal IsOnStage 1
+    immediateTempVar = 0
+    GET_CHAR_TRAIT(immediateTempVar, chr_chk_isAerialAttack)
+    if Equal immediateTempVar 1
+    else
+      immediateTempVar = Direction * 10
+      GetYDistFloorOffset immediateTempVar immediateTempVar 20 0
+      globTempVar = XSpeed * Direction
+      if Equal immediateTempVar -1 && globTempVar > 0.05
+        ClearStick
+        if CurrAction >= hex(0x2) && CurrAction <= hex(0x9)
+          scriptVariant = sv_wavedash_awayFromLedge
+          CallI Wavedash
+        endif
+      endif
+    endif
   endif
 Return
 label jumpPreCheck
-if Equal currGoal cg_attack
+if cg_attack <= currGoal && currGoal <= calc(cg_attack + 1)
   #let isAerialAttack = var0
   GET_CHAR_TRAIT(isAerialAttack, chr_chk_isAerialAttack)
   if Equal isAerialAttack 1
@@ -224,14 +226,29 @@ endif
 Return
 label jumpDirHandler
 Button X
-immediateTempVar = XSpeed * 15 + TopNX
-immediateTempVar -= goalX
-ClearStick
-if LevelValue >= LV7 && Rnd < 0.9 && Equal CurrAction hex(0x3) && AnimFrame >= pt_dashForceTurnFrame 
-elif immediateTempVar > goalX
-  AbsStick -1
-else
-  AbsStick 1
+if Equal AirGroundState 1
+  GetAttribute globTempVar attr_jumpXVelGroundMult 0
+  immediateTempVar = XSpeed * 15 * globTempVar + TopNX
+  ClearStick
+  
+  immediateTempVar -= goalX
+  globTempVar = immediateTempVar
+  Abs globTempVar
+
+  if LevelValue >= LV7 && Rnd < 0.9 && Equal CurrAction hex(0x3) && AnimFrame >= pt_dashForceTurnFrame 
+  elif globTempVar < 18
+  elif immediateTempVar < 0
+    AbsStick -1
+  else
+    AbsStick 1
+  endif
+else 
+  ClearStick
+  GetAttribute globTempVar attr_airXTermVel 0
+  immediateTempVar = goalX - TopNX
+  immediateTempVar *= 15
+  immediateTempVar = immediateTempVar * 1 / globTempVar
+  AbsStick immediateTempVar
 endif
 Return
 label handleWaveland

@@ -1,13 +1,13 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 55
-  #const UpBYDist = 55
+  #const UpBXDist = 90
+  #const UpBYDist = 95
   #const sideBHeight = 8
-  #const sideBRange = 65
+  #const sideBRange = 100
   #const tolerence = 15
 
   #const jumpChance = 0.3
-  #const highUpBChance = 0.4
-  #const highHighUpBChance = 0.2
+  #const highUpBChance = 0.6
+  #const highHighUpBChance = 0.3
   #const sideBChance = 0.4
   #const sideBLedgeChance = 0.7
   #const trickAngleChance = 0.6
@@ -28,8 +28,8 @@
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
-  #const NCXOffs = 6
-  #const NCXOffsClose = 4
+  #const NCXOffs = 9
+  #const NCXOffsNear = 4
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
@@ -46,14 +46,18 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
+
+  if !(NoOneHanging) && !(Equal isBelowStage 1)
+    nearCliffY -= 25
+  endif
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 12)
+    if YDistBackEdge > calc(pt_djumpHeight - 12) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
   elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 30) || globTempVar < 18
-    if NumJumps > 0
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
@@ -65,11 +69,13 @@
       Return
     endif
   endif
-  if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
-    Button B
-    ClearStick
-    Stick 1
-    Return
+  if YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
+    if sideBValue <= sideBChance || trickAngleValue > trickAngleChance && highUpBValue > highUpBChance
+      Button B
+      ClearStick
+      Stick 1
+      Return
+    endif
   endif
   if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
@@ -97,9 +103,9 @@
 #snippet USPECIAL
   if Equal isBelowStage 1
     if nearCliffX > TopNX
-      nearCliffX += 2
+      nearCliffX += 4
     else
-      nearCliffX -= 2
+      nearCliffX -= 4
     endif
   endif
 
@@ -108,9 +114,18 @@
       nearCliffY -= 45
     endif
 
-    if trickAngleValue < trickAngleChance
+    if trickAngleValue < trickAngleChance && !(Equal isBelowStage 1)
       immediateTempVar = Rnd * 70 + 20
+      nearCliffY += YDistBackEdge
       nearCliffY -= immediateTempVar
+    endif
+
+    if highHighUpBValue <= highHighUpBChance || highUpBValue < highUpBChance
+      if TopNX > 0
+        nearCliffX -= 50
+      else
+        nearCliffX += 50
+      endif
     endif
 
     #let absNCX = var4
@@ -147,7 +162,7 @@
 
   if sideBLedgeValue < sideBLedgeChance
     Abs nearCliffX
-    if Equal CurrSubaction hex(0x1d5) && nearCliffX < 25
+    if Equal CurrSubaction hex(0x1d1) && nearCliffX < 60
       Button B
     endif
   endif

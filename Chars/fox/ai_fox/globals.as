@@ -1,12 +1,24 @@
-#const pt_bait_dashAwayChance = 0.85
-#const pt_braveChance = 0.65
-#const pt_baitChance = 0.8
-#const pt_aggression = 0.65
-#const pt_wall_chance = 0.45
-#const pt_bait_wdashAwayChance = 0.15
-#const pt_circleCampChance = 0.25
-#const pt_jumpiness = 0.35
-#const pt_djumpiness = 0.07
+#const DIRY_ABOVE = 15
+#const DIRY_BELOW = 3
+#const DIRX_FRONT = 4
+#const DIRX_BACK = 0
+
+// #const pt_bait_dashAwayChance = 0.85
+// #const pt_bait_wdashAwayChance = 0.25
+// #const pt_jumpiness = 0.1
+// #const pt_djumpiness = 0.07
+// #const pt_aggression = 0.95
+
+#const pt_jumpiness = 0.4
+#const pt_djumpiness = 0.1
+#const pt_aggression = 0.75
+#const pt_bait_dashAwayChance = 0.55
+#const pt_bait_wdashAwayChance = 0.25
+#const pt_wall_chance = 0.4
+#const pt_platChance = 0.1
+#const pt_baitChance = 0.75
+#const pt_braveChance = 0.85
+#const pt_circleCampChance = 0.35
 
 #const pt_dashForceTurnFrame = 9
 #const pt_dashDanceMinFrames = 6
@@ -15,6 +27,11 @@
 #const pt_djumpHeight = 39.514
 #const pt_wavedashDist = 25
 
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) 
+#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x11a)
 
 // jab123
 #const jab123_IASA = 17
@@ -107,10 +124,10 @@
 #const nspecial_damage_info = NSpecial|3|0|0|0
 
 #const nspecialair_IASA = 80
-#const nspecialair_xOffset = 5
-#const nspecialair_yOffset = -2
-#const nspecialair_xRange = 20
-#const nspecialair_yRange = 2
+#const nspecialair_xOffset = 0
+#const nspecialair_yOffset = 5
+#const nspecialair_xRange = 200
+#const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 10
 #const nspecialair_lastHitFrame = 30
 #const nspecialair_damage_info = NSpecialAir|3|0|0|0
@@ -138,16 +155,16 @@
 // #const uspecial_damage_info = USpecial|14|60|60|80
 
 // downB
-#const dspecial_IASA = 7
+#const dspecial_IASA = 8
 #const dspecial_xOffset = -8
 #const dspecial_yOffset = 1.5
 #const dspecial_xRange = 8
 #const dspecial_yRange = 8
 #const dspecial_hitFrame = 1
 #const dspecial_lastHitFrame = 1
-#const dspecial_damage_info = DSpecial|5|w80|100|0
+#const dspecial_damage_info = DSpecial|5|w80|100|1
 
-#const dspecialair_IASA = 20
+#const dspecialair_IASA = 70
 #const dspecialair_xOffset = -8
 #const dspecialair_yOffset = 1.5
 #const dspecialair_xRange = 8

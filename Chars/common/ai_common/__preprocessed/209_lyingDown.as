@@ -11,7 +11,10 @@ XReciever
 Seek begin
 var21 = 17
 
-if CurrAction <= 32
+if CurrAction <= 32 || Equal CanCancelAttack 1
+  if ODistLE 60
+    CallI DefendHub
+  endif
   CallI MainHub
 endif
 
@@ -23,10 +26,10 @@ if Equal var22 0
   var22 += 35
   if ODistLE var22
     GetCommitPredictChance var17 LevelValue
-    var17 *= 2
+    var17 *= 5
     var22 = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
     if Rnd < var17
-      if ODistLE 30 && Rnd < 0.3
+      if ODistLE 50 && Rnd < 0.25
         Button A
       else
         var22 = Rnd * 2 - 1
@@ -35,7 +38,7 @@ if Equal var22 0
       endif
       Return
     elif OAnimFrame >= var22 && OAttacking
-      if ODistLE 35 && Rnd < 0.4
+      if ODistLE 35 && Rnd < 0.35
         Button A
       else
         var22 = Rnd * 2 - 1
@@ -48,7 +51,7 @@ if Equal var22 0
 endif
 
 if var0 >= 10 && Rnd <= 0.1 && Equal CurrAction 77
-  if Rnd < 0.4
+  if Rnd < 0.2
     Button A
   else
     var22 = Rnd * 2 - 1

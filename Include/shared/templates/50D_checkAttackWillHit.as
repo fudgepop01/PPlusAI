@@ -13,59 +13,78 @@ XReciever
 
 tempGoalX = goalX
 tempGoalY = goalY
-// adjust for char height
-// top of Opponent
-immediateTempVar = OTopNY + OHurtboxSize
-if tempGoalY > immediateTempVar
-  tempGoalY -= OHurtboxSize
-  tempGoalY -= OHurtboxSize
-elif tempGoalY < OTopNY
-  // nothing
+
+// adjust to O center
+anotherTempVar = OHurtboxSize
+move_yRange += anotherTempVar
+anotherTempVar = OWidth
+move_xRange += anotherTempVar
+
+anotherTempVar = OTopNX - OCenterX
+tempGoalX -= anotherTempVar
+if TopNX < OTopNX
+  tempGoalX -= anotherTempVar
 else 
-  globTempVar = immediateTempVar - tempGoalY
-  tempGoalY -= globTempVar
-  tempGoalY -= globTempVar
+  tempGoalX += anotherTempVar
 endif
 
-// adjust for char "width" 
-#const charWidth = 3
-immediateTempVar = OTopNX - charWidth
-anotherTempVar = OTopNX + charWidth
-if tempGoalX > anotherTempVar
-  if Equal dirX -1
-    tempGoalX -= charWidth
-  else
-    tempGoalX += charWidth
-  endif
-elif tempGoalX < immediateTempVar
-  if Equal dirX -1
-    tempGoalX += charWidth
-  else
-    tempGoalX -= charWidth
-  endif
-else
-  immediateTempVar = tempGoalX - OTopNX
-  if Equal dirX -1
-    immediateTempVar *= -1
-  endif
-  if immediateTempVar < 0
-    tempGoalX += immediateTempVar
-  else
-    tempGoalX -= immediateTempVar
-  endif
+anotherTempVar = OTopNY - OCenterY
+tempGoalY -= anotherTempVar
+
+if TopNY < OTopNY
+  tempGoalY -= anotherTempVar
+else 
+  tempGoalY += anotherTempVar
 endif
 
 globTempVar = move_hitFrame
 
-anotherTempVar = OHurtboxSize
-move_yRange += anotherTempVar
+if AnimFrame < 2
+  if TotalYSpeed > 0
+    anotherTempVar = TopNY + TotalYSpeed * globTempVar - Gravity * globTempVar
+  else
+    anotherTempVar = TopNY + TotalYSpeed * globTempVar
+  endif
+else
+  EstYCoord anotherTempVar globTempVar
+endif
+anotherTempVar -= TopNY
+tempGoalY += anotherTempVar
 
-immediateTempVar = (100 - LevelValue) * 0.2
-move_xOffset -= immediateTempVar
-move_yOffset -= immediateTempVar
-immediateTempVar *= 0.5
-move_xRange += immediateTempVar
-move_yRange += immediateTempVar
+$ifAerialAttack()
+  anotherTempVar = globTempVar
+  if Equal CurrAction hex(0x6) || Equal CurrAction hex(0x7)
+    anotherTempVar *= 0.35
+  elif Equal PrevAction hex(0x6) || Equal PrevAction hex(0x7)
+    if Equal CurrAction hex(0x3) && AnimFrame < 4
+      anotherTempVar *= 0.35
+    endif
+  endif
+  if AnimFrame < 2
+    anotherTempVar = TopNX + TotalXSpeed * anotherTempVar
+  else
+    EstXCoord anotherTempVar anotherTempVar
+  endif
+elif True
+  anotherTempVar = TopNX
+endif
+anotherTempVar -= TopNX
+tempGoalX -= anotherTempVar
+
+immediateTempVar = (100 - LevelValue) * 0.2 - 0
+anotherTempVar = move_xRange + immediateTempVar
+if anotherTempVar > 1
+  move_xOffset -= immediateTempVar
+  immediateTempVar *= 0.5
+  move_xRange += immediateTempVar
+  immediateTempVar *= 2
+endif
+anotherTempVar = move_yRange + immediateTempVar
+if anotherTempVar > 1
+  move_yOffset -= immediateTempVar
+  immediateTempVar *= 0.5
+  move_yRange += immediateTempVar
+endif
 
 $ifAerialAttack()
   GetAttribute immediateTempVar attr_airMobilityB 0
@@ -99,7 +118,7 @@ distY = tempGoalY
 
 immediateTempVar = OTopNX + (move_xOffset + move_xRange) * ODirection
 globTempVar = OTopNY - move_yOffset + move_yRange
-DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0x00FFFFDD)
+DrawDebugRectOutline immediateTempVar globTempVar move_xRange move_yRange color(0xFFFF4444)
 
 immediateTempVar = distX 
 globTempVar = distY 
@@ -118,29 +137,14 @@ if !(Equal scriptVariant sv_checkHit)
     if anotherTempVar <= move_xRange && immediateTempVar <= move_yRange
       if Equal CurrAction hex(0x3) || Equal CurrAction hex(0x8)
         if AnimFrame < calc(pt_dashForceTurnFrame - 4)
-          move_xRange -= 5
-          if globTempVar <= move_xRange
-            scriptVariant = sv_wavedash_neutral
-          elif distX <= TopNX
-            if OPos < 0
-              scriptVariant = sv_wavedash_in
-            else
-              scriptVariant = sv_wavedash_out
-            endif
-          elif distX >= TopNX
-            if OPos > 0
-              scriptVariant = sv_wavedash_in
-            else
-              scriptVariant = sv_wavedash_out
-            endif
-          endif
+          scriptVariant = sv_wavedash_goal
           if XDistFrontEdge < 15 || XDistBackEdge > -15
             scriptVariant = sv_wavedash_awayFromLedge
           endif
-          skipMainInit = mainInitSkip
-          if Rnd < 0.7
+          // skipMainInit = mainInitSkip
+          // if Rnd < 0.7
             skipMainInit = sm_execAttack
-          endif
+          // endif
           CallI Wavedash      
         endif
       endif
@@ -165,37 +169,28 @@ elif anotherTempVar > pt_shortHopHeight
   lastAttack = -1
 endif
 
-$ifAerialAttack()
-  if Equal AirGroundState 2
-    #let fastfallDist = var4
-    CALC_FASTFALL_DIST(fastfallDist, move_hitFrame)
-
-    immediateTempVar = fastfallDist + (OSCDBottom - TopNY)
-    immediateTempVar -= YDistBackEdge
-    if immediateTempVar > 0
-      globTempVar = distX - TopNX
-      immediateTempVar = distY - TopNY + fastfallDist
-
-      Abs globTempVar
-      Abs immediateTempVar
-      if globTempVar <= move_xRange && immediateTempVar <= move_yRange
-        if !(Equal scriptVariant sv_checkHit)
-          scriptVariant = sv_execute_fastfall
-          CallI ExecuteAttack
-          Finish
-        else
-          scriptVariant = sv_execute_fastfall
-          Return
-        endif
-      endif
-    endif
-  endif
+if Equal IsOnStage 1
+  {FASTFALL_CHECK}
 endif
+
+globTempVar = distX - TopNX
+immediateTempVar = distY - TopNY
+
+Abs globTempVar
+Abs immediateTempVar
 
 if globTempVar <= move_xRange && immediateTempVar <= move_yRange
   if !(Equal scriptVariant sv_checkHit)
     $ifAerialAttack()
-      if Equal AirGroundState 2
+      if Equal currGoal cg_edgeguard && Equal IsOnStage 0
+        EstYCoord immediateTempVar move_IASA
+        DrawDebugRectOutline TopNX immediateTempVar 5 5 color(0x00FFFFDD)
+        DrawDebugRectOutline TopNX pt_recoveryDistY 10 2 color(0xFF8800DD)
+        if immediateTempVar >= pt_recoveryDistY
+          CallI ExecuteAttack
+          Finish
+        endif
+      elif Equal AirGroundState 2
         CallI ExecuteAttack
         Finish
       endif

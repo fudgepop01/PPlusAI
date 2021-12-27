@@ -20,7 +20,7 @@
 
 #snippet NCXOFFS_REDEFINE
   #const NCXOffs = 6
-  #const NCXOffsClose = 4
+  #const NCXOffsNear = 4
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
@@ -38,23 +38,35 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 10)
+    immediateTempVar = calc(pt_djumpHeight - 8)
+    if !(NoOneHanging)
+      immediateTempVar -= 20
+    endif
+
+    if YDistBackEdge > immediateTempVar && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       jumpValue *= 1.25
       Return
     endif
-  elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
+  else
+  
+    immediateTempVar = calc(pt_djumpHeight + UpBYDist - 20)
+    if !(NoOneHanging)
+      immediateTempVar -= 20
+    endif
+    if YDistBackEdge > immediateTempVar || globTempVar < 18
+      if NumJumps > 0 && Rnd < 0.5
+        Button X
+        Goto handleJumpToStage
+        Return
+      else
+        hasTriedToUpB = 1
+        Button B
+        ClearStick
+        AbsStick 0 (0.7)
+        Return
+      endif
     endif
   endif
   if horizUpBValue <= horizUpBChance && YDistBackEdge > -horizUpBHeight && YDistBackEdge < horizUpBHeight && absNCX <= horizUpBRange && absNCX >= UpBXDist
@@ -145,12 +157,15 @@
   if Equal isBelowStage 1
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
+  elif Equal IsOnStage 1
+    globTempVar = TopNX * -1
+    AbsStick globTempVar
   elif nearCliffX > 6 || nearCliffX < -6
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
   endif
   immediateTempVar = nearCliffX * Direction
-  if immediateTempVar < 0
+  if immediateTempVar < 0 && Equal isBelowStage 0
     Stick -1
   endif
 #endsnippet

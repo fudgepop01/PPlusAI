@@ -1,4 +1,3 @@
-
 #macro ACTIONABLE_ON_GROUND()
   if Equal CurrAction hex(0x16) 
     if Equal PrevAction hex(0x21)
@@ -59,9 +58,9 @@
     if Equal immediateTempVar 0
       immediateTempVar = OEndFrame
     endif 
-    if OAnimFrame >= globTempVar
+    // if OAnimFrame >= globTempVar
       {targetVar} = immediateTempVar - OAnimFrame
-    endif
+    // endif
   elif Rnd < pt_aggression && Rnd < pt_aggression && Rnd < 0.1
     {targetVar} = 20
   endif
@@ -1568,15 +1567,15 @@ endif
   {out} = immediateTempVar - maxXEdgeDist
 #endmacro
 
-#macro KILL_CHECK(out, kb, angle, xCoord, yCoord)
-  Goto KCheck
+#macro KILL_CHECK(LABEL, out, kb, angle, xCoord, yCoord)
+  Goto {LABEL}
   if !(True)
-    label KCheck
+    label {LABEL}
     // LOGSTR str("KChkData")
     COS immediateTempVar {angle}
     immediateTempVar *= {kb}
     immediateTempVar *= OPos
-    immediateTempVar *= 1
+    immediateTempVar *= 0.03
     globTempVar = RBoundary - ({xCoord})
     // LOGSTR str("RB")
     // LOGVAL immediateTempVar
@@ -1596,7 +1595,7 @@ endif
     globTempVar = TBoundary - ({yCoord})
     SIN immediateTempVar {angle}
     immediateTempVar *= {kb}
-    immediateTempVar *= 1
+    immediateTempVar *= 0.03
     // LOGSTR str("TB")
     // LOGVAL immediateTempVar
     // LOGVAL globTempVar
@@ -1609,10 +1608,10 @@ endif
   endif
 #endmacro
 
-#macro MOVE_KB_WITHIN(out, kb, angle, min, minX, maxX, minY, maxY)
-  Goto KBCheck
+#macro MOVE_KB_WITHIN(LABEL, out, kb, angle, min, minX, maxX, minY, maxY)
+  Goto {LABEL}
   if !(True)
-    label KBCheck
+    label {LABEL}
     #let out = {out}
     if {kb} < {min}
       out = 0
@@ -1623,6 +1622,8 @@ endif
     Abs immediateTempVar
     globTempVar = {minX}
     anotherTempVar = {maxX}
+    LOGSTR str("X KB")
+    LOGVAL immediateTempVar
     if immediateTempVar < globTempVar || anotherTempVar < immediateTempVar
       out = 0
       Return
@@ -1630,6 +1631,8 @@ endif
 
     SIN immediateTempVar {angle}
     immediateTempVar *= {kb}
+    LOGSTR str("Y KB")
+    LOGVAL immediateTempVar
     globTempVar = {minY}
     anotherTempVar = {maxY}
     if immediateTempVar < globTempVar || anotherTempVar < immediateTempVar

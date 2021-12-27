@@ -30,9 +30,9 @@ if Equal CurrAction hex(0x4) || Equal CurrAction hex(0x5)
 endif
 
 
-timeLimit = dashForceTurnFrame * 2 - dashDanceMinFrames
-timeLimit = Rnd * timeLimit + dashDanceMinFrames
-startOPos = 1
+timeLimit = dashForceTurnFrame * 2 - dashDanceMinFrames + Rnd * 20
+timeLimit = Rnd * timeLimit + dashDanceMinFrames 
+startOPos = OPos
 if Equal scriptVariant sv_dash_away
   timeLimit += 3
   if timeLimit >= dashForceTurnFrame
@@ -50,7 +50,7 @@ elif XDistBackEdge > -25
   scriptVariant = sv_dash_towards
 endif
 
-if timePassed < dashForceTurnFrame
+if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through)
   if Equal scriptVariant sv_dash_towards
     AbsStick OPos
   elif Equal scriptVariant sv_dash_away
@@ -64,13 +64,27 @@ if timePassed < dashForceTurnFrame
   elif Equal scriptVariant sv_dash_toCenter
     immediateTempVar = TopNX * -1
     AbsStick immediateTempVar
-  elif Equal scriptVariant sv_dash_through
-    AbsStick OPos
-    if !(Equal startOPos OPos)
-      Call MainHub
-    endif
-    Return
   endif
+elif Equal scriptVariant sv_dash_through
+  if TopNX < 0 && OTopNX > 0
+  elif TopNX > 0 && OTopNX < 0
+  else
+    immediateTempVar = OTopNX
+    globTempVar = TopNX 
+    Abs immediateTempVar
+    Abs globTempVar
+    if globTempVar < immediateTempVar && globTempVar > 20
+      scriptVariant = sv_dash_toCenter
+      AbsStick OPos
+      Return
+    endif
+  endif
+
+  AbsStick OPos
+  if !(Equal startOPos OPos)
+    Call MainHub
+  endif
+  Return
 endif
 timePassed += 1
 if timePassed > timeLimit

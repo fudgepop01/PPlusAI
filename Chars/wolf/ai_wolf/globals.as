@@ -1,11 +1,11 @@
+#const DIRY_ABOVE = 9
+#const DIRY_BELOW = 3
+#const DIRX_FRONT = 4
+#const DIRX_BACK = -3
+
 #const pt_bait_dashAwayChance = 0.35
-#const pt_braveChance = 0.35
-#const pt_baitChance = 0.85
-#const pt_aggression = 0.65
-#const pt_wall_chance = 0.45
 #const pt_bait_wdashAwayChance = 0.65
-#const pt_circleCampChance = 0.35
-#const pt_jumpiness = 0.35
+#const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.07
 
 #const pt_dashForceTurnFrame = 9
@@ -14,6 +14,12 @@
 #const pt_shortHopHeight = 12.344
 #const pt_djumpHeight = 33.514
 #const pt_wavedashDist = 25
+
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) 
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x11a)
 
 
 // jab123
@@ -116,7 +122,7 @@
 
 // noochB
 #const nspecial_IASA = 80
-#const nspecial_xOffset = 5
+#const nspecial_xOffset = 0
 #const nspecial_yOffset = -2
 #const nspecial_xRange = 200
 #const nspecial_yRange = 2
@@ -125,7 +131,7 @@
 #const nspecial_damage_info = NSpecial|3|0|0|0
 
 #const nspecialair_IASA = 80
-#const nspecialair_xOffset = 5
+#const nspecialair_xOffset = 0
 #const nspecialair_yOffset = -2
 #const nspecialair_xRange = 60
 #const nspecialair_yRange = 2

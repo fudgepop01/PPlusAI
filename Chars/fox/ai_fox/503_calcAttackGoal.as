@@ -1,5 +1,5 @@
 #snippet COMBO_MOVES
-  $addToDice(dspecial)
+  // $addToDice(dspecial)
 #endsnippet
 
 #snippet PANIC_MOVES
@@ -7,10 +7,17 @@
 #endsnippet
 
 #snippet LAUNCH_MOVES
-  $addToDice(dspecial)
+  // $addToDice(dspecial)
 #endsnippet
 
 #snippet PRESSURE_MOVES
+  // $addToDice(nspecialair)
+  // $addToDice(nspecialair)
+  // $addToDice(nspecialair)
+  // $addToDice(uthrow)
+  // $addToDice(uthrow)
+  // $addToDice(uthrow)
+  // $addToDice(dthrow)
 #endsnippet
 
 #snippet BREAKCC_MOVES
@@ -19,9 +26,11 @@
 
 #snippet BAIT_MOVES
   $addToDice(nspecialair)
+  $addToDice(nspecialair)
 #endsnippet
 
 #snippet CAMP_MOVES
+  $addToDice(nspecialair)
   $addToDice(nspecialair)
   $addToDice(nspecialair)
   $addToDice(nspecialair)

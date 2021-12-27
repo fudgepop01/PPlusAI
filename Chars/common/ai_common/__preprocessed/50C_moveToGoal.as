@@ -24,13 +24,15 @@ if var22 <= 8 && Equal AirGroundState 1
   ClearStick
   Return
 endif
-var22 = XSpeed * 10
+GetAttribute var17 15 0
+var22 = XSpeed * 10 * var17
 GetYDistFloorOffset var17 var22 110 0
 GetYDistFloorOffset var22 var22 3 0
 if var17 > 0
   var22 = TopNY + 3 - var22
   var17 = TopNY + 100 - var17
-  if var22 < var17 && !(Equal var21 16)
+  if var21 <= 16 && var21 <= 17
+  elif var22 < var17
   var10 = 9
   XGoto GetChrSpecific
   XReciever
@@ -79,7 +81,7 @@ if Equal AirGroundState 2 && YSpeed < var22 && YDistBackEdge > -3 && !(Equal var
 endif
 Goto stickMovement
 if Equal AirGroundState 2 && !(OutOfStage) || Equal CurrAction 10
-  var17 = 16
+  var17 = 20
   var2 = XSpeed * var17
   GetYDistFloorOffset var1 var2 5 0
   // var22 = TopNY - var1 
@@ -97,9 +99,10 @@ if Equal AirGroundState 2 && !(OutOfStage) || Equal CurrAction 10
   else
     var1 = 0
   endif
-  if !(Equal var1 0) && Rnd < var0
+  if !(Equal var1 0) && !(Equal var21 16.5)
     AbsStick var1
     AbsStick var1
+    Return
   endif
 elif Equal AirGroundState 1
   var22 = XSpeed * 10
@@ -110,10 +113,11 @@ elif Equal AirGroundState 1
     AbsStick var22
   endif
 endif
-var22 = XSpeed * 9 + TopNX
+GetAttribute var17 15 0
+var22 = XSpeed * 9 * var17 + TopNX
 var22 -= var8
 Abs var22
-if var22 <= 15 && TopNY < var9
+if var22 <= 25 || Equal CurrSubaction JumpSquat && TopNY < var9
   var22 = var9 - TopNY
   if Equal AirGroundState 1
     var22 = var9
@@ -138,20 +142,26 @@ if var22 <= 15 && TopNY < var9
   XGoto GetChrSpecific
   XReciever
   var2 = var10
-    var1 = var2 * NumJumps
+    var1 = var2 * NumJumps * 2
     if var17 < var23 && var22 < var1 && !(Equal YSpeed 0)
-      var17 = GetJumpHeight / GetJumpLength
+      GetAttribute var17 31 0
+      GetAttribute var22 18 0
+      GetAttribute var23 14 0
+      var22 *= var23
+      var17 = var17 / var22
       var22 = var8 - TopNX
       Abs var22
-      var23 = var9 - TopNY
+      EstYCoord var23 10
+      var23 *= -1
+      var23 += var9 
       var22 /= var23
-      if var22 <= var17
+      if var22 >= var17
   var10 = 100
   XGoto GetChrSpecific
   XReciever
   var0 = var10
         if Equal var0 1 || Equal var20 -1
-          Button X
+          Goto jumpDirHandler
         endif
       endif
     endif
@@ -175,7 +185,7 @@ elif var22 <= 15 && TopNY > var9 && Equal IsOnPassableGround 1
   XReciever
   var1 = var10
 
-  if var17 <= var8 && var8 <= var22 && Rnd < var0 && Rnd < var1
+  if var17 <= var8 && var8 <= var22 && Rnd < var1
     label empty_2
     Goto PFC
     Seek empty_2
@@ -192,27 +202,9 @@ XReciever
 Return
 label stickMovement
   if TopNX > var8
-    if Equal Direction 1 && Equal CurrAction 4 && LevelValue >= 48
-      var16 = 1
-      CallI Wavedash
-    endif
-    GetYDistFloorOffset var22 -8 0 0
-    if !(Equal var22 -1) 
-      AbsStick -1
-    elif XDistBackEdge > -4
-      AbsStick 0.65
-    endif
-  elif True
-    if Equal Direction -1 && Equal CurrAction 4 && LevelValue >= 48
-      var16 = 1
-      CallI Wavedash
-    endif
-    GetYDistFloorOffset var22 8 0 0
-    if !(Equal var22 -1) 
-      AbsStick 1
-    elif XDistBackEdge > -4
-      AbsStick -0.65
-    endif
+    AbsStick -1
+  else
+    AbsStick 1
   endif
   var22 = TopNX - var8
   Abs var22
@@ -225,19 +217,32 @@ label stickMovement
         AbsStick 0.65
       endif
     endif
-  elif Equal CurrAction 1 && YDistBackEdge < -10 && YDistFrontEdge > 10
+  elif Equal CurrAction 1 && XDistBackEdge < -10 && XDistFrontEdge > 10
     ClearStick
   endif
-  var22 = CharXSpeed * 8 + 5 * Direction
-  GetYDistFloorOffset var22 var22 10 0
-  if Equal var22 -1 && CurrAction > 2 && FramesHitstun <= 0 && Equal AirGroundState 1
-    ClearStick
-    var16 = 4
-    Call Wavedash
+  if !(Equal var21 16.5) && Equal IsOnStage 1
+    var22 = 0
+  var10 = 100
+  XGoto GetChrSpecific
+  XReciever
+  var22 = var10
+    if Equal var22 1
+    else
+      var22 = Direction * 10
+      GetYDistFloorOffset var22 var22 20 0
+      var17 = XSpeed * Direction
+      if Equal var22 -1 && var17 > 0.05
+        ClearStick
+        if CurrAction >= 2 && CurrAction <= 9
+          var16 = 4
+          CallI Wavedash
+        endif
+      endif
+    endif
   endif
 Return
 label jumpPreCheck
-if Equal var21 16
+if 16 <= var21 && var21 <= 17
   var10 = 100
   XGoto GetChrSpecific
   XReciever
@@ -251,14 +256,29 @@ endif
 Return
 label jumpDirHandler
 Button X
-var22 = XSpeed * 15 + TopNX
-var22 -= var8
-ClearStick
-if LevelValue >= 60 && Rnd < 0.9 && Equal CurrAction 3 && AnimFrame >= 8 
-elif var22 > var8
-  AbsStick -1
-else
-  AbsStick 1
+if Equal AirGroundState 1
+  GetAttribute var17 15 0
+  var22 = XSpeed * 15 * var17 + TopNX
+  ClearStick
+  
+  var22 -= var8
+  var17 = var22
+  Abs var17
+
+  if LevelValue >= 60 && Rnd < 0.9 && Equal CurrAction 3 && AnimFrame >= 8 
+  elif var17 < 18
+  elif var22 < 0
+    AbsStick -1
+  else
+    AbsStick 1
+  endif
+else 
+  ClearStick
+  GetAttribute var17 31 0
+  var22 = var8 - TopNX
+  var22 *= 15
+  var22 = var22 * 1 / var17
+  AbsStick var22
 endif
 Return
 label handleWaveland

@@ -29,7 +29,7 @@
 
 #snippet NCXOFFS_REDEFINE
   #const NCXOffs = 6
-  #const NCXOffsClose = 4
+  #const NCXOffsNear = 4
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
@@ -47,13 +47,13 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 12)
+    if YDistBackEdge > calc(pt_djumpHeight - 12) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
   elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 30) || globTempVar < 18
-    if NumJumps > 0
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
@@ -147,7 +147,7 @@
 
   if sideBLedgeValue < sideBLedgeChance
     Abs nearCliffX
-    if Equal CurrSubaction hex(0x1d5) && nearCliffX < 25
+    if Equal CurrSubaction hex(0x1d5) && nearCliffX < 50
       Button B
     endif
   endif

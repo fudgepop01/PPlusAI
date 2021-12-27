@@ -19,9 +19,7 @@ else
   Goto defensiveOptions
 endif
 
-if !(OutOfStage)
-  Call MainHub
-endif
+Goto stageCheck
 Return
 label defensiveOptions
 immediateTempVar = (1 - (LevelValue / 100)) * 30 + 7
@@ -57,11 +55,11 @@ if Equal immediateTempVar 0 && !(Equal currGoal cg_defend)
   endif
 endif
 
-if Rnd <= 0.2
-  if Rnd < 0.3
-    if ODistLE 25 && Rnd < 0.3
+if Rnd <= 0.8
+  if Rnd < 0.5
+    if ODistLE 35 && Rnd < 0.3
       Button A
-    elif Rnd < 0.2
+    elif Rnd < 0.4
       Button R
     else
       Seek dropOptions
@@ -73,7 +71,7 @@ if Rnd <= 0.2
 endif
 Return
 label dropOptions
-if Rnd <= 0.35
+if Rnd <= 0.0
   Seek ledgeRefresh
   Jump
 elif Rnd <= 0.3
@@ -93,6 +91,7 @@ XGoto PerFrameChecks
 XReciever
 Seek lrExec
 immediateTempVar = grabbed
+Goto stageCheck
 Goto edgeGrabCheck
 if Equal immediateTempVar 0 && Equal grabbed 1
   Return
@@ -114,12 +113,13 @@ XReciever
 Seek mdExec
 immediateTempVar = grabbed
 Goto edgeGrabCheck
+Goto stageCheck
 if Equal immediateTempVar 0 && Equal grabbed 1
   Return
 endif
 
 #let djumpHeight = var1
-GET_CHAR_TRAIT_SEEK(djumpHeight, chr_pt_djumpHeight, lrExec)
+GET_CHAR_TRAIT_SEEK(djumpHeight, chr_pt_djumpHeight, mdExec)
 immediateTempVar = djumpHeight - HurtboxSize + 1
 if YDistBackEdge >= immediateTempVar
   Button X
@@ -166,6 +166,7 @@ label ledgeDash
 XGoto PerFrameChecks
 XReciever
 Seek ledgeDash
+Goto stageCheck
 if Equal CurrAction hex(0xE) && Rnd <= 0.85
   Button X
   Stick 1
@@ -192,6 +193,11 @@ elif CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
   else
     ClearStick
   endif
+endif
+Return
+label stageCheck
+if Equal IsOnStage 1 && CurrAction <= hex(0x9) && AnimFrame >= 8
+  Call MainHub
 endif
 Return
 Return

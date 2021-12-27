@@ -12,7 +12,10 @@ XReciever
 Seek begin
 currGoal = cg_lying
 
-if CurrAction <= hex(0x20)
+if CurrAction <= hex(0x20) || Equal CanCancelAttack 1
+  if ODistLE 60
+    CallI DefendHub
+  endif
   CallI MainHub
 endif
 
@@ -24,10 +27,10 @@ if Equal immediateTempVar 0
   immediateTempVar += 35
   if ODistLE immediateTempVar
     GetCommitPredictChance globTempVar LevelValue
-    globTempVar *= 2
+    globTempVar *= 5
     immediateTempVar = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
     if Rnd < globTempVar
-      if ODistLE 30 && Rnd < 0.3
+      if ODistLE 50 && Rnd < 0.25
         Button A
       else
         immediateTempVar = Rnd * 2 - 1
@@ -36,7 +39,7 @@ if Equal immediateTempVar 0
       endif
       Return
     elif OAnimFrame >= immediateTempVar && OAttacking
-      if ODistLE 35 && Rnd < 0.4
+      if ODistLE 35 && Rnd < 0.35
         Button A
       else
         immediateTempVar = Rnd * 2 - 1
@@ -49,7 +52,7 @@ if Equal immediateTempVar 0
 endif
 
 if timer >= 10 && Rnd <= 0.1 && Equal CurrAction hex(0x4D)
-  if Rnd < 0.4
+  if Rnd < 0.2
     Button A
   else
     immediateTempVar = Rnd * 2 - 1

@@ -19,9 +19,7 @@ else
   Goto defensiveOptions
 endif
 
-if !(OutOfStage)
-  Call MainHub
-endif
+Goto stageCheck
 Return
 label defensiveOptions
 var22 = (1 - (LevelValue / 100)) * 30 + 7
@@ -57,11 +55,11 @@ if Equal var22 0 && !(Equal var21 13)
   endif
 endif
 
-if Rnd <= 0.2
-  if Rnd < 0.3
-    if ODistLE 25 && Rnd < 0.3
+if Rnd <= 0.8
+  if Rnd < 0.5
+    if ODistLE 35 && Rnd < 0.3
       Button A
-    elif Rnd < 0.2
+    elif Rnd < 0.4
       Button R
     else
       Seek dropOptions
@@ -73,7 +71,7 @@ if Rnd <= 0.2
 endif
 Return
 label dropOptions
-if Rnd <= 0.35
+if Rnd <= 0.0
   Seek ledgeRefresh
   Jump
 elif Rnd <= 0.3
@@ -92,6 +90,7 @@ XGoto PerFrameChecks
 XReciever
 Seek lrExec
 var22 = var0
+Goto stageCheck
 Goto edgeGrabCheck
 if Equal var22 0 && Equal var0 1
   Return
@@ -115,6 +114,7 @@ XReciever
 Seek mdExec
 var22 = var0
 Goto edgeGrabCheck
+Goto stageCheck
 if Equal var22 0 && Equal var0 1
   Return
 endif
@@ -123,7 +123,7 @@ endif
   XGoto GetChrSpecific
   XReciever
   var1 = var10
-  Seek lrExec
+  Seek mdExec
 var22 = var1 - HurtboxSize + 1
 if YDistBackEdge >= var22
   Button X
@@ -170,6 +170,7 @@ label ledgeDash
 XGoto PerFrameChecks
 XReciever
 Seek ledgeDash
+Goto stageCheck
 if Equal CurrAction 14 && Rnd <= 0.85
   Button X
   Stick 1
@@ -196,6 +197,11 @@ elif CurrAction >= 115 && CurrAction <= 117
   else
     ClearStick
   endif
+endif
+Return
+label stageCheck
+if Equal IsOnStage 1 && CurrAction <= 9 && AnimFrame >= 8
+  Call MainHub
 endif
 Return
 Return

@@ -10,58 +10,78 @@ XReciever
 
 var2 = var8
 var3 = var9
-// adjust for char height
-// top of Opponent
-var22 = OTopNY + OHurtboxSize
-if var3 > var22
-  var3 -= OHurtboxSize
-  var3 -= OHurtboxSize
-elif var3 < OTopNY
-  // nothing
+
+// adjust to O center
+var23 = OHurtboxSize
+var13 += var23
+var23 = OWidth
+var12 += var23
+
+var23 = OTopNX - OCenterX
+var2 -= var23
+if TopNX < OTopNX
+  var2 -= var23
 else 
-  var17 = var22 - var3
-  var3 -= var17
-  var3 -= var17
+  var2 += var23
 endif
 
-// adjust for char "width" 
-var22 = OTopNX - 3
-var23 = OTopNX + 3
-if var2 > var23
-  if Equal var5 -1
-    var2 -= 3
-  else
-    var2 += 3
-  endif
-elif var2 < var22
-  if Equal var5 -1
-    var2 += 3
-  else
-    var2 -= 3
-  endif
-else
-  var22 = var2 - OTopNX
-  if Equal var5 -1
-    var22 *= -1
-  endif
-  if var22 < 0
-    var2 += var22
-  else
-    var2 -= var22
-  endif
+var23 = OTopNY - OCenterY
+var3 -= var23
+
+if TopNY < OTopNY
+  var3 -= var23
+else 
+  var3 += var23
 endif
 
 var17 = var14
 
-var23 = OHurtboxSize
-var13 += var23
+if AnimFrame < 2
+  if TotalYSpeed > 0
+    var23 = TopNY + TotalYSpeed * var17 - Gravity * var17
+  else
+    var23 = TopNY + TotalYSpeed * var17
+  endif
+else
+  EstYCoord var23 var17
+endif
+var23 -= TopNY
+var3 += var23
 
-var22 = (100 - LevelValue) * 0.2
-var10 -= var22
-var11 -= var22
-var22 *= 0.5
-var12 += var22
-var13 += var22
+if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
+  var23 = var17
+  if Equal CurrAction 6 || Equal CurrAction 7
+    var23 *= 0.35
+  elif Equal PrevAction 6 || Equal PrevAction 7
+    if Equal CurrAction 3 && AnimFrame < 4
+      var23 *= 0.35
+    endif
+  endif
+  if AnimFrame < 2
+    var23 = TopNX + TotalXSpeed * var23
+  else
+    EstXCoord var23 var23
+  endif
+elif True
+  var23 = TopNX
+endif
+var23 -= TopNX
+var2 -= var23
+
+var22 = (100 - LevelValue) * 0.2 - 0
+var23 = var12 + var22
+if var23 > 1
+  var10 -= var22
+  var22 *= 0.5
+  var12 += var22
+  var22 *= 2
+endif
+var23 = var13 + var22
+if var23 > 1
+  var11 -= var22
+  var22 *= 0.5
+  var13 += var22
+endif
 
 if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
   GetAttribute var22 30 0
@@ -93,7 +113,7 @@ var1 = var3
 
 var22 = OTopNX + (var10 + var12) * ODirection
 var17 = OTopNY - var11 + var13
-DrawDebugRectOutline var22 var17 var12 var13 0 255 255 221
+DrawDebugRectOutline var22 var17 var12 var13 255 255 68 68
 
 var22 = var0 
 var17 = var1 
@@ -108,33 +128,18 @@ Abs var22
 
 if !(Equal var16 1)
 if !(True)  || Equal var20 0 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 7 || Equal var20 8 || Equal var20 9 || Equal var20 11
-    var23 = var17 - 8
+    var23 = var17 - 15
     if var23 <= var12 && var22 <= var13
       if Equal CurrAction 3 || Equal CurrAction 8
         if AnimFrame < 4
-          var12 -= 5
-          if var17 <= var12
-            var16 = 3
-          elif var0 <= TopNX
-            if OPos < 0
-              var16 = 1
-            else
-              var16 = 2
-            endif
-          elif var0 >= TopNX
-            if OPos > 0
-              var16 = 1
-            else
-              var16 = 2
-            endif
-          endif
+          var16 = 5
           if XDistFrontEdge < 15 || XDistBackEdge > -15
             var16 = 4
           endif
-          var15 = -1
-          if Rnd < 0.7
+          // var15 = -1
+          // if Rnd < 0.7
             var15 = -2
-          endif
+          // endif
           CallI Wavedash      
         endif
       endif
@@ -159,8 +164,9 @@ elif var23 > 15
   var20 = -1
 endif
 
+if Equal IsOnStage 1
 if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
-  if Equal AirGroundState 2
+    if Equal AirGroundState 2
   var17 = var14
   if Equal CurrSubaction JumpSquat
     GetAttribute var22 17 0
@@ -169,33 +175,46 @@ if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|
     var22 = YSpeed * -1
   endif
   CalcYChange var4 var17 var22 Gravity MaxFallSpeed FastFallSpeed 1
-
-    var22 = var4 + (OSCDBottom - TopNY)
-    var22 -= YDistBackEdge
-    if var22 > 0
-      var17 = var0 - TopNX
-      var22 = var1 - TopNY + var4
-
-      Abs var17
-      Abs var22
-      if var17 <= var12 && var22 <= var13
-        if !(Equal var16 1)
-          var16 = 1
-          CallI ExecuteAttack
-          Finish
-        else
-          var16 = 1
-          Return
+      // var22 = var4 + (OSCDBottom - TopNY)
+      // var22 -= YDistBackEdge
+      // if var22 > 0
+        var17 = var0 - TopNX
+        var22 = var1 - TopNY + var4
+        Abs var17
+        Abs var22
+        if var17 <= var12 && var22 <= var13
+          if !(Equal var16 1)
+            var16 = 1
+            CallI ExecuteAttack
+            Finish
+          else
+            var16 = 1
+            Return
+          endif
         endif
-      endif
+      // endif
     endif
   endif
 endif
 
+var17 = var0 - TopNX
+var22 = var1 - TopNY
+
+Abs var17
+Abs var22
+
 if var17 <= var12 && var22 <= var13
   if !(Equal var16 1)
 if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
-      if Equal AirGroundState 2
+      if Equal var21 16.5 && Equal IsOnStage 0
+        EstYCoord var22 var16
+        DrawDebugRectOutline TopNX var22 5 5 0 255 255 221
+        DrawDebugRectOutline TopNX -40 10 2 255 136 0 221
+        if var22 >= -40
+          CallI ExecuteAttack
+          Finish
+        endif
+      elif Equal AirGroundState 2
         CallI ExecuteAttack
         Finish
       endif

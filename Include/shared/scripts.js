@@ -68,8 +68,6 @@ export const generateMovesUsedKB = () => {
   out(`    else`)
   out(`      move_angle = 44`)
   out(`    endif`)
-  out(`  else`)
-  out(`    move_angle = 180 - move_angle`);
   out(`  endif`)
   out(`elif Equal move_angle 361`);
   out(`  move_angle = 45`);
@@ -101,6 +99,16 @@ export const generateAllMovesGoto = () => {
   }
   return _out; 
 }
+
+export const LV9Check = (action) => {
+  clearOut();
+  out("if Equal LevelValue LV9");
+  out(action);
+  out("endif");
+  
+  return _out;
+}
+
 
 export const generateAllMovesGotoKB = () => {
   clearOut();
@@ -134,8 +142,6 @@ export const generateAllMovesGotoKB = () => {
   out(`    else`)
   out(`      move_angle = 44`)
   out(`    endif`)
-  out(`  else`)
-  out(`    move_angle = 180 - move_angle`);
   out(`  endif`)
   out(`elif Equal move_angle 361`);
   out(`  move_angle = 45`);
@@ -144,6 +150,8 @@ export const generateAllMovesGotoKB = () => {
   return _out; 
 }
 
+// "KBONLY"
+// well, that was a lie
 export const generateAllMovesGotoKBONLY = () => {
   clearOut();
   const moves = Object.values(getMoveData());
@@ -156,17 +164,25 @@ export const generateAllMovesGotoKBONLY = () => {
     out(`label ${mn}`)
     out(`LOGSTR str("${moveName}")`);
     out(`hitFrame = ${hitFrame}`)
-    out(`duration = ${hitFrame - lastHitFrame}`)
+    out(`duration = ${lastHitFrame - hitFrame}`)
     // shoutouts to preprocessing
     let dirX = 0;
-    if (xOffset + xRange > 5) dirX = 1
-    else if (xOffset + xRange < -3) dirX = -1
-    console.log(`${moveName}; ${xOffset + xRange}; ${dirX}`);
+    if (xOffset + xRange > parseFloat($globals[`DIRX_FRONT`])) dirX = 1
+    else if (xOffset + xRange < parseFloat($globals[`DIRX_BACK`])) dirX = -1
+    console.log(`X: ${moveName}; ${xOffset + xRange}; ${dirX}`);
     out(`dirX = ${dirX}`)
     let dirY = 0;
-    if (yOffset * -1 + yRange > 7) dirY = 1
-    else if (yOffset * -1 + yRange < 3) dirY = -1
+    if ((yRange - yOffset) > parseFloat($globals[`DIRY_ABOVE`])) dirY = 1;
+    else if ((yRange - yOffset) < parseFloat($globals[`DIRY_BELOW`])) dirY = -1
     out(`dirY = ${dirY}`)
+    console.log(`Y: ${moveName}; ${yRange - yOffset}; ${dirY}`);
+    out(`disjointX = ${xOffset > 0 ? xOffset + xRange * 2 - parseFloat($globals[`DIRX_FRONT`]) : xOffset + parseFloat($globals[`DIRX_BACK`])}`);
+
+    // out(`move_xStart = ${xOffset}`)
+    // out(`move_xEnd = ${xOffset + xRange}`);
+    // out(`move_ystart = ${yOffset * -1}`)
+    // out(`move_xEnd = ${(yRange - yOffset)}`);
+
     out(`CalcKnockback move_currKnockback ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
     out(`LOGVAL move_currKnockback`)
     out(`move_angle = ${angle}`)
@@ -370,6 +386,19 @@ export const generateAerialChecks = (labelName) => {
     }
     out(`Goto ${labelName}`);
   }
+  return _out;
+}
+
+export const ifLastOrigin = (origin, isElif) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  const outIdxes = moves.map((m, i) => (m.origin.toLowerCase() == origin.toLowerCase()) ? i : undefined).filter(m => !!m);
+  let builder = (isElif === "true") ? "elif !(True)" :  "if !(True)";
+  for (const idx of outIdxes) {
+    builder += ` || Equal lastAttack ${idx}`;
+  }
+  out(builder);
   return _out;
 }
 

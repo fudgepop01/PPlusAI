@@ -59,16 +59,16 @@ endif
 if Equal CurrAction 16
   Goto handleSFall
   Return
-elif Equal CurrAction 276
+elif Equal CurrAction 276 || Equal CurrAction 297 || Equal CurrAction 299
   Goto handleUSpecial
   Return
-elif Equal CurrAction 274
+elif Equal CurrAction 274 || Equal CurrAction 279 || Equal CurrAction 280
   Goto handleNSpecial
   Return
-elif Equal CurrAction 275
+elif Equal CurrAction 275 || Equal CurrAction 297
   Goto handleSSpecial
   Return
-elif Equal CurrAction 277
+elif Equal CurrAction 277 || Equal CurrAction 300
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
@@ -122,23 +122,34 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if Equal var4 1 || var5 <= 0.8
-    if YDistBackEdge > 18
+    var22 = 20
+    if !(NoOneHanging)
+      var22 -= 20
+    endif
+    if YDistBackEdge > var22 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       var5 *= 1.25
       Return
     endif
-  elif YDistBackEdge > 53 || var17 < 18
-    if NumJumps > 0
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      var4 = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
+  else
+  
+    var22 = 53
+    if !(NoOneHanging)
+      var22 -= 20
+    endif
+    if YDistBackEdge > var22 || var17 < 18
+      if NumJumps > 0 && Rnd < 0.5
+        Button X
+        Goto handleJumpToStage
+        Return
+      else
+        var4 = 1
+        Button B
+        ClearStick
+        AbsStick 0 (0.7)
+        Return
+      endif
     endif
   endif
   if var7 <= 0.6 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 60 && var2 >= 15
@@ -235,12 +246,15 @@ label handleJumpToStage
   if Equal var16 1
     var17 = var0 * -1
     AbsStick var17
+  elif Equal IsOnStage 1
+    var17 = TopNX * -1
+    AbsStick var17
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17
   endif
   var22 = var0 * Direction
-  if var22 < 0
+  if var22 < 0 && Equal var16 0
     Stick -1
   endif
 Return

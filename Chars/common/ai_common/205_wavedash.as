@@ -13,7 +13,7 @@ label setup
   airTime = 1 - airTime
   airTime *= Rnd * 4
   if Equal AirGroundState 2
-    if YDistBackEdge < -5
+    if YDistBackEdge < -15
       CallI MainHub
     endif
     Seek landing
@@ -36,7 +36,7 @@ label landing
   XReciever
   Seek landing
 
-  if airTime <= 0
+  if airTime <= 0 || YSpeed < 0
     Button R
     if Equal XDistBackEdge XDistFrontEdge
       globTempVar = TopNX * -1

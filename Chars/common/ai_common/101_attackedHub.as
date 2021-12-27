@@ -46,20 +46,25 @@ if FramesHitlag > 2
     AbsStick globTempVar immediateTempVar
   endif
   Return
-elif FramesHitlag > 1 && YDistBackEdge > -4
+elif FramesHitlag > 1
   immediateTempVar = 0
   globTempVar = LevelValue * 0.01
-  if LevelValue >= LV7 && Rnd < globTempVar
+  if LevelValue >= LV6 && Rnd < globTempVar
     immediateTempVar = TopNX * -1
-    if FramesSinceShield > 100
-      Button R
+    if FramesSinceShield > 40
+      if FramesSinceShield > 100
+        Button R
+      elif YDistBackEdge > -10 && Rnd < 0.45
+        Button R
+      endif
     endif
   endif
 
   predictionConfidence globTempVar man_ODefendOption LevelValue
   globTempVar *= 2
   predictOOption anotherTempVar man_ODefendOption LevelValue 
-  if Rnd < 0.6
+
+  if Rnd < 0.75
     AbsStick immediateTempVar (-1)
   elif Rnd < globTempVar && Equal anotherTempVar op_defend_attack 
     AbsStick OPos (-1)
@@ -95,7 +100,10 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     stickX = (Rnd * 2) - 1
   endif
   if LevelValue >= LV6
-    stickY = Rnd - 1.5
+    stickY = (Rnd * 2) - 1
+    if Rnd < 0.5
+      stickY -= 0.5
+    endif
   else
     stickY = (Rnd * 2) - 1
   endif
@@ -151,21 +159,24 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
         AbsStick stickX 0
         Return
       elif True
-        if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0 && Damage > 80
-          stickX = TotalXSpeed * 10
-          if Equal stickX 0
-            stickX = Rnd * 2 - 1
-            stickX *= 100
+        if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
+          stickX = TotalXSpeed
+          if stickX > -1 && stickX < 1
+            stickX = Rnd * 4 - 2
+            stickX *= 10
           endif
           // if Rnd < 0.15
-          //   globTempVar *= -1
+          //   stickX *= -1
           // endif
           ClearStick
           if Damage >= 90
-            AbsStick stickX (-1)
+            stickY = -1
+            AbsStick stickX stickY
           else
-            AbsStick stickX
+            stickY = 0
+            AbsStick stickX stickY
           endif
+          Return
         elif Equal IsOnStage 0 || KBSpeed > 3.7
           // if offstage with high damage, switch to survival DI
           stickX = TopNX * -1
@@ -173,7 +184,14 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
         else
           AbsStick stickX stickY
         endif
-        if Equal LevelValue LV8 && YDistBackEdge > -5 && Equal IsOnStage 1
+        // techskill
+        immediateTempVar = LevelValue * 0.01
+        if immediateTempVar < 0.05
+          immediateTempVar = 0.05
+        elif immediateTempVar > 0.8
+          immediateTempVar = 0.8
+        endif
+        if YDistBackEdge > -10 && Equal IsOnStage 1 && !(Equal CurrAction hex(0x42)) && Rnd < immediateTempVar
           ClearStick
           AbsStick stickX (-1)
         endif
@@ -191,15 +209,17 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     Jump
   elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
     label
-    // tempVar = Damage / 100
-    // tempVar *= 0.75
-    // if Rnd < tempVar
-    //   movePart = 1
-    //   Call FakeOutHub
-    // endif
 
-    
-    
+    // techskill
+    immediateTempVar = LevelValue * 0.01
+    immediateTempVar -= 0.1
+    if immediateTempVar < 0.05
+      immediateTempVar = 0.05
+    endif
+
+    if Rnd > immediateTempVar
+      Return
+    endif
     Goto _hitstunEnd
 
     Seek
@@ -219,6 +239,16 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     //   Call FakeOutHub
     // endif
 
+    // techskill
+    immediateTempVar = LevelValue * 0.01
+    immediateTempVar -= 0.1
+    if immediateTempVar < 0.05
+      immediateTempVar = 0.05
+    endif
+
+    if Rnd > immediateTempVar
+      Return
+    endif
     Goto _hitstunEnd
 
     CallI MainHub
@@ -266,7 +296,7 @@ label _checkTech
         endif
       endif
       globTempVar = (100 - LevelValue) / 100 * -1
-      globTempVar += 0.85
+      globTempVar += 0.50
       if Rnd < globTempVar
         if TotalYSpeed <= 0.03 || Equal CurrAction hex(0x42)
           techDirection = Rnd * 4 - 2

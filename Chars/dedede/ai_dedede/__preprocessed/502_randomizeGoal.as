@@ -15,12 +15,12 @@ endif
 var9 = var17
 var9 += 2
 
-if Rnd < 0.07
+if Rnd < 0.4
   GetAttribute var22 14 0
   var22 *= 3.5
   var9 = var9 + Rnd * var22 * 10
-  if Rnd < 0.12
-    GetAttribute var22 19 0
+  if Rnd < 0.2
+    GetAttribute var22 18 0
     var9 = var9 + Rnd * var22 * 10
   endif
 endif

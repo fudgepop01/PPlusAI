@@ -54,10 +54,10 @@ Button R
     if Equal var22 0
       var22 = OEndFrame
     endif 
-    if OAnimFrame >= var17
+    // if OAnimFrame >= var17
       var1 = var22 - OAnimFrame
-    endif
-  elif Rnd < 0.7 && Rnd < 0.7 && Rnd < 0.1
+    // endif
+  elif Rnd < 0.85 && Rnd < 0.85 && Rnd < 0.1
     var1 = 20
   endif
 

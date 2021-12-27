@@ -20,7 +20,9 @@ else
 endif
 //--- prevent auto-attack
 Cmd30
+
 //--- track target stuff 
+LOGSTR 1414676736 1129006336 1381171200 0 0
 // out of tumble action
 if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
   if Equal OCurrAction 73 && Equal OAnimFrame 30
@@ -93,7 +95,7 @@ elif Equal var21 13
 endif
 if !(True)
   label baitDefendOption
-  var22 = (1 - (LevelValue / 100)) * 30 + 12
+  var22 = (1 - (LevelValue / 100)) * 30 + 7
   MOD var22 AnimFrame var22
   if Equal var22 1
     var17 = 9
@@ -101,7 +103,7 @@ if !(True)
       var17 = 7
     endif
     predictAverage var22 10 LevelValue
-    var22 += 15
+    var22 += 40
     // var17 = var22 + 15
     if ODistLE var22
       if 3 <= OCurrAction && OCurrAction <= 5 && Rnd < 0.4 && !(Equal var21 13)
@@ -132,6 +134,7 @@ if !(True)
   Return
 endif
 
+LOGSTR 1398229248 1413695488 1163067392 0 0
 
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
@@ -142,22 +145,51 @@ elif !(Equal var21 15) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 endif
 
+LOGSTR 1413563136 1414087424 0 0 0
+
 //--- switch tactic if conditions are met
 if CurrAction >= 66 && CurrAction <= 69 && !(Equal var21 12)
+  var22 = LevelValue * 0.01 - 0.15
+  if Equal AirGroundState 1 && Rnd < var22
+    ClearStick
+    AbsStick 0 (-1)
+  endif
   if FramesHitstun > 0
     CallI AttackedHub
   elif Equal CurrAction 66
     CallI AttackedHub
   endif
 endif
-if !(Equal var21 2) && !(Equal var21 3) && !(Equal var21 15) && Equal FramesHitstun 0
+if Equal var21 16.5 && Equal OIsOnStage 0 && Equal IsOnStage 0
+  var10 = 17
+  XGoto GetChrSpecific
+  XReciever
+  var17 = var10
+  GetNearestCliff var22
+  var22 = TopNX - var22
+  var22 *= -1
+  var23 *= -1
+  var23 = var23 - (TopNY * -1)
+  Abs var22
+  if var22 > var17
+  var10 = 18
+  XGoto GetChrSpecific
+  XReciever
+  var22 = var10
+    if YDistBackEdge >= var22
+      CallI RecoveryHub
+    endif
+  endif
+elif Equal var21 16.5 && Equal OIsOnStage 0
+elif !(Equal var21 3) && !(Equal var21 15) && Equal FramesHitstun 0  
   if Equal IsOnStage 0
     GetYDistFloorOffset var22 0 25 0
     if Equal var22 -1
       CallI RecoveryHub
     endif
-  elif MeteoChance
-    // CallI EdgeguardHub
+  elif Equal OIsOnStage 0
+    var21 = 16.5
+    CallI MainHub
   endif
 endif
 
@@ -165,6 +197,7 @@ if Equal CurrAction 190
   Stick 1
 endif
 
+LOGSTR 1397246208 1162626048 0 0 0
 if Equal CurrAction 29 && !(CalledAs Shield)
   CallI Shield
 endif
@@ -185,37 +218,43 @@ endif
     Return
   endif
 
+LOGSTR 1145390592 1162760960 1157627904 0 0
+
 // react to/read the opponent's attack patterns
-var22 = (1 - (LevelValue / 100)) * 30 + 14
-MOD var22 AnimFrame var22
-if Equal var22 0 && !(Equal var21 13) && !(Equal var21 16.4) && OFramesHitstun <= 0 && !(CalledAs Shield)
+var22 = (1 - (LevelValue / 100)) * 30 + 1
+var23 = AnimFrame - 1
+MOD var17 var23 var22
+var23 = OAnimFrame - 1
+MOD var23 var23 var22
+if !(Equal var17 0) || !(Equal var23 0)
+elif !(Equal var21 13) && !(Equal var21 16.4) && OFramesHitstun <= 0 && !(CalledAs Shield) && !(Equal var21 16.5)
   if OCurrAction < 66 || OCurrAction >= 72
-    if Equal AirGroundState 2 && Rnd < 0.5
+    if Equal AirGroundState 2 && Rnd < 0.3
       Return
     endif
     predictAverage var22 10 LevelValue
-    var22 += 3
+    var22 += 10
     if Equal var21 12 || Equal CurrAction 73
-      var22 += 17
+      var22 += 14
     endif
     if ODistLE var22
       GetCommitPredictChance var17 LevelValue
-      var17 *= 0.8
+      var17 *= 4
       if Equal var21 12 || Equal CurrAction 73
         var22 = Damage * 0.1
         var17 += var22
       endif
-      var22 = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
+      var22 = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 5
       if Rnd < var17 && Rnd < var17
-        if var21 < 16 || var21 > 17
+        if Rnd < 0.6
           CallI DefendHub
         elif Rnd < 0.75 || Equal var21 12 || Equal CurrAction 73
           CallI DefendHub
         endif
       elif OAnimFrame >= var22 && OCurrAction >= 36 && OCurrAction <= 52
-        if var21 < 16 || var21 > 17
+        if Rnd < 0.1
           CallI DefendHub
-        elif Rnd < 0.75 || Equal var21 12 || Equal CurrAction 73
+        elif Rnd < 0.3 || Equal var21 12 || Equal CurrAction 73
           CallI DefendHub
         endif
       endif

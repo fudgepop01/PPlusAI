@@ -4,7 +4,7 @@
 
 #snippet NCXOFFS_REDEFINE
   #const NCXOffs = 6
-  #const NCXOffsClose = 4
+  #const NCXOffsNear = 4
 #endsnippet
 
 #snippet DSPECIAL

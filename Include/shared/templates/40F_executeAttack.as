@@ -4,13 +4,8 @@ unk 0x0
 
 XReciever
 
-label
-if Equal IsOnStage 0
-  Call MainHub
-  Return
-endif
-
-#let techSkill = var0
+label start
+#let techSkill = var7
 techSkill = LevelValue * 0.01
 if techSkill < 0.2
   techSkill = 0.2
@@ -18,24 +13,38 @@ endif
 
 XGoto PerFrameChecks
 XReciever
+Seek start
 
 if Equal AirGroundState 1
   immediateTempVar = move_xOffset + move_xRange
-  if immediateTempVar < 0 && Equal Direction OPos
-    immediateTempVar = OPos * -0.65
+  if immediateTempVar < DIRX_BACK && Equal Direction OPos
+    immediateTempVar = OPos * -1
     AbsStick immediateTempVar
     Return
-  elif immediateTempVar > 3 && !(Equal Direction OPos)
-    immediateTempVar = OPos * 0.65
+  elif immediateTempVar > DIRX_BACK && !(Equal Direction OPos)
+    immediateTempVar = OPos
     AbsStick immediateTempVar
     Return
   endif
 endif
 
+if OAnimFrame < 23
+  if OCurrAction >= hex(0x4E) && OCurrAction <= hex(0x52)
+    Return
+  elif OCurrAction >= hex(0x60) && OCurrAction <= hex(0x61)
+    Return
+  endif
+endif
+$ifLastOrigin(grab,false)
+  if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D) || Equal OCurrAction hex(0x53) || Equal OCurrAction hex(0x54)
+    Return
+  endif
+endif
+
+ACTIONABLE_ON_GROUND
+
 $ifAerialAttack()
   if Equal AirGroundState 1
-    ACTIONABLE_ON_GROUND
-
     if !(Equal CurrSubaction JumpSquat)
       Button X
     endif
@@ -46,7 +55,8 @@ endif
 if Rnd > techSkill
   Return
 endif
-
+#let lastFrameDmg = var6
+lastFrameDmg = ODamage
 Cmd30
 ClearStick
 {SKIP_EXEC}
@@ -90,9 +100,11 @@ label common_checks
   XReciever
 
   if Equal CanCancelAttack 1 && CurrAction >= hex(0x24) && CurrAction <= hex(0x34)
+    lastAttack = -1
     scriptVariant = sv_none
     Call MainHub
   elif CurrAction <= hex(0x20)
+    lastAttack = -1
     scriptVariant = sv_none
     Call MainHub
   endif
@@ -100,6 +112,14 @@ label common_checks
   if Equal scriptVariant sv_execute_fastfall && Equal AirGroundState 2 && YSpeed <= 0
     AbsStick 0 (-1)
     scriptVariant = sv_none
+  elif Equal IsOnStage 1 && !(Equal ODamage lastFrameDmg) && LevelValue >= LV8 && Equal AirGroundState 2
+    lastFrameDmg = ODamage + 1
+    if YSpeed <= 0
+      AbsStick 0 (-1)
+    endif
+  else
+    lastFrameDmg = ODamage
   endif
+  {COMMON_EXTENSION}
 Return
 Return

@@ -18,6 +18,9 @@ label start
 DisableDebugOverlay
 if Equal currGoal cg_recover
   CallI RecoveryHub
+elif Equal currGoal cg_edgeguard
+  Seek navigateToGoal
+  Jump
 endif
 
 // JUMP_HEIGHT_TEST
@@ -25,25 +28,37 @@ endif
 Goto PFC
 Seek start
 
+#let teamCloser = var3
+GetIsTeammateCloser teamCloser
+if Equal teamCloser 1
+  skipMainInit = -100
+endif
+
 if Equal skipMainInit mainInitSkip
   skipMainInit = -100
-  if Rnd < 0.45 && !(Equal currGoal cg_attack_reversal) && OFramesHitstun <= 0
-    currGoal = cg_bait
+  if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
+    currGoal = cg_attack
+  elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
+    currGoal = cg_attack
+  elif Rnd < 0.45 && !(Equal currGoal cg_attack_reversal) && OFramesHitstun <= 0
+    currGoal = cg_bait_dashdance
   endif
   Seek initial
   Jump
 elif Equal skipMainInit sm_execAttack
   label empty_0
   Goto PFC
+  XReciever
   Seek empty_0
 
   ACTIONABLE_ON_GROUND
   skipMainInit = -100
 
   CallI ExecuteAttack
-elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 2) && Rnd > calc(pt_braveChance) && OCurrAction <= hex(0x15)
+elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 1.4) && Rnd > calc(pt_braveChance * 0.35) && OCurrAction <= hex(0x15)
   label empty_1
   Goto PFC
+  XReciever
   Seek empty_1
 
   ACTIONABLE_ON_GROUND
@@ -61,7 +76,7 @@ elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 2) && Rnd > ca
   globTempVar = OTopNX - TopNX 
   immediateTempVar = OTopNY - TopNY
   Norm timer globTempVar immediateTempVar
-  if timer > 45
+  if timer > 55
     Return
   endif
   timer *= Rnd * 0.2
@@ -74,19 +89,21 @@ elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 2) && Rnd > ca
   endif
   timer -= 1
   Return
-elif Equal currGoal cg_camp_attack && Rnd < calc(pt_circleCampChance * 2) && Rnd < pt_aggression
+elif Equal currGoal cg_camp_attack && Rnd < calc(pt_circleCampChance * 1.3) && Rnd < pt_aggression
   label empty_2
   Goto PFC
+  XReciever
   Seek empty_2
 
   ACTIONABLE_ON_GROUND
   Seek initial
   Jump
+elif Equal currGoal cg_bait_wait
+  Seek waitSetup
+  Jump
 endif
 
 Goto PFC
-XReciever
-
 
 scriptVariant = sv_none
 lastAttack = -1
@@ -97,19 +114,23 @@ if Rnd < pt_circleCampChance
 endif
 if Rnd < pt_baitChance
   DynamicDiceAdd cg_bait
+  DynamicDiceAdd cg_bait_dashdance
 endif
 if Rnd < pt_aggression
   predictionConfidence immediateTempVar man_OBaitOption LevelValue
-  if immediateTempVar > 0.4 || Rnd < pt_aggression
+  if immediateTempVar > 0.4 || Rnd < calc(pt_aggression * 0.35)
     DynamicDiceAdd cg_attack
   endif
 endif
 DynamicDiceRoll currGoal
-if OFramesHitstun > 5 || ODistLE OHurtboxSize || Equal OCurrAction hex(0x49) || Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
+if Equal teamCloser 1
+  currGoal = cg_circleCamp
+elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
   currGoal = cg_attack
-elif OCurrAction >= hex(0x4D) && OCurrAction <= hex(0x59)
+elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
   currGoal = cg_attack
 endif
+goalY = BBoundary
 if Equal currGoal -1
   Call MainHub
 elif Equal currGoal cg_attack
@@ -118,10 +139,12 @@ endif
 
 label initial
 Goto PFC
+XReciever
 Seek initial
 if Equal goalX 0 && Equal goalY 0
   XGoto GoalChoiceHub
   XReciever
+  Seek initial
 endif
 
 #let techSkill = var0
@@ -129,8 +152,6 @@ techSkill = LevelValue * 0.01
 if techSkill < 0
   techSkill = 0.05
 endif
-LOGSTR str("TSkill")
-LOGVAL techSkill
 label tskillWait
 Goto PFC
 XReciever
@@ -143,31 +164,54 @@ LOGSTR str("waiting")
 Return
 label selectGoal
 Goto PFC
+XReciever
 XGoto UpdateGoal
 XReciever
-if Equal goalY BBoundary
-  Seek selectGoal
-  if Rnd < 0.5
+
+if Equal currGoal cg_bait_wait
+  label waitSetup
+  #let timer = var4
+  timer = Rnd * 55 + 5
+  label baitWait
+  Goto PFC
+  XReciever
+  XGoto UpdateGoal
+  XReciever
+  Seek baitWait
+  timer -= 1
+  // if Rnd < pt_wall_chance && Rnd < pt_braveChance
+  //   Seek setupWallDelay
+  //   Jump
+  // endif
+  if timer <= 0 || !(Equal currGoal cg_bait_wait)
     currGoal = cg_attack
+    Seek selectGoal
+  endif
+  Return
+elif Equal goalY BBoundary
+  Seek selectGoal
+  if Rnd < 0.1
+    currGoal = cg_bait_dashdance
   endif
   Return
 elif Equal currGoal cg_attack && Equal lastAttack -1
   Seek selectGoal
-  if Rnd < 0.5
-    currGoal = cg_attack
-  endif
   Return
 endif
 LOGSTR str("selected")
 label navigateToGoal
+LOGSTR str("CURRENT GOAL:")
+LOGVAL currGoal
 Goto PFC
 XReciever
 Seek selectGoal
 ACTIONABLE_ON_GROUND
+
+Goto PFC
+XReciever
 XGoto MoveToGoal
 XReciever
 Seek selectGoal
-
 Return
 label PFC
 XGoto PerFrameChecks

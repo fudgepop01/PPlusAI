@@ -5,27 +5,27 @@ unk 0x0
 XReciever
 
 if Equal var10 0
-  var10 = 0.07
+  var10 = 0.4
 elif Equal var10 1
-  var10 = 0.12
+  var10 = 0.2
 elif Equal var10 2
   var10 = 1.0
 elif Equal var10 3
-  var10 = 0.65
+  var10 = 0.85
 elif Equal var10 4
-  var10 = 0.8
+  var10 = 0.65
 elif Equal var10 5
   var10 = 0.15
 elif Equal var10 6
   var10 = 0.75
 elif Equal var10 7
-  var10 = 0.65
+  var10 = 0.45
 elif Equal var10 8
-  var10 = 0.75
+  var10 = 0.65
 elif Equal var10 9
-  var10 = 0.04
+  var10 = 0.05
 elif Equal var10 10
-  var10 = 0.25
+  var10 = 0.35
 elif Equal var10 11
   var10 = 0.35
 elif Equal var10 12
@@ -37,7 +37,11 @@ elif Equal var10 14
 elif Equal var10 15
   var10 = 22
 elif Equal var10 16
-  var10 = 8
+  var10 = 15
+elif Equal var10 17
+  var10 = 50
+elif Equal var10 18
+  var10 = -40
 elif Equal var10 100
 if !(True) || Equal var20 10|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
     var10 = 1

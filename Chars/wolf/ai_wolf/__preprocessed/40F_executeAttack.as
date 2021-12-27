@@ -4,35 +4,42 @@ unk 0x0
 
 XReciever
 
-label
-if Equal IsOnStage 0
-  Call MainHub
-  Return
-endif
-
-var0 = LevelValue * 0.01
-if var0 < 0.2
-  var0 = 0.2
+label start
+var7 = LevelValue * 0.01
+if var7 < 0.2
+  var7 = 0.2
 endif
 
 XGoto PerFrameChecks
 XReciever
+Seek start
 
 if Equal AirGroundState 1
   var22 = var10 + var12
-  if var22 < 0 && Equal Direction OPos
-    var22 = OPos * -0.65
+  if var22 < -3 && Equal Direction OPos
+    var22 = OPos * -1
     AbsStick var22
     Return
-  elif var22 > 3 && !(Equal Direction OPos)
-    var22 = OPos * 0.65
+  elif var22 > -3 && !(Equal Direction OPos)
+    var22 = OPos
     AbsStick var22
     Return
   endif
 endif
 
-if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 15|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27
-  if Equal AirGroundState 1
+if OAnimFrame < 23
+  if OCurrAction >= 78 && OCurrAction <= 82
+    Return
+  elif OCurrAction >= 96 && OCurrAction <= 97
+    Return
+  endif
+endif
+if !(True) || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20
+  if Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
+    Return
+  endif
+endif
+
   if Equal CurrAction 22 
     if Equal PrevAction 33
       Return
@@ -45,6 +52,8 @@ if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 15|| Equal var20 21|
     Return
   endif
 
+if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 15|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27
+  if Equal AirGroundState 1
     if !(Equal CurrSubaction JumpSquat)
       Button X
     endif
@@ -52,13 +61,16 @@ if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 15|| Equal var20 21|
   endif
 endif
 
-if Rnd > var0
+if Rnd > var7
   Return
 endif
-
+var6 = ODamage
 Cmd30
 ClearStick
-// {SKIP_EXEC}
+if Equal var20 11
+    Seek nspecialair
+    Return
+  endif
 
 if Equal var20 0
 Button A
@@ -336,10 +348,24 @@ label nspecialair
 Goto PFC
   ClearStick
   AbsStick OPos
-  var16 = 1
-  if AnimFrame >= 15 && Equal CurrSubaction 462 && Equal IsOnStage 1 && Equal AirGroundState 2 && YDistBackEdge > -15
-    var16 = 1
-    CallI Wavedash
+  Seek nspecialair
+  if !(Equal CurrSubaction 463) 
+    if !(Equal CurrSubaction JumpSquat) && AnimFrame >= 5 && Rnd < 0.8
+      ClearStick
+      Button B
+    endif
+    Return
+  elif True
+    if AnimFrame >= 13
+      var16 = 1
+    endif
+    if AnimFrame >= 14 && Equal IsOnStage 1 && Equal AirGroundState 2 && YDistBackEdge > -15 && Rnd <= var7
+      var16 = 1
+      if var21 < 16 
+        var16 = 2
+      endif
+      CallI Wavedash
+    endif
   endif
 Goto common_checks
 Seek nspecialair
@@ -367,11 +393,59 @@ Seek dspecialair
 Return
 label sspecial
 Goto PFC
+  if Equal CurrAction 275
+    var22 = TopNY - OTopNY 
+    if var22 < -20
+      AbsStick OPos 1
+    elif var22 > 30
+      AbsStick OPos (-1)
+    elif var22 >= 0 && XDistLE 20
+      AbsStick OPos (-1)
+    endif
+    if Equal CurrSubaction 468 
+      var22 = TopNX - var8
+      if Direction > 0 && var22 < 0
+        Button B
+      elif Direction < 0 && var22 > 0
+        Button B
+      endif
+      Abs var22
+      if Equal AnimFrame 0 && var22 < 20
+        Button B
+      elif var22 > 20 && var22 < 50 && Rnd < var7 && AnimFrame >= 1
+        Button B
+      endif
+    endif
+  endif
 Goto common_checks
 Seek sspecial
 Return
 label sspecialair
 Goto PFC
+  if Equal CurrAction 275
+    var22 = TopNY - OTopNY 
+    if var22 < -20
+      AbsStick OPos 1
+    elif var22 > 30
+      AbsStick OPos (-1)
+    elif var22 >= 0 && XDistLE 20
+      AbsStick OPos (-1)
+    endif
+    if Equal CurrSubaction 468 
+      var22 = TopNX - var8
+      if Direction > 0 && var22 < 0
+        Button B
+      elif Direction < 0 && var22 > 0
+        Button B
+      endif
+      Abs var22
+      if Equal AnimFrame 0 && var22 < 20
+        Button B
+      elif var22 > 20 && var22 < 50 && Rnd < var7 && AnimFrame >= 1
+        Button B
+      endif
+    endif
+  endif
 Goto common_checks
 Seek sspecialair
 Return
@@ -474,9 +548,11 @@ label common_checks
   XReciever
 
   if Equal CanCancelAttack 1 && CurrAction >= 36 && CurrAction <= 52
+    var20 = -1
     var16 = 0
     Call MainHub
   elif CurrAction <= 32
+    var20 = -1
     var16 = 0
     Call MainHub
   endif
@@ -484,6 +560,14 @@ label common_checks
   if Equal var16 1 && Equal AirGroundState 2 && YSpeed <= 0
     AbsStick 0 (-1)
     var16 = 0
+  elif Equal IsOnStage 1 && !(Equal ODamage var6) && LevelValue >= 75 && Equal AirGroundState 2
+    var6 = ODamage + 1
+    if YSpeed <= 0
+      AbsStick 0 (-1)
+    endif
+  else
+    var6 = ODamage
   endif
+//   {COMMON_EXTENSION}
 Return
 Return

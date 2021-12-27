@@ -1,23 +1,36 @@
+#const DIRY_ABOVE = 13.5
+#const DIRY_BELOW = 3
+#const DIRX_FRONT = 4
+#const DIRX_BACK = -3
+
 #const pt_shortHopHeight = 15
-#const pt_djumpHeight = 28
-#const pt_wavedashDist = 25
+#const pt_djumpHeight = 29
+#const pt_wavedashDist = 20
 
 #const dashForceTurnFrame = 14
 #const dashDanceMinFrames = 2
 
-#const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.2
-#const pt_aggression = 0.8
+#const pt_jumpiness = 0.2
+#const pt_djumpiness = 0.12
+#const pt_aggression = 0.76
+#const pt_bait_dashAwayChance = 0.4
 #const pt_bait_wdashAwayChance = 0.05
-#const pt_wall_chance = 0.5
+#const pt_wall_chance = 0.75
 #const pt_platChance = 0.1
-#const pt_baitChance = 0.8
-#const pt_braveChance = 0.75
+#const pt_baitChance = 0.85
+#const pt_braveChance = 0.7
 
 #const recovery_moves = uspecial|sspecial
 
 #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
 #const uspecial_recovery_info = common|60
+
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117)
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x11b)
+
 
 // jab123
 #const mv_gentlemen = 0
@@ -154,7 +167,7 @@
 #const sspecial_xOffset = -1.56
 #const sspecial_yOffset = -1.41
 #const sspecial_xRange = 11.08
-#const sspecial_yRange = 13.11
+#const sspecial_yRange = 9.11
 #const sspecial_hitFrame = 4
 #const sspecial_lastHitFrame = 8
 #const sspecial_damage_info = SSpecial|7|78|80|90

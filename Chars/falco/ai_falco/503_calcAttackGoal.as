@@ -12,6 +12,7 @@
 #snippet COMBO_MOVES
   $addToDice(dspecial)
   $addToDice(dair)
+  $addToDice(dair)
   $addToDice(nspecialair)
 #endsnippet
 
@@ -20,8 +21,11 @@
 #endsnippet
 
 #snippet LAUNCH_MOVES
-  $addToDice(dspecial)
-  $addToDice(dspecialair)
+  if Equal AirGroundState 1
+    $addToDice(dspecial)
+  else
+    $addToDice(dspecialair)
+  endif
 #endsnippet
 
 #snippet PRESSURE_MOVES
@@ -30,14 +34,18 @@
   $addToDice(nspecialair)
 #endsnippet
 
-#snippet WALL_MOVES
-  $addToDice(nspecialair)
+#snippet SPACING_MOVES
+  $addToDice(nair)
+  $addToDice(utilt)
+  $addToDice(bair)
   $addToDice(nspecialair)
   $addToDice(nspecialair)
   $addToDice(nspecialair)
 #endsnippet
 
 #snippet BREAKCC_MOVES
+  $addToDice(dair)
+  $addToDice(dair)
   $addToDice(dspecial)
 #endsnippet
 
@@ -45,12 +53,8 @@
   $addToDice(nspecialair)
   $addToDice(nspecialair)
   $addToDice(nspecialair)
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
 #endsnippet
 
 #snippet CAMP_MOVES
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
   $addToDice(nspecialair)
 #endsnippet

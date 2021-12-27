@@ -1,41 +1,27 @@
 
 #const pt_shortHopHeight = 15
 #const pt_djumpHeight = 28
-#const pt_wavedashDist = 8
+#const pt_wavedashDist = 20
 
-#const pt_jumpiness = 0.08
-#const pt_djumpiness = 0.12
-#const pt_aggression = 0.86
-#const pt_baitChance = 0.6
-#const pt_platChance = 0.02
+#const pt_jumpiness = 0.65
+#const pt_djumpiness = 0.25
+#const pt_aggression = 0.7
+#const pt_bait_dashAwayChance = 0.2
+#const pt_bait_wdashAwayChance = 0.3
+#const pt_wall_chance = 0.6
+#const pt_platChance = 0.23
+#const pt_baitChance = 0.85
+#const pt_braveChance = 0.45
 #const pt_circleCampChance = 0.2
 
 #const pt_dashForceTurnFrame = 10
 #const pt_dashDanceMinFrames = 3
 
-#const sweetSpotYRange = 4
-#const maxYEdgeDistWithJump = 75
-#const maxYEdgeDist = 58
-#const maxYEdgeDistJumpNoUpB = 25
-#const maxXEdgeDist = 60
-
-#const oWalkingDist = 20
-#const oJumpingDist = 15
-#const shortEdgeRange = 10
-#const edgeRange = 25
-#const calloutSpeed = 0.3
-
-#const jumpIfOWithin = 75
-#const SHIfOBeyond = 7
-#const FHIfOBeyond = 25
-#const DJIfOWithin = 32
-#const DJIfOBeyond = 23
-
-#const techChaseCloseDist = 20
-#const techChaseFarDist = 40
-
-#const DDWaveDash = 0.06
-#const DDMaxRange = 80
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
 
 // 0 through 21 if defensive things were consistent
 #const minBaseReactionTime = 0

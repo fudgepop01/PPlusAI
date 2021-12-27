@@ -19,9 +19,20 @@ if Equal AirGroundState 1
   #let aggression = var0
   GET_CHAR_TRAIT(aggression, chr_pt_aggression)
 
+  #let baitChance = var1
+  GET_CHAR_TRAIT(baitChance, chr_pt_baitChance)
+
+  immediateTempVar = aggression * 0.5
+  if !(Equal OCurrAction hex(0x0)) && Rnd < immediateTempVar
+    if !(Equal lastAttack -1) && Rnd < aggression
+      CallI ExecuteAttack
+    elif Rnd < aggression && Rnd < aggression && Rnd < 0.45
+      CallI CalcAttackGoal
+    endif 
+  endif
+
   predictOOption immediateTempVar man_ODefendOption LevelValue
   predictionConfidence globTempVar man_ODefendOption LevelValue
-  aggression *= 0.8
   globTempVar *= 2
   if Rnd > aggression && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
     CallI Shield
@@ -33,11 +44,14 @@ if Equal AirGroundState 1
 
   GetAttribute immediateTempVar attr_dashInitVel 0
 
+  currGoal = cg_bait_dashdance
+  skipMainInit = mainInitSkip
+
   #let dashAwayChance = var0
   GET_CHAR_TRAIT(dashAwayChance, chr_pt_bait_dashAwayChance)
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= LV7
     CallI Shield
-  elif immediateTempVar > 0.8 && Rnd < dashAwayChance && Rnd < dashAwayChance && LevelValue >= LV5 && Rnd < 0.65 && !(ODistLE anotherTempVar)
+  elif immediateTempVar > 0.8 && Rnd < dashAwayChance && LevelValue >= LV5 && Rnd < 0.85 && !(ODistLE anotherTempVar)
     scriptVariant = sv_dash_away
     CallI DashScr
   endif
@@ -59,19 +73,19 @@ if Equal AirGroundState 1
         scriptVariant = sv_dash_through
         CallI DashScr
       endif
-    elif Rnd < 0.45
+    elif Rnd < 0.2
       #let djumpiness = var0
       GET_CHAR_TRAIT(djumpiness, chr_pt_djumpiness)
-      if Rnd < 0.5
+      if Rnd < 0.2
         scriptVariant = sv_roll_through
         CallI Roll
-      elif Rnd < 0.8 && Rnd < djumpiness
+      elif Rnd < 0.4 && Rnd < djumpiness
         scriptVariant = sv_jump_over
         CallI JumpScr
       endif
       GetAttribute immediateTempVar attr_dashInitVel 0
       immediateTempVar *= 8
-      if Rnd < 0.6 && immediateTempVar > OXHitDist
+      if Rnd < 0.2 && immediateTempVar > OXHitDist
         scriptVariant = sv_dash_through
         CallI DashScr
       endif
@@ -80,7 +94,7 @@ if Equal AirGroundState 1
 
   GetAttribute immediateTempVar attr_jumpSquatFrames 0
   immediateTempVar *= 0.1
-  immediateTempVar = 0.8 - immediateTempVar
+  immediateTempVar = 0.7 - immediateTempVar
   #let wdashAwayChance = var0
   GET_CHAR_TRAIT(wdashAwayChance, chr_pt_bait_wdashAwayChance)
   if Rnd < immediateTempVar && Rnd < wdashAwayChance
@@ -100,8 +114,6 @@ if Equal AirGroundState 1
     scriptVariant = sv_dash_away
     CallI DashScr
   endif
-
-  CallI Shield
 endif
 
 // maybe make driftAway based on air mobility?
@@ -121,7 +133,9 @@ if Rnd < 0.1 && !(ODistLE OXHitDist)
   endif
 endif
 
+if Equal AirGroundState 1
+  CallI Shield
+endif
 CallI FastAerial
-
 Return
 Return

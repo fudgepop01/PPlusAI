@@ -8,6 +8,7 @@ label reroll
   var4 = 0
   var5 = Rnd
   var6 = Rnd
+  var7 = Rnd
 label begin
 var21 = 3
 
@@ -58,13 +59,13 @@ endif
 if Equal CurrAction 16
   Goto handleSFall
   Return
-elif Equal CurrAction 276
+elif Equal CurrAction 276 || Equal CurrAction 298 || Equal CurrAction 298 || Equal CurrAction 302
   Goto handleUSpecial
   Return
-elif Equal CurrAction 274
+elif Equal CurrAction 274 || Equal CurrAction 279 || Equal CurrAction 280
   Goto handleNSpecial
   Return
-elif Equal CurrAction 275
+elif Equal CurrAction 275 || Equal CurrAction 297
   Goto handleSSpecial
   Return
 elif Equal CurrAction 277
@@ -123,19 +124,23 @@ endif
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
-  if Equal var4 1 || var5 <= 0.3
-    if YDistBackEdge > 16
+  if Equal var4 1 || var5 <= 0.35
+    var22 = 16
+    if !(NoOneHanging)
+      var22 -= 20
+    endif
+    if YDistBackEdge > var22 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       var5 *= 1.25
       Return
     endif
-  elif YDistBackEdge > 92 || var17 < 18
-    if NumJumps > 0
+  elif YDistBackEdge > 122 || var17 < 18
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
-    elif Equal var16 0
+    else
       var4 = 1
       Button B
       ClearStick
@@ -143,20 +148,54 @@ endif
       Return
     endif
   endif
-  if var6 <= 0.15 && YDistBackEdge > 50 && Equal var4 0
+  // if YDistBackEdge < -30 && var7 < 0.6 && NumJumps > 0
+  //   Seek execWaddleDash
+  //   Jump
+  // endif
+  if var6 <= 0.45 && YDistBackEdge > 50 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 50 && YDistBackEdge > 84 && Equal var4 0 && Equal var16 0
+  if var2 <= 50 && YDistBackEdge > 110 && Equal var4 0 && Equal var16 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif 
+  // if !(True)
+  //   label execWaddleDash
+  //     XGoto PerFrameChecks
+  //     XReciever
+  //     Seek execWaddleDash
+  //     var17 = var0 * -1
+  //     AbsStick var17
+  //     if Equal CurrAction 14 || Equal CurrAction 15
+  //       Button B
+  //     elif Equal CurrAction 275
+  //       if Equal CanCancelAttack 1
+  //         Seek postThrow
+  //         Jump
+  //       endif
+  //     endif
+  //   Return
+  //   label postThrow
+  //     XGoto PerFrameChecks
+  //     XReciever
+  //     Seek postThrow
+  //     ClearStick
+  //     var17 = var0 * -1
+  //     AbsStick var17
+  //     if Equal CurrAction 275
+  //       Button X
+  //     elif Equal CurrAction 14 || Equal CurrAction 13
+  //       Button X
+  //     endif
+  //   Return
+  // endif
 
 Return
 
@@ -174,10 +213,20 @@ Return
 
 label handleUSpecial
   ClearStick
-  if Equal var16 1
+  if AnimFrame > 2 && AnimFrame < 5
+    var22 = TopNX * -1
+    AbsStick var22
+  elif Equal var16 1
     var17 = var0 * -1
     AbsStick var17
   elif var0 > 6 || var0 < -6
+    // var17 = var0 * -1
+    // AbsStick var17
+    var22 = HurtboxSize - 5
+    if NoOneHanging && YDistBackEdge < var22 && var6 < 0.45
+      AbsStick 0 (-1)
+    endif
+  else
     var17 = var0 * -1
     AbsStick var17
   endif
@@ -196,6 +245,9 @@ label handleJumpToStage
   ClearStick
   if Equal var16 1
     var17 = var0 * -1
+    AbsStick var17
+  elif Equal IsOnStage 1
+    var17 = TopNX * -1
     AbsStick var17
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1

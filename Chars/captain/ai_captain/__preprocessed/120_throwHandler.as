@@ -6,6 +6,19 @@ unk 0x0
 if CurrAction < 52 || CurrAction > 60
   CallI MainHub
 elif Equal CurrAction 57 && AnimFrame > 8
+  if Rnd < 0.7
+    GetYDistFloorOffset var22 20 0 0
+    if Equal var22 -1
+      AbsStick 1 0
+      Return
+    endif
+    GetYDistFloorOffset var22 -20 0 0
+    if Equal var22 -1
+      AbsStick -1 0
+      Return
+    endif
+  endif
+
 if Equal var20 10
     Stick 1 0
 elif Equal var20 11
@@ -14,18 +27,7 @@ elif Equal var20 12
     Stick -1 0
 elif Equal var20 13
     Stick 0 1
-  else
-    GetYDistFloorOffset var22 30 0 0
-    if Equal var22 -1
-      AbsStick 1 0
-      Return
-    endif
-    GetYDistFloorOffset var22 -30 0 0
-    if Equal var22 -1
-      AbsStick -1 0
-      Return
-    endif
-
+  elif True
     if Rnd < 0.5
       AbsStick 0 1
     else 

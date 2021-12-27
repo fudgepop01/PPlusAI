@@ -21,7 +21,7 @@
 
 #snippet NCXOFFS_REDEFINE
   #const NCXOffs = 6
-  #const NCXOffsClose = 4
+  #const NCXOffsNear = 4
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
@@ -48,13 +48,13 @@
     AbsStick 0 (-1)
     Return
   elif Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 6)
+    if YDistBackEdge > calc(pt_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
   elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0
+    if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
