@@ -15,27 +15,17 @@ XReciever
 Seek start
 
 if Equal AirGroundState 1
-  var22 = var10 + var12
-  if var22 < -3 && Equal Direction OPos
+  var22 = 0.001
+  XGoto GetChrSpecific
+  XReciever
+
+  if var22 < 0 && Equal Direction OPos
     var22 = OPos * -1
     AbsStick var22
     Return
-  elif var22 > -3 && !(Equal Direction OPos)
+  elif var22 > 0 && !(Equal Direction OPos)
     var22 = OPos
     AbsStick var22
-    Return
-  endif
-endif
-
-if OAnimFrame < 23
-  if OCurrAction >= 78 && OCurrAction <= 82
-    Return
-  elif OCurrAction >= 96 && OCurrAction <= 97
-    Return
-  endif
-endif
-if !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
-  if Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
     Return
   endif
 endif
@@ -64,206 +54,161 @@ endif
 if Rnd > var7
   Return
 endif
-var6 = ODamage
+if Equal AirGroundState 1
+  Seek
+  Return
+endif
+label
 Cmd30
 ClearStick
 // {SKIP_EXEC}
 
 if Equal var20 0
+var6 = 10
 Button A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1784766976 825373440 0 0 0
 Seek jab123
 Return
 elif Equal var20 1
+var6 = 29
 Goto execDA
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1684108032 1751217152 1952539392 1795162112 0
 Seek dashattack
 Return
 elif Equal var20 2
+var6 = 15
 Button A
-Stick 0.7
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1718905088 1819541504 0 0 0
+Goto getHeight
+Stick 0.7 var22
 Seek ftilt
 Return
 elif Equal var20 3
+var6 = 17
 Button A
 Stick 0 0.7
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1970563328 1819541504 0 0 0
 Seek utilt
 Return
 elif Equal var20 4
+var6 = 8
 Button A
 Stick 0 (-0.7)
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1685350656 1819541504 0 0 0
 Seek dtilt
 Return
 elif Equal var20 5
+var6 = 43
 Button A
+Goto getHeight
 Stick 1
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1718840576 1634953216 0 0 0
 Seek fsmash
 Return
 elif Equal var20 6
+var6 = 24
 Button A
 Stick 0 1
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1970498816 1634953216 0 0 0
 Seek usmash
 Return
 elif Equal var20 7
+var6 = 18
 Button A
 Stick 0 (-1)
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1685286144 1634953216 0 0 0
 Seek dsmash
 Return
 elif Equal var20 8
+var6 = 24
 Button A
 Stick 0 (-1)
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1685286144 1634953216 1600678144 1949433856 0
 Seek dsmash_hit2
 Return
 elif Equal var20 9
+var6 = 19
 Button B
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1853059072 1701013760 1634467840 0 0
 Seek nspecial
 Return
 elif Equal var20 10
+var6 = 19
 Button B
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1853059072 1701013760 1634492672 1769078784 0
 Seek nspecialair
 Return
 elif Equal var20 11
+var6 = 10
 Button B
 Stick 0 (-0.7)
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1685286912 1701013760 1634467840 0 0
 Seek dspecial
 Return
 elif Equal var20 12
+var6 = 51
 Button B
 AbsStick OPos
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1936945152 1701013760 1634467840 0 0
 Seek sspecial
 Return
 elif Equal var20 13
+var6 = 51
 Button B
 AbsStick OPos
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1936945152 1701013760 1634492672 1769078784 0
 Seek sspecialair
 Return
 elif Equal var20 14
+var6 = 8
 Button R|A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1735549184 1644167168 0 0 0
 Seek grab
 Return
 elif Equal var20 15
+var6 = 8
 Button R|A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1718904832 1919907584 0 0 0
 Seek fthrow
 Return
 elif Equal var20 16
+var6 = 8
 Button R|A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1685350400 1919907584 0 0 0
 Seek dthrow
 Return
 elif Equal var20 17
+var6 = 8
 Button R|A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1651795968 1919907584 0 0 0
 Seek bthrow
 Return
 elif Equal var20 18
+var6 = 8
 Button R|A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1970563072 1919907584 0 0 0
 Seek uthrow
 Return
 elif Equal var20 19
+var6 = 7
 Button A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1851877632 1912602624 0 0 0
 Seek nair
 Return
 elif Equal var20 20
+var6 = 28
 Button A
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1851877632 1918859008 1700883200 0 0
 Seek nair_weak
 Return
 elif Equal var20 21
+var6 = 18
 Button A
+Goto getHeight
 Stick 1
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1717659904 1912602624 0 0 0
 Seek fair
 Return
 elif Equal var20 22
+var6 = 8
 Button A
 Stick (-1) 0
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1650551040 1912602624 0 0 0
 Seek bair
 Return
 elif Equal var20 23
+var6 = 21
 Button A
 Stick (-1) 0
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1650551040 1918859008 1700883200 0 0
 Seek bair_weak
 Return
 elif Equal var20 24
+var6 = 24
 Button A
 Stick 0 1
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1969318144 1912602624 0 0 0
 Seek uair
 Return
 elif Equal var20 25
+var6 = 26
 Button A
 Stick 0 (-0.6)
-LOGSTR 757935360 757935360 754974720 0 0
-LOGVAL PlayerNum
-LOGSTR 1684105472 1912602624 0 0 0
 Seek dair
 Return
 endif
@@ -316,21 +261,33 @@ Seek dsmash_hit2
 Return
 label nspecial
 Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
 Goto common_checks
 Seek nspecial
 Return
 label nspecialair
 Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
 Goto common_checks
 Seek nspecialair
 Return
 label dspecial
 Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
 Goto common_checks
 Seek dspecial
 Return
 label sspecial
 Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
   var22 = TopNY - OTopNY 
   if var22 < -20
     AbsStick OPos 1
@@ -344,6 +301,9 @@ Seek sspecial
 Return
 label sspecialair
 Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
   var22 = TopNY - OTopNY 
   if var22 < -20
     AbsStick OPos 1
@@ -439,6 +399,16 @@ label execDA
   endif
   Seek execDA
   Return
+label getHeight
+  var22 = 0
+  if Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
+    var22 = -0.5
+  elif OCurrAction >= 68 && OCurrAction <= 73 || Equal OCurrAction 66
+    if OYDistBackEdge > -8 && OYSpeed < 0
+      var22 = -0.5
+    endif
+  endif 
+  Return
 label PFC
   XGoto PerFrameChecks
   XReciever
@@ -454,26 +424,86 @@ label common_checks
   XReciever
 
   if Equal CanCancelAttack 1 && CurrAction >= 36 && CurrAction <= 52
-    var20 = -1
-    var16 = 0
-    Call MainHub
+    Seek finish
+    Jump
   elif CurrAction <= 32
-    var20 = -1
-    var16 = 0
-    Call MainHub
+    Seek finish
+    Jump
   endif
 
+  if Equal OFramesHitlag 1
+    ADJUST_PERSONALITY 0 0.002
+    if var21 >= 7 && var21 < 8
+      ADJUST_PERSONALITY 5 0.015
+      if Equal var21 7.1
+        ADJUST_PERSONALITY 0 0.002
+      endif
+    elif var21 >= 16 && var21 < 17
+      ADJUST_PERSONALITY 3 -0.04
+      ADJUST_PERSONALITY 0 0.002
+      if Equal var21 16.4
+        ADJUST_PERSONALITY 0 0.005
+      elif Equal var21 16.1 || Equal var21 16.2
+        ADJUST_PERSONALITY 3 0.01
+      elif Equal var21 16.3
+        ADJUST_PERSONALITY 3 0.005
+        ADJUST_PERSONALITY 5 0.025
+      endif
+    elif Equal var21 10.1
+      ADJUST_PERSONALITY 3 0.01
+    endif
+
+    if Equal AirGroundState 2
+      ADJUST_PERSONALITY 7 0.003
+      if Rnd < 0.3
+        ADJUST_PERSONALITY 6 0.002
+      endif
+    else
+      ADJUST_PERSONALITY 7 -0.002
+      ADJUST_PERSONALITY 6 -0.002
+    endif
+
+    if OKBSpeed > 3
+      if CHANCE_MUL_LE PT_AGGRESSION 0.6
+        var21 = 16
+      else
+        var21 = 10.5
+      endif
+    else
+      var21 = 16
+    endif
+  endif
+
+  // L cancel
+  if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.3 && YDistFloor < 7 && Equal CurrAction 51
+    Button R
+  endif
+
+  // just for those with FSM
+  var22 = AnimFrame * 0.8
   if Equal var16 1 && Equal AirGroundState 2 && YSpeed <= 0
     AbsStick 0 (-1)
     var16 = 0
-  elif Equal IsOnStage 1 && !(Equal ODamage var6) && LevelValue >= 75 && Equal AirGroundState 2
-    var6 = ODamage + 1
-    if YSpeed <= 0
+  elif Equal IsOnStage 1 && var22 > var6 && LevelValue >= 75 && Equal AirGroundState 2
+    var22 = EndFrame - AnimFrame 
+    if YSpeed <= 0 && var22 > 20 && Equal CurrAction 51
       AbsStick 0 (-1)
     endif
-  else
-    var6 = ODamage
   endif
 //   {COMMON_EXTENSION}
+Return
+label finish
+  var20 = -1
+  var16 = 0
+  if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || Equal var21 16 || CHANCE_MUL_LE PT_AGGRESSION 0.25
+    XGoto CalcAttackGoal
+    XReciever
+    var15 = -1
+    var21 = 16.4
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.75
+    var15 = -1
+    var21 = 10.5
+  endif
+  CallI MainHub
 Return
 Return

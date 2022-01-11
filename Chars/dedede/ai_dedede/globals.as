@@ -1,21 +1,21 @@
-// globals are preprocessed variables that can be used anywhere
-// they'll automatically be substituted for the variable or value
-// they stand for.
-//
-// ex. in here, "move_xOffset" will always be replaced with "var9"
+#const DIRY_ABOVE = 17
+#const DIRY_BELOW_AIR = 3
+#const DIRY_BELOW_GROUND = -1
+#const DIRX_FRONT = 4
+#const DIRX_BACK = -3
 
-#const pt_shortHopHeight = 15
-#const pt_djumpHeight = 22
-#const pt_wavedashDist = 15
+#const cs_shortHopHeight = 15
+#const cs_djumpHeight = 22
+#const cs_wavedashDist = 15
 
-#const pt_jumpiness = 0.4
-#const pt_djumpiness = 0.2
+#const pt_jumpiness = 0.05
+#const pt_djumpiness = 0.04
 #const pt_bait_dashAwayChance = 0.15
 #const pt_bait_wdashAwayChance = 0.75
 #const pt_circleCampChance = 0.35
 
-#const pt_dashForceTurnFrame = 8
-#const pt_dashDanceMinFrames = 3
+#const cs_dashForceTurnFrame = 8
+#const cs_dashDanceMinFrames = 3
 
 // ACTION CATEGORIES N' STUFF
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
@@ -208,9 +208,21 @@
 #const grab_lastHitFrame = 8
 
 #const grab_damage_info = Grab|0|0|0|0
+
+#const fthrow_IASA = 38
+#const fthrow_throwFrame = 13
 #const fthrow_damage_info = Grab|8|80|75|45
-#const dthrow_damage_info = Grab|4|80|50|40
+
+#const dthrow_IASA = 35
+#const dthrow_throwFrame = 22
+#const dthrow_damage_info = Grab|4|50|40|32
+
+#const bthrow_IASA = 43
+#const bthrow_throwFrame = 18
 #const bthrow_damage_info = Grab|9|60|94|-45
+
+#const uthrow_IASA = 41
+#const uthrow_throwFrame = 18
 #const uthrow_damage_info = Grab|5|60|72|90
 
 // NAir

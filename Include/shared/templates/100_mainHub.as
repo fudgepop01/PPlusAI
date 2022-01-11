@@ -2,10 +2,12 @@
 id 0x8100
 unk 0x0
 
+$genPersonalityStrings()
+
 XReciever
 SetAutoDefend 0
 SetDisabledSwitch 1
-SetDebugMode 0
+SetDebugMode TEMP_DEBUG_TOGGLE
 
 if ODistLE 180
   SetDisabledMd 6
@@ -13,6 +15,7 @@ else
   SetDisabledMd -1
 endif
 
+#let loopCount = var0
 label start
 
 DisableDebugOverlay
@@ -36,9 +39,8 @@ endif
 
 if Equal skipMainInit mainInitSkip
   skipMainInit = -100
-  if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
-    currGoal = cg_attack
-  elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+  if Equal immediateTempVar 1
     currGoal = cg_attack
   elif Rnd < 0.45 && !(Equal currGoal cg_attack_reversal) && OFramesHitstun <= 0
     currGoal = cg_bait_dashdance
@@ -51,11 +53,21 @@ elif Equal skipMainInit sm_execAttack
   XReciever
   Seek empty_0
 
+  if Equal CurrAction hex(0x3) || Equal CurrAction hex(0x4)
+    $ifLastOrigin(dashattack, false)
+    elif True
+      if Equal currGoal cg_defend
+        scriptVariant = sv_wavedash_out
+      endif
+      scriptVariant = sv_wavedash_neutral
+      CallI Wavedash 
+    endif
+  endif
   ACTIONABLE_ON_GROUND
   skipMainInit = -100
 
   CallI ExecuteAttack
-elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 1.4) && Rnd > calc(pt_braveChance * 0.35) && OCurrAction <= hex(0x15)
+elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 1.4 && CHANCE_MUL_GE PT_BRAVECHANCE 0.35 && OCurrAction <= hex(0x15)
   label empty_1
   Goto PFC
   XReciever
@@ -67,7 +79,7 @@ elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 1.4) && Rnd > 
   XReciever
   Seek setupWallDelay
 
-  if Rnd < 0.1 && Rnd < pt_wall_chance
+  if Rnd < 0.1 && CHANCE_MUL_LE PT_WALL_CHANCE 1
     XGoto CalcAttackGoal
     XReciever
   endif
@@ -89,7 +101,7 @@ elif Equal currGoal cg_attack_wall && Rnd < calc(pt_wall_chance * 1.4) && Rnd > 
   endif
   timer -= 1
   Return
-elif Equal currGoal cg_camp_attack && Rnd < calc(pt_circleCampChance * 1.3) && Rnd < pt_aggression
+elif Equal currGoal cg_camp_attack && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1.3 && CHANCE_MUL_LE PT_AGGRESSION 1
   label empty_2
   Goto PFC
   XReciever
@@ -104,30 +116,33 @@ elif Equal currGoal cg_bait_wait
 endif
 
 Goto PFC
+XReciever
 
 scriptVariant = sv_none
 lastAttack = -1
 
-DynamicDiceClear
-if Rnd < pt_circleCampChance
-  DynamicDiceAdd cg_circleCamp
+DynamicDiceClear dslot0
+if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
+  DynamicDiceAdd dslot0 cg_circleCamp 1
 endif
-if Rnd < pt_baitChance
-  DynamicDiceAdd cg_bait
-  DynamicDiceAdd cg_bait_dashdance
+if CHANCE_MUL_LE PT_BAITCHANCE 1
+  DynamicDiceAdd dslot0 cg_bait 1.75
+  DynamicDiceAdd dslot0 cg_bait_dashdance 3
 endif
-if Rnd < pt_aggression
+if CHANCE_MUL_LE PT_AGGRESSION 1
   predictionConfidence immediateTempVar man_OBaitOption LevelValue
-  if immediateTempVar > 0.4 || Rnd < calc(pt_aggression * 0.35)
-    DynamicDiceAdd cg_attack
+  if immediateTempVar > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
+    DynamicDiceAdd dslot0 cg_attack 2
   endif
 endif
-DynamicDiceRoll currGoal
+DynamicDiceRoll dslot0 currGoal 0
+
+GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
 if Equal teamCloser 1
   currGoal = cg_circleCamp
 elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
   currGoal = cg_attack
-elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
+elif Equal immediateTempVar 1
   currGoal = cg_attack
 endif
 goalY = BBoundary
@@ -198,10 +213,7 @@ elif Equal currGoal cg_attack && Equal lastAttack -1
   Seek selectGoal
   Return
 endif
-LOGSTR str("selected")
 label navigateToGoal
-LOGSTR str("CURRENT GOAL:")
-LOGVAL currGoal
 Goto PFC
 XReciever
 Seek selectGoal

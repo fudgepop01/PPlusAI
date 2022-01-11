@@ -26,7 +26,7 @@ endif
 if Equal var17 -1
   XGoto RandomizeGoal
   XReciever
-  DynamicDiceClear
+  DynamicDiceClear 0
   Return
 endif
 
@@ -35,9 +35,9 @@ var23 = TopNX
 Abs var23
 if var22 < 50 && !(Equal var22 -1) && var23 < 80
   if OTopNY < 25
-    DynamicDiceAdd 1
+    DynamicDiceAdd 0 1 1
   elif TopNY < 60
-    DynamicDiceAdd 4
+    DynamicDiceAdd 0 4 1
   endif
 endif
 var17 *= -1
@@ -49,9 +49,9 @@ if var22 < 60 && !(Equal var22 -1) && var23 < 80
   Abs var23
   if var23 > 30
     if OTopNY < 25
-      DynamicDiceAdd 2
+      DynamicDiceAdd 0 2 1
     else
-      DynamicDiceAdd 5
+      DynamicDiceAdd 0 5 1
     endif
   endif
 endif
@@ -64,47 +64,47 @@ if var22 < 60 && !(Equal var22 -1) && var23 < 80
   Abs var23
   if var23 > 30
     if OTopNY < 25
-      DynamicDiceAdd 3
+      DynamicDiceAdd 0 3 1
     else
-      DynamicDiceAdd 6
+      DynamicDiceAdd 0 6 1
     endif
   endif
 endif
 
-DynamicDiceRoll var23
+DynamicDiceRoll 0 var23 0
 GetYDistFloorAbsPos var22 0 30
 if Equal var23 1
   GetYDistFloorAbsPos var22 0 100
-  var8 = 0
-  var9 = 100 - var22 + 5
+  var13 = 0
+  var14 = 100 - var22 + 5
 elif Equal var23 2
   var17 *= -1
   GetYDistFloorAbsPos var22 var17 80
-  var8 = var17
-  var9 = 80 - var22 + 5
+  var13 = var17
+  var14 = 80 - var22 + 5
 elif Equal var23 3
   GetYDistFloorAbsPos var22 var17 80
-  var8 = var17
-  var9 = 80 - var22 + 5
+  var13 = var17
+  var14 = 80 - var22 + 5
 elif Equal var23 4
-  var8 = 0
-  var9 = 30 - var22
+  var13 = 0
+  var14 = 30 - var22
 elif Equal var23 5
-  var8 = var17 * -1
-  var9 = 30 - var22
+  var13 = var17 * -1
+  var14 = 30 - var22
 elif Equal var23 6
-  var8 = var17
-  var9 = 30 - var22
+  var13 = var17
+  var14 = 30 - var22
 else
   XGoto RandomizeGoal
   XReciever
-  DynamicDiceClear
+  DynamicDiceClear 0
   Return
 endif
 
 var23 = Rnd * 20 - 10
-var8 += var23
-DynamicDiceClear
+var13 += var23
+DynamicDiceClear 0
 
 Return
 Return

@@ -2,7 +2,6 @@
 id 0x1120
 unk 0x0
 
-
 if CurrAction < 52 || CurrAction > 60
   CallI MainHub
 elif Equal CurrAction 57 && AnimFrame > 8

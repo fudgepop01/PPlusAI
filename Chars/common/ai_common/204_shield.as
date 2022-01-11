@@ -8,10 +8,23 @@ label setup
 #let OEndLag = var1
 #let timer = var2
 #let patience = var3
+#let willStrike = var4
 
 OHasHitShield = 0
 timer = 0
-patience = Rnd * 110 + 40
+
+willStrike = false
+globTempVar = PT_AGGRESSION
+globTempVar *= 0.65
+if Rnd < globTempVar
+  willStrike = true
+endif
+
+patience = Rnd * 35 + 5
+if Equal currGoal cg_bait_shield
+  immediateTempVar = 60 * Rnd + 20
+  patience += immediateTempVar
+endif
 Seek shield
 Return
 label shield
@@ -28,18 +41,19 @@ endif
 timer += 1
 Button R
 
-CALC_ENDLAG(OEndLag)
+GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
+Seek shield
 
-// if Equal LevelValue LV9
-//   immediateTempVar = OPos * 0.5
-//   globTempVar = OTopNY - TopNY
-//   if globTempVar > 0.5
-//     globTempVar = 0.5
-//   else
-//     globTempVar = -0.5
-//   endif
-//   AbsStick immediateTempVar globTempVar
-// endif
+if Equal LevelValue LV9
+  immediateTempVar = OPos * 0.5
+  globTempVar = OTopNY - TopNY
+  if globTempVar > 0.5
+    globTempVar = 0.5
+  else
+    globTempVar = -0.5
+  endif
+  AbsStick immediateTempVar globTempVar
+endif
 
 if Equal CurrAction hex(0x1D)
   MOD globTempVar timer 14
@@ -58,10 +72,13 @@ MOD globTempVar timer 3
 if Equal CurrAction hex(0x1B) && Equal globTempVar 0 
   GetShieldRemain globTempVar
   immediateTempVar = OHasHitShield * 0.03
-  if globTempVar < 35 || timer >= patience || OEndLag > 8 || Rnd <= immediateTempVar || !(ODistLE 30)
+  if globTempVar < 40 || OEndLag > 8 || Rnd <= immediateTempVar || !(ODistLE 45)
     Seek pickOption
     Jump
-  elif Equal OHitboxConnected 1 && OAttacking && Rnd < 0.3
+  elif Equal willStrike true && ODistLE 45 && Rnd < 0.4
+    Seek pickOption
+    Jump
+  elif timer >= patience && !(ODistLE 15) 
     Seek pickOption
     Jump
   endif
@@ -70,42 +87,56 @@ Return
 label pickOption
 
 predictAverage immediateTempVar man_OXHitDist LevelValue
-immediateTempVar += 13
-if OEndLag > 5 && Rnd < 0.8 && XDistLE immediateTempVar
+immediateTempVar += 35
+if OEndLag > 7 && CHANCE_MUL_LE PT_AGGRESSION 0.7
+  Button X
+  currGoal = cg_attack_reversal
+  XGoto CalcAttackGoal
+  XReciever
+  skipMainInit = mainInitSkip
+  CallI MainHub
+elif Rnd < 0.4 && XDistLE immediateTempVar
   Button X
   Call FastAerial
-elif XDistLE immediateTempVar
-  predictionConfidence immediateTempVar man_ODefendOption LevelValue
-  predictOOption globTempVar man_ODefendOption LevelValue 
-  if Rnd < immediateTempVar && Equal globTempVar op_defend_grab
-    Button X
-    Call FastAerial
+elif Rnd < 0.6 && Equal willStrike true
+  Button X
+  currGoal = cg_attack_reversal
+  XGoto CalcAttackGoal
+  XReciever
+  skipMainInit = mainInitSkip
+  CallI MainHub
+endif
+
+immediateTempVar -= 20
+if OEndLag > 24 && Rnd < 0.7
+  scriptVariant = sv_wavedash_in
+  currGoal = cg_attack_reversal
+  CallI Wavedash
+elif OEndLag > 14 && Rnd < 0.7
+  scriptVariant = sv_wavedash_out
+  currGoal = cg_attack_reversal
+  CallI Wavedash
+elif Equal OPos Direction && ODistLE immediateTempVar
+  if OEndLag > 5 && Rnd < 0.75 || Equal willStrike true
+    Button A
+    Call Grab
   endif
 endif
 
-if OEndLag > 15 && Rnd < 0.4
-  scriptVariant = sv_wavedash_in
-  CallI Wavedash
-elif OEndLag > 9 && Rnd < 0.4
-  scriptVariant = sv_wavedash_out
-  CallI Wavedash
-elif OEndLag > 5 && Rnd < 0.5 && Equal OPos Direction && ODistLE immediateTempVar
-  Button A
-  Call Grab
-endif
-
-if Rnd < 0.7
+if Rnd < 0.3
   predictionConfidence immediateTempVar man_ODefendOption LevelValue
   predictOOption globTempVar man_ODefendOption LevelValue 
   if Rnd < immediateTempVar
     if Equal globTempVar op_defend_attack
-      if Rnd < 0.35
+      if Rnd < 1
         scriptVariant = sv_jump_away
-        if XDistBackEdge > -10
+        if XDistBackEdge > -15
           scriptVariant = sv_jump_over
+          scriptVariant += svp_jump_fullhop
         endif
         CallI JumpScr
       endif
+      Seek shield
       Return
     elif Equal globTempVar op_defend_grab
       scriptVariant = sv_wavedash_in
@@ -123,7 +154,7 @@ if Rnd < 0.7
   endif
 endif
 
-if Rnd < 0.3
+if Rnd < 0.2
   if Rnd < 0.3
     scriptVariant = sv_jump_away
     CallI JumpScr
@@ -140,6 +171,5 @@ if Rnd < 0.3
   endif
 endif
 Seek shield
-Return
 Return
 Return

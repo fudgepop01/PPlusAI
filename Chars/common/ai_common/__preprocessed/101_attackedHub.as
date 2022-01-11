@@ -4,12 +4,6 @@ unk 0x0
 
 XReciever
 var21 = 12
-if Equal OHitboxConnected 1
-  var22 = TopNX - OTopNX
-  Abs var22
-  var22 += 6
-  trackOAction 10 var22
-endif
 
 // label inThrow
 // #let techDirection = var5
@@ -29,14 +23,16 @@ if FramesHitlag > 2
   // SDI input frequency:
   // level 9: once per 20 frames
   // level 1: once per 50 frames
+  var0 = PT_SDICHANCE
+  
   var22 = (1 - (LevelValue / 100)) * 30 + 20
+  if PT_REACTION_TIME > 0.5
+    var22 *= PT_REACTION_TIME
+  else
+    var22 *= 0.5
+  endif
   MOD var22 FramesHitlag var22
 
-  var10 = 11
-  XGoto GetChrSpecific
-  XReciever
-  var0 = var10
-  Seek hitlag
   if Equal var22 6 && Rnd <= var0
     var17 = OPos * -1
     if XDistBackEdge > -15
@@ -48,34 +44,33 @@ if FramesHitlag > 2
     endif
     AbsStick var17 var22
   endif
+
+  if FramesSinceShield > 10 && Equal AirGroundState 2
+    if FramesSinceShield > 100
+      Button R
+    elif YDistFloor < 10 && Rnd < 0.7 && KBAngle < 40
+      Button R
+    endif
+  endif
   Return
 elif FramesHitlag > 1
   var22 = 0
   var17 = LevelValue * 0.01
   if LevelValue >= 48 && Rnd < var17
     var22 = TopNX * -1
-    if FramesSinceShield > 40
-      if FramesSinceShield > 100
-        Button R
-      elif YDistBackEdge > -10 && Rnd < 0.45
-        Button R
-      endif
-    endif
   endif
 
   predictionConfidence var17 7 LevelValue
   var17 *= 2
   predictOOption var23 7 LevelValue 
 
-  if Rnd < 0.75
+  if Rnd < 0.75 && Rnd < var17
     AbsStick var22 (-1)
   elif Rnd < var17 && Equal var23 1 
     AbsStick OPos (-1)
   else
     AbsStick var22
   endif
-  Return
-elif FramesHitlag > 1
   Return
 endif
 
@@ -90,7 +85,7 @@ if FramesHitstun > 0 || Equal CurrAction 66
     if KBAngle > 90 && KBAngle < 170
       var0 *= -1
     endif  
-    if Rnd < 0.2
+    if Rnd < 0.2 || KBSpeed > 3
       var0 *= -1
     endif
   else
@@ -100,6 +95,9 @@ if FramesHitstun > 0 || Equal CurrAction 66
     var1 = (Rnd * 2) - 1
     if Rnd < 0.5
       var1 -= 0.5
+    endif
+    if KBSpeed > 3
+      var1 = 1
     endif
   else
     var1 = (Rnd * 2) - 1
@@ -159,8 +157,12 @@ if FramesHitstun > 0 || Equal CurrAction 66
         if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
           var0 = TotalXSpeed
           if var0 > -1 && var0 < 1
-            var0 = Rnd * 4 - 2
-            var0 *= 10
+            var0 = OPos * -1
+            if Rnd < 0.3
+              var0 *= 0.6
+            elif Rnd < 0.1
+              var0 *= -1
+            endif
           endif
           // if Rnd < 0.15
           //   var0 *= -1
@@ -208,7 +210,7 @@ if FramesHitstun > 0 || Equal CurrAction 66
     label
 
     // techskill
-    var22 = LevelValue * 0.01
+    var22 = LevelValue * 0.004
     var22 -= 0.1
     if var22 < 0.05
       var22 = 0.05
@@ -253,13 +255,15 @@ if FramesHitstun > 0 || Equal CurrAction 66
     // endif
 
     // techskill
-    var22 = LevelValue * 0.01
-    var22 -= 0.1
-    if var22 < 0.05
-      var22 = 0.05
+    var22 = 100 - LevelValue
+    var22 *= 0.005
+    if var22 > 0.9
+      var22 = 0.9
+    elif var22 < 0.2
+      var22 = 0.2
     endif
 
-    if Rnd > var22
+    if Rnd < var22
       Return
     endif
     Goto _hitstunEnd
@@ -302,16 +306,16 @@ Return
 label _checkTech
   if var2 <= 0
     if CurrAction >= 66 && CurrAction <= 77 && FramesSinceShield > 40
-      var17 = OEndFrame - 25
+      var17 = OEndFrame - 23
       if Equal CurrAction 66
         if OAnimFrame < var17 || Rnd < 0.1
           Return
         endif
       endif
       var17 = (100 - LevelValue) / 100 * -1
-      var17 += 0.50
-      if Rnd < var17
-        if TotalYSpeed <= 0.03 || Equal CurrAction 66
+      var17 += 0.80
+      if Rnd < var17 && YDistFloor < 20
+        if TotalYSpeed <= 0.3 || Equal CurrAction 66
           var5 = Rnd * 4 - 2
         endif
         Button R

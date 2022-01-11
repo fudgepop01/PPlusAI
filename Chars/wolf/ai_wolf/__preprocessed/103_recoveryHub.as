@@ -14,6 +14,8 @@ label reroll
   var10 = Rnd
 label begin
 var21 = 3
+SetDebugOverlayColor 255 136 0 221
+EnableDebugOverlay
 
 if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
@@ -33,17 +35,17 @@ var17 = var1 - var0
 var16 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
-    var2 = 4
+    var2 = 2
   else
-    var2 = -4
+    var2 = -2
   endif
 elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
 elif TopNY < var2
   if var17 < 0
-    var2 = 9
+    var2 = 0.001
   else
-    var2 = -9
+    var2 = -0.001
   endif
   var16 = 1
 endif
@@ -102,6 +104,9 @@ endif
 
 if Equal var2 0 || Equal AirGroundState 1
   var21 = 0
+  var20 = -1
+  var14 = BBoundary
+  var13 = 0
   Call MainHub
 endif
 
@@ -127,8 +132,13 @@ endif
   if !(NoOneHanging) && !(Equal var16 1)
     var1 -= 25
   endif
-  if Equal var4 1 || var5 <= 0.3
-    if YDistBackEdge > 21.514000000000003 && Rnd < 0.5
+  if YDistBackEdge < 29.514000000000003 && var2 <= 15 && NumJumps > 0
+    Button X
+    Goto handleJumpToStage
+    Return
+  endif
+  if Equal var4 1 || var5 <= 0.5 && NumJumps > 0
+    if YDistBackEdge > 21.514000000000003
       Button X
       Goto handleJumpToStage
       Return
@@ -147,28 +157,28 @@ endif
     endif
   endif
   if YDistBackEdge > -8 && YDistBackEdge < 8 && var2 <= 100
-    if var7 <= 0.4 || var10 > 0.6 && var6 > 0.6
+    if var7 <= 0.4 || var10 > 0.25 && var6 > 0.4
       Button B
       ClearStick
       Stick 1
       Return
     endif
   endif
-  if var6 <= 0.6 && YDistBackEdge > 55 && Equal var4 0
+  if var6 <= 0.4 && YDistBackEdge < 0 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var9 <= 0.3 && YDistBackEdge > -5 && Equal var4 0
+  if var9 <= 0.6 && YDistBackEdge < -50 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 90 && YDistBackEdge > 80 && Equal var4 0
+  if var2 <= 90 && YDistBackEdge > 70 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
@@ -200,25 +210,27 @@ Return
 label handleUSpecial
   if Equal var16 1
     if var0 > TopNX
-      var0 += 4
+      var0 += 10
     else
-      var0 -= 4
+      var0 -= 10
     endif
   endif
   if !(Equal CurrSubaction 479)
-    if !(NoOneHanging) && !(Equal var16 1)
-      var1 -= 45
-    endif
-    if var10 < 0.6 && !(Equal var16 1)
-      var22 = Rnd * 70 + 20
-      var1 += YDistBackEdge
-      var1 -= var22
-    endif
-    if var9 <= 0.3 || var6 < 0.6
-      if TopNX > 0
-        var0 -= 50
-      else
-        var0 += 50
+    if !(Equal var16 1)
+      if !(NoOneHanging)
+        var1 -= 20
+      endif
+      if var10 < 0.25 && YDistBackEdge < 0
+        var22 = Rnd * 70 + 20
+        var1 += YDistBackEdge
+        var1 -= var22
+      endif
+      if var9 <= 0.6 && YDistBackEdge < -5 || var6 <= 0.4 && YDistBackEdge < -5
+        if TopNX > 0
+          var0 += 3
+        else
+          var0 -= 3
+        endif
       endif
     endif
     var4 = var0
@@ -246,7 +258,7 @@ label handleDSpecial
 Return
 
 label handleSFall
-  var17 = var0 * -1
+  var17 = TopNX * -1
   AbsStick var17
 Return
 
@@ -257,6 +269,9 @@ label handleJumpToStage
     AbsStick var17
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
+    AbsStick var17
+  elif YDistBackEdge < 33.514
+    var17 = var0 * -3
     AbsStick var17
   endif
 Return

@@ -7,7 +7,19 @@ label setup
 
 var0 = 0
 var2 = 0
-var3 = Rnd * 110 + 40
+
+var4 = 0
+var17 = PT_AGGRESSION
+var17 *= 0.65
+if Rnd < var17
+  var4 = 1
+endif
+
+var3 = Rnd * 35 + 5
+if Equal var21 10.2
+  var22 = 60 * Rnd + 20
+  var3 += var22
+endif
 Seek shield
 Return
 label shield
@@ -24,53 +36,22 @@ endif
 var2 += 1
 Button R
 
-  var1 = -1
-  if Equal OCurrAction 51 && OYDistBackEdge > -25
-    if Equal OCurrSubaction AttackAirN
-      GetAttribute var17 65 1
-    elif Equal OCurrSubaction AttackAirF
-      GetAttribute var17 66 1
-    elif Equal OCurrSubaction AttackAirB
-      GetAttribute var17 67 1
-    elif Equal OCurrSubaction AttackAirHi
-      GetAttribute var17 68 1
-    elif Equal OCurrSubaction AttackAirLw
-      GetAttribute var17 69 1
-    endif
-    var17 -= OYDistBackEdge
-    var17 *= 0.7
-    var1 = var17
-  elif Equal OCurrAction 24
-    var1 = OEndFrame - OAnimFrame
-  elif Equal OCurrAction 33 && OYDistBackEdge < -15
-    var1 = 35
-  elif Equal OCurrAction 26 || Equal OCurrAction 27 || Equal OCurrAction 16
-    var17 = OTopNX - TopNX
-    Abs var17
-    var17 = 10 - var17
-    var1 = 30 + var17
-  elif OAttacking 
-    RetrieveFullATKD var22 var17 var23 var23 var23 var23 var23 OCurrSubaction 1
-    if Equal var22 0
-      var22 = OEndFrame
-    endif 
-    // if OAnimFrame >= var17
-      var1 = var22 - OAnimFrame
-    // endif
-  elif Rnd < 0.85 && Rnd < 0.85 && Rnd < 0.1
-    var1 = 20
-  endif
+  var22 = 0.004
+  XGoto GetChrSpecific
+  XReciever
+var1 = var22
+Seek shield
 
-// if Equal LevelValue 100
-//   var22 = OPos * 0.5
-//   var17 = OTopNY - TopNY
-//   if var17 > 0.5
-//     var17 = 0.5
-//   else
-//     var17 = -0.5
-//   endif
-//   AbsStick var22 var17
-// endif
+if Equal LevelValue 100
+  var22 = OPos * 0.5
+  var17 = OTopNY - TopNY
+  if var17 > 0.5
+    var17 = 0.5
+  else
+    var17 = -0.5
+  endif
+  AbsStick var22 var17
+endif
 
 if Equal CurrAction 29
   MOD var17 var2 14
@@ -89,10 +70,13 @@ MOD var17 var2 3
 if Equal CurrAction 27 && Equal var17 0 
   GetShieldRemain var17
   var22 = var0 * 0.03
-  if var17 < 35 || var2 >= var3 || var1 > 8 || Rnd <= var22 || !(ODistLE 30)
+  if var17 < 40 || var1 > 8 || Rnd <= var22 || !(ODistLE 45)
     Seek pickOption
     Jump
-  elif Equal OHitboxConnected 1 && OAttacking && Rnd < 0.3
+  elif Equal var4 1 && ODistLE 45 && Rnd < 0.4
+    Seek pickOption
+    Jump
+  elif var2 >= var3 && !(ODistLE 15) 
     Seek pickOption
     Jump
   endif
@@ -101,42 +85,56 @@ Return
 label pickOption
 
 predictAverage var22 10 LevelValue
-var22 += 13
-if var1 > 5 && Rnd < 0.8 && XDistLE var22
+var22 += 35
+if var1 > 7 && CHANCE_MUL_LE PT_AGGRESSION 0.7
+  Button X
+  var21 = 16.4
+  XGoto CalcAttackGoal
+  XReciever
+  var15 = -1
+  CallI MainHub
+elif Rnd < 0.4 && XDistLE var22
   Button X
   Call FastAerial
-elif XDistLE var22
-  predictionConfidence var22 7 LevelValue
-  predictOOption var17 7 LevelValue 
-  if Rnd < var22 && Equal var17 2
-    Button X
-    Call FastAerial
+elif Rnd < 0.6 && Equal var4 1
+  Button X
+  var21 = 16.4
+  XGoto CalcAttackGoal
+  XReciever
+  var15 = -1
+  CallI MainHub
+endif
+
+var22 -= 20
+if var1 > 24 && Rnd < 0.7
+  var16 = 1
+  var21 = 16.4
+  CallI Wavedash
+elif var1 > 14 && Rnd < 0.7
+  var16 = 2
+  var21 = 16.4
+  CallI Wavedash
+elif Equal OPos Direction && ODistLE var22
+  if var1 > 5 && Rnd < 0.75 || Equal var4 1
+    Button A
+    Call Grab
   endif
 endif
 
-if var1 > 15 && Rnd < 0.4
-  var16 = 1
-  CallI Wavedash
-elif var1 > 9 && Rnd < 0.4
-  var16 = 2
-  CallI Wavedash
-elif var1 > 5 && Rnd < 0.5 && Equal OPos Direction && ODistLE var22
-  Button A
-  Call Grab
-endif
-
-if Rnd < 0.7
+if Rnd < 0.3
   predictionConfidence var22 7 LevelValue
   predictOOption var17 7 LevelValue 
   if Rnd < var22
     if Equal var17 1
-      if Rnd < 0.35
+      if Rnd < 1
         var16 = 3
-        if XDistBackEdge > -10
+        if XDistBackEdge > -15
           var16 = 1
+          var16 += 0.1
         endif
         CallI JumpScr
       endif
+      Seek shield
       Return
     elif Equal var17 2
       var16 = 1
@@ -154,7 +152,7 @@ if Rnd < 0.7
   endif
 endif
 
-if Rnd < 0.3
+if Rnd < 0.2
   if Rnd < 0.3
     var16 = 3
     CallI JumpScr
@@ -173,5 +171,3 @@ endif
 Seek shield
 Return
 Return
-Return
-

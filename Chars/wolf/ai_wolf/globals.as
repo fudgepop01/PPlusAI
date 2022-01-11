@@ -1,19 +1,29 @@
 #const DIRY_ABOVE = 9
-#const DIRY_BELOW = 3
+#const DIRY_BELOW_AIR = 3
+#const DIRY_BELOW_GROUND = 0
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -3
 
-#const pt_bait_dashAwayChance = 0.35
-#const pt_bait_wdashAwayChance = 0.65
 #const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.07
+#const pt_djumpiness = 0.04
+#const pt_aggression = 1.5
+#const pt_bait_dashAwayChance = 0.55
+#const pt_bait_wdashAwayChance = 0.15
+#const pt_wall_chance = 0.45
+#const pt_platChance = 0.1
+#const pt_baitChance = 0.75
+#const pt_braveChance = 0.85
+#const pt_circleCampChance = 0.4
 
-#const pt_dashForceTurnFrame = 9
-#const pt_dashDanceMinFrames = 6
+#const cs_recoveryDistY = -80
+#const cs_recoveryDistX = 60
 
-#const pt_shortHopHeight = 12.344
-#const pt_djumpHeight = 33.514
-#const pt_wavedashDist = 25
+#const cs_dashForceTurnFrame = 9
+#const cs_dashDanceMinFrames = 6
+
+#const cs_shortHopHeight = 12.344
+#const cs_djumpHeight = 33.514
+#const cs_wavedashDist = 25
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) 
@@ -23,19 +33,19 @@
 
 
 // jab123
-#const jab123_IASA = 34
-#const jab123_xOffset = 15.84
-#const jab123_yOffset = 1.18
-#const jab123_xRange = 5.79
-#const jab123_yRange = 6.4
+#const jab123_IASA = 14
+#const jab123_xOffset = 5.44
+#const jab123_yOffset = -1.02
+#const jab123_xRange = 7.1
+#const jab123_yRange = 5.2
 #const jab123_hitFrame = 4
 #const jab123_lastHitFrame = 5
-#const jab123_damage_info = Jab123|4|40|150|361
+#const jab123_damage_info = Jab123|4|20|53|80
 
 // dashattack
 #const dashattack_IASA = 39
 #const dashattack_xOffset = 22.13
-#const dashattack_yOffset = -4.76
+#const dashattack_yOffset = 2.1
 #const dashattack_xRange = 7.77
 #const dashattack_yRange = 11.07
 #const dashattack_hitFrame = 11
@@ -170,23 +180,25 @@
 
 
 // sideB
-#const sspecial_IASA = calc(18 + 5 + 36)
-#const sspecial_xOffset = 28
-#const sspecial_yOffset = -14
-#const sspecial_xRange = 6
-#const sspecial_yRange = 8
-#const sspecial_hitFrame = 17
-#const sspecial_lastHitFrame = 20
-#const sspecial_damage_info = SSpecial|3|68|60|60
+//18 + 5 + 36
+#const sspecial_IASA = 59 
+#const sspecial_xOffset = 0
+#const sspecial_yOffset = 0
+#const sspecial_xRange = 20
+#const sspecial_yRange = 14
+#const sspecial_hitFrame = 19
+#const sspecial_lastHitFrame = 22
+#const sspecial_damage_info = SSpecial|16|60|100|30
 
-#const sspecialair_IASA = calc(18 + 5 + 36)
-#const sspecialair_xOffset = 28
-#const sspecialair_yOffset = -14
-#const sspecialair_xRange = 6
-#const sspecialair_yRange = 8
-#const sspecialair_hitFrame = 17
-#const sspecialair_lastHitFrame = 20
-#const sspecialair_damage_info = SSpecialAir|3|68|60|60
+//18 + 5 + 36
+#const sspecialair_IASA = 59 
+#const sspecialair_xOffset = 0
+#const sspecialair_yOffset = 0
+#const sspecialair_xRange = 20
+#const sspecialair_yRange = 14
+#const sspecialair_hitFrame = 19
+#const sspecialair_lastHitFrame = 22
+#const sspecialair_damage_info = SSpecialAir|16|60|100|30
 
 // grab
 // when I want to techchase using grab, i'll set move_variant to this value
@@ -201,10 +213,18 @@
 #const grab_lastHitFrame = 7
 #const grab_damage_info = Grab|0|0|0|0
 
+#const fthrow_IASA = 30
+#const fthrow_throwFrame = 10
 #const fthrow_damage_info = Grab|2|54|135|45
+#const dthrow_IASA = 48
+#const dthrow_throwFrame = 25
 #const dthrow_damage_info = Grab|3|70|50|55
+#const bthrow_IASA = 43
+#const bthrow_throwFrame = 21
 #const bthrow_damage_info = Grab|5|70|58|-60
-#const uthrow_damage_info = Grab|2|70|100|77
+#const uthrow_IASA = 44
+#const uthrow_throwFrame = 16
+#const uthrow_damage_info = Grab|2|70|110|77
 
 // NAir
 #const nair_IASA = 40

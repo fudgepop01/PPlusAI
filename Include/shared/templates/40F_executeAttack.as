@@ -16,27 +16,15 @@ XReciever
 Seek start
 
 if Equal AirGroundState 1
-  immediateTempVar = move_xOffset + move_xRange
-  if immediateTempVar < DIRX_BACK && Equal Direction OPos
+  GET_CHAR_TRAIT(immediateTempVar, chr_get_moveDir)
+
+  if immediateTempVar < 0 && Equal Direction OPos
     immediateTempVar = OPos * -1
     AbsStick immediateTempVar
     Return
-  elif immediateTempVar > DIRX_BACK && !(Equal Direction OPos)
+  elif immediateTempVar > 0 && !(Equal Direction OPos)
     immediateTempVar = OPos
     AbsStick immediateTempVar
-    Return
-  endif
-endif
-
-if OAnimFrame < 23
-  if OCurrAction >= hex(0x4E) && OCurrAction <= hex(0x52)
-    Return
-  elif OCurrAction >= hex(0x60) && OCurrAction <= hex(0x61)
-    Return
-  endif
-endif
-$ifLastOrigin(grab,false)
-  if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D) || Equal OCurrAction hex(0x53) || Equal OCurrAction hex(0x54)
     Return
   endif
 endif
@@ -55,8 +43,12 @@ endif
 if Rnd > techSkill
   Return
 endif
-#let lastFrameDmg = var6
-lastFrameDmg = ODamage
+#let lastHitFrame = var6
+if Equal AirGroundState 1
+  Seek
+  Return
+endif
+label
 Cmd30
 ClearStick
 {SKIP_EXEC}
@@ -85,6 +77,16 @@ label execDA
   endif
   Seek execDA
   Return
+label getHeight
+  immediateTempVar = 0
+  if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D) || Equal OCurrAction hex(0x53) || Equal OCurrAction hex(0x54)
+    immediateTempVar = -0.5
+  elif OCurrAction >= hex(0x44) && OCurrAction <= hex(0x49) || Equal OCurrAction hex(0x42)
+    if OYDistBackEdge > -8 && OYSpeed < 0
+      immediateTempVar = -0.5
+    endif
+  endif 
+  Return
 label PFC
   XGoto PerFrameChecks
   XReciever
@@ -100,26 +102,86 @@ label common_checks
   XReciever
 
   if Equal CanCancelAttack 1 && CurrAction >= hex(0x24) && CurrAction <= hex(0x34)
-    lastAttack = -1
-    scriptVariant = sv_none
-    Call MainHub
+    Seek finish
+    Jump
   elif CurrAction <= hex(0x20)
-    lastAttack = -1
-    scriptVariant = sv_none
-    Call MainHub
+    Seek finish
+    Jump
   endif
 
+  if Equal OFramesHitlag 1
+    ADJUST_PERSONALITY idx_aggression 0.002
+    if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
+      ADJUST_PERSONALITY idx_circleCampChance 0.015
+      if Equal currGoal cg_camp_attack
+        ADJUST_PERSONALITY idx_aggression 0.002
+      endif
+    elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
+      ADJUST_PERSONALITY idx_baitChance -0.04
+      ADJUST_PERSONALITY idx_aggression 0.002
+      if Equal currGoal cg_attack_reversal
+        ADJUST_PERSONALITY idx_aggression 0.005
+      elif Equal currGoal cg_attack_overshoot || Equal currGoal cg_attack_undershoot
+        ADJUST_PERSONALITY idx_baitChance 0.01
+      elif Equal currGoal cg_attack_wall
+        ADJUST_PERSONALITY idx_baitChance 0.005
+        ADJUST_PERSONALITY idx_circleCampChance 0.025
+      endif
+    elif Equal currGoal cg_bait_attack
+      ADJUST_PERSONALITY idx_baitChance 0.01
+    endif
+
+    if Equal AirGroundState 2
+      ADJUST_PERSONALITY idx_jumpiness 0.003
+      if Rnd < 0.3
+        ADJUST_PERSONALITY idx_djumpiness 0.002
+      endif
+    else
+      ADJUST_PERSONALITY idx_jumpiness -0.002
+      ADJUST_PERSONALITY idx_djumpiness -0.002
+    endif
+
+    if OKBSpeed > 3
+      if CHANCE_MUL_LE PT_AGGRESSION 0.6
+        currGoal = cg_attack
+      else
+        currGoal = cg_bait_dashdance
+      endif
+    else
+      currGoal = cg_attack
+    endif
+  endif
+
+  // L cancel
+  if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.3 && YDistFloor < 7 && Equal CurrAction hex(0x33)
+    Button R
+  endif
+
+  // just for those with FSM
+  immediateTempVar = AnimFrame * 0.8
   if Equal scriptVariant sv_execute_fastfall && Equal AirGroundState 2 && YSpeed <= 0
     AbsStick 0 (-1)
     scriptVariant = sv_none
-  elif Equal IsOnStage 1 && !(Equal ODamage lastFrameDmg) && LevelValue >= LV8 && Equal AirGroundState 2
-    lastFrameDmg = ODamage + 1
-    if YSpeed <= 0
+  elif Equal IsOnStage 1 && immediateTempVar > lastHitFrame && LevelValue >= LV8 && Equal AirGroundState 2
+    immediateTempVar = EndFrame - AnimFrame 
+    if YSpeed <= 0 && immediateTempVar > 20 && Equal CurrAction hex(0x33)
       AbsStick 0 (-1)
     endif
-  else
-    lastFrameDmg = ODamage
   endif
   {COMMON_EXTENSION}
+Return
+label finish
+  lastAttack = -1
+  scriptVariant = sv_none
+  if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || Equal currGoal cg_attack || CHANCE_MUL_LE PT_AGGRESSION 0.25
+    XGoto CalcAttackGoal
+    XReciever
+    skipMainInit = mainInitSkip
+    currGoal = cg_attack_reversal
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.75
+    skipMainInit = mainInitSkip
+    currGoal = cg_bait_dashdance
+  endif
+  CallI MainHub
 Return
 Return

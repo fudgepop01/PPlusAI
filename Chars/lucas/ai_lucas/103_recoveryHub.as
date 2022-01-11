@@ -46,13 +46,15 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 12) && Rnd < 0.5
+
+  {PRE_CONDITIONS}
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 30) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -95,49 +97,6 @@
 #endsnippet
 
 #snippet USPECIAL
-  if Equal isBelowStage 1
-    if nearCliffX > TopNX
-      nearCliffX += 2
-    else
-      nearCliffX -= 2
-    endif
-  endif
-
-  if !(Equal CurrSubaction hex(0x1DF))
-    if !(NoOneHanging) && !(Equal isBelowStage 1)
-      nearCliffY -= 45
-    endif
-
-    if trickAngleValue < trickAngleChance
-      immediateTempVar = Rnd * 70 + 20
-      nearCliffY -= immediateTempVar
-    endif
-
-    #let absNCX = var4
-    #let NCY = var3
-    absNCX = nearCliffX
-    NCY = nearCliffY
-
-    Norm globTempVar nearCliffX nearCliffY
-    nearCliffX /= globTempVar
-    nearCliffY /= globTempVar
-    nearCliffX *= -1
-    nearCliffY *= -1
-
-    if 0.1 < nearCliffX && nearCliffX < 0.25
-      AbsStick 0.3 nearCliffY
-    elif -0.25 < nearCliffX && nearCliffX < -0.1
-      AbsStick -0.3 nearCliffY
-    else
-      AbsStick nearCliffX nearCliffY
-    endif
-  else
-    globTempVar = TopNX * -1
-    AbsStick globTempVar
-  endif
-#endsnippet
-
-#snippet USPECIAL
   #const startDist = 40
   #const endDist = 6
   #const time = 30
@@ -151,6 +110,26 @@
   #let nearCliffX = var1
   #let nearCliffY = var2
   NEAREST_CLIFF(nearCliffX, nearCliffY)
+
+  if !(Equal isBelowStage 1)
+    if !(NoOneHanging)
+      nearCliffY -= 20
+    endif
+
+    if trickAngleValue < trickAngleChance
+      immediateTempVar = 20
+      nearCliffY += YDistBackEdge
+      nearCliffY -= immediateTempVar
+    endif
+
+    if highHighUpBValue <= highHighUpBChance && YDistBackEdge > calc(UpBYDist - 100) || highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40)
+      if TopNX > 0
+        nearCliffX += 3
+      else
+        nearCliffX -= 3
+      endif
+    endif
+  endif
 
   #let targetPosX = var3
   #let targetPosY = var4

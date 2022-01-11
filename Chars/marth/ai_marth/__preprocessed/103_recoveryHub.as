@@ -11,6 +11,8 @@ label reroll
   var7 = Rnd
 label begin
 var21 = 3
+SetDebugOverlayColor 255 136 0 221
+EnableDebugOverlay
 
 if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
@@ -30,9 +32,9 @@ var17 = var1 - var0
 var16 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
-    var2 = 5
+    var2 = 4
   else
-    var2 = -5
+    var2 = -4
   endif
 elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
@@ -99,6 +101,9 @@ endif
 
 if Equal var2 0 || Equal AirGroundState 1
   var21 = 0
+  var20 = -1
+  var14 = BBoundary
+  var13 = 0
   Call MainHub
 endif
 
@@ -121,13 +126,21 @@ endif
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
-  if Equal var4 1 || var5 <= 0.3
+  if !(NoOneHanging) && !(Equal var16 1)
+    var1 -= 25
+  endif
+  if YDistBackEdge < 21 && var2 <= 15 && NumJumps > 0
+    Button X
+    Goto handleJumpToStage
+    Return
+  endif
+  if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
     if YDistBackEdge > 19 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 63 || var17 < 18
+  elif YDistBackEdge > 53 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -140,20 +153,20 @@ endif
       Return
     endif
   endif
-  if var7 <= 0.4 && YDistBackEdge > -80 && YDistBackEdge < 80 && var2 <= 50
+  if var7 <= 0.4 && YDistBackEdge > -80 && YDistBackEdge < 80 && var2 <= 50 && AnimFrame >= 30
     Button B
     ClearStick
     Stick 1
     Return
   endif
-  if var6 <= 0.15 && YDistBackEdge > 18 && Equal var4 0
+  if var6 <= 0.1 && YDistBackEdge > 38 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 20 && YDistBackEdge > 52 && Equal var4 0
+  if var2 <= 20 && YDistBackEdge > 42 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
@@ -177,18 +190,18 @@ label handleSSpecial
 Return
 
 label handleUSpecial
-  Seek reroll
-  if !(Equal CurrSubaction 470) && !(Equal CurrSubaction 471)
-    var21 = 0
-    Call MainHub
-  endif
-  if Equal var16 0 && var1 > 0
-    GetRndPointOnStage var0
-    var17 = var0 - TopNX
-    AbsStick var17
+  if AnimFrame > 2 && AnimFrame < 5
+    var22 = TopNX
+    if Equal var16 0
+      var22 *= -1
+    endif
+    AbsStick var22
   else
-    var17 = var0 * -1
-    AbsStick var17
+    if var0 > TopNX
+      var0 -= 2
+    endif
+    var22 = TopNX * -1
+    AbsStick var22
   endif
 Return
 
@@ -197,7 +210,7 @@ label handleDSpecial
 Return
 
 label handleSFall
-  var17 = var0 * -1
+  var17 = TopNX * -1
   AbsStick var17
 Return
 
@@ -208,6 +221,9 @@ label handleJumpToStage
     AbsStick var17
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
+    AbsStick var17
+  elif YDistBackEdge < 25
+    var17 = var0 * -3
     AbsStick var17
   endif
 Return

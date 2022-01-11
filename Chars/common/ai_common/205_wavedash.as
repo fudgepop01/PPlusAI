@@ -13,12 +13,15 @@ label setup
   airTime = 1 - airTime
   airTime *= Rnd * 4
   if Equal AirGroundState 2
-    if YDistBackEdge < -15
+    if YDistFloor > 15
       CallI MainHub
     endif
     Seek landing
   endif
-  ACTIONABLE_ON_GROUND
+  if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
+  elif True
+    ACTIONABLE_ON_GROUND
+  endif  
   Button X
   Seek
   Return
@@ -68,8 +71,21 @@ label landing
       endif
       immediateTempVar = OPos * -1
       AbsStick immediateTempVar (-1)
+    elif Equal scriptVariant sv_wavedash_goal
+      GET_CHAR_TRAIT(globTempVar, chr_cs_wavedashDist)
+      immediateTempVar = goalX - TopNX
+      globTempVar = 1 / globTempVar
+      immediateTempVar *= globTempVar
+      globTempVar = immediateTempVar
+      Abs globTempVar
+      globTempVar = 1 - immediateTempVar
+      if globTempVar > -0.3
+        globTempVar = -0.3
+      endif
+      AbsStick immediateTempVar globTempVar
     else
       label
+      ClearStick
       AbsStick 0 (-1)
     endif 
     Call MainHub

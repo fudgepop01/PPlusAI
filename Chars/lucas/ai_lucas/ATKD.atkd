@@ -12,7 +12,7 @@ AttackS3Lw_AttackS3S_ unk=0,start=5,end=9,xmin=2.00,xmax=22.00,ymin=-2.00,ymax=8
 AttackHi3 unk=30,start=7,end=12,xmin=-10.11,xmax=13.16,ymin=0.08,ymax=25.95
 AttackLw3 unk=14,start=3,end=4,xmin=3.66,xmax=16.42,ymin=-0.53,ymax=6.90
 AttackS4S unk=39,start=7,end=9,xmin=-1.82,xmax=19.47,ymin=0.06,ymax=10.76
-AttackHi4 unk=0,start=23,end=48,xmin=-14.00,xmax=14.00,ymin=0.00,ymax=48.00
+AttackHi4 unk=0,start=17,end=28,xmin=-10.00,xmax=10.00,ymin=7.00,ymax=36.00
 AttackLw4 unk=0,start=14,end=35,xmin=-3.00,xmax=21.00,ymin=-10.00,ymax=15.00
 subaction0x3A unk=21,start=4,end=8,xmin=1.52,xmax=13.52,ymin=-3.00,ymax=9.00
 AttackAirN unk=43,start=4,end=19,xmin=-7.25,xmax=7.80,ymin=-2.50,ymax=12.50

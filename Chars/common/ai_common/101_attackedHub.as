@@ -4,12 +4,6 @@ unk 0x0
 
 XReciever
 currGoal = cg_inHitstun
-if Equal OHitboxConnected 1
-  immediateTempVar = TopNX - OTopNX
-  Abs immediateTempVar
-  immediateTempVar += 6
-  trackOAction man_OXHitDist immediateTempVar
-endif
 
 // label inThrow
 // #let techDirection = var5
@@ -29,11 +23,17 @@ if FramesHitlag > 2
   // SDI input frequency:
   // level 9: once per 20 frames
   // level 1: once per 50 frames
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 20
+  #let sdiChance = var0
+  sdiChance = PT_SDICHANCE
+  
+  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10
+  if PT_REACTION_TIME > 0.5
+    immediateTempVar *= PT_REACTION_TIME
+  else
+    immediateTempVar *= 0.5
+  endif
   MOD immediateTempVar FramesHitlag immediateTempVar
 
-  #let sdiChance = var0
-  GET_CHAR_TRAIT_SEEK(sdiChance, chr_pt_SDIChance, hitlag)
   if Equal immediateTempVar 6 && Rnd <= sdiChance
     globTempVar = OPos * -1
     if XDistBackEdge > -shortEdgeRange
@@ -45,34 +45,33 @@ if FramesHitlag > 2
     endif
     AbsStick globTempVar immediateTempVar
   endif
+
+  if FramesSinceShield > 10 && Equal AirGroundState 2
+    if FramesSinceShield > 100
+      Button R
+    elif YDistFloor < 10 && Rnd < 0.7 && KBAngle < 40
+      Button R
+    endif
+  endif
   Return
 elif FramesHitlag > 1
   immediateTempVar = 0
   globTempVar = LevelValue * 0.01
   if LevelValue >= LV6 && Rnd < globTempVar
     immediateTempVar = TopNX * -1
-    if FramesSinceShield > 40
-      if FramesSinceShield > 100
-        Button R
-      elif YDistBackEdge > -10 && Rnd < 0.45
-        Button R
-      endif
-    endif
   endif
 
   predictionConfidence globTempVar man_ODefendOption LevelValue
   globTempVar *= 2
   predictOOption anotherTempVar man_ODefendOption LevelValue 
 
-  if Rnd < 0.75
+  if Rnd < 0.75 && Rnd < globTempVar
     AbsStick immediateTempVar (-1)
   elif Rnd < globTempVar && Equal anotherTempVar op_defend_attack 
     AbsStick OPos (-1)
   else
     AbsStick immediateTempVar
   endif
-  Return
-elif FramesHitlag > 1
   Return
 endif
 
@@ -93,7 +92,7 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     if KBAngle > 90 && KBAngle < 170
       stickX *= -1
     endif  
-    if Rnd < 0.2
+    if Rnd < 0.2 || KBSpeed > 3
       stickX *= -1
     endif
   else
@@ -103,6 +102,9 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     stickY = (Rnd * 2) - 1
     if Rnd < 0.5
       stickY -= 0.5
+    endif
+    if KBSpeed > 3
+      stickY = 1
     endif
   else
     stickY = (Rnd * 2) - 1
@@ -162,8 +164,12 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
         if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
           stickX = TotalXSpeed
           if stickX > -1 && stickX < 1
-            stickX = Rnd * 4 - 2
-            stickX *= 10
+            stickX = OPos * -1
+            if Rnd < 0.3
+              stickX *= 0.6
+            elif Rnd < 0.1
+              stickX *= -1
+            endif
           endif
           // if Rnd < 0.15
           //   stickX *= -1
@@ -211,7 +217,7 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     label
 
     // techskill
-    immediateTempVar = LevelValue * 0.01
+    immediateTempVar = LevelValue * 0.004
     immediateTempVar -= 0.1
     if immediateTempVar < 0.05
       immediateTempVar = 0.05
@@ -240,13 +246,15 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     // endif
 
     // techskill
-    immediateTempVar = LevelValue * 0.01
-    immediateTempVar -= 0.1
-    if immediateTempVar < 0.05
-      immediateTempVar = 0.05
+    immediateTempVar = 100 - LevelValue
+    immediateTempVar *= 0.005
+    if immediateTempVar > 0.9
+      immediateTempVar = 0.9
+    elif immediateTempVar < 0.2
+      immediateTempVar = 0.2
     endif
 
-    if Rnd > immediateTempVar
+    if Rnd < immediateTempVar
       Return
     endif
     Goto _hitstunEnd
@@ -289,16 +297,16 @@ Return
 label _checkTech
   if techWindow <= 0
     if CurrAction >= hex(0x42) && CurrAction <= hex(0x4D) && FramesSinceShield > 40
-      globTempVar = OEndFrame - 25
+      globTempVar = OEndFrame - 23
       if Equal CurrAction hex(0x42)
         if OAnimFrame < globTempVar || Rnd < 0.1
           Return
         endif
       endif
       globTempVar = (100 - LevelValue) / 100 * -1
-      globTempVar += 0.50
-      if Rnd < globTempVar
-        if TotalYSpeed <= 0.03 || Equal CurrAction hex(0x42)
+      globTempVar += 0.80
+      if Rnd < globTempVar && YDistFloor < 20
+        if TotalYSpeed <= 0.3 || Equal CurrAction hex(0x42)
           techDirection = Rnd * 4 - 2
         endif
         Button R

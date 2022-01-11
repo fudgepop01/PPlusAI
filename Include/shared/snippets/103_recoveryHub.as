@@ -26,7 +26,7 @@
 #endsnippet
 
 #snippet SFALL
-  globTempVar = nearCliffX * -1
+  globTempVar = TopNX * -1
   AbsStick globTempVar
 #endsnippet
 
@@ -38,6 +38,20 @@
   elif nearCliffX > 6 || nearCliffX < -6
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
+  elif YDistBackEdge < cs_djumpHeight
+    globTempVar = nearCliffX * -3
+    AbsStick globTempVar
+  endif
+#endsnippet
+
+#snippet PRE_CONDITIONS
+  if !(NoOneHanging) && !(Equal isBelowStage 1)
+    nearCliffY -= 25
+  endif
+  if YDistBackEdge < calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
+    Button X
+    Goto handleJumpToStage
+    Return
   endif
 #endsnippet
 

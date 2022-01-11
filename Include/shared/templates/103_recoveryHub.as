@@ -8,6 +8,8 @@ label reroll
 {INITIALIZATION}
 label begin
 currGoal = cg_recover
+SetDebugOverlayColor color(0xFF8800DD)
+EnableDebugOverlay
 
 if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
   CallI AttackedHub
@@ -85,6 +87,9 @@ GOING_OFFSTAGE(isGoingOffstage, var3, 15)
 
 if Equal isGoingOffstage 0 || Equal AirGroundState 1
   currGoal = cg_nothing
+  lastAttack = -1
+  goalY = BBoundary
+  goalX = 0
   Call MainHub
 endif
 

@@ -2,49 +2,46 @@
 #endsnippet
 
 #snippet LAUNCH_MOVES
-  $addToDice(sspecial)
+  $addToDice(1, sspecial, 1)
 #endsnippet
 
 #snippet TECHCHASE_MOVES
-  $addToDice(sspecial)
+  $addToDice(1, sspecial, 1)
 #endsnippet
 
 #snippet ESCAPE_MOVES
   if !(ODistLE 10)
-    $addToDice(sspecial)
-    $addToDice(sspecialair)
+    $addToDice(1, sspecial, 1)
+    $addToDice(1, sspecialair, 1)
   endif
 #endsnippet
 
 #snippet SPACING_MOVES
   if !(ODistLE 10)
-    $addToDice(sspecial)
-    $addToDice(sspecialair)
+    $addToDice(1, sspecial, 1)
+    $addToDice(1, sspecialair, 1)
   endif
-  $addToDice(fair)
-  $addToDice(fair)
+  $addToDice(1, fair, 2)
 #endsnippet
 
 #snippet PRESSURE_MOVES
-  $addToDice(sspecial)
-  $addToDice(fair)
-  $addToDice(fair)
+  $addToDice(1, sspecial, 1)
+  $addToDice(1, fair, 2)
 #endsnippet
 
 #snippet BREAKCC_MOVES
-  $addToDice(sspecial)
+  $addToDice(1, sspecial, 1)
 #endsnippet
 
 #snippet BAIT_MOVES
   if !(ODistLE 10)
-    $addToDice(sspecial)
-    $addToDice(sspecialair)
+    $addToDice(1, sspecial, 1)
+    $addToDice(1, sspecialair, 1)
   endif
-  $addToDice(fair)
-  $addToDice(fair)
+  $addToDice(1, fair, 2)
 #endsnippet
 
 #snippet CAMP_MOVES
-  $addToDice(sspecial)
-  $addToDice(sspecialair)
+  $addToDice(1, sspecial, 1)
+  $addToDice(1, sspecialair, 1)
 #endsnippet

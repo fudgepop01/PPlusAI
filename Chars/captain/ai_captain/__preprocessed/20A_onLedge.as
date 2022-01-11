@@ -96,10 +96,10 @@ if Equal var22 0 && Equal var0 1
   Return
 endif
 
-  var10 = 15
+  var22 = 15
   XGoto GetChrSpecific
   XReciever
-  var1 = var10
+var1 = var22
   Seek lrExec
 var22 = var1
 if YDistBackEdge >= var22
@@ -118,10 +118,10 @@ if Equal var22 0 && Equal var0 1
   Return
 endif
 
-  var10 = 15
+  var22 = 15
   XGoto GetChrSpecific
   XReciever
-  var1 = var10
+var1 = var22
   Seek lrExec
 var22 = var1 + 1
 if YDistBackEdge >= var22

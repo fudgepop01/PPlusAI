@@ -1,43 +1,47 @@
+#snippet ADDITIONAL_FILTERS
+  $ifLastAttack(dspecialair)
+    if Equal NumJumps 0
+      lastAttack = -1
+    endif
+  $elifLastAttack(nspecial)
+    lastAttack = -1
+  endif
+#endsnippet
+
 #snippet COMBO_MOVES
-  $addToDice(dspecial)
-  $addToDice(fair)
-  $addToDice(uthrow)
-  $addToDice(dthrow)
+  // $addToDice(dspecial)
+  // $addToDice(fair)
+  // $addToDice(uthrow)
+  // $addToDice(dthrow)
 #endsnippet
 
 #snippet PANIC_MOVES
-  $addToDice(dspecialair)
+  $addToDice(1, dspecialair, 2.5)
 #endsnippet
 
 #snippet LAUNCH_MOVES
-  $addToDice(dspecial)
-  $addToDice(dair)
+  $addToDice(1, dspecial, 2.5)
 #endsnippet
 
 #snippet PRESSURE_MOVES
-  $addToDice(nair)
-  $addToDice(nair)
-  $addToDice(dspecial)
-  $addToDice(dair)
+  // $addToDice(nair)
+  $addToDice(1, nair, 3)
+  // $addToDice(dspecial)
+  // $addToDice(dair)
 #endsnippet
 
 #snippet BREAKCC_MOVES
-  $addToDice(dair)
+  // $addToDice(dair)
 #endsnippet
 
 #snippet BAIT_MOVES
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
+  $addToDice(1, nspecialair, 2)
 #endsnippet
 
 #snippet SPACING_MOVES
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
+  $addToDice(1, nspecialair, 2)
 #endsnippet
 
 #snippet CAMP_MOVES
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
-  $addToDice(nspecialair)
+  $addToDice(1, nspecialair, 3)
 #endsnippet

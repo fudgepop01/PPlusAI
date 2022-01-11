@@ -1,31 +1,26 @@
 #const DIRY_ABOVE = 15
-#const DIRY_BELOW = 3
+#const DIRY_BELOW_AIR = 3
+#const DIRY_BELOW_GROUND = -1
 #const DIRX_FRONT = 4
 #const DIRX_BACK = 0
 
-// #const pt_bait_dashAwayChance = 0.85
-// #const pt_bait_wdashAwayChance = 0.25
-// #const pt_jumpiness = 0.1
-// #const pt_djumpiness = 0.07
-// #const pt_aggression = 0.95
-
-#const pt_jumpiness = 0.4
-#const pt_djumpiness = 0.1
-#const pt_aggression = 0.75
-#const pt_bait_dashAwayChance = 0.55
-#const pt_bait_wdashAwayChance = 0.25
+#const pt_jumpiness = 0.1
+#const pt_djumpiness = 0.04
+#const pt_aggression = 1.5
+#const pt_bait_dashAwayChance = 0.6
+#const pt_bait_wdashAwayChance = 0.15
 #const pt_wall_chance = 0.4
 #const pt_platChance = 0.1
 #const pt_baitChance = 0.75
 #const pt_braveChance = 0.85
-#const pt_circleCampChance = 0.35
+#const pt_circleCampChance = 0.55
 
-#const pt_dashForceTurnFrame = 9
-#const pt_dashDanceMinFrames = 6
+#const cs_dashForceTurnFrame = 9
+#const cs_dashDanceMinFrames = 6
 
-#const pt_shortHopHeight = 25.344
-#const pt_djumpHeight = 39.514
-#const pt_wavedashDist = 25
+#const cs_shortHopHeight = 25.344
+#const cs_djumpHeight = 39.514
+#const cs_wavedashDist = 32
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
@@ -197,9 +192,20 @@
 #const grab_lastHitFrame = 7
 #const grab_damage_info = Grab|0|0|0|0
 
+#const fthrow_IASA = 35
+#const fthrow_throwFrame = 10
 #const fthrow_damage_info = Grab|3|35|130|45
+
+#const dthrow_IASA = 45
+#const dthrow_throwFrame = 32
 #const dthrow_damage_info = Grab|1|150|40|270
-#const bthrow_damage_info = Grab|2|80|85|-56
+
+#const bthrow_IASA = 40
+#const bthrow_throwFrame = 8
+#const bthrow_damage_info = Grab|2|80|85|56
+
+#const uthrow_IASA = 40
+#const uthrow_throwFrame = 6
 #const uthrow_damage_info = Grab|2|75|110|90
 
 // NAir
@@ -256,17 +262,18 @@
 #const uair_yOffset = -4.33
 #const uair_xRange = 5.88
 #const uair_yRange = 8.25
-#const uair_hitFrame = 8
+#const uair_hitFrame = 11
 #const uair_lastHitFrame = 14
 #const uair_damage_info = UAir|13|40|116|85
 
 #const mv_uair_weak = 1
-#const uair_weak_xOffset = -5.05
-#const uair_weak_yOffset = -4.33
-#const uair_weak_xRange = 5.88
-#const uair_weak_yRange = 8.25
+#const uair_weak_IASA = 35
+#const uair_weak_xOffset = -4.33
+#const uair_weak_yOffset = -5.6
+#const uair_weak_xRange = 5.11
+#const uair_weak_yRange = 7.12
 #const uair_weak_hitFrame = 8
-#const uair_weak_lastHitFrame = 14
+#const uair_weak_lastHitFrame = 9
 #const uair_weak_damage_info = UAir|4|w30|120|92
 
 // DAir

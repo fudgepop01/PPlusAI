@@ -98,7 +98,7 @@ if Equal immediateTempVar 0 && Equal grabbed 1
 endif
 
 #let djumpHeight = var1
-GET_CHAR_TRAIT_SEEK(djumpHeight, chr_pt_djumpHeight, lrExec)
+GET_CHAR_TRAIT_SEEK(djumpHeight, chr_cs_djumpHeight, lrExec)
 immediateTempVar = djumpHeight
 if YDistBackEdge >= immediateTempVar
   Button X
@@ -118,7 +118,7 @@ if Equal immediateTempVar 0 && Equal grabbed 1
 endif
 
 #let djumpHeight = var1
-GET_CHAR_TRAIT_SEEK(djumpHeight, chr_pt_djumpHeight, lrExec)
+GET_CHAR_TRAIT_SEEK(djumpHeight, chr_cs_djumpHeight, lrExec)
 immediateTempVar = djumpHeight + 1
 if YDistBackEdge >= immediateTempVar
   Button X

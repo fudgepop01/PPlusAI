@@ -37,11 +37,18 @@ endif
 label locomotion
 XGoto PerFrameChecks
 XReciever
+if !(Equal lastAttack -1) 
+  XGoto SetAttackGoal
+  XReciever
+  XGoto CheckAttackWillHit
+  XReciever
+endif
 if Equal shouldFullHop 1 && Equal AirGroundState 1
   Seek jumpCommand
 else
   Seek locomotion
 endif
+
 
 if Equal CurrSubaction JumpSquat
   Button X
@@ -52,6 +59,14 @@ if Equal scriptVariant sv_jump_over
   endif
   AbsStick savedOPos
   if !(Equal savedOPos OPos) || YSpeed < 0
+    Seek
+    Jump
+  elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
+    label
+    if currGoal < cg_attack || currGoal > calc(cg_attack + 1)
+      scriptVariant = sv_aerialdrift_away
+      CallI AerialDrift
+    endif
     CallI MainHub
   endif
 elif Equal scriptVariant sv_jump_neutral

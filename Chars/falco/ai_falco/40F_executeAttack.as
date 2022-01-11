@@ -31,13 +31,13 @@
   AbsStick OPos
   Seek nspecialair
   if !(Equal CurrSubaction hex(0x1d2)) && Equal AirGroundState 2
-    if !(Equal CurrSubaction JumpSquat) && AnimFrame >= 9 && Rnd < 0.8
+    if !(Equal CurrSubaction JumpSquat) && AnimFrame >= 6 && Rnd < 0.8
       ClearStick
       Button B
     endif
     Return
   elif True
-    if AnimFrame >= 2 && Rnd <= 0.35 && Equal IsOnStage 1 && Equal AirGroundState 2
+    if AnimFrame >= 5 && Rnd <= techSkill && Equal IsOnStage 1 && Equal AirGroundState 2
       scriptVariant = sv_execute_fastfall
     endif
   endif

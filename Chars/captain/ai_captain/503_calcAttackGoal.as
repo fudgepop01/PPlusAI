@@ -1,3 +1,11 @@
+#snippet FILTER_CHECKS
+  $ifLastAttack(dair_spike)
+    if Equal OIsOnStage 1 && OYDistBackEdge > -20 
+      Return
+    endif
+  endif
+#endsnippet
+
 #snippet COMBO_MOVES
 #endsnippet
 
@@ -5,32 +13,31 @@
 #endsnippet
 
 #snippet TECHCHASE_MOVES
-  $addToDice(dthrow)
-  $addToDice(dair)
+  // $addToDice(1, dthrow, 1)
+  // $addToDice(1, dair, 1)
 #endsnippet
 
 #snippet ESCAPE_MOVES
 #endsnippet
 
 #snippet SPACING_MOVES
-  $addToDice(nair)
-  $addToDice(nair)
+  $addToDice(1, nair, 2)
 #endsnippet
 
 #snippet PRESSURE_MOVES
-  $addToDice(nair)
-  $addToDice(nair)
-  $addToDice(fair)
+  // $addToDice(1, nair, 1)
+  // $addToDice(1, nair, 1)
+  // $addToDice(1, fair, 1)
 #endsnippet
 
 #snippet BREAKCC_MOVES
-  $addToDice(dair)
+  // $addToDice(1, dair, 1)
 #endsnippet
 
 #snippet BAIT_MOVES
-  $addToDice(fair)
-  $addToDice(nair)
-  $addToDice(uair)
+  // $addToDice(1, fair, 1)
+  $addToDice(1, nair, 1)
+  // $addToDice(1, uair, 1)
 #endsnippet
 
 #snippet CAMP_MOVES

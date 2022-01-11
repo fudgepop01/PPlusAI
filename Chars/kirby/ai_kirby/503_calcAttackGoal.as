@@ -1,21 +1,21 @@
 #snippet KILL_MOVES
   // if YDistBackEdge < -45 && TopNY > OTopNY
-  //   $addToDice(dspecialair)
+  //   $addToDice(1, dspecialair, 1)
   // endif
 #endsnippet
 
 #snippet COMBO_MOVES
-  $addToDice(uspecial)
+  $addToDice(1, uspecial, 1)
 #endsnippet
 
 #snippet PANIC_MOVES
-  $addToDice(dspecialair)
+  $addToDice(1, dspecialair, 1)
 #endsnippet
 
 #snippet LAUNCH_MOVES
 #endsnippet
 
 #snippet PRESSURE_MOVES
-  $addToDice(dspecial)
-  $addToDice(dair)
+  $addToDice(1, dspecial, 1)
+  $addToDice(1, dair, 1)
 #endsnippet

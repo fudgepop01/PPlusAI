@@ -8,21 +8,23 @@ NoRepeat
 
 //--- visualize stuffs
 if Equal PlayerNum 0
-  DrawDebugRectOutline var8 var9 5 5 255 0 0 221
+  DrawDebugRectOutline var13 var14 5 5 255 0 0 221
 elif Equal PlayerNum 1
-  DrawDebugRectOutline var8 var9 5 5 0 0 255 221
+  DrawDebugRectOutline var13 var14 5 5 0 0 255 221
 elif Equal PlayerNum 2
-  DrawDebugRectOutline var8 var9 5 5 0 255 0 221
+  DrawDebugRectOutline var13 var14 5 5 0 255 0 221
 elif Equal PlayerNum 3
-  DrawDebugRectOutline var8 var9 5 5 255 255 0 221
+  DrawDebugRectOutline var13 var14 5 5 255 255 0 221
 else
-  DrawDebugRectOutline var8 var9 5 5 34 34 34 221
+  DrawDebugRectOutline var13 var14 5 5 34 34 34 221
 endif
 //--- prevent auto-attack
 Cmd30
-
+// keeps the AI from targeting itself because that can happen for some reason
+if Equal PlayerNum OPlayerNum
+  SwitchTarget
+endif
 //--- track target stuff 
-LOGSTR 1414676736 1129006336 1381171200 0 0
 // out of tumble action
 if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
   if Equal OCurrAction 73 && Equal OAnimFrame 30
@@ -36,6 +38,15 @@ if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
       trackOAction 15 2
     endif
   endif
+endif
+// frame count after hitstun ends
+if OFramesHitstun < 0
+  getCurrentPredictValue var22 4
+  if var22 < 100
+    incrementPrediction 4
+  endif
+elif Equal OFramesHitstun 1
+  trackOAction 4 0
 endif
 // O OOS Option
 if Equal OAnimFrame 0 && OFramesSinceShield < 20
@@ -59,6 +70,15 @@ elif OCurrAction >= 36 && OCurrAction <= 52 && Equal OAnimFrame 0
     trackOAction 11 2
   else
     trackOAction 11 3
+  endif
+
+  RetrieveFullATKD var23 var23 var23 var17 var22 var23 var23 OCurrSubaction 1
+  Abs var17
+  Abs var22
+  if var17 < var22
+    trackOAction 10 var22
+  else
+    trackOAction 10 var17
   endif
 endif
 // O Tech Option
@@ -88,14 +108,20 @@ if Equal OAnimFrame 10
   endif
 endif
 // O Bait/Defend Option
-if var21 >= 10 && var21 < 11
+if var21 >= 7 && var21 < 11
   Goto baitDefendOption
+  XReciever
 elif Equal var21 13
   Goto baitDefendOption
+  XReciever
+elif Rnd < 0.2
+  Goto baitDefendOption
+  XReciever
 endif
 if !(True)
   label baitDefendOption
   var22 = (1 - (LevelValue / 100)) * 30 + 7
+  var22 *= PT_REACTION_TIME
   MOD var22 AnimFrame var22
   if Equal var22 1
     var17 = 9
@@ -108,7 +134,7 @@ if !(True)
     if ODistLE var22
       if 3 <= OCurrAction && OCurrAction <= 5 && Rnd < 0.4 && !(Equal var21 13)
         trackOAction 9 1
-        if OAnimFrame >= 6 || Equal OCurrAction 4 || Equal OCurrAction 3
+        if OAnimFrame >= 4 || Equal OCurrAction 4 || Equal OCurrAction 5
           // the target is running in a direction as a result of a bait
           if !(Equal OPos ODirection) 
             // the target is running away, therefor overshoot
@@ -122,10 +148,10 @@ if !(True)
         // the target is roughly in-place, therefor neutral
         trackOAction 9 1
         trackOAction 8 1
-      elif Equal OCurrAction 52 || Equal OCurrAction 54 || Equal OCurrAction 56 
-        trackOAction var17 2
       elif OAttacking && Rnd < 0.5 && Equal var21 13
         trackOAction var17 1
+      elif OAttacking && Rnd < 0.5 && !(Equal var21 13)
+        trackOAction 9 2
       elif 26 <= OCurrAction && OCurrAction <= 28 && Rnd < 0.6
         trackOAction var17 3
       endif
@@ -133,8 +159,6 @@ if !(True)
   endif
   Return
 endif
-
-LOGSTR 1398229248 1413695488 1163067392 0 0
 
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
@@ -145,26 +169,41 @@ elif !(Equal var21 15) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 endif
 
-LOGSTR 1413563136 1414087424 0 0 0
-
 //--- switch tactic if conditions are met
-if CurrAction >= 66 && CurrAction <= 69 && !(Equal var21 12)
+if CurrAction >= 66 && CurrAction <= 69 && !(Equal var21 12) && !(Equal OCurrAction 73)
   var22 = LevelValue * 0.01 - 0.15
-  if Equal AirGroundState 1 && Rnd < var22
-    ClearStick
-    AbsStick 0 (-1)
-  endif
   if FramesHitstun > 0
+    Goto OnGotHitAdjustments
     CallI AttackedHub
   elif Equal CurrAction 66
+    Goto OnGotHitAdjustments
     CallI AttackedHub
   endif
 endif
-if Equal var21 16.5 && Equal OIsOnStage 0 && Equal IsOnStage 0
-  var10 = 17
+
+if Equal OFramesHitlag 1 && OFramesHitstun > 0 && Equal HitboxConnected 0
+  var22 = 10000
   XGoto GetChrSpecific
   XReciever
-  var17 = var10
+endif
+
+  var22 = 20000
+  XGoto GetChrSpecific
+  XReciever
+
+if !(True)
+  label OnGotHitAdjustments
+  var22 = 30000
+  XGoto GetChrSpecific
+  XReciever
+  Return
+endif
+
+if Equal var21 16.5 && Equal OIsOnStage 0 && Equal IsOnStage 0
+  var22 = 17
+  XGoto GetChrSpecific
+  XReciever
+var17 = var22
   GetNearestCliff var22
   var22 = TopNX - var22
   var22 *= -1
@@ -172,24 +211,35 @@ if Equal var21 16.5 && Equal OIsOnStage 0 && Equal IsOnStage 0
   var23 = var23 - (TopNY * -1)
   Abs var22
   if var22 > var17
-  var10 = 18
+  var22 = 18
   XGoto GetChrSpecific
   XReciever
-  var22 = var10
     if YDistBackEdge >= var22
       CallI RecoveryHub
     endif
   endif
+  Norm var22 OXDistBackEdge OYDistBackEdge
+  Norm var17 XDistBackEdge YDistBackEdge
+
+  if var22 < var17 && YDistBackEdge > 0
+    CallI RecoveryHub
+  endif
 elif Equal var21 16.5 && Equal OIsOnStage 0
 elif !(Equal var21 3) && !(Equal var21 15) && Equal FramesHitstun 0  
   if Equal IsOnStage 0
-    GetYDistFloorOffset var22 0 25 0
-    if Equal var22 -1
+    GetYDistFloorOffset var22 15 15 0
+    GetYDistFloorOffset var17 -15 15 0
+    if Equal var22 -1 && Equal var17 -1
       CallI RecoveryHub
     endif
-  elif Equal OIsOnStage 0
-    var21 = 16.5
-    CallI MainHub
+  elif Equal OIsOnStage 0 && !(Equal var21 16.5)
+    GetYDistFloorOffset var22 15 15 1
+    GetYDistFloorOffset var17 -15 15 1
+    if Equal var22 -1 && Equal var17 -1
+      var21 = 16.5
+      var15 = -1
+      CallI MainHub
+    endif
   endif
 endif
 
@@ -197,8 +247,7 @@ if Equal CurrAction 190
   Stick 1
 endif
 
-LOGSTR 1397246208 1162626048 0 0 0
-if Equal CurrAction 29 && !(CalledAs Shield)
+if Equal CurrAction 29 && !(CalledFrom Shield)
   CallI Shield
 endif
 
@@ -218,45 +267,52 @@ endif
     Return
   endif
 
-LOGSTR 1145390592 1162760960 1157627904 0 0
-
 // react to/read the opponent's attack patterns
 var22 = (1 - (LevelValue / 100)) * 30 + 1
+var22 *= PT_REACTION_TIME
 var23 = AnimFrame - 1
 MOD var17 var23 var22
-var23 = OAnimFrame - 1
+var23 = OAnimFrame - 8
 MOD var23 var23 var22
-if !(Equal var17 0) || !(Equal var23 0)
-elif !(Equal var21 13) && !(Equal var21 16.4) && OFramesHitstun <= 0 && !(CalledAs Shield) && !(Equal var21 16.5)
+if var17 > 1 || var23 > 1
+elif Equal OCurrAction 77 && OAnimFrame > 25
+elif var21 >= 16 && var21 < 17 && !(Equal var21 16) && CHANCE_MUL_LE PT_AGGRESSION 0.3
+elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
   if OCurrAction < 66 || OCurrAction >= 72
-    if Equal AirGroundState 2 && Rnd < 0.3
-      Return
-    endif
     predictAverage var22 10 LevelValue
-    var22 += 10
+    var22 += 15
     if Equal var21 12 || Equal CurrAction 73
       var22 += 14
     endif
     if ODistLE var22
       GetCommitPredictChance var17 LevelValue
-      var17 *= 4
+      PredictOMov var23 15 LevelValue
+      if var23 > var17
+        var17 = var23
+      endif
+      var17 *= 1.2
+      var22 = 2 - PT_AGGRESSION
+      if var22 > 0.75
+        var17 *= var22
+      endif
       if Equal var21 12 || Equal CurrAction 73
         var22 = Damage * 0.1
         var17 += var22
       endif
-      var22 = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 5
-      if Rnd < var17 && Rnd < var17
-        if Rnd < 0.6
+      // var22 = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 8
+      // var22 *= PT_REACTION_TIME
+      if Rnd < var17 && CHANCE_MUL_LE var17 2
+        if Rnd < 0.7
           CallI DefendHub
-        elif Rnd < 0.75 || Equal var21 12 || Equal CurrAction 73
-          CallI DefendHub
-        endif
-      elif OAnimFrame >= var22 && OCurrAction >= 36 && OCurrAction <= 52
-        if Rnd < 0.1
-          CallI DefendHub
-        elif Rnd < 0.3 || Equal var21 12 || Equal CurrAction 73
+        elif Rnd < 0.8 || Equal var21 12 || Equal CurrAction 73
           CallI DefendHub
         endif
+      // elif OAnimFrame >= var22 && OCurrAction >= 36 && OCurrAction <= 52
+      //   if Rnd < 0.1
+      //     CallI DefendHub
+      //   elif Rnd < 0.3 || Equal var21 12 || Equal CurrAction 73
+      //     CallI DefendHub
+      //   endif
       endif
     endif
   endif

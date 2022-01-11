@@ -1,25 +1,26 @@
 #const DIRY_ABOVE = 15
-#const DIRY_BELOW = 3
+#const DIRY_BELOW_AIR = 1
+#const DIRY_BELOW_GROUND = -1
 #const DIRX_FRONT = 4
-#const DIRX_BACK = 0
+#const DIRX_BACK = -1
 
-#const pt_shortHopHeight = 16
-#const pt_djumpHeight = 38
-#const pt_wavedashDist = 30
+#const cs_shortHopHeight = 16
+#const cs_djumpHeight = 38
+#const cs_wavedashDist = 30
 
-#const pt_dashForceTurnFrame = 9
-#const pt_dashDanceMinFrames = 6
+#const cs_dashForceTurnFrame = 9
+#const cs_dashDanceMinFrames = 6
 
-#const pt_jumpiness = 0.4
-#const pt_djumpiness = 0.04
-#const pt_aggression = 0.7
+#const pt_aggression = 1.55
 #const pt_bait_dashAwayChance = 0.05
 #const pt_bait_wdashAwayChance = 0.45
-#const pt_wall_chance = 0.9
-#const pt_platChance = 0.1
 #const pt_baitChance = 0.8
-#const pt_braveChance = 0.85
-#const pt_circlecampChancce = 0.65
+#const pt_braveChance = 0.8
+#const pt_circleCampChance = 0.85
+#const pt_djumpiness = 0.02
+#const pt_jumpiness = 0.08
+#const pt_platChance = 0.15
+#const pt_wall_chance = 0.4
 
 // the following is the data that I give the AI that allows it to determine
 // where it should be before performing an attack.
@@ -215,9 +216,20 @@
 #const grab_lastHitFrame = 7
 #const grab_damage_info = Grab|0|0|0|0
 
+#const fthrow_IASA = 35
+#const fthrow_throwFrame = 10
 #const fthrow_damage_info = Grab|3|35|135|45
+
+#const dthrow_IASA = 45
+#const dthrow_throwFrame = 32
 #const dthrow_damage_info = Grab|1|150|40|270
+
+#const bthrow_IASA = 40
+#const bthrow_throwFrame = 8
 #const bthrow_damage_info = Grab|2|80|85|56
+
+#const uthrow_IASA = 40
+#const uthrow_throwFrame = 6
 #const uthrow_damage_info = Grab|2|75|110|90
 
 // NAir

@@ -2,23 +2,40 @@
 id 0x8503
 unk 0x0
 
-str "*"
-str "SELECT MOVE"
-str "move"
-str "priority"
+XReciever
+
+// yep, move choice is COOOOOMPLICATED lmao
+#let result = var0
+#let move_angle = var1
+#let move_hitFrame = var2
+#let move_xRange = var3
+#let move_yRange = var4
+#let move_xOffset = var5
+#let move_yOffset = var6
+#let move_hitFrame = var7
+#let move_duration = var8
+#let move_IASA = var9
+#let move_knockback = var10
+#let targetX = var11
+#let targetY = var12
+#let rollWeight = var15
+#let aerialChecks = var16
+#let loopCounter = var18
+
+// $generateChecks(check_hub)
 
 predictOOption immediateTempVar man_OBaitDirection LevelValue 
 anotherTempVar = 0
-if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64)
+if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && !(Equal OCurrAction hex(0x49))
   anotherTempVar = 1
 endif
-if !(Equal immediateTempVar op_baitdir_overshoot) && !(CalledAs FastAerial) && Equal currGoal cg_attack && OFramesHitstun <= 0 && Equal anotherTempVar 0
-  predictOOption immediateTempVar man_ODefendOption LevelValue 
+if !(Equal immediateTempVar op_baitdir_overshoot) && !(Equal currGoal cg_edgeguard) && !(CalledFrom FastAerial) && Equal currGoal cg_attack && !(Equal currGoal cg_camp_attack) && OFramesHitstun <= 0 && Equal anotherTempVar 0
+  predictOOption anotherTempVar man_ODefendOption LevelValue 
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
   predictionConfidence globTempVar man_ODefendOption LevelValue
   globTempVar *= 2
-  if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
-  elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
-  elif !(Equal immediateTempVar op_defend_shield) && Rnd < globTempVar && Rnd < calc(pt_wall_chance * 1.2) && SamePlane
+  if Equal immediateTempVar 1
+  elif !(Equal anotherTempVar op_defend_shield) && Rnd < globTempVar && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
     currGoal = cg_attack_wall
   endif
 endif
@@ -28,275 +45,489 @@ elif Equal currGoal cg_camp_attack || Equal currGoal cg_bait_attack || Equal cur
 elif !(Equal currGoal cg_attack_wall)
   currGoal = cg_attack
 endif
-if OFramesHitstun >= 1
+if OFramesHitstun >= 1 && !(Equal currGoal cg_edgeguard)
   currGoal = cg_attack
 endif
 
-#const priority_kill = 1
-#const priority_combo = 2
-#const priority_juggle = 3
-#const priority_techchase = 4
-#const priority_pressure = 5
-#const priority_breakCC = 6
-#const priority_escapeCorner = 7
-#const priority_launch = 8
-#const priority_spacing = 9
-#const priority_panic = 10
-#const priority_bait = 11
-#const priority_camp = 12
-#const priority_power = 13
+// ///////////////////////////////////////////////////////////////
+// prioritization
+// ///////////////////////////////////////////////////////////////
 
-DynamicDiceClear
+#const priority_kill = 0
+#const priority_combo = 1
+#const priority_techchase = 2
+// https://fightinggameglossary.net/index/pressure
+#const priority_pressure = 3 
+#const priority_breakCC = 4
+#const priority_escapeCorner = 5
+#const priority_launch = 6
+// https://fightinggameglossary.net/index/poke
+#const priority_poke = 7 
+// I might not implement this idk
+#const priority_camp = 8 
+#const priority_edgeguard = 9
+// https://fightinggameglossary.net/index/anti-air
+#const priority_antiAir = 10 
+// https://fightinggameglossary.net/index/conversion
+#const priority_conversion = 11 
+// https://fightinggameglossary.net/index/frame-trap
+#const priority_frameTrap = 12 
+// https://fightinggameglossary.net/index/cross-up
+#const priority_crossUp = 13 
+// https://fightinggameglossary.net/index/otg
+#const priority_jabReset = 14 
 
-if ODamage >= 40
-  DynamicDiceAdd priority_power
-  if ODamage >= 70
-    DynamicDiceAdd priority_power
-    DynamicDiceAdd priority_kill
-    DynamicDiceAdd priority_kill
+DynamicDiceClear dslot0
+DynamicDiceClear dslot1
+
+// universal:
+// - breakCC
+// - antiAir
+  // predict the chance that the opponent will crouch
+  PredictOMov immediateTempVar mov_crouch LevelValue
+  if OCurrAction >= hex(0x11) && OCurrAction <= hex(0x15)
+    immediateTempVar += 1.5
+  endif
+  DynamicDiceAdd dslot0 priority_breakCC immediateTempVar
+
+  // if they're in the air and are likely to attack then an anti-air is a good option
+  immediateTempVar = OTopNY - TopNY - HurtboxSize
+  if XDistLE globTempVar && immediateTempVar > 10
+    PredictOMov immediateTempVar mov_attack LevelValue
+    if immediateTempVar > 0.4 && CHANCE_MUL_LE PT_AGGRESSION 1.3 && OFramesHitstun < 15
+      anotherTempVar = PT_AGGRESSION * 3
+      DynamicDiceAdd dslot0 priority_antiAir anotherTempVar
+    endif
+  endif
+// neutral:
+// - kill
+// - poke
+// - breakCC
+// - crossUp
+// - antiAir
+// - launch
+
+// getting approximate width of the main stage platform
+Goto approxStageWidth
+
+Norm immediateTempVar TopNX TopNY 
+Norm anotherTempVar OTopNX OTopNY
+Abs immediateTempVar
+Abs anotherTempVar
+
+// if the distance between the players is less than about 7/20ths of the stage width
+globTempVar *= 0.35
+if immediateTempVar < globTempVar
+  // ...and neither player is 7/20th stage lengths away from the ledge
+  globTempVar *= OPos
+  GetYDistFloorOffset immediateTempVar globTempVar 5 1
+  globTempVar *= -1
+  GetYDistFloorOffset anotherTempVar globTempVar 5 0
+  if !(Equal immediateTempVar -1) && !(Equal anotherTempVar -1) 
+    Goto neutral_priorities
   endif
 endif
-immediateTempVar = OTopNY - TopNY
-if Equal currGoal cg_attack_reversal
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_power
-  DynamicDiceAdd priority_launch
-elif OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1D)
-  DynamicDiceAdd priority_pressure
-  DynamicDiceAdd priority_pressure
-elif OFramesHitstun <= 0 && immediateTempVar < 30 && Equal HitboxConnected 0
-  predictAverage immediateTempVar man_OXHitDist LevelValue
-  if !(ODistLE immediateTempVar) && OYDistBackEdge > -35 
-    DynamicDiceAdd priority_spacing
-    DynamicDiceAdd priority_bait
-  endif
 
-  if hex(0x11) <= OCurrAction && OCurrAction <= hex(0x15)
-    DynamicDiceAdd priority_breakCC
-    DynamicDiceAdd priority_breakCC
-    DynamicDiceAdd priority_breakCC
-  endif
-  GetYDistFloorOffset immediateTempVar 13 5 1
-  GetYDistFloorOffset globTempVar (-13) 5 1
-  if Equal immediateTempVar -1 || Equal globTempVar -1
-    globTempVar = TopNX
-    immediateTempVar = OTopNX
-    Abs globTempVar
-    Abs immediateTempVar
-    if globTempVar > immediateTempVar
-      DynamicDiceAdd priority_escapeCorner
+if !(True)
+  label neutral_priorities
+    // the greater the damage, the more incentive there is to go for a kill
+    // however, approaching can be unsafe, and so is determined by aggression
+    globTempVar = PT_AGGRESSION + 0.15
+    immediateTempVar = ODamage * (100 + OWeight - 100) / 2000
+    immediateTempVar *= globTempVar
+    DynamicDiceAdd dslot0 priority_kill immediateTempVar
+
+    // pokes are used in neutral often to try and get at the target from a safe distance
+    anotherTempVar = (PT_AGGRESSION + 1) * (PT_BAITCHANCE + 1)
+    DynamicDiceAdd dslot0 priority_poke anotherTempVar
+
+    if Equal AirGroundState 1
+      // if the opponent is unlikely to attack or grab
+      PredictOMov immediateTempVar mov_attack LevelValue
+      PredictOMov globTempVar mov_grab LevelValue
+      anotherTempVar = (PT_AGGRESSION + 1) * (PT_BAITCHANCE + 1) * (1.5 - immediateTempVar) * (1.5 - globTempVar)
+      if immediateTempVar < 0.2 && globTempVar < 0.2
+        // then consider crossing them up
+        DynamicDiceAdd dslot0 priority_crossUp anotherTempVar
+      endif
+      // otherwise if they're high in the air and nearby
+      $tempVar(OYDist, immediateTempVar)
+      OYDist = OTopNY - TopNY - HurtboxSize
+      predictAverage globTempVar man_OXHitDist LevelValue
+      globTempVar += 10
+      if XDistLE globTempVar && OYDist > 25
+        // then maybe crossing up is still a good option
+        anotherTempVar *= 0.85 * PT_AGGRESSION
+        DynamicDiceAdd dslot0 priority_crossUp anotherTempVar
+      endif
     endif
-  else 
-    DynamicDiceAdd priority_combo
-  endif
-  if Rnd < pt_aggression
-    DynamicDiceAdd priority_pressure
-    DynamicDiceAdd priority_launch
-  else
-    DynamicDiceAdd priority_spacing
-  endif
-  if Rnd < pt_baitChance
-    DynamicDiceAdd priority_bait
-  else
-    DynamicDiceAdd priority_pressure
-  endif
-  if Rnd < pt_wall_chance
-    DynamicDiceAdd priority_spacing
-  else
-    DynamicDiceAdd priority_pressure
-  endif
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_launch
-  DynamicDiceAdd priority_pressure
-  DynamicDiceAdd priority_power
+
+    // if they're close then a launcher (as-in combo starter) is an idea
+    predictAverage globTempVar man_OXHitDist LevelValue
+    globTempVar += Width + OWidth
+    if ODistLE globTempVar
+      anotherTempVar = 2 * (0.4 + PT_AGGRESSION) * (0.4 + PT_BRAVECHANCE)
+      DynamicDiceAdd dslot0 priority_launch anotherTempVar
+    endif
+  Return
+endif
+
+// advantage options
+$tempVar(OYDist, immediateTempVar)
+OYDist = OTopNY - TopNY - HurtboxSize
+if OYDist > 40
+  Goto advantage_priorities
 elif True
-  if ODamage >= 60
-    DynamicDiceAdd priority_kill
-    DynamicDiceAdd priority_kill
-    DynamicDiceAdd priority_power
-    DynamicDiceAdd priority_power
-    if ODamage >= 100
-      DynamicDiceAdd priority_kill
-      DynamicDiceAdd priority_kill
-      DynamicDiceAdd priority_kill
-      DynamicDiceAdd priority_power
-      DynamicDiceAdd priority_power
-      DynamicDiceAdd priority_power
-    endif
-  endif
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_combo
-  DynamicDiceAdd priority_juggle
-  DynamicDiceAdd priority_launch
-  DynamicDiceAdd priority_pressure
-  GetYDistFloorOffset immediateTempVar 40 5 1
-  GetYDistFloorOffset globTempVar (-40) 5 1
-  if Equal immediateTempVar -1 || Equal globTempVar -1
-    DynamicDiceAdd priority_launch
-    DynamicDiceAdd priority_kill
-    DynamicDiceAdd priority_power
-    DynamicDiceAdd priority_power
-  endif
-
-  if OKBAngle >= 70 && OKBAngle <= 110
-    DynamicDiceAdd priority_juggle
-    DynamicDiceAdd priority_launch
-    DynamicDiceAdd priority_launch
-  elif OKBAngle >= 180 
-    DynamicDiceAdd priority_juggle
-    DynamicDiceAdd priority_launch
-    DynamicDiceAdd priority_combo
-  endif
-
-  if OYDistBackEdge > -calc(pt_shortHopHeight + pt_djumpHeight / 2)
-    DynamicDiceAdd priority_combo
-    DynamicDiceAdd priority_combo
-    DynamicDiceAdd priority_combo
-    DynamicDiceAdd priority_juggle
-    DynamicDiceAdd priority_launch
-  elif Equal OIsOnStage 1 && ODamage >= 70
-    GetAttribute globTempVar attr_fastFallSpeed 0
-    if globTempVar > 2
-      DynamicDiceAdd priority_combo
+  // otherwise if the opponent is 4/10ths of the way to the ledge relative to their direction from you
+  Goto approxStageWidth
+  globTempVar *= 0.4 * OPos
+  // take aggression and bravery into account
+  anotherTempVar = (0.5 + PT_AGGRESSION) * (0.5 + PT_BRAVECHANCE)
+  globTempVar *= anotherTempVar
+  GetYDistFloorOffset immediateTempVar globTempVar 5 1
+  if Equal immediateTempVar -1
+    Goto advantage_priorities
+  elif True
+    // then if the target is stuck in their shield...
+    if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1D) && XDistLE 35
+      Goto advantage_priorities
     endif
   endif
 endif
 
-if OYDistBackEdge < -pt_shortHopHeight
-  DynamicDiceAdd priority_juggle
-  if OFramesHitstun > 0
-    DynamicDiceAdd priority_juggle
-    DynamicDiceAdd priority_juggle
-  endif
-  DynamicDiceAdd priority_combo
-  if OYDistBackEdge < -calc(pt_djumpHeight * 1.4)
-    DynamicDiceAdd priority_juggle
-    DynamicDiceAdd priority_kill
-  endif
+if !(True)
+  label advantage_priorities
+    // the greater the damage, the more incentive there is to go for a kill
+    immediateTempVar = ODamage * (100 + OWeight - 100) / 2000
+    DynamicDiceAdd dslot0 priority_kill immediateTempVar
+
+    immediateTempVar = 5 * PT_AGGRESSION
+    DynamicDiceAdd dslot0 priority_pressure immediateTempVar
+    if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1D)
+      DynamicDiceAdd dslot0 priority_pressure 2.5
+    endif
+    immediateTempVar *= 0.65
+    DynamicDiceAdd dslot0 priority_combo immediateTempVar
+    anotherTempVar = 1 + PT_BRAVECHANCE
+    immediateTempVar *= anotherTempVar
+    DynamicDiceAdd dslot0 priority_launch immediateTempVar
+
+    immediateTempVar = PT_BAITCHANCE * 5
+    DynamicDiceAdd dslot0 priority_frameTrap immediateTempVar
+  Return
 endif
 
-if FramesHitstun > 0 || Equal CurrAction hex(0x49)
-  predictAverage immediateTempVar man_OXHitDist LevelValue
-  immediateTempVar += 10
-  if Equal AirGroundState 2 && ODistLE immediateTempVar
-    DynamicDiceClear
-    DynamicDiceAdd priority_panic
+// if the target is caught in a combo of some sort
+// exclude if they can act freely
+if OCurrAction <= hex(0x41) || OCurrAction >= hex(0xBE)
+elif Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0
+  Goto punish_priorities
+elif OPrevAction >= hex(0x43) && OPrevAction <= hex(0x64)  
+  Goto punish_priorities
+endif
+if !(True)
+  label punish_priorities
+    // the greater the damage, the more incentive there is to go for a kill
+    immediateTempVar = ODamage * (100 + OWeight - 100) / 900
+    DynamicDiceAdd dslot0 priority_kill immediateTempVar
+
+    // calculate if we can arrive to the target's position as their hitstun ends
+    if OFramesHitstun > 0
+      anotherTempVar = OFramesHitstun
+
+      EstOXCoord immediateTempVar anotherTempVar
+
+      if Equal AirGroundState 1
+        GetAttribute globTempVar attr_dashInitVel 0
+      else
+        GetAttribute globTempVar attr_airXTermVel 0
+      endif
+      globTempVar = globTempVar * anotherTempVar
+      globTempVar *= OPos
+      globTempVar += TopNX
+
+      if globTempVar < immediateTempVar && OPos < 0
+        DynamicDiceAdd dslot0 priority_combo 4
+      elif globTempVar > immediateTempVar && OPos > 0
+        DynamicDiceAdd dslot0 priority_combo 4
+      endif
+    elif OCurrAction >= hex(0x4D) && OCurrAction <= hex(0x64)
+      DynamicDiceAdd dslot0 priority_techchase 4
+    else
+      // otherwise see if we can make a conversion
+      anotherTempVar = 20
+
+      EstOXCoord immediateTempVar anotherTempVar
+
+      if Equal AirGroundState 1
+        GetAttribute globTempVar attr_dashInitVel 0
+      else
+        GetAttribute globTempVar attr_airXTermVel 0
+      endif
+      globTempVar = globTempVar * anotherTempVar
+      globTempVar *= OPos
+      globTempVar += TopNX
+
+      if globTempVar < immediateTempVar && OPos < 0
+        DynamicDiceAdd dslot0 priority_conversion 2
+      elif globTempVar > immediateTempVar && OPos > 0
+        DynamicDiceAdd dslot0 priority_conversion 2
+      endif
+    endif
+
+    if OYDistFloor > 1 && OYDistFloor < 8
+      DynamicDiceAdd dslot0 priority_techchase 2.5
+    endif
+
+    immediateTempVar = PT_BAITCHANCE * 5
+    if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1D)
+      immediateTempVar *= 2.5
+    endif
+    DynamicDiceAdd dslot0 priority_frameTrap immediateTempVar
+  Return
+endif
+
+// disadvantage (very similar to advantage - basically just reversed)
+$tempVar(OYDist, immediateTempVar)
+OYDist = TopNY - OTopNY - OHurtboxSize
+if OYDist > 40
+  Goto disadvantage_priorities
+elif True
+  // otherwise if the opponent is 4/10ths of the way to the ledge relative to their direction from you
+  Goto approxStageWidth
+  globTempVar *= -0.4 * OPos
+  // take aggression and bravery into account
+  // anotherTempVar = (0.5 + PT_AGGRESSION) * (0.5 + PT_BRAVECHANCE) + 1
+  // globTempVar /= anotherTempVar
+  GetYDistFloorOffset immediateTempVar globTempVar 5 1
+  anotherTempVar = OTopNX + globTempVar
+  DrawDebugLine OTopNX OCenterY anotherTempVar OCenterY color(0xFF0000DD)
+  if Equal immediateTempVar -1
+    Goto disadvantage_priorities
   endif
+endif
+if !(True)
+  label disadvantage_priorities
+    // the greater the damage, the more incentive there is to go for a kill (less so than pure advantage)
+    immediateTempVar = ODamage * (100 + OWeight - 100) / 4000
+    DynamicDiceAdd dslot0 priority_kill immediateTempVar
+    
+    // perhaps try to wall them out
+    immediateTempVar = (1 - PT_AGGRESSION) * 4
+    DynamicDiceAdd dslot0 priority_poke immediateTempVar
+
+    immediateTempVar = PT_BRAVECHANCE * 4
+    DynamicDiceAdd dslot0 priority_crossUp immediateTempVar
+
+    immediateTempVar = PT_AGGRESSION * 4
+    DynamicDiceAdd dslot0 priority_escapeCorner immediateTempVar
+  Return
+endif
+// edgeguard
+if !(True)
+  label edgeguard_priorities
+    // the greater the damage, the more incentive there is to go for a kill (less so than pure advantage)
+    immediateTempVar = ODamage * (100 + OWeight - 100) / 2000
+    DynamicDiceAdd dslot0 priority_kill immediateTempVar
+    
+    DynamicDiceAdd dslot0 priority_edgeguard 12
+  Return
 endif
 
 #let priority = var7
-DynamicDiceRoll priority
+DynamicDiceRoll dslot0 priority 0
 
-if Equal currGoal cg_defend
-  priority = -1
+
+
+
+// ///////////////////////////////////////////////////////////////
+// priority results
+// ///////////////////////////////////////////////////////////////
+
+if Equal currGoal cg_camp_attack
+  priority = priority_camp
 endif
 
-if CalledAs FastAerial
-  priority = priority_panic
-elif True
-  if Equal currGoal cg_attack_wall && Rnd < 0.55
-    priority = priority_spacing 
-  elif Equal currGoal cg_bait_attack
-    if Rnd < pt_braveChance && Rnd < pt_aggression && Rnd < 0.5
-      priority = priority_pressure
-    else
-      priority = priority_bait
-    endif
-  elif Equal currGoal cg_camp_attack
-    priority = priority_camp
-  endif
-endif
-DynamicDiceClear
+DynamicDiceClear dslot0
 
-#let move_currKnockback = var0
-#let result = var1
-#let hitFrame = var2
-#let dirX = var3
-#let dirY = var4
-#let targetX = var5
-#let targetY = var6
-#let duration = var9
-#let disjointX = var10
-// #let disjointY = var11
+// ///////////////////////////////////////////////////////////////
+// attack rolls
+// ///////////////////////////////////////////////////////////////
 
-if Equal priority priority_pressure
-  if Equal AirGroundState 2
-    Goto gen_aerial_checks
-  else
-    Goto gen_checks
-  endif
-elif Equal priority priority_panic
-  Goto gen_aerial_checks
-elif YDistBackEdge < -15 || YSpeed > 0
-  Goto gen_aerial_checks
-elif OYDistBackEdge < -35 && OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && OYSpeed > 0
-  Goto gen_aerial_checks
-else
-  Goto gen_checks
+immediateTempVar = OTopNY - TopNY - OHurtboxSize * 2
+if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
+  aerialChecks = 1
+elif Equal CurrSubaction JumpSquat
+  aerialChecks = 1
+elif Equal priority priority_pressure
+elif YDistFloor > 15 || YSpeed > 0.2
+  aerialChecks = 1
+// elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && OYSpeed > 0 && immediateTempVar > 0
+//   aerialChecks = 1
 endif
 
-if !(True)
-  label gen_checks
-  $generateChecks(check_hub)
-  Return
-endif
+$generateInitialAttackDiceRolls()
 
-if !(True)
-  label gen_aerial_checks
-  $generateAerialChecks(check_hub)
-  Return
-endif
+// if Equal priority priority_combo
+//   PAUSE
+// endif
+
+// ///////////////////////////////////////////////////////////////
+// hardcoded situations
+// ///////////////////////////////////////////////////////////////
 
 if Equal priority priority_kill
+  LOGSTR_NL str("KILL")
   {KILL_MOVES}
 elif Equal priority priority_combo
+  LOGSTR_NL str("COMBO")
   {COMBO_MOVES}
-elif Equal priority priority_juggle
-  {JUGGLE_MOVES}
 elif Equal priority priority_techchase
+  LOGSTR_NL str("TECHCHASE")
   {TECHCHASE_MOVES}
 elif Equal priority priority_pressure
+  LOGSTR_NL str("PRESSURE")
   {PRESSURE_MOVES}
 elif Equal priority priority_breakCC
+  LOGSTR_NL str("BREAKCC")
   {BREAKCC_MOVES}
 elif Equal priority priority_escapeCorner
-  {ESCAPE_MOVES}
+  LOGSTR_NL str("ESCAPECORNER")
+  {ESCAPECORNER_MOVES}
 elif Equal priority priority_launch
+  LOGSTR_NL str("LAUNCH")
   {LAUNCH_MOVES}
-elif Equal priority priority_power
-  {POWER_MOVES}
-elif Equal priority priority_spacing
-  {SPACING_MOVES}
-
-  if Rnd < calc(pt_wall_chance * 1.2) && OYDistBackEdge > -30 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && SamePlane && OFramesHitstun <= 0
-    currGoal = cg_attack_wall
-  endif
-elif Equal priority priority_panic
-  {PANIC_MOVES}
-  LOGSTR str("PANIC")
-elif Equal priority priority_bait
-  {BAIT_MOVES}
-  LOGSTR str("BAIT")
+elif Equal priority priority_poke
+  LOGSTR_NL str("POKE")
+  {POKE_MOVES}
 elif Equal priority priority_camp
+  LOGSTR_NL str("CAMP")
   {CAMP_MOVES}
-  LOGSTR str("CAMP")
+elif Equal priority priority_edgeguard
+  LOGSTR_NL str("EDGEGUARD")
+  {EDGEGUARD_MOVES}
+elif Equal priority priority_antiAir
+  LOGSTR_NL str("ANTIAIR")
+  {ANTIAIR_MOVES}
+elif Equal priority priority_conversion
+  LOGSTR_NL str("CONVERSION")
+  {CONVERSION_MOVES}
+elif Equal priority priority_frameTrap
+  LOGSTR_NL str("FRAMETRAP")
+  {FRAMETRAP_MOVES}
+elif Equal priority priority_crossUp
+  LOGSTR_NL str("CROSSUP")
+  {CROSSUP_MOVES}
+elif Equal priority priority_jabReset
+  LOGSTR_NL str("JABRESET")
+  {JABRESET_MOVES}
 endif
 
-DynamicDiceRoll lastAttack
-
-{ADDITIONAL_FILTERS}
-
-if Equal priority priority_camp
+loopCounter = 80 * ((6 - PlayerCount) * 0.25)
+SeekNoCommit __DICE_LOOP__
+if !(True)
+  label __DICE_LOOP__
+  DynamicDiceRoll dslot0 lastAttack 1
+  if Equal lastAttack -1
+    loopCounter -= 1
+    if loopCounter <= 0
+      SeekNoCommit __DICE_LOOP_END__
+    elif Equal lastAttack -1 
+      SeekNoCommit __DICE_LOOP__
+    endif
+  endif 
+  // GotoByValue lastAttack
+  GET_MOVE_DATA(move_angle, move_xOffset, move_yOffset, move_xRange, move_yRange, move_hitFrame, move_duration, move_IASA, move_knockback)
+  Goto check_hub
+  Goto __ADDITIONAL_FILTERS__
+  loopCounter -= 1
+  if loopCounter <= 0
+    SeekNoCommit __DICE_LOOP_END__
+  elif Equal lastAttack -1 
+    SeekNoCommit __DICE_LOOP__
+  endif
+  SeekNoCommit __DICE_LOOP__
   Return
-elif Equal priority priority_bait
+  label __DICE_LOOP_END__
+endif
+
+if !(True)
+  label __ADDITIONAL_FILTERS__
+  if Equal aerialChecks 1
+    $ifAerialAttack()
+    else
+      lastAttack = -1
+    endif
+  endif
+  {ADDITIONAL_FILTERS}
   Return
-elif Equal priority priority_panic || Equal currGoal cg_defend
+endif
+
+DynamicDiceRoll dslot1 lastAttack 0
+
+Goto __ADDITIONAL_FILTERS__
+
+DynamicDiceClear dslot0
+DynamicDiceClear dslot1
+
+// ///////////////////////////////////////////////////////////////
+// attack post-processing
+// ///////////////////////////////////////////////////////////////
+
+if !(Equal lastAttack -1)
+  if Equal priority priority_poke
+    currGoal = cg_attack_undershoot
+    if CHANCE_MUL_LE PT_AGGRESSION 0.25
+      currGoal = cg_attack
+    endif
+    Return
+  elif Equal priority priority_crossUp
+    predictAverage immediateTempVar man_OXHitDist LevelValue
+    immediateTempVar += 15
+    if XDistLE immediateTempVar
+      if Equal AirGroundState 1 && CHANCE_MUL_GE PT_JUMPINESS 1
+        currGoal = cg_attack_reversal
+        skipMainInit = mainInitSkip
+        scriptVariant = sv_dash_through
+        CallI DashScr
+      else
+        currGoal = cg_attack_reversal
+        skipMainInit = mainInitSkip
+        scriptVariant = sv_jump_over
+        if CHANCE_MUL_LE PT_JUMPINESS 1.25
+          scriptVariant += svp_jump_fullhop
+        endif
+        CallI JumpScr
+      endif
+    endif
+  elif Equal priority priority_frameTrap
+    predictAverage immediateTempVar man_OXHitDist LevelValue
+    immediateTempVar += 10
+    if XDistLE immediateTempVar
+      immediateTempVar = Rnd * 15
+      label frametrap_wait
+        LOGSTR_NL str("FT_WAIT")
+        XGoto PerFrameChecks
+        XReciever
+        XGoto SetAttackGoal
+        XReciever
+        XGoto MoveToGoal
+        XReciever
+        Seek frametrap_wait
+        immediateTempVar -= 1
+        if immediateTempVar < 0
+          currGoal = cg_attack
+          skipMainInit = sm_execAttack
+          CallI MainHub
+        endif
+      Return
+    endif
+  endif
+endif
+
+if Equal priority priority_camp || Equal priority priority_poke || Equal priority priority_edgeguard
+  Return
+elif Equal CurrAction hex(0x49) || Equal currGoal cg_defend
   if !(Equal lastAttack -1)
     skipMainInit = mainInitSkip
     currGoal = cg_attack_reversal
@@ -307,59 +538,62 @@ endif
 predictionConfidence immediateTempVar man_OBaitOption LevelValue
 predictOOption globTempVar man_OBaitOption LevelValue
 anotherTempVar = 0
-if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64)
+if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && !(Equal OCurrAction hex(0x49))
   anotherTempVar = 1
 endif
-if Rnd < immediateTempVar && Equal globTempVar op_bait_move && Equal currGoal cg_attack && OYDistBackEdge > -20 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && Equal anotherTempVar 0 
+if Equal currGoal cg_edgeguard
+elif Rnd < immediateTempVar && Equal globTempVar op_bait_move && Equal currGoal cg_attack && OYDistBackEdge > -20 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && Equal anotherTempVar 0 
   predictOOption immediateTempVar man_OBaitDirection LevelValue 
   if Equal immediateTempVar op_baitdir_overshoot
     currGoal = cg_attack_overshoot
   elif Equal immediateTempVar op_baitdir_undershoot
     currGoal = cg_attack_undershoot
   endif
+elif Equal priority priority_poke && CHANCE_MUL_GE PT_AGGRESSION 0.2
+  currGoal = cg_attack_undershoot
 endif
 
-immediateTempVar *= 2
-$ifAerialAttack()
-  // if OYDistBackEdge < calc(pt_djumpHeight * -2)
-  //   lastAttack = -1
-  // endif
-elif YDistBackEdge < -45 || OYDistBackEdge < -20
-  lastAttack = -1 
-elif Rnd < immediateTempVar && Equal globTempVar op_bait_shield
-  $ifLastAttack(uthrow)
-  $elifLastAttack(bthrow)
-  $elifLastAttack(fthrow)
-  $elifLastAttack(dthrow)
-  else
-    lastAttack = -1
-  endif
-endif
+// immediateTempVar *= 2
+// $ifAerialAttack()
+// elif YDistBackEdge < -45 || OYDistBackEdge < -20
+//   lastAttack = -1 
+// elif Rnd < immediateTempVar && Equal globTempVar op_bait_shield
+//   $ifLastAttack(uthrow)
+//   $elifLastAttack(bthrow)
+//   $elifLastAttack(fthrow)
+//   $elifLastAttack(dthrow)
+//   else
+//     lastAttack = -1
+//   endif
+// endif
 
-if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
-elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
-elif Rnd < pt_wall_chance && Equal currGoal cg_attack && SamePlane && OFramesHitstun <= 0
+GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+if Equal immediateTempVar 1
+elif Equal currGoal cg_edgeguard
+elif CHANCE_MUL_LE PT_WALL_CHANCE 1 && Equal currGoal cg_attack && SamePlane && OFramesHitstun <= 0
   immediateTempVar = TopNX
   globTempVar = OTopNX
   Abs immediateTempVar
   Abs globTempVar
 
-  if immediateTempVar < globTempVar && duration > 4
-    currGoal = cg_attack_wall
-  endif
+  // if immediateTempVar < globTempVar && move_duration > 4
+  //   currGoal = cg_attack_wall
+  // endif
 endif
 
 XGoto SetAttackGoal
 XReciever
 Return
 
-$refreshMoves()
-$generateAllMovesGotoKBONLY()
-Return
+// ///////////////////////////////////////////////////////////////
+// check hub/types/adder
+// ///////////////////////////////////////////////////////////////
 
 label check_hub
 
-  if YDistBackEdge >= -20
+  rollWeight = 0
+
+  if YDistFloor < 20 && !(Equal YDistFloor -1) 
     $ifLastOrigin(nair,false)
       GetAttribute immediateTempVar attr_nairLandingLag 0
     $ifLastOrigin(fair,true)
@@ -371,324 +605,433 @@ label check_hub
     $ifLastOrigin(uair,true)
       GetAttribute immediateTempVar attr_uairLandingLag 0
     endif
-    immediateTempVar *= 0.5
+    if Equal AirGroundState 2
+      immediateTempVar *= 0.5
+    else
+      GetAttribute anotherTempVar attr_jumpSquatFrames 0
+      move_hitFrame += anotherTempVar + 1
+      immediateTempVar *= 0.8
+    endif
 
     if immediateTempVar <= move_IASA
       move_IASA = immediateTempVar
     endif
   endif
 
+  {FILTER_CHECKS}
+
+  // LOGVAL move_knockback
   if Equal priority priority_kill
     Goto kill_check
-    LOGSTR str("KILL")
   elif Equal priority priority_combo
     Goto combo_check
-    LOGSTR str("COMBO")
-  elif Equal priority priority_juggle
-    Goto juggle_check
-    LOGSTR str("JUGGLE")
   elif Equal priority priority_techchase
     Goto techchase_check
-    LOGSTR str("TECHCHASE")
   elif Equal priority priority_pressure
     Goto pressure_check
-    LOGSTR str("PRESSURE")
   elif Equal priority priority_breakCC
-    $ifLastOrigin(grab,false)
-      Goto combo_check
-    endif
-    Goto combo_check
-    LOGSTR str("BREAKCC")
+    Goto breakcc_check
   elif Equal priority priority_escapeCorner
-    Goto escapeCorner_check
-    LOGSTR str("ESCAPE")
+    Goto escapecorner_check
   elif Equal priority priority_launch
     Goto launch_check
-    LOGSTR str("LAUNCH")
-  elif Equal priority priority_spacing
-    Goto space_check
-    LOGSTR str("SPACE")
-  elif Equal priority priority_power
-    Goto power_check
-    LOGSTR str("POWER")
-  elif Equal priority priority_panic || Equal currGoal cg_defend
-    $ifLastOrigin(grab, false)
-    else
-      Goto fastCheck
-    endif
-  elif Equal priority priority_bait
-    Goto bait_check
+  elif Equal priority priority_poke
+    Goto poke_check
+  elif Equal priority priority_camp
+    Goto camp_check
+  elif Equal priority priority_edgeguard
+    Goto edgeguard_check
+  elif Equal priority priority_antiAir
+    Goto antiair_check
+  elif Equal priority priority_conversion
+    Goto conversion_check
+  elif Equal priority priority_frameTrap
+    Goto frametrap_check
+  elif Equal priority priority_crossUp
+    Goto crossup_check
+  elif Equal priority priority_jabReset
+    Goto jabreset_check
   endif
 
-  PRINTLN
+  Goto dirCheck
 Return
 label kill_check
   if OFramesHitstun > 0
-    anotherTempVar = hitFrame + OFramesHitstun
+    anotherTempVar = move_hitFrame + OFramesHitstun
     EstOXCoord targetX anotherTempVar
     EstOYCoord targetY anotherTempVar
   else
     targetX = OTopNX
     targetY = OTopNY
   endif
-  KILL_CHECK(__KILL__, result, move_currKnockback, move_angle, targetX, targetY)
+  KILL_CHECK(__KILL__, result, move_knockback, move_knockback * 0.4, move_angle, targetX, targetY)
   if Equal result 1
-    Goto dirCheck
-    Goto dirCheck
+    rollWeight += 2
   endif
 Return
 label combo_check
   Goto kill_check
 
-  immediateTempVar = move_IASA - (hitFrame + duration)
-  globTempVar = move_currKnockback * 0.4
-  if OYDistBackEdge > -4 && move_currKnockback <= 110
-    immediateTempVar += 10 // leeway room (CC)
-  else
-    immediateTempVar += 0 // leeway room
+  globTempVar = move_knockback * 0.4
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+  if Equal immediateTempVar 1 && Equal OIsOnStage 1
+    anotherTempVar = OTopNY - YDistBackEdge + 15
+    EstOPassTimeY globTempVar anotherTempVar
   endif
-  LOGSTR str("HITSTUN")
-  LOGVAL globTempVar
-  LOGSTR str("LEEWAY")
-  LOGVAL immediateTempVar
-  PRINTLN
-  if immediateTempVar < globTempVar
-    anotherTempVar = move_currKnockback * 0.4
-    GetAttribute immediateTempVar attr_fastFallSpeed 0
-    immediateTempVar *= anotherTempVar
-    GetAttribute globTempVar attr_jumpYInitVel 0
-    globTempVar *= anotherTempVar
-
-    anotherTempVar = (move_currKnockback * 0.03)
-    if move_angle > 230 && move_angle < 310
-      if immediateTempVar > anotherTempVar || globTempVar > anotherTempVar
-        Goto dirCheck
-      endif
-    elif move_angle > 55 && move_angle < 105 && globTempVar > anotherTempVar
-      Goto dirCheck
-    endif
-
-    // globTempVar = move_IASA - (hitFrame + duration)
-    GetAttribute immediateTempVar attr_dashRunTermVel 0
-    immediateTempVar *= move_currKnockback * 0.4
-    anotherTempVar = (move_currKnockback * 0.03)
-    if move_angle > 230 && move_angle < 310
-    elif move_angle > 55 && move_angle < 105
-    elif immediateTempVar > anotherTempVar
-      Goto dirCheck
-    endif
+  Goto getEndlag
+  if OYDistFloor < 4 && move_knockback <= 90 && CHANCE_MUL_GE PT_BRAVECHANCE 0.7
+    immediateTempVar += 0 // leeway room (CC)
+  else
+    immediateTempVar -= 8 // leeway room
+  endif
+  if immediateTempVar < globTempVar && move_knockback >= 65
+    Goto combo_check_pt2
+  elif immediateTempVar <= 15 && move_hitFrame <= 8
+    Goto combo_check_pt2
   endif
 Return
-label juggle_check
-  anotherTempVar = OYDistBackEdge * -2
-  if move_angle > 230 && move_angle < 310 && anotherTempVar < move_currKnockback
-    Goto dirCheck
-  elif move_angle > 55 && move_angle < 105
-    Goto dirCheck
+label combo_check_pt2
+  result = 1
+
+  if !(Equal result 0) 
+    // globTempVar = move_IASA - (move_hitFrame + move_duration)
+    anotherTempVar = immediateTempVar
+    Goto getEndlag
+    anotherTempVar -= immediateTempVar
+    GetAttribute immediateTempVar attr_dashInitVel 0
+    immediateTempVar *= anotherTempVar * 1.75
+    GetAttribute globTempVar attr_airXTermVel 0
+    globTempVar *= anotherTempVar * 1.75
+    
+    COS result move_angle
+    result *= (move_knockback * 0.03) * anotherTempVar
+    if move_angle >= 230 && move_angle <= 310
+    elif move_angle >= 55 && move_angle <= 105
+    elif immediateTempVar > result || globTempVar > result
+    else
+      result = 0
+    endif
+  endif
+
+  if !(Equal result 0)
+    rollWeight += 1
   endif
 Return
 label techchase_check
-  Goto dirCheck
+  Goto combo_check
 Return
 label pressure_check
-  $ifLastOrigin(grab, false)
-    Goto combo_check
-  elif move_currKnockback >= 35
-    if hitFrame <= 12
-      Goto fastCheck
-    elif move_angle > 180 && OYDistBackEdge > -60
-      Goto fastCheck
-    endif
-  endif
-Return
-label breakCC_check
-  if move_currKnockback >= 90
-    Goto dirCheck
-  endif
-Return
-label space_check
-  immediateTempVar = move_IASA - (hitFrame + duration)
-  if move_currKnockback < 55 || immediateTempVar >= 20
-  $ifLastOrigin(grab, true)
-  else
-    Goto dirCheck
-  endif
-Return
-label power_check
-  Goto kill_check
-  if move_angle <= 55 && move_currKnockback >= 200
-    Goto dirCheck
-  endif
-Return
-label escapeCorner_check
-  if hitFrame <= 15
+  Goto getEndlag
+  if immediateTempVar < 20 || move_hitFrame < 20
+    rollWeight += 1
     Goto fastCheck
   endif
 Return
-label launch_check
-  if move_currKnockback >= 250
-    Goto dirCheck
+label breakcc_check
+  if move_knockback >= 120
+    rollWeight += 1
+  $ifLastOrigin(grab,true)
+    rollWeight += 1.5
   endif
 Return
-label bait_check
-  immediateTempVar = move_IASA - (hitFrame + duration)
-  if immediateTempVar < 25 && hitFrame < 35
+label escapecorner_check
+  Goto fastCheck
+Return
+label launch_check
+  // Goto combo_check_pt2
+
+  immediateTempVar = 60
+  if ODamage > 50
+    immediateTempVar = 100
+  endif
+  if move_knockback < immediateTempVar
+  else
+    rollWeight += 1
+  endif
+Return
+label poke_check
+  Goto getEndlag
+ 
+  globTempVar = move_xOffset + move_xRange
+  if immediateTempVar < 15 && move_hitFrame < 30 && globTempVar > calc(DIRX_FRONT + 1)
     Goto fastCheck
   endif 
 Return
-label fastCheck
-  $ifAerialAttack()
-    immediateTempVar = move_IASA
-  else
-    immediateTempVar = move_IASA - (hitFrame + duration)
+label camp_check
+  Goto poke_check
+Return
+label edgeguard_check
+  $ifLastOrigin(grab,false)
+    rollWeight += 0.35
+    Return
   endif
 
-  if hitFrame <= 7 && immediateTempVar <= 10
-    Goto dirCheck
-  elif hitFrame <= 14 && immediateTempVar <= 10 && duration >= 10
-    Goto dirCheck
-  elif hitFrame <= 11 && immediateTempVar <= 16
-    if Rnd < pt_braveChance
-      Goto dirCheck
-    endif
-  endif
-Return
-label dirCheck
-  immediateTempVar = OTopNY - TopNY
-  if OFramesHitstun <= 0 && immediateTempVar < 30 && Equal HitboxConnected 0 && !(Equal priority priority_panic)
-    disjointX *= globTempVar
-    immediateTempVar = OTopNX - TopNX
-    Abs immediateTempVar
-    immediateTempVar *= 2
-    if OYDistBackEdge > -35
-      if disjointX >= immediateTempVar
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      endif
-      immediateTempVar *= -1
-      if disjointX <= immediateTempVar
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      endif
-      if !(Equal priority priority_pressure)
-        if disjointX > 1 && Equal Direction OPos
-          DynamicDiceAdd lastAttack
-          if disjointX > 3
-            DynamicDiceAdd lastAttack
-            if disjointX > 5
-              DynamicDiceAdd lastAttack
-              if disjointX > 7
-                DynamicDiceAdd lastAttack
-                if disjointX > 9
-                  DynamicDiceAdd lastAttack
-                  if disjointX > 11
-                    DynamicDiceAdd lastAttack
-                  endif
-                endif
-              endif
-            endif
-          endif
-        elif disjointX < -1 && !(Equal Direction OPos)
-          DynamicDiceAdd lastAttack
-          if disjointX < -3
-            DynamicDiceAdd lastAttack
-            if disjointX < -5
-              DynamicDiceAdd lastAttack
-              if disjointX < -7
-                DynamicDiceAdd lastAttack
-                if disjointX < -9
-                  DynamicDiceAdd lastAttack
-                  if disjointX < -11
-                    DynamicDiceAdd lastAttack
-                  endif
-                endif
-              endif
-            endif
-          endif
-        endif
-      endif
-    endif
-    if dirX >= 0 && move_angle > 230 && move_angle < 310
-      DynamicDiceAdd lastAttack
-      DynamicDiceAdd lastAttack
-      if move_hitFrame <= 15
-        DynamicDiceAdd lastAttack
-        if move_hitFrame <= 10
-          DynamicDiceAdd lastAttack
-          if move_hitFrame <= 5
-            DynamicDiceAdd lastAttack
-          endif
-        endif
-      endif
-    elif move_angle > 55 && move_angle < 105 && Equal dirY 1 && TopNY < OTopNY && Equal priority priority_juggle
-      DynamicDiceAdd lastAttack
-      if move_hitFrame <= 15
-        DynamicDiceAdd lastAttack
-        if move_hitFrame <= 10
-          DynamicDiceAdd lastAttack
-          if move_hitFrame <= 5
-            DynamicDiceAdd lastAttack
-          endif
-        endif
-      endif
+  Goto kill_check
+  immediateTempVar = Direction * TopNX
+  result = 0
+  if immediateTempVar < 0
+    if move_angle >= 135 && move_angle <= 325
+      result = 1
     endif
   else
-    immediateTempVar = Direction * OPos
-    if Equal dirX 0 && Equal dirY 0
-      DynamicDiceAdd lastAttack
-      DynamicDiceAdd lastAttack
-    elif Equal dirX immediateTempVar
-      if Equal dirY 0 
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      elif Equal dirY 1 && OTopNY > TopNY
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      elif Equal dirY -1 && OTopNY <= TopNY
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      endif
-    elif Equal dirY 1 && OTopNY > TopNY
-      if Equal dirX 0
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      elif Equal dirX immediateTempVar
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      endif
-    elif Equal dirY -1 && OTopNY <= TopNY
-      if Equal dirX 0
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      elif Equal dirX immediateTempVar
-        DynamicDiceAdd lastAttack
-        DynamicDiceAdd lastAttack
-      endif
-    endif
-    if dirX >= 0 && move_angle > 230 && move_angle < 310
-      DynamicDiceAdd lastAttack
-      DynamicDiceAdd lastAttack
-      if move_hitFrame <= 15
-        DynamicDiceAdd lastAttack
-        if move_hitFrame <= 10
-          DynamicDiceAdd lastAttack
-          if move_hitFrame <= 5
-            DynamicDiceAdd lastAttack
-          endif
-        endif
-      endif
-    elif move_angle > 55 && move_angle < 105 && Equal dirY 1 && TopNY < OTopNY && Equal priority priority_juggle
-      DynamicDiceAdd lastAttack
-      if move_hitFrame <= 15
-        DynamicDiceAdd lastAttack
-        if move_hitFrame <= 10
-          DynamicDiceAdd lastAttack
-          if move_hitFrame <= 5
-            DynamicDiceAdd lastAttack
-          endif
-        endif
-      endif
+    if move_angle <= 65 || move_angle >= 225
+      result = 1
     endif
   endif
+
+  if Equal result 1
+    rollWeight += 2
+  endif 
+Return
+label antiair_check
+  immediateTempVar = move_yRange - move_yOffset
+  if immediateTempVar > HurtboxSize
+    immediateTempVar -= HurtboxSize
+    immediateTempVar = 1 + immediateTempVar / 3
+    rollWeight += immediateTempVar
+  endif
+Return
+label conversion_check
+  Goto fastCheck
+  Goto combo_check
+Return
+label frametrap_check
+  Goto pressure_check
+Return
+label crossup_check
+  Goto combo_check
+Return
+label jabreset_check
+  // I know, it's supposed to be moves that deal < 7% but at this
+  // point i'm out of variables lmao
+  if move_knockback < 60
+    rollWeight += 1
+  endif
+Return
+label fastCheck
+  Goto getEndlag
+
+  // if move_knockback >= 71
+    if move_hitFrame <= 7 && immediateTempVar <= 10
+      rollWeight += 1.5
+    elif move_hitFrame <= 14 && immediateTempVar <= 10 && move_duration >= 10
+      rollWeight += 1
+    elif move_hitFrame <= 11 && immediateTempVar <= 16
+      if CHANCE_MUL_LE PT_BRAVECHANCE 1
+        rollWeight += 1
+      endif
+    endif
+  // endif
+Return
+label dirCheck  
+
+  result = rollWeight
+
+  // O above
+  $tempVar(dirY, immediateTempVar)
+  GET_CHAR_TRAIT(dirY, chr_get_moveDirY)
+
+  if TopNY < OTopNY 
+    if Equal dirY 1
+      rollWeight *= 1.5
+    else
+      rollWeight *= 0.1
+    endif
+  endif
+
+  // O below
+  anotherTempVar = OTopNY
+  if anotherTempVar <= TopNY
+    if Equal dirY -1
+      rollWeight *= 1.5
+    else
+      rollWeight *= 0.25
+    endif
+  endif
+
+  // O mid
+  globTempVar = TopNY - OTopNY
+  Abs globTempVar
+  anotherTempVar = HurtboxSize + OHurtboxSize
+  anotherTempVar *= 0.5
+  if globTempVar <= anotherTempVar
+    if Equal dirY 0 
+      rollWeight *= 1.35
+    else
+      rollWeight *= 0.25
+    endif
+  endif
+
+   
+  $tempVar(dirX, immediateTempVar)
+  GET_CHAR_TRAIT(dirX, chr_get_moveDir)
+  globTempVar = Direction * OPos
+  if Equal dirX globTempVar 
+    anotherTempVar = move_xRange * 2 + move_xOffset
+    if Equal dirX -1
+      anotherTempVar = move_xOffset * -1
+    endif
+    if !(XDistLE 20)
+      if Equal priority priority_poke || Equal priority priority_conversion || Equal priority priority_pressure
+        anotherTempVar *= 0.25
+        anotherTempVar += 1
+        rollWeight *= anotherTempVar
+      elif Equal priority priority_combo && OFramesHitstun <= 0
+        anotherTempVar *= 0.25
+        anotherTempVar += 1
+        rollWeight *= anotherTempVar
+      else
+        rollWeight *= 1.25
+      endif
+    else
+      rollWeight *= 1.25
+    endif
+  elif Equal dirX 0 && globTempVar > 0
+    anotherTempVar = move_xRange * 2 + move_xOffset
+    if !(XDistLE 20)
+      if Equal priority priority_poke || Equal priority priority_conversion || Equal priority priority_pressure
+        anotherTempVar *= 0.25
+        anotherTempVar += 1
+        rollWeight *= anotherTempVar
+      elif Equal priority priority_combo && OFramesHitstun <= 0
+        anotherTempVar *= 0.25
+        anotherTempVar += 1
+        rollWeight *= anotherTempVar
+      else
+        rollWeight *= 1.25
+      endif
+    else
+      rollWeight *= 1.25
+    endif
+  else
+    rollWeight *= 0.2
+  endif
+  Goto addIfFastHit
+  Goto getOEndlag
+  if move_hitFrame <= immediateTempVar && move_knockback >= 50
+    immediateTempVar -= move_hitFrame
+    immediateTempVar *= 0.15
+    immediateTempVar += 1
+    rollWeight += immediateTempVar
+  endif
+  DynamicDiceAdd dslot1 lastAttack rollWeight
+
+  // immediateTempVar = OTopNY - TopNY
+  // if OFramesHitstun <= 0 && immediateTempVar < 30 && Equal HitboxConnected 0 && !(Equal priority priority_panic) && OCurrAction < hex(0x41)
+  //   immediateTempVar = OTopNX - TopNX
+  //   Abs immediateTempVar
+  //   immediateTempVar *= 2
+  //   if OYDistBackEdge > -35
+  //     if !(Equal priority priority_pressure)
+  //       if disjointX > 1 && Equal Direction OPos || Equal AirGroundState 1
+  //         immediateTempVar = disjointX * 0.4 + 1
+  //         immediateTempVar *= rollWeight
+  //         DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //       elif disjointX < -1 && !(Equal Direction OPos) || Equal AirGroundState 1
+  //         immediateTempVar = disjointX * -0.4 + 1
+  //         immediateTempVar *= rollWeight
+  //         DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //       endif
+  //     endif
+  //   endif
+  //   immediateTempVar = OTopNY - CenterY
+  //   if immediateTempVar >= 20
+  //     if OAttacking
+  //       immediateTempVar = 1
+  //     else
+  //       immediateTempVar = 0
+  //     endif
+  //     if move_angle > 55 && move_angle < 105 && dirY >= immediateTempVar
+  //       DynamicDiceAdd dslot1 lastAttack rollWeight
+  //       Goto addIfFastHit
+  //     endif
+  //   elif True
+  //     if move_angle > 55 && move_angle < 105
+  //       DynamicDiceAdd dslot1 lastAttack rollWeight
+  //     endif
+  //     if move_angle > 230 && move_angle < 310
+  //       DynamicDiceAdd dslot1 lastAttack rollWeight
+  //     endif
+  //     Goto addIfFastHit
+
+  //     $ifLastOrigin(grab,false)
+  //       immediateTempVar = rollWeight * 2.5
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     endif
+  //   endif
+  // else
+  //   immediateTempVar = Direction * OPos
+  //   globTempVar = OTopNY + OHurtboxSize * 0.5
+  //   if Equal dirX 0 && Equal dirY 0
+  //     immediateTempVar = rollWeight * 2
+  //     DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //   elif Equal dirX immediateTempVar
+  //     if dirY <= 0
+  //       immediateTempVar = rollWeight * 2
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     elif Equal dirY 1 && globTempVar > CenterY
+  //       immediateTempVar = rollWeight * 2
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     endif
+  //   elif Equal dirY 1 && globTempVar > CenterY
+  //     if Equal dirX 0
+  //       immediateTempVar = rollWeight * 2
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     elif Equal dirX immediateTempVar
+  //       immediateTempVar = rollWeight * 2
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     endif
+  //   elif Equal dirY -1 && globTempVar <= CenterY
+  //     if Equal dirX 0
+  //       immediateTempVar = rollWeight * 2
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     elif Equal dirX immediateTempVar
+  //       immediateTempVar = rollWeight * 2
+  //       DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //     endif
+  //   endif
+  //   DynamicDiceAdd dslot1 lastAttack rollWeight
+  //   $ifLastOrigin(grab,false)
+  //     immediateTempVar = rollWeight * 2
+  //     DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  //   endif
+  // endif
+
+  // Goto getOEndlag
+  // if move_hitFrame <= immediateTempVar && move_knockback >= 50
+  //   immediateTempVar -= move_hitFrame
+  //   immediateTempVar *= 0.15
+  //   immediateTempVar += 1
+  //   immediateTempVar *= rollWeight
+  //   DynamicDiceAdd dslot1 lastAttack immediateTempVar
+  // endif
+Return
+label getEndlag
+  immediateTempVar = move_IASA - (move_hitFrame + move_duration)
+  $ifAerialAttack()
+    if Equal IsOnStage 1
+      immediateTempVar = move_IASA
+    endif
+  $ifLastOrigin(grab,true)
+    immediateTempVar -= 8
+  endif
+Return
+label getOEndlag
+  GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
+Return
+label addIfFastHit
+  immediateTempVar = move_hitFrame
+  immediateTempVar -= 20
+  if immediateTempVar > 0
+    immediateTempVar = 20 - immediateTempVar
+    immediateTempVar *= 0.3
+    immediateTempVar *= rollWeight
+    rollWeight += immediateTempVar
+  endif
+Return
+label approxStageWidth
+  GetColDistPosAbs immediateTempVar anotherTempVar 0 -5 -10000 -5 0
+  GetColDistPosAbs globTempVar anotherTempVar immediateTempVar -5 10000 -5 0
+  globTempVar -= immediateTempVar
 Return
 Return

@@ -2,23 +2,26 @@
 id 0x8503
 unk 0x0
 
-str "*"
-str "SELECT MOVE"
-str "move"
-str "priority"
+XReciever
+
+// yep, move choice is COOOOOMPLICATED lmao
+
+// $generateChecks(check_hub)
 
 predictOOption var22 8 LevelValue 
 var23 = 0
-if OCurrAction >= 66 && OCurrAction <= 100
+if OCurrAction >= 66 && OCurrAction <= 100 && !(Equal OCurrAction 73)
   var23 = 1
 endif
-if !(Equal var22 2) && !(CalledAs FastAerial) && Equal var21 16 && OFramesHitstun <= 0 && Equal var23 0
-  predictOOption var22 7 LevelValue 
+if !(Equal var22 2) && !(Equal var21 16.5) && !(CalledFrom FastAerial) && Equal var21 16 && !(Equal var21 7.1) && OFramesHitstun <= 0 && Equal var23 0
+  predictOOption var23 7 LevelValue 
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
   predictionConfidence var17 7 LevelValue
   var17 *= 2
-  if OCurrAction >= 66 && OCurrAction <= 89
-  elif Equal HitboxConnected 1 || Equal PrevAction 60
-  elif !(Equal var22 3) && Rnd < var17 && Rnd < 0.54 && SamePlane
+  if Equal var22 1
+  elif !(Equal var23 3) && Rnd < var17 && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
     var21 = 16.3
   endif
 endif
@@ -28,490 +31,647 @@ elif Equal var21 7.1 || Equal var21 10.1 || Equal var21 10.2 || Equal var21 13
 elif !(Equal var21 16.3)
   var21 = 16
 endif
-if OFramesHitstun >= 1
+if OFramesHitstun >= 1 && !(Equal var21 16.5)
   var21 = 16
 endif
 
+// ///////////////////////////////////////////////////////////////
+// prioritization
+// ///////////////////////////////////////////////////////////////
 
-DynamicDiceClear
+// https://fightinggameglossary.net/index/pressure
+// https://fightinggameglossary.net/index/poke
+// I might not implement this idk
+// https://fightinggameglossary.net/index/anti-air
+// https://fightinggameglossary.net/index/conversion
+// https://fightinggameglossary.net/index/frame-trap
+// https://fightinggameglossary.net/index/cross-up
+// https://fightinggameglossary.net/index/otg
 
-if ODamage >= 40
-  DynamicDiceAdd 13
-  if ODamage >= 70
-    DynamicDiceAdd 13
-    DynamicDiceAdd 1
-    DynamicDiceAdd 1
+DynamicDiceClear 0
+DynamicDiceClear 1
+
+// universal:
+// - breakCC
+// - antiAir
+  // predict the chance that the opponent will crouch
+  PredictOMov var22 6 LevelValue
+  if OCurrAction >= 17 && OCurrAction <= 21
+    var22 += 1.5
+  endif
+  DynamicDiceAdd 0 4 var22
+
+  // if they're in the air and are likely to attack then an anti-air is a good option
+  var22 = OTopNY - TopNY - HurtboxSize
+  if XDistLE var17 && var22 > 10
+    PredictOMov var22 14 LevelValue
+    if var22 > 0.4 && CHANCE_MUL_LE PT_AGGRESSION 1.3 && OFramesHitstun < 15
+      var23 = PT_AGGRESSION * 3
+      DynamicDiceAdd 0 10 var23
+    endif
+  endif
+// neutral:
+// - kill
+// - poke
+// - breakCC
+// - crossUp
+// - antiAir
+// - launch
+
+// getting approximate width of the main stage platform
+Goto approxStageWidth
+
+Norm var22 TopNX TopNY 
+Norm var23 OTopNX OTopNY
+Abs var22
+Abs var23
+
+// if the distance between the players is less than about 7/20ths of the stage width
+var17 *= 0.35
+if var22 < var17
+  // ...and neither player is 7/20th stage lengths away from the ledge
+  var17 *= OPos
+  GetYDistFloorOffset var22 var17 5 1
+  var17 *= -1
+  GetYDistFloorOffset var23 var17 5 0
+  if !(Equal var22 -1) && !(Equal var23 -1) 
+    Goto neutral_priorities
   endif
 endif
-var22 = OTopNY - TopNY
-if Equal var21 16.4
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 13
-  DynamicDiceAdd 8
-elif OCurrAction >= 26 && OCurrAction <= 29
-  DynamicDiceAdd 5
-  DynamicDiceAdd 5
-elif OFramesHitstun <= 0 && var22 < 30 && Equal HitboxConnected 0
-  predictAverage var22 10 LevelValue
-  if !(ODistLE var22) && OYDistBackEdge > -35 
-    DynamicDiceAdd 9
-    DynamicDiceAdd 11
-  endif
 
-  if 17 <= OCurrAction && OCurrAction <= 21
-    DynamicDiceAdd 6
-    DynamicDiceAdd 6
-    DynamicDiceAdd 6
-  endif
-  GetYDistFloorOffset var22 13 5 1
-  GetYDistFloorOffset var17 (-13) 5 1
-  if Equal var22 -1 || Equal var17 -1
-    var17 = TopNX
-    var22 = OTopNX
-    Abs var17
-    Abs var22
-    if var17 > var22
-      DynamicDiceAdd 7
+if !(True)
+  label neutral_priorities
+    // the greater the damage, the more incentive there is to go for a kill
+    // however, approaching can be unsafe, and so is determined by aggression
+    var17 = PT_AGGRESSION + 0.15
+    var22 = ODamage * (100 + OWeight - 100) / 2000
+    var22 *= var17
+    DynamicDiceAdd 0 0 var22
+
+    // pokes are used in neutral often to try and get at the target from a safe distance
+    var23 = (PT_AGGRESSION + 1) * (PT_BAITCHANCE + 1)
+    DynamicDiceAdd 0 7 var23
+
+    if Equal AirGroundState 1
+      // if the opponent is unlikely to attack or grab
+      PredictOMov var22 14 LevelValue
+      PredictOMov var17 15 LevelValue
+      var23 = (PT_AGGRESSION + 1) * (PT_BAITCHANCE + 1) * (1.5 - var22) * (1.5 - var17)
+      if var22 < 0.2 && var17 < 0.2
+        // then consider crossing them up
+        DynamicDiceAdd 0 13 var23
+      endif
+      // otherwise if they're high in the air and nearby
+
+      var22 = OTopNY - TopNY - HurtboxSize
+      predictAverage var17 10 LevelValue
+      var17 += 10
+      if XDistLE var17 && var22 > 25
+        // then maybe crossing up is still a good option
+        var23 *= 0.85 * PT_AGGRESSION
+        DynamicDiceAdd 0 13 var23
+      endif
     endif
-  else 
-    DynamicDiceAdd 2
-  endif
-  if Rnd < 0.6
-    DynamicDiceAdd 5
-    DynamicDiceAdd 8
-  else
-    DynamicDiceAdd 9
-  endif
-  if Rnd < 0.65
-    DynamicDiceAdd 11
-  else
-    DynamicDiceAdd 5
-  endif
-  if Rnd < 0.45
-    DynamicDiceAdd 9
-  else
-    DynamicDiceAdd 5
-  endif
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 8
-  DynamicDiceAdd 5
-  DynamicDiceAdd 13
+
+    // if they're close then a launcher (as-in combo starter) is an idea
+    predictAverage var17 10 LevelValue
+    var17 += Width + OWidth
+    if ODistLE var17
+      var23 = 2 * (0.4 + PT_AGGRESSION) * (0.4 + PT_BRAVECHANCE)
+      DynamicDiceAdd 0 6 var23
+    endif
+  Return
+endif
+
+// advantage options
+
+var22 = OTopNY - TopNY - HurtboxSize
+if var22 > 40
+  Goto advantage_priorities
 elif True
-  if ODamage >= 60
-    DynamicDiceAdd 1
-    DynamicDiceAdd 1
-    DynamicDiceAdd 13
-    DynamicDiceAdd 13
-    if ODamage >= 100
-      DynamicDiceAdd 1
-      DynamicDiceAdd 1
-      DynamicDiceAdd 1
-      DynamicDiceAdd 13
-      DynamicDiceAdd 13
-      DynamicDiceAdd 13
-    endif
-  endif
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 2
-  DynamicDiceAdd 3
-  DynamicDiceAdd 8
-  DynamicDiceAdd 5
-  GetYDistFloorOffset var22 40 5 1
-  GetYDistFloorOffset var17 (-40) 5 1
-  if Equal var22 -1 || Equal var17 -1
-    DynamicDiceAdd 8
-    DynamicDiceAdd 1
-    DynamicDiceAdd 13
-    DynamicDiceAdd 13
-  endif
-
-  if OKBAngle >= 70 && OKBAngle <= 110
-    DynamicDiceAdd 3
-    DynamicDiceAdd 8
-    DynamicDiceAdd 8
-  elif OKBAngle >= 180 
-    DynamicDiceAdd 3
-    DynamicDiceAdd 8
-    DynamicDiceAdd 2
-  endif
-
-  if OYDistBackEdge > -26.5
-    DynamicDiceAdd 2
-    DynamicDiceAdd 2
-    DynamicDiceAdd 2
-    DynamicDiceAdd 3
-    DynamicDiceAdd 8
-  elif Equal OIsOnStage 1 && ODamage >= 70
-    GetAttribute var17 33 0
-    if var17 > 2
-      DynamicDiceAdd 2
+  // otherwise if the opponent is 4/10ths of the way to the ledge relative to their direction from you
+  Goto approxStageWidth
+  var17 *= 0.4 * OPos
+  // take aggression and bravery into account
+  var23 = (0.5 + PT_AGGRESSION) * (0.5 + PT_BRAVECHANCE)
+  var17 *= var23
+  GetYDistFloorOffset var22 var17 5 1
+  if Equal var22 -1
+    Goto advantage_priorities
+  elif True
+    // then if the target is stuck in their shield...
+    if OCurrAction >= 26 && OCurrAction <= 29 && XDistLE 35
+      Goto advantage_priorities
     endif
   endif
 endif
 
-if OYDistBackEdge < -14
-  DynamicDiceAdd 3
-  if OFramesHitstun > 0
-    DynamicDiceAdd 3
-    DynamicDiceAdd 3
-  endif
-  DynamicDiceAdd 2
-  if OYDistBackEdge < -35
-    DynamicDiceAdd 3
-    DynamicDiceAdd 1
-  endif
+if !(True)
+  label advantage_priorities
+    // the greater the damage, the more incentive there is to go for a kill
+    var22 = ODamage * (100 + OWeight - 100) / 2000
+    DynamicDiceAdd 0 0 var22
+
+    var22 = 5 * PT_AGGRESSION
+    DynamicDiceAdd 0 3 var22
+    if OCurrAction >= 26 && OCurrAction <= 29
+      DynamicDiceAdd 0 3 2.5
+    endif
+    var22 *= 0.65
+    DynamicDiceAdd 0 1 var22
+    var23 = 1 + PT_BRAVECHANCE
+    var22 *= var23
+    DynamicDiceAdd 0 6 var22
+
+    var22 = PT_BAITCHANCE * 5
+    DynamicDiceAdd 0 12 var22
+  Return
 endif
 
-if FramesHitstun > 0 || Equal CurrAction 73
-  predictAverage var22 10 LevelValue
-  var22 += 10
-  if Equal AirGroundState 2 && ODistLE var22
-    DynamicDiceClear
-    DynamicDiceAdd 10
-  endif
+// if the target is caught in a combo of some sort
+// exclude if they can act freely
+if OCurrAction <= 65 || OCurrAction >= 190
+elif Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0
+  Goto punish_priorities
+elif OPrevAction >= 67 && OPrevAction <= 100  
+  Goto punish_priorities
 endif
+if !(True)
+  label punish_priorities
+    // the greater the damage, the more incentive there is to go for a kill
+    var22 = ODamage * (100 + OWeight - 100) / 900
+    DynamicDiceAdd 0 0 var22
 
-DynamicDiceRoll var7
+    // calculate if we can arrive to the target's position as their hitstun ends
+    if OFramesHitstun > 0
+      var23 = OFramesHitstun
 
-if Equal var21 13
-  var7 = -1
-endif
+      EstOXCoord var22 var23
 
-if CalledAs FastAerial
-  var7 = 10
-elif True
-  if Equal var21 16.3 && Rnd < 0.65
-    var7 = 9 
-  elif Equal var21 10.1
-    if Rnd < 0.65 && Rnd < 0.6 && Rnd < 0.5
-      var7 = 5
+      if Equal AirGroundState 1
+        GetAttribute var17 40; 0
+      else
+        GetAttribute var17 136; 0
+      endif
+      var17 = var17 * var23
+      var17 *= OPos
+      var17 += TopNX
+
+      if var17 < var22 && OPos < 0
+        DynamicDiceAdd 0 1 4
+      elif var17 > var22 && OPos > 0
+        DynamicDiceAdd 0 1 4
+      endif
+    elif OCurrAction >= 77 && OCurrAction <= 100
+      DynamicDiceAdd 0 2 4
     else
-      var7 = 11
+      // otherwise see if we can make a conversion
+      var23 = 20
+
+      EstOXCoord var22 var23
+
+      if Equal AirGroundState 1
+        GetAttribute var17 40; 0
+      else
+        GetAttribute var17 136; 0
+      endif
+      var17 = var17 * var23
+      var17 *= OPos
+      var17 += TopNX
+
+      if var17 < var22 && OPos < 0
+        DynamicDiceAdd 0 11 2
+      elif var17 > var22 && OPos > 0
+        DynamicDiceAdd 0 11 2
+      endif
     endif
-  elif Equal var21 7.1
-    var7 = 12
-  endif
-endif
-DynamicDiceClear
 
-// #let disjointY = var11
+    if OYDistFloor > 1 && OYDistFloor < 8
+      DynamicDiceAdd 0 2 2.5
+    endif
 
-if Equal var7 5
-  if Equal AirGroundState 2
-    Goto gen_aerial_checks
-  else
-    Goto gen_checks
-  endif
-elif Equal var7 10
-  Goto gen_aerial_checks
-elif YDistBackEdge < -15 || YSpeed > 0
-  Goto gen_aerial_checks
-elif OYDistBackEdge < -35 && OCurrAction >= 66 && OCurrAction <= 100 && OYSpeed > 0
-  Goto gen_aerial_checks
-else
-  Goto gen_checks
-endif
-
-if !(True)
-  label gen_checks
-var20 = 0
-Goto jab123
-Goto check_hub
-var20 = 1
-Goto jab123
-Goto jab123_strong
-Goto check_hub
-var20 = 2
-Goto dashattack
-Goto check_hub
-var20 = 3
-Goto dashattack
-Goto dashattack_mid
-Goto check_hub
-var20 = 4
-Goto dashattack
-Goto dashattack_strong
-Goto check_hub
-var20 = 5
-Goto ftilt
-Goto check_hub
-var20 = 6
-Goto ftilt
-Goto ftilt_strong
-Goto check_hub
-var20 = 7
-Goto utilt
-Goto check_hub
-var20 = 8
-Goto utilt
-Goto utilt_start_outer
-Goto check_hub
-var20 = 9
-Goto utilt
-Goto utilt_end_inner
-Goto check_hub
-var20 = 10
-Goto utilt
-Goto utilt_end_outer
-Goto check_hub
-var20 = 11
-Goto dtilt
-Goto check_hub
-var20 = 12
-Goto dtilt
-Goto dtilt_inner
-Goto check_hub
-var20 = 13
-Goto dtilt
-Goto dtilt_outer
-Goto check_hub
-var20 = 14
-Goto fsmash
-Goto check_hub
-var20 = 15
-Goto fsmash
-Goto fsmash_outer
-Goto check_hub
-var20 = 16
-Goto usmash
-Goto check_hub
-var20 = 17
-Goto usmash
-Goto usmash_mid
-Goto check_hub
-var20 = 18
-Goto usmash
-Goto usmash_strong
-Goto check_hub
-var20 = 19
-Goto dsmash
-Goto check_hub
-var20 = 20
-Goto dsmash
-Goto dsmash_hit1_inner
-Goto check_hub
-var20 = 21
-Goto dsmash
-Goto dsmash_hit1_outer
-Goto check_hub
-var20 = 22
-Goto dsmash
-Goto dsmash_hit2_mid
-Goto check_hub
-var20 = 23
-Goto dsmash
-Goto dsmash_hit2_inner
-Goto check_hub
-var20 = 24
-Goto dsmash
-Goto dsmash_hit2_outer
-Goto check_hub
-var20 = 25
-Goto nspecial
-Goto check_hub
-var20 = 26
-Goto nspecial
-Goto nspecial_mid
-Goto check_hub
-var20 = 27
-Goto nspecial
-Goto nspecial_strong
-Goto check_hub
-var20 = 28
-Goto sspecial
-Goto check_hub
-var20 = 30
-Goto grab
-Goto fthrow
-Goto check_hub
-var20 = 31
-Goto grab
-Goto dthrow
-Goto check_hub
-var20 = 32
-Goto grab
-Goto bthrow
-Goto check_hub
-var20 = 33
-Goto grab
-Goto uthrow
-Goto check_hub
-var20 = 34
-Goto nair
-Goto check_hub
-var20 = 35
-Goto nair
-Goto nair_hit1_strong
-Goto check_hub
-var20 = 36
-Goto nair
-Goto nair_hit2_inner
-Goto check_hub
-var20 = 37
-Goto nair
-Goto nair_hit2_strong
-Goto check_hub
-var20 = 38
-Goto fair
-Goto check_hub
-var20 = 39
-Goto fair
-Goto fair_mid
-Goto check_hub
-var20 = 40
-Goto fair
-Goto fair_outer
-Goto check_hub
-var20 = 41
-Goto bair
-Goto check_hub
-var20 = 42
-Goto bair
-Goto bair_mid
-Goto check_hub
-var20 = 43
-Goto bair
-Goto bair_outer
-Goto check_hub
-var20 = 44
-Goto uair
-Goto check_hub
-var20 = 45
-Goto uair
-Goto uair_mid
-Goto check_hub
-var20 = 46
-Goto uair
-Goto uair_outer
-Goto check_hub
-var20 = 47
-Goto dair
-Goto check_hub
-var20 = 48
-Goto dair
-Goto dair_mid
-Goto check_hub
-var20 = 49
-Goto dair
-Goto dair_outer
-Goto check_hub
+    var22 = PT_BAITCHANCE * 5
+    if OCurrAction >= 26 && OCurrAction <= 29
+      var22 *= 2.5
+    endif
+    DynamicDiceAdd 0 12 var22
   Return
 endif
 
+// disadvantage (very similar to advantage - basically just reversed)
+
+var22 = TopNY - OTopNY - OHurtboxSize
+if var22 > 40
+  Goto disadvantage_priorities
+elif True
+  // otherwise if the opponent is 4/10ths of the way to the ledge relative to their direction from you
+  Goto approxStageWidth
+  var17 *= -0.4 * OPos
+  // take aggression and bravery into account
+  // var23 = (0.5 + PT_AGGRESSION) * (0.5 + PT_BRAVECHANCE) + 1
+  // var17 /= var23
+  GetYDistFloorOffset var22 var17 5 1
+  var23 = OTopNX + var17
+  DrawDebugLine OTopNX OCenterY var23 OCenterY 255 0 0 221
+  if Equal var22 -1
+    Goto disadvantage_priorities
+  endif
+endif
 if !(True)
-  label gen_aerial_checks
-var20 = 34
-Goto nair
-Goto check_hub
-var20 = 35
-Goto nair
-Goto nair_hit1_strong
-Goto check_hub
-var20 = 36
-Goto nair
-Goto nair_hit2_inner
-Goto check_hub
-var20 = 37
-Goto nair
-Goto nair_hit2_strong
-Goto check_hub
-var20 = 38
-Goto fair
-Goto check_hub
-var20 = 39
-Goto fair
-Goto fair_mid
-Goto check_hub
-var20 = 40
-Goto fair
-Goto fair_outer
-Goto check_hub
-var20 = 41
-Goto bair
-Goto check_hub
-var20 = 42
-Goto bair
-Goto bair_mid
-Goto check_hub
-var20 = 43
-Goto bair
-Goto bair_outer
-Goto check_hub
-var20 = 44
-Goto uair
-Goto check_hub
-var20 = 45
-Goto uair
-Goto uair_mid
-Goto check_hub
-var20 = 46
-Goto uair
-Goto uair_outer
-Goto check_hub
-var20 = 47
-Goto dair
-Goto check_hub
-var20 = 48
-Goto dair
-Goto dair_mid
-Goto check_hub
-var20 = 49
-Goto dair
-Goto dair_outer
-Goto check_hub
+  label disadvantage_priorities
+    // the greater the damage, the more incentive there is to go for a kill (less so than pure advantage)
+    var22 = ODamage * (100 + OWeight - 100) / 4000
+    DynamicDiceAdd 0 0 var22
+    
+    // perhaps try to wall them out
+    var22 = (1 - PT_AGGRESSION) * 4
+    DynamicDiceAdd 0 7 var22
+
+    var22 = PT_BRAVECHANCE * 4
+    DynamicDiceAdd 0 13 var22
+
+    var22 = PT_AGGRESSION * 4
+    DynamicDiceAdd 0 5 var22
+  Return
+endif
+// edgeguard
+if !(True)
+  label edgeguard_priorities
+    // the greater the damage, the more incentive there is to go for a kill (less so than pure advantage)
+    var22 = ODamage * (100 + OWeight - 100) / 2000
+    DynamicDiceAdd 0 0 var22
+    
+    DynamicDiceAdd 0 9 12
   Return
 endif
 
-if Equal var7 1
-//   {KILL_MOVES}
-elif Equal var7 2
+DynamicDiceRoll 0 var7 0
 
+
+// ///////////////////////////////////////////////////////////////
+// var7 results
+// ///////////////////////////////////////////////////////////////
+
+if Equal var21 7.1
+  var7 = 8
+endif
+
+DynamicDiceClear 0
+
+// ///////////////////////////////////////////////////////////////
+// attack rolls
+// ///////////////////////////////////////////////////////////////
+
+var22 = OTopNY - TopNY - OHurtboxSize * 2
+if CurrAction >= 26 && CurrAction <= 29
+  var16 = 1
+elif Equal CurrSubaction JumpSquat
+  var16 = 1
 elif Equal var7 3
-//   {JUGGLE_MOVES}
-elif Equal var7 4
-//   {TECHCHASE_MOVES}
-elif Equal var7 5
-
-elif Equal var7 6
-
-elif Equal var7 7
-//   {ESCAPE_MOVES}
-elif Equal var7 8
-
-elif Equal var7 13
-//   {POWER_MOVES}
-elif Equal var7 9
-//   {SPACING_MOVES}
-
-  if Rnd < 0.54 && OYDistBackEdge > -30 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && SamePlane && OFramesHitstun <= 0
-    var21 = 16.3
-  endif
-elif Equal var7 10
-
-  LOGSTR 1346457088 1229127680 0 0 0
-elif Equal var7 11
-//   {BAIT_MOVES}
-  LOGSTR 1111574784 1409286144 0 0 0
-elif Equal var7 12
-//   {CAMP_MOVES}
-  LOGSTR 1128353024 1342177280 0 0 0
+elif YDistFloor > 15 || YSpeed > 0.2
+  var16 = 1
+// elif OCurrAction >= 66 && OCurrAction <= 100 && OYSpeed > 0 && var22 > 0
+//   var16 = 1
 endif
 
-DynamicDiceRoll var20
+DynamicDiceClear 0
+DynamicDiceAdd 0 0 1
+DynamicDiceAdd 0 1 1
+DynamicDiceAdd 0 2 0.3333333333333333
+DynamicDiceAdd 0 3 0.3333333333333333
+DynamicDiceAdd 0 4 0.3333333333333333
+DynamicDiceAdd 0 5 0.5
+DynamicDiceAdd 0 6 0.5
+DynamicDiceAdd 0 7 0.25
+DynamicDiceAdd 0 8 0.25
+DynamicDiceAdd 0 9 0.25
+DynamicDiceAdd 0 10 0.25
+DynamicDiceAdd 0 11 0.3333333333333333
+DynamicDiceAdd 0 12 0.3333333333333333
+DynamicDiceAdd 0 13 0.3333333333333333
+DynamicDiceAdd 0 14 0.5
+DynamicDiceAdd 0 15 0.5
+DynamicDiceAdd 0 16 0.3333333333333333
+DynamicDiceAdd 0 17 0.3333333333333333
+DynamicDiceAdd 0 18 0.3333333333333333
+DynamicDiceAdd 0 19 0.16666666666666666
+DynamicDiceAdd 0 20 0.16666666666666666
+DynamicDiceAdd 0 21 0.16666666666666666
+DynamicDiceAdd 0 22 0.16666666666666666
+DynamicDiceAdd 0 23 0.16666666666666666
+DynamicDiceAdd 0 24 0.16666666666666666
+DynamicDiceAdd 0 25 0.3333333333333333
+DynamicDiceAdd 0 26 0.3333333333333333
+DynamicDiceAdd 0 27 0.3333333333333333
+DynamicDiceAdd 0 28 1
+DynamicDiceAdd 0 29 0.2
+DynamicDiceAdd 0 30 0.2
+DynamicDiceAdd 0 31 0.2
+DynamicDiceAdd 0 32 0.2
+DynamicDiceAdd 0 33 0.2
+DynamicDiceAdd 0 34 0.25
+DynamicDiceAdd 0 35 0.25
+DynamicDiceAdd 0 36 0.25
+DynamicDiceAdd 0 37 0.25
+DynamicDiceAdd 0 38 0.3333333333333333
+DynamicDiceAdd 0 39 0.3333333333333333
+DynamicDiceAdd 0 40 0.3333333333333333
+DynamicDiceAdd 0 41 0.3333333333333333
+DynamicDiceAdd 0 42 0.3333333333333333
+DynamicDiceAdd 0 43 0.3333333333333333
+DynamicDiceAdd 0 44 0.3333333333333333
+DynamicDiceAdd 0 45 0.3333333333333333
+DynamicDiceAdd 0 46 0.3333333333333333
+DynamicDiceAdd 0 47 0.3333333333333333
+DynamicDiceAdd 0 48 0.3333333333333333
+DynamicDiceAdd 0 49 0.3333333333333333
 
-// {ADDITIONAL_FILTERS}
+// if Equal var7 1
+//   PAUSE
+// endif
 
-if Equal var7 12
-  Return
+// ///////////////////////////////////////////////////////////////
+// hardcoded situations
+// ///////////////////////////////////////////////////////////////
+
+if Equal var7 0
+  LOGSTR_NL 1263094784 1275068416 0 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 18 1
+DynamicDiceAdd 0 21 1
+DynamicDiceAdd 0 24 1
+DynamicDiceAdd 0 15 1
+DynamicDiceAdd 0 8 1
+DynamicDiceAdd 0 33 1
+DynamicDiceAdd 0 40 1
+elif Equal var7 1
+  LOGSTR_NL 1129270528 1112473600 0 0 0
+  DynamicDiceClear 0
+  if OKBAngle >= 60 && OKBAngle <= 120
+DynamicDiceAdd 0 -1 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 8 1
+DynamicDiceAdd 0 44 1
+DynamicDiceAdd 0 45 1
+DynamicDiceAdd 0 46 1
+  else
+DynamicDiceAdd 0 45 1
+DynamicDiceAdd 0 46 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 36 1
+DynamicDiceAdd 0 33 1
+DynamicDiceAdd 0 30 1
+DynamicDiceAdd 0 28 1
+DynamicDiceAdd 0 11 1
+DynamicDiceAdd 0 12 1
+DynamicDiceAdd 0 13 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 8 1
+  endif
+elif Equal var7 2
+  LOGSTR_NL 1413825280 1212368896 1095976192 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 49 1
+DynamicDiceAdd 0 15 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 33 1
+DynamicDiceAdd 0 31 1
+elif Equal var7 3
+  LOGSTR_NL 1347568896 1397970176 1380253696 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 34 1
+DynamicDiceAdd 0 35 1
+DynamicDiceAdd 0 36 1
+DynamicDiceAdd 0 37 1
+DynamicDiceAdd 0 33 1
+DynamicDiceAdd 0 30 1
+DynamicDiceAdd 0 31 1
+elif Equal var7 4
+  LOGSTR_NL 1112687872 1095451392 1124073472 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 49 1
+DynamicDiceAdd 0 21 1
+DynamicDiceAdd 0 15 1
+DynamicDiceAdd 0 33 1
+elif Equal var7 5
+  LOGSTR_NL 1163084544 1095779584 1129271808 1313165824 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 34 1
+DynamicDiceAdd 0 3 1
+DynamicDiceAdd 0 4 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 32 1
+elif Equal var7 6
+  LOGSTR_NL 1279350016 1313032192 0 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 8 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 33 1
+elif Equal var7 7
+  LOGSTR_NL 1347373824 1157627904 0 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 34 1
+DynamicDiceAdd 0 35 1
+DynamicDiceAdd 0 36 1
+DynamicDiceAdd 0 37 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 5 1
+elif Equal var7 8
+  LOGSTR_NL 1128353024 1342177280 0 0 0
+
+elif Equal var7 9
+  LOGSTR_NL 1162102528 1162302720 1095910400 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 15 1
+DynamicDiceAdd 0 14 1
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 47 1
+DynamicDiceAdd 0 48 1
+DynamicDiceAdd 0 49 1
+elif Equal var7 10
+  LOGSTR_NL 1095652352 1229015296 1375731712 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 15 1
+DynamicDiceAdd 0 14 1
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 47 1
+DynamicDiceAdd 0 48 1
+DynamicDiceAdd 0 49 1
 elif Equal var7 11
+  LOGSTR_NL 1129270784 1447383552 1397313280 1308622848 0
+  DynamicDiceClear 0
+  if OKBAngle >= 60 && OKBAngle <= 120
+DynamicDiceAdd 0 -1 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 8 1
+DynamicDiceAdd 0 44 1
+DynamicDiceAdd 0 45 1
+DynamicDiceAdd 0 46 1
+  else
+DynamicDiceAdd 0 -1 1
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 8 1
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 3 1
+DynamicDiceAdd 0 4 1
+  endif
+elif Equal var7 12
+  LOGSTR_NL 1179795712 1296389120 1380012032 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 7 1
+DynamicDiceAdd 0 8 1
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 34 1
+DynamicDiceAdd 0 35 1
+DynamicDiceAdd 0 36 1
+DynamicDiceAdd 0 37 1
+DynamicDiceAdd 0 28 1
+elif Equal var7 13
+  LOGSTR_NL 1129467648 1397970176 1342177280 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 38 1
+DynamicDiceAdd 0 39 1
+DynamicDiceAdd 0 40 1
+DynamicDiceAdd 0 34 1
+DynamicDiceAdd 0 35 1
+DynamicDiceAdd 0 36 1
+DynamicDiceAdd 0 37 1
+elif Equal var7 14
+  LOGSTR_NL 1245790720 1380274944 1163132928 0 0
+  DynamicDiceClear 0
+DynamicDiceAdd 0 0 1
+endif
+
+var18 = 80 * ((6 - PlayerCount) * 0.25)
+SeekNoCommit __DICE_LOOP__
+if !(True)
+  label __DICE_LOOP__
+  DynamicDiceRoll 0 var20 1
+  if Equal var20 -1
+    var18 -= 1
+    if var18 <= 0
+      SeekNoCommit __DICE_LOOP_END__
+    elif Equal var20 -1 
+      SeekNoCommit __DICE_LOOP__
+    endif
+  endif 
+  // GotoByValue var20
+  var22 = 19
+STACK_PUSH 10
+STACK_PUSH 9
+STACK_PUSH 8
+STACK_PUSH 7
+STACK_PUSH 4
+STACK_PUSH 3
+STACK_PUSH 6
+STACK_PUSH 5
+STACK_PUSH 1
+  XGoto GetChrSpecific
+  XReciever
+  Goto check_hub
+  Goto __ADDITIONAL_FILTERS__
+  var18 -= 1
+  if var18 <= 0
+    SeekNoCommit __DICE_LOOP_END__
+  elif Equal var20 -1 
+    SeekNoCommit __DICE_LOOP__
+  endif
+  SeekNoCommit __DICE_LOOP__
   Return
-elif Equal var7 10 || Equal var21 13
+  label __DICE_LOOP_END__
+endif
+
+if !(True)
+  label __ADDITIONAL_FILTERS__
+  if Equal var16 1
+if !(True) || Equal var20 34|| Equal var20 35|| Equal var20 36|| Equal var20 37|| Equal var20 38|| Equal var20 39|| Equal var20 40|| Equal var20 41|| Equal var20 42|| Equal var20 43|| Equal var20 44|| Equal var20 45|| Equal var20 46|| Equal var20 47|| Equal var20 48|| Equal var20 49
+    else
+      var20 = -1
+    endif
+  endif
+//   {ADDITIONAL_FILTERS}
+  Return
+endif
+
+DynamicDiceRoll 1 var20 0
+
+Goto __ADDITIONAL_FILTERS__
+
+DynamicDiceClear 0
+DynamicDiceClear 1
+
+// ///////////////////////////////////////////////////////////////
+// attack post-processing
+// ///////////////////////////////////////////////////////////////
+
+if !(Equal var20 -1)
+  if Equal var7 7
+    var21 = 16.2
+    if CHANCE_MUL_LE PT_AGGRESSION 0.25
+      var21 = 16
+    endif
+    Return
+  elif Equal var7 13
+    predictAverage var22 10 LevelValue
+    var22 += 15
+    if XDistLE var22
+      if Equal AirGroundState 1 && CHANCE_MUL_GE PT_JUMPINESS 1
+        var21 = 16.4
+        var15 = -1
+        var16 = 5
+        CallI DashScr
+      else
+        var21 = 16.4
+        var15 = -1
+        var16 = 1
+        if CHANCE_MUL_LE PT_JUMPINESS 1.25
+          var16 += 0.1
+        endif
+        CallI JumpScr
+      endif
+    endif
+  elif Equal var7 12
+    predictAverage var22 10 LevelValue
+    var22 += 10
+    if XDistLE var22
+      var22 = Rnd * 15
+      label frametrap_wait
+        LOGSTR_NL 1179934464 1463896320 1409286144 0 0
+        XGoto PerFrameChecks
+        XReciever
+        XGoto SetAttackGoal
+        XReciever
+        XGoto MoveToGoal
+        XReciever
+        Seek frametrap_wait
+        var22 -= 1
+        if var22 < 0
+          var21 = 16
+          var15 = -2
+          CallI MainHub
+        endif
+      Return
+    endif
+  endif
+endif
+
+if Equal var7 8 || Equal var7 7 || Equal var7 9
+  Return
+elif Equal CurrAction 73 || Equal var21 13
   if !(Equal var20 -1)
     var15 = -1
     var21 = 16.4
@@ -522,1037 +682,549 @@ endif
 predictionConfidence var22 9 LevelValue
 predictOOption var17 9 LevelValue
 var23 = 0
-if OCurrAction >= 66 && OCurrAction <= 100
+if OCurrAction >= 66 && OCurrAction <= 100 && !(Equal OCurrAction 73)
   var23 = 1
 endif
-if Rnd < var22 && Equal var17 1 && Equal var21 16 && OYDistBackEdge > -20 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && Equal var23 0 
+if Equal var21 16.5
+elif Rnd < var22 && Equal var17 1 && Equal var21 16 && OYDistBackEdge > -20 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && Equal var23 0 
   predictOOption var22 8 LevelValue 
   if Equal var22 2
     var21 = 16.1
   elif Equal var22 3
     var21 = 16.2
   endif
+elif Equal var7 7 && CHANCE_MUL_GE PT_AGGRESSION 0.2
+  var21 = 16.2
 endif
 
-var22 *= 2
-if !(True) || Equal var20 34|| Equal var20 35|| Equal var20 36|| Equal var20 37|| Equal var20 38|| Equal var20 39|| Equal var20 40|| Equal var20 41|| Equal var20 42|| Equal var20 43|| Equal var20 44|| Equal var20 45|| Equal var20 46|| Equal var20 47|| Equal var20 48|| Equal var20 49
-  // if OYDistBackEdge < -50
-  //   var20 = -1
-  // endif
-elif YDistBackEdge < -45 || OYDistBackEdge < -20
-  var20 = -1 
-elif Rnd < var22 && Equal var17 3
-if Equal var20 33
-elif Equal var20 32
-elif Equal var20 30
-elif Equal var20 31
-  else
-    var20 = -1
-  endif
-endif
+// var22 *= 2
+// $ifAerialAttack()
+// elif YDistBackEdge < -45 || OYDistBackEdge < -20
+//   var20 = -1 
+// elif Rnd < var22 && Equal var17 3
+//   $ifLastAttack(uthrow)
+//   $elifLastAttack(bthrow)
+//   $elifLastAttack(fthrow)
+//   $elifLastAttack(dthrow)
+//   else
+//     var20 = -1
+//   endif
+// endif
 
-if OCurrAction >= 66 && OCurrAction <= 89
-elif Equal HitboxConnected 1 || Equal PrevAction 60
-elif Rnd < 0.45 && Equal var21 16 && SamePlane && OFramesHitstun <= 0
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
+if Equal var22 1
+elif Equal var21 16.5
+elif CHANCE_MUL_LE PT_WALL_CHANCE 1 && Equal var21 16 && SamePlane && OFramesHitstun <= 0
   var22 = TopNX
   var17 = OTopNX
   Abs var22
   Abs var17
 
-  if var22 < var17 && var9 > 4
-    var21 = 16.3
-  endif
+  // if var22 < var17 && var8 > 4
+  //   var21 = 16.3
+  // endif
 endif
 
 XGoto SetAttackGoal
 XReciever
 Return
 
-
-label jab123
-LOGSTR 1784766976 825373440 0 0 0
-var2 = 4
-var9 = 3
-var3 = 1
-var4 = 1
-var10 = 17.259999999999998
-CalcKnockback var0 ODamage 4 20 50 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label jab123_strong
-LOGSTR 1784766976 825373440 1601401856 1919905280 1728053248
-var2 = 4
-var9 = 3
-var3 = 1
-var4 = 0
-var10 = 23.21
-CalcKnockback var0 ODamage 6 30 60 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label dashattack
-LOGSTR 1684108032 1751217152 1952539392 1795162112 0
-var2 = 12
-var9 = 3
-var3 = 1
-var4 = 0
-var10 = 37.59
-CalcKnockback var0 ODamage 11 70 55 OWeight 0
-LOGVAL var0
-var8 = 110
-Goto __ANGLE_FIX__
-Return
-label dashattack_mid
-LOGSTR 1684108032 1751217152 1952539392 1801415936 1768161280
-var2 = 12
-var9 = 3
-var3 = 1
-var4 = 0
-var10 = 31.93
-CalcKnockback var0 ODamage 9 35 60 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label dashattack_strong
-LOGSTR 1684108032 1751217152 1952539392 1801417472 1953656576
-var2 = 12
-var9 = 3
-var3 = 1
-var4 = -1
-var10 = 44.209999999999994
-CalcKnockback var0 ODamage 12 70 55 OWeight 0
-LOGVAL var0
-var8 = 110
-Goto __ANGLE_FIX__
-Return
-label ftilt
-LOGSTR 1718905088 1819541504 0 0 0
-var2 = 7
-var9 = 3
-var3 = 1
-var4 = 1
-var10 = 19.35
-CalcKnockback var0 ODamage 9 30 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label ftilt_strong
-LOGSTR 1718905088 1819565824 1937011200 1869506304 0
-var2 = 7
-var9 = 3
-var3 = 1
-var4 = 1
-var10 = 24.7
-CalcKnockback var0 ODamage 13 60 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label utilt
-LOGSTR 1970563328 1819541504 0 0 0
-var2 = 6
-var9 = 2
-var3 = 1
-var4 = 1
-var10 = 8.860000000000001
-CalcKnockback var0 ODamage 8 40 116 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label utilt_start_outer
-LOGSTR 1970563328 1819565824 1937006848 1920229120 1869968384
-var2 = 6
-var9 = 2
-var3 = 1
-var4 = 1
-var10 = 17.369999999999997
-CalcKnockback var0 ODamage 12 50 100 OWeight 0
-LOGVAL var0
-var8 = 110
-Goto __ANGLE_FIX__
-Return
-label utilt_end_inner
-LOGSTR 1970563328 1819565824 1701733376 1600744960 1852142080
-var2 = 9
-var9 = 3
-var3 = 0
-var4 = 1
-var10 = -4.29
-CalcKnockback var0 ODamage 9 30 116 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label utilt_end_outer
-LOGSTR 1970563328 1819565824 1701733376 1601139968 1952805376
-var2 = 9
-var9 = 3
-var3 = 0
-var4 = 1
-var10 = -14.93
-CalcKnockback var0 ODamage 13 50 100 OWeight 0
-LOGVAL var0
-var8 = 85
-Goto __ANGLE_FIX__
-Return
-label dtilt
-LOGSTR 1685350656 1819541504 0 0 0
-var2 = 7
-var9 = 2
-var3 = 1
-var4 = -1
-var10 = 19.580000000000002
-CalcKnockback var0 ODamage 9 40 40 OWeight 0
-LOGVAL var0
-var8 = 30
-Goto __ANGLE_FIX__
-Return
-label dtilt_inner
-LOGSTR 1685350656 1819565824 1768844800 1701969920 0
-var2 = 7
-var9 = 2
-var3 = 1
-var4 = 0
-var10 = 12.850000000000001
-CalcKnockback var0 ODamage 8 20 40 OWeight 0
-LOGVAL var0
-var8 = 30
-Goto __ANGLE_FIX__
-Return
-label dtilt_outer
-LOGSTR 1685350656 1819565824 1869968384 1701969920 0
-var2 = 7
-var9 = 2
-var3 = 1
-var4 = -1
-var10 = 24.5
-CalcKnockback var0 ODamage 10 50 40 OWeight 0
-LOGVAL var0
-var8 = 30
-Goto __ANGLE_FIX__
-Return
-label fsmash
-LOGSTR 1718840576 1634953216 0 0 0
-var2 = 11
-var9 = 3
-var3 = 1
-var4 = 1
-var10 = 23.37
-CalcKnockback var0 ODamage 14 60 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label fsmash_outer
-LOGSTR 1718840576 1634953216 1601139968 1952805376 0
-var2 = 11
-var9 = 3
-var3 = 1
-var4 = 1
-var10 = 28.200000000000003
-CalcKnockback var0 ODamage 20 80 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label usmash
-LOGSTR 1970498816 1634953216 0 0 0
-var2 = 9
-var9 = 4
-var3 = 0
-var4 = 0
-var10 = -13.59
-CalcKnockback var0 ODamage 8 100 100 OWeight 1
-LOGVAL var0
-var8 = 75
-Goto __ANGLE_FIX__
-Return
-label usmash_mid
-LOGSTR 1970498816 1634953216 1601005824 1677721600 0
-var2 = 9
-var9 = 4
-var3 = 0
-var4 = 1
-var10 = -7.41
-CalcKnockback var0 ODamage 15 30 80 OWeight 0
-LOGVAL var0
-var8 = 90
-Goto __ANGLE_FIX__
-Return
-label usmash_strong
-LOGSTR 1970498816 1634953216 1601401856 1919905280 1728053248
-var2 = 9
-var9 = 4
-var3 = 0
-var4 = 1
-var10 = -7.31
-CalcKnockback var0 ODamage 18 60 80 OWeight 0
-LOGVAL var0
-var8 = 90
-Goto __ANGLE_FIX__
-Return
-label dsmash
-LOGSTR 1685286144 1634953216 0 0 0
-var2 = 6
-var9 = 2
-var3 = 1
-var4 = 0
-var10 = 18.63
-CalcKnockback var0 ODamage 11 70 72 OWeight 0
-LOGVAL var0
-var8 = 75
-Goto __ANGLE_FIX__
-Return
-label dsmash_hit1_inner
-LOGSTR 1685286144 1634953216 1600678144 1949392640 1768844800
-var2 = 6
-var9 = 2
-var3 = 1
-var4 = 0
-var10 = 12.780000000000001
-CalcKnockback var0 ODamage 11 16 100 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label dsmash_hit1_outer
-LOGSTR 1685286144 1634953216 1600678144 1949392640 1869968384
-var2 = 6
-var9 = 2
-var3 = 1
-var4 = -1
-var10 = 22.98
-CalcKnockback var0 ODamage 16 70 100 OWeight 0
-LOGVAL var0
-var8 = 70
-Goto __ANGLE_FIX__
-Return
-label dsmash_hit2_mid
-LOGSTR 1685286144 1634953216 1600678144 1949458176 1835623424
-var2 = 21
-var9 = 2
-var3 = -1
-var4 = -1
-var10 = -20.54
-CalcKnockback var0 ODamage 11 70 72 OWeight 0
-LOGVAL var0
-var8 = 75
-Goto __ANGLE_FIX__
-Return
-label dsmash_hit2_inner
-LOGSTR 1685286144 1634953216 1600678144 1949458176 1768844800
-var2 = 21
-var9 = 2
-var3 = -1
-var4 = 0
-var10 = -14.89
-CalcKnockback var0 ODamage 11 15 100 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label dsmash_hit2_outer
-LOGSTR 1685286144 1634953216 1600678144 1949458176 1869968384
-var2 = 21
-var9 = 2
-var3 = -1
-var4 = -1
-var10 = -24.89
-CalcKnockback var0 ODamage 16 70 100 OWeight 0
-LOGVAL var0
-var8 = 75
-Goto __ANGLE_FIX__
-Return
-label nspecial
-LOGSTR 1853059072 1701013760 1634467840 0 0
-var2 = 17
-var9 = 5
-var3 = 1
-var4 = 0
-var10 = 14.619999999999997
-CalcKnockback var0 ODamage 7 30 100 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label nspecial_mid
-LOGSTR 1853059072 1701013760 1634492160 1835623424 0
-var2 = 17
-var9 = 5
-var3 = 0
-var4 = 0
-var10 = -4.05
-CalcKnockback var0 ODamage 7 34 100 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label nspecial_strong
-LOGSTR 1853059072 1701013760 1634492160 1937011200 1869506304
-var2 = 17
-var9 = 5
-var3 = 1
-var4 = 1
-var10 = -4.02
-CalcKnockback var0 ODamage 7 40 100 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label sspecial
-LOGSTR 1936945152 1701013760 1634467840 0 0
-var2 = 6
-var9 = 2
-var3 = 1
-var4 = 1
-var10 = 21.36
-CalcKnockback var0 ODamage 4 55 25 OWeight 0
-LOGVAL var0
-var8 = 96
-Goto __ANGLE_FIX__
-Return
-label grab
-LOGSTR 1735549184 1644167168 0 0 0
-var2 = 7
-var9 = 0
-var3 = 1
-var4 = 0
-var10 = 13.740000000000002
-CalcKnockback var0 ODamage 0 0 0 OWeight 0
-LOGVAL var0
-var8 = 0
-Goto __ANGLE_FIX__
-Return
-label fthrow
-LOGSTR 1718904832 1919907584 0 0 0
-var2 = 7
-var9 = 0
-var3 = 1
-var4 = 0
-var10 = 13.740000000000002
-CalcKnockback var0 ODamage 4 70 45 OWeight 0
-LOGVAL var0
-var8 = 50
-Goto __ANGLE_FIX__
-Return
-label dthrow
-LOGSTR 1685350400 1919907584 0 0 0
-var2 = 7
-var9 = 0
-var3 = 1
-var4 = 0
-var10 = 13.740000000000002
-CalcKnockback var0 ODamage 5 65 50 OWeight 0
-LOGVAL var0
-var8 = 50
-Goto __ANGLE_FIX__
-Return
-label bthrow
-LOGSTR 1651795968 1919907584 0 0 0
-var2 = 7
-var9 = 0
-var3 = 1
-var4 = 0
-var10 = 13.740000000000002
-CalcKnockback var0 ODamage 4 70 60 OWeight 0
-LOGVAL var0
-var8 = 117
-Goto __ANGLE_FIX__
-Return
-label uthrow
-LOGSTR 1970563072 1919907584 0 0 0
-var2 = 7
-var9 = 0
-var3 = 1
-var4 = 0
-var10 = 13.740000000000002
-CalcKnockback var0 ODamage 4 60 130 OWeight 0
-LOGVAL var0
-var8 = 87
-Goto __ANGLE_FIX__
-Return
-label nair
-LOGSTR 1851877632 1912602624 0 0 0
-var2 = 6
-var9 = 1
-var3 = 1
-var4 = 1
-var10 = -5.83
-CalcKnockback var0 ODamage 4 30 40 OWeight 0
-LOGVAL var0
-var8 = 100
-Goto __ANGLE_FIX__
-Return
-label nair_hit1_strong
-LOGSTR 1851877632 1918855168 1769222400 1601401856 1919905280
-var2 = 6
-var9 = 1
-var3 = 0
-var4 = 0
-var10 = -7.7
-CalcKnockback var0 ODamage 4 30 40 OWeight 0
-LOGVAL var0
-var8 = 90
-Goto __ANGLE_FIX__
-Return
-label nair_hit2_inner
-LOGSTR 1851877632 1918855168 1769222656 1600744960 1852142080
-var2 = 6
-var9 = 15
-var3 = 0
-var4 = 1
-var10 = -19.24
-CalcKnockback var0 ODamage 10 50 80 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label nair_hit2_strong
-LOGSTR 1851877632 1918855168 1769222656 1601401856 1919905280
-var2 = 15
-var9 = 6
-var3 = 0
-var4 = 0
-var10 = -7.42
-CalcKnockback var0 ODamage 10 50 80 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label fair
-LOGSTR 1717659904 1912602624 0 0 0
-var2 = 4
-var9 = 3
-var3 = 0
-var4 = 0
-var10 = -6.13
-CalcKnockback var0 ODamage 9 20 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label fair_mid
-LOGSTR 1717659904 1918856448 1768161280 0 0
-var2 = 4
-var9 = 3
-var3 = 1
-var4 = 0
-var10 = 9.959999999999999
-CalcKnockback var0 ODamage 10 30 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label fair_outer
-LOGSTR 1717659904 1918856960 1970562304 1912602624 0
-var2 = 4
-var9 = 3
-var3 = 1
-var4 = 1
-var10 = 15.329999999999998
-CalcKnockback var0 ODamage 13 42 70 OWeight 0
-LOGVAL var0
-var8 = 67
-Goto __ANGLE_FIX__
-Return
-label bair
-LOGSTR 1650551040 1912602624 0 0 0
-var2 = 7
-var9 = 4
-var3 = -1
-var4 = 1
-var10 = -16.32
-CalcKnockback var0 ODamage 9 10 70 OWeight 0
-LOGVAL var0
-var8 = -181
-Goto __ANGLE_FIX__
-Return
-label bair_mid
-LOGSTR 1650551040 1918856448 1768161280 0 0
-var2 = 7
-var9 = 4
-var3 = -1
-var4 = 1
-var10 = -21.28
-CalcKnockback var0 ODamage 10 30 70 OWeight 0
-LOGVAL var0
-var8 = -181
-Goto __ANGLE_FIX__
-Return
-label bair_outer
-LOGSTR 1650551040 1918856960 1970562304 1912602624 0
-var2 = 7
-var9 = 4
-var3 = -1
-var4 = 1
-var10 = -26.66
-CalcKnockback var0 ODamage 13 30 70 OWeight 0
-LOGVAL var0
-var8 = -181
-Goto __ANGLE_FIX__
-Return
-label uair
-LOGSTR 1969318144 1912602624 0 0 0
-var2 = 5
-var9 = 3
-var3 = 0
-var4 = 1
-var10 = -12.11
-CalcKnockback var0 ODamage 9 18 70 OWeight 0
-LOGVAL var0
-var8 = 80
-Goto __ANGLE_FIX__
-Return
-label uair_mid
-LOGSTR 1969318144 1918856448 1768161280 0 0
-var2 = 5
-var9 = 3
-var3 = 0
-var4 = 1
-var10 = -15.28
-CalcKnockback var0 ODamage 10 30 70 OWeight 0
-LOGVAL var0
-var8 = 80
-Goto __ANGLE_FIX__
-Return
-label uair_outer
-LOGSTR 1969318144 1918856960 1970562304 1912602624 0
-var2 = 5
-var9 = 3
-var3 = 0
-var4 = 1
-var10 = -17.71
-CalcKnockback var0 ODamage 13 40 70 OWeight 0
-LOGVAL var0
-var8 = 90
-Goto __ANGLE_FIX__
-Return
-label dair
-LOGSTR 1684105472 1912602624 0 0 0
-var2 = 6
-var9 = 3
-var3 = 0
-var4 = 0
-var10 = -11.79
-CalcKnockback var0 ODamage 9 20 70 OWeight 0
-LOGVAL var0
-var8 = 361
-Goto __ANGLE_FIX__
-Return
-label dair_mid
-LOGSTR 1684105472 1918856448 1768161280 0 0
-var2 = 6
-var9 = 3
-var3 = 0
-var4 = -1
-var10 = -16.58
-CalcKnockback var0 ODamage 10 40 70 OWeight 0
-LOGVAL var0
-var8 = 80
-Goto __ANGLE_FIX__
-Return
-label dair_outer
-LOGSTR 1684105472 1918856960 1970562304 1912602624 0
-var2 = 6
-var9 = 3
-var3 = 0
-var4 = -1
-var10 = -21
-CalcKnockback var0 ODamage 13 40 70 OWeight 0
-LOGVAL var0
-var8 = 290
-Goto __ANGLE_FIX__
-Return
-label __ANGLE_FIX__
-if var8 > 180 && Equal OAirGroundState 1
-  if Equal var8 361
-    if var0 < 32
-      var8 = 0
-    else
-      var8 = 44
-    endif
-  endif
-elif Equal var8 361
-  var8 = 45
-endif
-Return
-Return
+// ///////////////////////////////////////////////////////////////
+// check hub/types/adder
+// ///////////////////////////////////////////////////////////////
 
 label check_hub
 
-  if YDistBackEdge >= -20
+  var15 = 0
+
+  if YDistFloor < 20 && !(Equal YDistFloor -1) 
 if !(True) || Equal var20 34 || Equal var20 35 || Equal var20 36 || Equal var20 37
-      GetAttribute var22 65 0
+      GetAttribute var22 300; 0
 elif !(True) || Equal var20 38 || Equal var20 39 || Equal var20 40
-      GetAttribute var22 66 0
+      GetAttribute var22 304; 0
 elif !(True) || Equal var20 47 || Equal var20 48 || Equal var20 49
-      GetAttribute var22 69 0
+      GetAttribute var22 316; 0
 elif !(True) || Equal var20 41 || Equal var20 42 || Equal var20 43
-      GetAttribute var22 67 0
+      GetAttribute var22 308; 0
 elif !(True) || Equal var20 44 || Equal var20 45 || Equal var20 46
-      GetAttribute var22 68 0
+      GetAttribute var22 312; 0
     endif
-    var22 *= 0.5
-
-    if var22 <= var16
-      var16 = var22
-    endif
-  endif
-
-  if Equal var7 1
-    Goto kill_check
-    LOGSTR 1263094784 1275068416 0 0 0
-  elif Equal var7 2
-    Goto combo_check
-    LOGSTR 1129270528 1112473600 0 0 0
-  elif Equal var7 3
-    Goto juggle_check
-    LOGSTR 1247102720 1196180736 0 0 0
-  elif Equal var7 4
-    Goto techchase_check
-    LOGSTR 1413825280 1212368896 1095976192 0 0
-  elif Equal var7 5
-    Goto pressure_check
-    LOGSTR 1347568896 1397970176 1380253696 0 0
-  elif Equal var7 6
-if !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
-      Goto combo_check
-    endif
-    Goto combo_check
-    LOGSTR 1112687872 1095451392 1124073472 0 0
-  elif Equal var7 7
-    Goto escapeCorner_check
-    LOGSTR 1163084544 1095779584 0 0 0
-  elif Equal var7 8
-    Goto launch_check
-    LOGSTR 1279350016 1313032192 0 0 0
-  elif Equal var7 9
-    Goto space_check
-    LOGSTR 1397768448 1128595456 0 0 0
-  elif Equal var7 13
-    Goto power_check
-    LOGSTR 1347376896 1163001856 0 0 0
-  elif Equal var7 10 || Equal var21 13
-if !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
+    if Equal AirGroundState 2
+      var22 *= 0.5
     else
-      Goto fastCheck
+      GetAttribute var23 940; 0
+      var7 += var23 + 1
+      var22 *= 0.8
     endif
-  elif Equal var7 11
-    Goto bait_check
+
+    if var22 <= var9
+      var9 = var22
+    endif
   endif
 
-  PRINTLN
+//   {FILTER_CHECKS}
+
+  // LOGVAL var10
+  if Equal var7 0
+    Goto kill_check
+  elif Equal var7 1
+    Goto combo_check
+  elif Equal var7 2
+    Goto techchase_check
+  elif Equal var7 3
+    Goto pressure_check
+  elif Equal var7 4
+    Goto breakcc_check
+  elif Equal var7 5
+    Goto escapecorner_check
+  elif Equal var7 6
+    Goto launch_check
+  elif Equal var7 7
+    Goto poke_check
+  elif Equal var7 8
+    Goto camp_check
+  elif Equal var7 9
+    Goto edgeguard_check
+  elif Equal var7 10
+    Goto antiair_check
+  elif Equal var7 11
+    Goto conversion_check
+  elif Equal var7 12
+    Goto frametrap_check
+  elif Equal var7 13
+    Goto crossup_check
+  elif Equal var7 14
+    Goto jabreset_check
+  endif
+
+  Goto dirCheck
 Return
 label kill_check
   if OFramesHitstun > 0
-    var23 = var2 + OFramesHitstun
-    EstOXCoord var5 var23
-    EstOYCoord var6 var23
+    var23 = var7 + OFramesHitstun
+    EstOXCoord var11 var23
+    EstOYCoord var12 var23
   else
-    var5 = OTopNX
-    var6 = OTopNY
+    var11 = OTopNX
+    var12 = OTopNY
   endif
   Goto __KILL__
   if !(True)
     label __KILL__
     // LOGSTR 1262708736 1799643392 1952514048 0 0
-    COS var22 var8
-    var22 *= var0
+    COS var22 var1
+    var22 *= var10
     var22 *= OPos
     var22 *= 0.03
-    var17 = RBoundary - (var5)
+    var22 *= var10 * 0.4 * 8
+    var17 = RBoundary - (var11)
     // LOGSTR 1380057088 0 0 0 0
     // LOGVAL var22
     // LOGVAL var17
     if var22 > var17
-      var1 = 1
+      var0 = 1
       Return
     endif
-    var17 = LBoundary - (var5)
+    var17 = LBoundary - (var11)
     // LOGSTR 1279393792 0 0 0 0
     // LOGVAL var22
     // LOGVAL var17
     if var22 < var17
-      var1 = 1
+      var0 = 1
       Return
     endif
-    var17 = TBoundary - (var6)
-    SIN var22 var8
-    var22 *= var0
+    var17 = TBoundary - (var12)
+    SIN var22 var1
+    var22 *= var10
     var22 *= 0.03
+    var22 *= var10 * 0.4 * 8
     // LOGSTR 1413611520 0 0 0 0
     // LOGVAL var22
     // LOGVAL var17
     if var22 > var17
-      var1 = 1
+      var0 = 1
       Return
     endif
-    var1 = 0
+    var0 = 0
     Return
   endif
-  if Equal var1 1
-    Goto dirCheck
-    Goto dirCheck
+  if Equal var0 1
+    var15 += 2
   endif
 Return
 label combo_check
   Goto kill_check
 
-  var22 = var16 - (var2 + var9)
-  var17 = var0 * 0.4
-  if OYDistBackEdge > -4 && var0 <= 110
-    var22 += 10 // leeway room (CC)
-  else
-    var22 += 0 // leeway room
+  var17 = var10 * 0.4
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
+  if Equal var22 1 && Equal OIsOnStage 1
+    var23 = OTopNY - YDistBackEdge + 15
+    EstOPassTimeY var17 var23
   endif
-  LOGSTR 1212765184 1398035712 1308622848 0 0
-  LOGVAL var17
-  LOGSTR 1279608064 1463900416 0 0 0
-  LOGVAL var22
-  PRINTLN
-  if var22 < var17
-    var23 = var0 * 0.4
-    GetAttribute var22 33 0
-    var22 *= var23
-    GetAttribute var17 14 0
-    var17 *= var23
-
-    var23 = (var0 * 0.03)
-    if var8 > 230 && var8 < 310
-      if var22 > var23 || var17 > var23
-        Goto dirCheck
-      endif
-    elif var8 > 65 && var8 < 115 && var17 > var23
-      Goto dirCheck
-    endif
-
-    // var17 = var16 - (var2 + var9)
-    GetAttribute var22 7 0
-    var22 *= var0 * 0.4
-    var23 = (var0 * 0.03)
-    if var8 > 230 && var8 < 310
-    elif var8 > 65 && var8 < 115
-    elif var22 > var23
-      Goto dirCheck
-    endif
+  Goto getEndlag
+  if OYDistFloor < 4 && var10 <= 90 && CHANCE_MUL_GE PT_BRAVECHANCE 0.7
+    var22 += 0 // leeway room (CC)
+  else
+    var22 -= 8 // leeway room
+  endif
+  if var22 < var17 && var10 >= 65
+    Goto combo_check_pt2
+  elif var22 <= 15 && var7 <= 8
+    Goto combo_check_pt2
   endif
 Return
-label juggle_check
-  var23 = OYDistBackEdge * -2
-  if var8 > 230 && var8 < 310 && var23 < var0
-    Goto dirCheck
-  elif var8 > 65 && var8 < 115
-    Goto dirCheck
+label combo_check_pt2
+  var0 = 1
+
+  if !(Equal var0 0) 
+    // var17 = var9 - (var7 + var8)
+    var23 = var22
+    Goto getEndlag
+    var23 -= var22
+    GetAttribute var22 40; 0
+    var22 *= var23 * 1.75
+    GetAttribute var17 136; 0
+    var17 *= var23 * 1.75
+    
+    COS var0 var1
+    var0 *= (var10 * 0.03) * var23
+    if var1 >= 230 && var1 <= 310
+    elif var1 >= 55 && var1 <= 105
+    elif var22 > var0 || var17 > var0
+    else
+      var0 = 0
+    endif
+  endif
+
+  if !(Equal var0 0)
+    var15 += 1
   endif
 Return
 label techchase_check
-  Goto dirCheck
+  Goto combo_check
 Return
 label pressure_check
-if !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
-    Goto combo_check
-  elif var0 >= 35
-    if var2 <= 12
-      Goto fastCheck
-    elif var8 > 180 && OYDistBackEdge > -60
-      Goto fastCheck
-    endif
-  endif
-Return
-label breakCC_check
-  if var0 >= 90
-    Goto dirCheck
-  endif
-Return
-label space_check
-  var22 = var16 - (var2 + var9)
-  if var0 < 55 || var22 >= 20
-elif !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
-  else
-    Goto dirCheck
-  endif
-Return
-label power_check
-  Goto kill_check
-  if var8 <= 65 && var0 >= 200
-    Goto dirCheck
-  endif
-Return
-label escapeCorner_check
-  if var2 <= 15
+  Goto getEndlag
+  if var22 < 20 || var7 < 20
+    var15 += 1
     Goto fastCheck
   endif
 Return
-label launch_check
-  if var0 >= 250
-    Goto dirCheck
+label breakcc_check
+  if var10 >= 120
+    var15 += 1
+elif !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
+    var15 += 1.5
   endif
 Return
-label bait_check
-  var22 = var16 - (var2 + var9)
-  if var22 < 25 && var2 < 35
+label escapecorner_check
+  Goto fastCheck
+Return
+label launch_check
+  // Goto combo_check_pt2
+
+  var22 = 60
+  if ODamage > 50
+    var22 = 100
+  endif
+  if var10 < var22
+  else
+    var15 += 1
+  endif
+Return
+label poke_check
+  Goto getEndlag
+ 
+  var17 = var5 + var3
+  if var22 < 15 && var7 < 30 && var17 > 3
     Goto fastCheck
   endif 
 Return
-label fastCheck
-if !(True) || Equal var20 34|| Equal var20 35|| Equal var20 36|| Equal var20 37|| Equal var20 38|| Equal var20 39|| Equal var20 40|| Equal var20 41|| Equal var20 42|| Equal var20 43|| Equal var20 44|| Equal var20 45|| Equal var20 46|| Equal var20 47|| Equal var20 48|| Equal var20 49
-    var22 = var16
-  else
-    var22 = var16 - (var2 + var9)
+label camp_check
+  Goto poke_check
+Return
+label edgeguard_check
+if !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
+    var15 += 0.35
+    Return
   endif
 
-  if var2 <= 7 && var22 <= 10
-    Goto dirCheck
-  elif var2 <= 14 && var22 <= 10 && var9 >= 10
-    Goto dirCheck
-  elif var2 <= 11 && var22 <= 16
-    if Rnd < 0.65
-      Goto dirCheck
-    endif
-  endif
-Return
-label dirCheck
-  var22 = OTopNY - TopNY
-  if OFramesHitstun <= 0 && var22 < 30 && Equal HitboxConnected 0 && !(Equal var7 10)
-    var10 *= var17
-    var22 = OTopNX - TopNX
-    Abs var22
-    var22 *= 2
-    if OYDistBackEdge > -35
-      if var10 >= var22
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      endif
-      var22 *= -1
-      if var10 <= var22
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      endif
-      if !(Equal var7 5)
-        if var10 > 1 && Equal Direction OPos
-          DynamicDiceAdd var20
-          if var10 > 3
-            DynamicDiceAdd var20
-            if var10 > 5
-              DynamicDiceAdd var20
-              if var10 > 7
-                DynamicDiceAdd var20
-                if var10 > 9
-                  DynamicDiceAdd var20
-                  if var10 > 11
-                    DynamicDiceAdd var20
-                  endif
-                endif
-              endif
-            endif
-          endif
-        elif var10 < -1 && !(Equal Direction OPos)
-          DynamicDiceAdd var20
-          if var10 < -3
-            DynamicDiceAdd var20
-            if var10 < -5
-              DynamicDiceAdd var20
-              if var10 < -7
-                DynamicDiceAdd var20
-                if var10 < -9
-                  DynamicDiceAdd var20
-                  if var10 < -11
-                    DynamicDiceAdd var20
-                  endif
-                endif
-              endif
-            endif
-          endif
-        endif
-      endif
-    endif
-    if var3 >= 0 && var8 > 230 && var8 < 310
-      DynamicDiceAdd var20
-      DynamicDiceAdd var20
-      if var14 <= 15
-        DynamicDiceAdd var20
-        if var14 <= 10
-          DynamicDiceAdd var20
-          if var14 <= 5
-            DynamicDiceAdd var20
-          endif
-        endif
-      endif
-    elif var8 > 65 && var8 < 115 && Equal var4 1 && TopNY < OTopNY && Equal var7 3
-      DynamicDiceAdd var20
-      if var14 <= 15
-        DynamicDiceAdd var20
-        if var14 <= 10
-          DynamicDiceAdd var20
-          if var14 <= 5
-            DynamicDiceAdd var20
-          endif
-        endif
-      endif
+  Goto kill_check
+  var22 = Direction * TopNX
+  var0 = 0
+  if var22 < 0
+    if var1 >= 135 && var1 <= 325
+      var0 = 1
     endif
   else
-    var22 = Direction * OPos
-    if Equal var3 0 && Equal var4 0
-      DynamicDiceAdd var20
-      DynamicDiceAdd var20
-    elif Equal var3 var22
-      if Equal var4 0 
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      elif Equal var4 1 && OTopNY > TopNY
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      elif Equal var4 -1 && OTopNY <= TopNY
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      endif
-    elif Equal var4 1 && OTopNY > TopNY
-      if Equal var3 0
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      elif Equal var3 var22
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      endif
-    elif Equal var4 -1 && OTopNY <= TopNY
-      if Equal var3 0
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      elif Equal var3 var22
-        DynamicDiceAdd var20
-        DynamicDiceAdd var20
-      endif
-    endif
-    if var3 >= 0 && var8 > 230 && var8 < 310
-      DynamicDiceAdd var20
-      DynamicDiceAdd var20
-      if var14 <= 15
-        DynamicDiceAdd var20
-        if var14 <= 10
-          DynamicDiceAdd var20
-          if var14 <= 5
-            DynamicDiceAdd var20
-          endif
-        endif
-      endif
-    elif var8 > 65 && var8 < 115 && Equal var4 1 && TopNY < OTopNY && Equal var7 3
-      DynamicDiceAdd var20
-      if var14 <= 15
-        DynamicDiceAdd var20
-        if var14 <= 10
-          DynamicDiceAdd var20
-          if var14 <= 5
-            DynamicDiceAdd var20
-          endif
-        endif
-      endif
+    if var1 <= 65 || var1 >= 225
+      var0 = 1
     endif
   endif
+
+  if Equal var0 1
+    var15 += 2
+  endif 
+Return
+label antiair_check
+  var22 = var4 - var6
+  if var22 > HurtboxSize
+    var22 -= HurtboxSize
+    var22 = 1 + var22 / 3
+    var15 += var22
+  endif
+Return
+label conversion_check
+  Goto fastCheck
+  Goto combo_check
+Return
+label frametrap_check
+  Goto pressure_check
+Return
+label crossup_check
+  Goto combo_check
+Return
+label jabreset_check
+  // I know, it's supposed to be moves that deal < 7% but at this
+  // point i'm out of variables lmao
+  if var10 < 60
+    var15 += 1
+  endif
+Return
+label fastCheck
+  Goto getEndlag
+
+  // if var10 >= 71
+    if var7 <= 7 && var22 <= 10
+      var15 += 1.5
+    elif var7 <= 14 && var22 <= 10 && var8 >= 10
+      var15 += 1
+    elif var7 <= 11 && var22 <= 16
+      if CHANCE_MUL_LE PT_BRAVECHANCE 1
+        var15 += 1
+      endif
+    endif
+  // endif
+Return
+label dirCheck  
+
+  var0 = var15
+
+  // O above
+
+  var22 = 0.002
+  XGoto GetChrSpecific
+  XReciever
+
+  if TopNY < OTopNY 
+    if Equal var22 1
+      var15 *= 1.5
+    else
+      var15 *= 0.1
+    endif
+  endif
+
+  // O below
+  var23 = OTopNY
+  if var23 <= TopNY
+    if Equal var22 -1
+      var15 *= 1.5
+    else
+      var15 *= 0.25
+    endif
+  endif
+
+  // O mid
+  var17 = TopNY - OTopNY
+  Abs var17
+  var23 = HurtboxSize + OHurtboxSize
+  var23 *= 0.5
+  if var17 <= var23
+    if Equal var22 0 
+      var15 *= 1.35
+    else
+      var15 *= 0.25
+    endif
+  endif
+
+   
+
+  var22 = 0.001
+  XGoto GetChrSpecific
+  XReciever
+  var17 = Direction * OPos
+  if Equal var22 var17 
+    var23 = var3 * 2 + var5
+    if Equal var22 -1
+      var23 = var5 * -1
+    endif
+    if !(XDistLE 20)
+      if Equal var7 7 || Equal var7 11 || Equal var7 3
+        var23 *= 0.25
+        var23 += 1
+        var15 *= var23
+      elif Equal var7 1 && OFramesHitstun <= 0
+        var23 *= 0.25
+        var23 += 1
+        var15 *= var23
+      else
+        var15 *= 1.25
+      endif
+    else
+      var15 *= 1.25
+    endif
+  elif Equal var22 0 && var17 > 0
+    var23 = var3 * 2 + var5
+    if !(XDistLE 20)
+      if Equal var7 7 || Equal var7 11 || Equal var7 3
+        var23 *= 0.25
+        var23 += 1
+        var15 *= var23
+      elif Equal var7 1 && OFramesHitstun <= 0
+        var23 *= 0.25
+        var23 += 1
+        var15 *= var23
+      else
+        var15 *= 1.25
+      endif
+    else
+      var15 *= 1.25
+    endif
+  else
+    var15 *= 0.2
+  endif
+  Goto addIfFastHit
+  Goto getOEndlag
+  if var7 <= var22 && var10 >= 50
+    var22 -= var7
+    var22 *= 0.15
+    var22 += 1
+    var15 += var22
+  endif
+  DynamicDiceAdd 1 var20 var15
+
+  // var22 = OTopNY - TopNY
+  // if OFramesHitstun <= 0 && var22 < 30 && Equal HitboxConnected 0 && !(Equal var7 priority_panic) && OCurrAction < 65
+  //   var22 = OTopNX - TopNX
+  //   Abs var22
+  //   var22 *= 2
+  //   if OYDistBackEdge > -35
+  //     if !(Equal var7 3)
+  //       if disjointX > 1 && Equal Direction OPos || Equal AirGroundState 1
+  //         var22 = disjointX * 0.4 + 1
+  //         var22 *= var15
+  //         DynamicDiceAdd 1 var20 var22
+  //       elif disjointX < -1 && !(Equal Direction OPos) || Equal AirGroundState 1
+  //         var22 = disjointX * -0.4 + 1
+  //         var22 *= var15
+  //         DynamicDiceAdd 1 var20 var22
+  //       endif
+  //     endif
+  //   endif
+  //   var22 = OTopNY - CenterY
+  //   if var22 >= 20
+  //     if OAttacking
+  //       var22 = 1
+  //     else
+  //       var22 = 0
+  //     endif
+  //     if var1 > 55 && var1 < 105 && var22 >= var22
+  //       DynamicDiceAdd 1 var20 var15
+  //       Goto addIfFastHit
+  //     endif
+  //   elif True
+  //     if var1 > 55 && var1 < 105
+  //       DynamicDiceAdd 1 var20 var15
+  //     endif
+  //     if var1 > 230 && var1 < 310
+  //       DynamicDiceAdd 1 var20 var15
+  //     endif
+  //     Goto addIfFastHit
+
+  //     $ifLastOrigin(grab,0)
+  //       var22 = var15 * 2.5
+  //       DynamicDiceAdd 1 var20 var22
+  //     endif
+  //   endif
+  // else
+  //   var22 = Direction * OPos
+  //   var17 = OTopNY + OHurtboxSize * 0.5
+  //   if Equal var22 0 && Equal var22 0
+  //     var22 = var15 * 2
+  //     DynamicDiceAdd 1 var20 var22
+  //   elif Equal var22 var22
+  //     if var22 <= 0
+  //       var22 = var15 * 2
+  //       DynamicDiceAdd 1 var20 var22
+  //     elif Equal var22 1 && var17 > CenterY
+  //       var22 = var15 * 2
+  //       DynamicDiceAdd 1 var20 var22
+  //     endif
+  //   elif Equal var22 1 && var17 > CenterY
+  //     if Equal var22 0
+  //       var22 = var15 * 2
+  //       DynamicDiceAdd 1 var20 var22
+  //     elif Equal var22 var22
+  //       var22 = var15 * 2
+  //       DynamicDiceAdd 1 var20 var22
+  //     endif
+  //   elif Equal var22 -1 && var17 <= CenterY
+  //     if Equal var22 0
+  //       var22 = var15 * 2
+  //       DynamicDiceAdd 1 var20 var22
+  //     elif Equal var22 var22
+  //       var22 = var15 * 2
+  //       DynamicDiceAdd 1 var20 var22
+  //     endif
+  //   endif
+  //   DynamicDiceAdd 1 var20 var15
+  //   $ifLastOrigin(grab,0)
+  //     var22 = var15 * 2
+  //     DynamicDiceAdd 1 var20 var22
+  //   endif
+  // endif
+
+  // Goto getOEndlag
+  // if var7 <= var22 && var10 >= 50
+  //   var22 -= var7
+  //   var22 *= 0.15
+  //   var22 += 1
+  //   var22 *= var15
+  //   DynamicDiceAdd 1 var20 var22
+  // endif
+Return
+label getEndlag
+  var22 = var9 - (var7 + var8)
+if !(True) || Equal var20 34|| Equal var20 35|| Equal var20 36|| Equal var20 37|| Equal var20 38|| Equal var20 39|| Equal var20 40|| Equal var20 41|| Equal var20 42|| Equal var20 43|| Equal var20 44|| Equal var20 45|| Equal var20 46|| Equal var20 47|| Equal var20 48|| Equal var20 49
+    if Equal IsOnStage 1
+      var22 = var9
+    endif
+elif !(True) || Equal var20 29 || Equal var20 30 || Equal var20 31 || Equal var20 32 || Equal var20 33
+    var22 -= 8
+  endif
+Return
+label getOEndlag
+  var22 = 0.003
+  XGoto GetChrSpecific
+  XReciever
+Return
+label addIfFastHit
+  var22 = var7
+  var22 -= 20
+  if var22 > 0
+    var22 = 20 - var22
+    var22 *= 0.3
+    var22 *= var15
+    var15 += var22
+  endif
+Return
+label approxStageWidth
+  GetColDistPosAbs var22 var23 0 -5 -10000 -5 0
+  GetColDistPosAbs var17 var23 var22 -5 10000 -5 0
+  var17 -= var22
 Return
 Return

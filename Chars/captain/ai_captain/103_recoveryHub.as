@@ -38,6 +38,7 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
+  {PRE_CONDITIONS}
   if NumJumps > 0 && YDistBackEdge < calc(downBIfAbove + 12)
     Button X
     Goto handleJumpToStage
@@ -47,13 +48,13 @@
     ClearStick
     AbsStick 0 (-1)
     Return
-  elif Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 6) && Rnd < 0.5
+  elif Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 20) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage

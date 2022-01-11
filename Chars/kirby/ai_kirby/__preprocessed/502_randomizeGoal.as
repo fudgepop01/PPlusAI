@@ -3,25 +3,25 @@ id 0x8502
 unk 0x0
 
 XReciever
-var8 = Rnd * 300 - 150
-var9 = Rnd * 150
-GetColDistPosRel var17 var17 var8 var9 0 -150 0
+var13 = Rnd * 300 - 150
+var14 = Rnd * 150
+GetColDistPosRel var17 var17 var13 var14 0 -150 0
 
 if var17 <= -1
-  var9 = BBoundary
+  var14 = BBoundary
   Return
 endif
 
-var9 = var17
-var9 += 2
+var14 = var17
+var14 += 2
 
-if Rnd < 0.65
-  GetAttribute var22 14 0
+if CHANCE_MUL_LE PT_JUMPINESS 1
+  GetAttribute var22 72; 0
   var22 *= 3.5
-  var9 = var9 + Rnd * var22 * 10
-  if Rnd < 0.25
-    GetAttribute var22 18 0
-    var9 = var9 + Rnd * var22 * 10
+  var14 = var14 + Rnd * var22 * 10
+  if CHANCE_MUL_LE PT_DJUMPINESS 1
+    GetAttribute var22 88; 0
+    var14 = var14 + Rnd * var22 * 10
   endif
 endif
 

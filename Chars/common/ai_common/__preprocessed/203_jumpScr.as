@@ -45,11 +45,18 @@ endif
 label locomotion
 XGoto PerFrameChecks
 XReciever
+if !(Equal var20 -1) 
+  XGoto SetAttackGoal
+  XReciever
+  XGoto CheckAttackWillHit
+  XReciever
+endif
 if Equal var1 1 && Equal AirGroundState 1
   Seek jumpCommand
 else
   Seek locomotion
 endif
+
 
 if Equal CurrSubaction JumpSquat
   Button X
@@ -60,6 +67,14 @@ if Equal var16 1
   endif
   AbsStick var0
   if !(Equal var0 OPos) || YSpeed < 0
+    Seek
+    Jump
+  elif var21 >= 16 && var21 < 17
+    label
+    if var21 < 16 || var21 > 17
+      var16 = 2
+      CallI AerialDrift
+    endif
     CallI MainHub
   endif
 elif Equal var16 2

@@ -2,3 +2,12 @@
 req Equal : 0x1020 lhs rhs
 
 req IsStage : 0x1021 ID
+
+//C++ INJECTIONS START HERE
+
+/// for efficient use with personality trait values
+req CHANCE_MUL_LE : 0x1022 trait multiplier
+req CHANCE_MUL_GE : 0x1023 trait multiplier
+
+/// if the script listed was called anywhere in the stack
+req CalledFrom : 0x1024 AIID

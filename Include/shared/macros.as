@@ -16,7 +16,7 @@
   chr_trait_select = {targetTrait}
   XGoto GetChrSpecific
   XReciever
-  {targetVar} = chr_trait_return
+  $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
   Seek {seeker}
 #endmacro
 
@@ -24,12 +24,35 @@
   chr_trait_select = {targetTrait}
   XGoto GetChrSpecific
   XReciever
-  {targetVar} = chr_trait_return
+  $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
+#endmacro
+
+#macro GET_MOVE_DATA(angle, xOffset, yOffset, xRange, yRange, hitFrame, duration, IASA, knockback)
+  chr_trait_select = chr_cs_moveData
+  $pushVarAsValue({knockback})
+  $pushVarAsValue({IASA})
+  $pushVarAsValue({duration})
+  $pushVarAsValue({hitFrame})
+  $pushVarAsValue({yRange})
+  $pushVarAsValue({xRange})
+  $pushVarAsValue({yOffset})
+  $pushVarAsValue({xOffset})
+  $pushVarAsValue({angle})
+  XGoto GetChrSpecific
+  XReciever
+#endmacro
+
+
+#macro CALL_EVENT(targetEvent)
+  chr_trait_select = {targetEvent}
+  XGoto GetChrSpecific
+  XReciever
 #endmacro
 
 #macro CALC_ENDLAG(targetVar)
+  #const imperfection = 5
   {targetVar} = -1
-  if Equal OCurrAction hex(0x33) && OYDistBackEdge > -25
+  if Equal OCurrAction hex(0x33) && OYDistFloor < 25 && OYSpeed < 0.2
     if Equal OCurrSubaction AttackAirN
       GetAttribute globTempVar attr_nairLandingLag 1
     elif Equal OCurrSubaction AttackAirF
@@ -41,18 +64,25 @@
     elif Equal OCurrSubaction AttackAirLw
       GetAttribute globTempVar attr_dairLandingLag 1
     endif
-    globTempVar -= OYDistBackEdge
+    globTempVar += OYDistFloor
     globTempVar *= 0.7
     {targetVar} = globTempVar
+    {targetVar} += imperfection
+    
   elif Equal OCurrAction hex(0x18)
     {targetVar} = OEndFrame - OAnimFrame
+    {targetVar} += imperfection
   elif Equal OCurrAction hex(0x21) && OYDistBackEdge < -15
     {targetVar} = 35
+    {targetVar} += imperfection
   elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B) || Equal OCurrAction hex(0x10)
-    globTempVar = OTopNX - TopNX
-    Abs globTempVar
-    globTempVar = 10 - globTempVar
-    {targetVar} = 30 + globTempVar
+    GetAttribute immediateTempVar attr_jumpSquatFrames 1
+    {targetVar} = 7 + immediateTempVar
+    {targetVar} += imperfection
+  elif Equal OCurrAction hex(0x1D)
+    GetRaBasic globTempVar hex(0x5) 1
+    {targetVar} = globTempVar + 15
+    {targetVar} += imperfection
   elif OAttacking 
     RetrieveFullATKD immediateTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
     if Equal immediateTempVar 0
@@ -60,9 +90,18 @@
     endif 
     // if OAnimFrame >= globTempVar
       {targetVar} = immediateTempVar - OAnimFrame
+      {targetVar} += imperfection
     // endif
-  elif Rnd < pt_aggression && Rnd < pt_aggression && Rnd < 0.1
-    {targetVar} = 20
+  elif OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
+    {targetVar} = OEndFrame - OAnimFrame
+    {targetVar} += imperfection
+  elif OFramesHitstun > 0
+    if Equal OAirGroundState 1
+      {targetVar} = 8
+    else
+      {targetVar} = OFramesHitstun + OFramesHitlag
+    endif
+    {targetVar} += imperfection
   endif
 #endmacro
 
@@ -1567,7 +1606,7 @@ endif
   {out} = immediateTempVar - maxXEdgeDist
 #endmacro
 
-#macro KILL_CHECK(LABEL, out, kb, angle, xCoord, yCoord)
+#macro KILL_CHECK(LABEL, out, kb, hitstun, angle, xCoord, yCoord)
   Goto {LABEL}
   if !(True)
     label {LABEL}
@@ -1576,6 +1615,7 @@ endif
     immediateTempVar *= {kb}
     immediateTempVar *= OPos
     immediateTempVar *= 0.03
+    immediateTempVar *= {hitstun} * 8
     globTempVar = RBoundary - ({xCoord})
     // LOGSTR str("RB")
     // LOGVAL immediateTempVar
@@ -1596,6 +1636,8 @@ endif
     SIN immediateTempVar {angle}
     immediateTempVar *= {kb}
     immediateTempVar *= 0.03
+    immediateTempVar *= {hitstun} * 8
+
     // LOGSTR str("TB")
     // LOGVAL immediateTempVar
     // LOGVAL globTempVar

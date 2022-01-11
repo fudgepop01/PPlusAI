@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 75
-  #const UpBYDist = 75
+  #const UpBXDist = 100
+  #const UpBYDist = 100
   #const sideBHeight = 2
   #const sideBRange = 100
   #const tolerence = 15
@@ -46,13 +46,14 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    if YDistBackEdge > calc(pt_djumpHeight - 12) && Rnd < 0.5
+  {PRE_CONDITIONS}
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 30) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage

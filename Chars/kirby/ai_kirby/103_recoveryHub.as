@@ -37,8 +37,9 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    immediateTempVar = calc(pt_djumpHeight - 8)
+  {PRE_CONDITIONS}
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    immediateTempVar = calc(cs_djumpHeight - 8)
     if !(NoOneHanging)
       immediateTempVar -= 20
     endif
@@ -51,7 +52,7 @@
     endif
   else
   
-    immediateTempVar = calc(pt_djumpHeight + UpBYDist - 20)
+    immediateTempVar = calc(cs_djumpHeight + UpBYDist - 20)
     if !(NoOneHanging)
       immediateTempVar -= 20
     endif

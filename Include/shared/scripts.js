@@ -12,6 +12,21 @@ export const clearMovesUsed = () => {
   return "";
 }
 
+export const genPersonalityStrings = () => {
+  clearOut();
+  const items = Object.entries($globals).filter(([k, v]) => {
+    return k.startsWith("pt_");
+  });
+  items.sort(([a, _], [b, __]) => a.localeCompare(b));
+  let toLog = items.map(([a, b]) => a);
+  console.log(toLog);
+  out(`str "PERSONALITY"`);
+  for (const [k, v] of items) {
+    out(`str "${v}"`);
+  }
+  return _out;
+}
+
 export const generateMovesUsed = () => {
   clearOut();
   const moves = moveUsageTracker.values();
@@ -22,7 +37,7 @@ export const generateMovesUsed = () => {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
-    out(`LOGSTR str("${moveName}")`);
+    // out(`LOGSTR str("${moveName}")`);
     if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
     if (IASA_src.startsWith(mn)) out(`move_IASA = ${IASA_src}`)
     if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
@@ -46,7 +61,7 @@ export const generateMovesUsedKB = () => {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
-    out(`LOGSTR str("${moveName}")`);
+    // out(`LOGSTR str("${moveName}")`);
     if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
     if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
     if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
@@ -61,16 +76,24 @@ export const generateMovesUsedKB = () => {
   }
   out("")
   out("label __ANGLE_FIX__")
-  out(`if move_angle > 180 && Equal OAirGroundState 1`);
+  out(`if Equal OAirGroundState 1`);
   out(`  if Equal move_angle 361`)
   out(`    if move_currKnockback < 32`)
-  out(`      move_angle = 0`)
+  out(`      move_angle = move_currKnockback * 0.03125 * 44`);
   out(`    else`)
-  out(`      move_angle = 44`)
+  out(`      move_angle = 44`);
+  out(`    endif`)
+  out(`  elif Equal move_angle -361`)
+  out(`    if move_currKnockback < 32`)
+  out(`      move_angle = 180 - move_currKnockback * 0.03125 * 44`);
+  out(`    else`)
+  out(`      move_angle = 136`);
   out(`    endif`)
   out(`  endif`)
   out(`elif Equal move_angle 361`);
   out(`  move_angle = 45`);
+  out(`elif Equal move_angle -361`);
+  out(`  move_angle = 135`);
   out(`endif`);
   out("Return");
   return _out;
@@ -86,7 +109,7 @@ export const generateAllMovesGoto = () => {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
-    out(`LOGSTR str("${moveName}")`);
+    // out(`LOGSTR str("${moveName}")`);
     if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
     if (IASA_src.startsWith(mn)) out(`move_IASA = ${IASA_src}`)
     if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
@@ -120,7 +143,7 @@ export const generateAllMovesGotoKB = () => {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
-    out(`LOGSTR str("${moveName}")`);
+    // out(`LOGSTR str("${moveName}")`);
     if (moveName.toLowerCase() === origin.toLowerCase()) out(`lastAttack = val${origin}`);
     if (xOffset_src.startsWith(mn)) out(`move_xOffset = ${xOffset_src}`)
     if (yOffset_src.startsWith(mn)) out(`move_yOffset = ${yOffset_src}`)
@@ -135,19 +158,134 @@ export const generateAllMovesGotoKB = () => {
   }
   out("")
   out("label __ANGLE_FIX__")
-  out(`if move_angle > 180 && Equal OAirGroundState 1`);
+  out(`if Equal OAirGroundState 1`);
   out(`  if Equal move_angle 361`)
   out(`    if move_currKnockback < 32`)
-  out(`      move_angle = 0`)
+  out(`      move_angle = move_currKnockback * 0.03125 * 44`);
   out(`    else`)
-  out(`      move_angle = 44`)
+  out(`      move_angle = 44`);
+  out(`    endif`)
+  out(`  elif Equal move_angle -361`)
+  out(`    if move_currKnockback < 32`)
+  out(`      move_angle = 180 - move_currKnockback * 0.03125 * 44`);
+  out(`    else`)
+  out(`      move_angle = 136`);
   out(`    endif`)
   out(`  endif`)
   out(`elif Equal move_angle 361`);
   out(`  move_angle = 45`);
+  out(`elif Equal move_angle -361`);
+  out(`  move_angle = 135`);
   out(`endif`);
   out("Return");
   return _out; 
+}
+
+export const ifNEQThen = (in1, in2, out) => {
+  
+  let lets = globals.lets;
+  let thing = lets[in1] ?? in1;
+  let otherThing = lets[in2] ?? in2;
+  if (thing != otherThing) return out;
+  else return "";
+}
+
+export const genLastAttackDir = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  const dirs = {
+    [-1]: [],
+    [0]: [],
+    [1]: []
+  };
+  for (const [idx, {moveName, xOffset, xRange}] of moves.entries()) {
+    let dirX = 0;
+    if (xOffset + xRange > parseFloat($globals[`DIRX_FRONT`])) dirX = 1
+    else if (xOffset + xRange < parseFloat($globals[`DIRX_BACK`])) dirX = -1
+    dirs[dirX].push(idx);
+    console.log(`X: ${moveName} ${dirX} [${xOffset + xRange}]`)
+  }
+  let str = "if !(True)";
+  for (const val of dirs[-1]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out("  chr_trait_return = -1");
+  str = "elif !(True)";
+  for (const val of dirs[0]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out("  chr_trait_return = 0");
+  str = "elif !(True)";
+  for (const val of dirs[1]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out("  chr_trait_return = 1");
+  out("endif")
+
+  return _out;
+}
+
+export const genLastAttackDirY = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  const dirs = {
+    [-1]: [],
+    [0]: [],
+    [1]: []
+  };
+  for (const [idx, {origin, moveName, yOffset, yRange}] of moves.entries()) {
+    let yBottom = (origin.toLowerCase().endsWith('air')) ? $globals[`DIRY_BELOW_AIR`] : $globals[`DIRY_BELOW_GROUND`];
+    let dirY = 0;
+    if (yRange - yOffset > parseFloat($globals[`DIRY_ABOVE`])) dirY = 1
+    else if (yRange - yOffset < parseFloat(yBottom)) dirY = -1
+    dirs[dirY].push(idx);
+    console.log(`Y: ${moveName} ${dirY} [${yRange - yOffset}]`)
+  }
+  let str = "if !(True)";
+  for (const val of dirs[-1]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out("  chr_trait_return = -1");
+  str = "elif !(True)";
+  for (const val of dirs[0]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out("  chr_trait_return = 0");
+  str = "elif !(True)";
+  for (const val of dirs[1]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out("  chr_trait_return = 1");
+  out("endif")
+
+  return _out;
+}
+
+export const genLastAttackDirAerials = (varName) => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  const dirs = {
+    [-1]: [],
+    [0]: [],
+    [1]: []
+  };
+  for (const [idx, {origin, xOffset, xRange}] of moves.entries()) {
+    if(origin.toLowerCase().endsWith('air')) {
+      let dirX = 0;
+      if (xOffset + xRange > parseFloat($globals[`DIRX_FRONT`])) dirX = 1
+      else if (xOffset + xRange < parseFloat($globals[`DIRX_BACK`])) dirX = -1
+      dirs[dirX].push(idx);
+    }
+  }
+  let str = "if !(True)";
+  for (const val of dirs[-1]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out(`  ${varName} = -1`);
+  str = "elif !(True)";
+  for (const val of dirs[0]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out(`  ${varName} = 0`);
+  str = "elif !(True)";
+  for (const val of dirs[1]) { str += ` || Equal lastAttack ${val}`; }
+  out(str);
+  out(`  ${varName} = 1`);
+  out("endif")
+
+  return _out;
 }
 
 // "KBONLY"
@@ -162,21 +300,25 @@ export const generateAllMovesGotoKBONLY = () => {
     const mn = moveName.toLowerCase();
     out("");
     out(`label ${mn}`)
-    out(`LOGSTR str("${moveName}")`);
+    // out(`LOGSTR str("${moveName}")`);
     out(`hitFrame = ${hitFrame}`)
-    out(`duration = ${lastHitFrame - hitFrame}`)
+    if (["fthrow", "dthrow", "uthrow", "bthrow"].includes(mn)) {
+      out(`duration = ${hitFrame + parseInt($globals[`${moveName}_IASA`]) - parseInt($globals[`${moveName}_throwFrame`])}`)
+    } else {
+      out(`duration = ${lastHitFrame - hitFrame}`)
+    }
     // shoutouts to preprocessing
-    let dirX = 0;
-    if (xOffset + xRange > parseFloat($globals[`DIRX_FRONT`])) dirX = 1
-    else if (xOffset + xRange < parseFloat($globals[`DIRX_BACK`])) dirX = -1
-    console.log(`X: ${moveName}; ${xOffset + xRange}; ${dirX}`);
-    out(`dirX = ${dirX}`)
-    let dirY = 0;
-    if ((yRange - yOffset) > parseFloat($globals[`DIRY_ABOVE`])) dirY = 1;
-    else if ((yRange - yOffset) < parseFloat($globals[`DIRY_BELOW`])) dirY = -1
-    out(`dirY = ${dirY}`)
-    console.log(`Y: ${moveName}; ${yRange - yOffset}; ${dirY}`);
-    out(`disjointX = ${xOffset > 0 ? xOffset + xRange * 2 - parseFloat($globals[`DIRX_FRONT`]) : xOffset + parseFloat($globals[`DIRX_BACK`])}`);
+    // let dirX = 0;
+    // if (xOffset + xRange > parseFloat($globals[`DIRX_FRONT`])) dirX = 1
+    // else if (xOffset + xRange < parseFloat($globals[`DIRX_BACK`])) dirX = -1
+    // console.log(`X: ${moveName}; ${xOffset + xRange}; ${dirX}`);
+    // out(`dirX = ${dirX}`)
+    // let dirY = 0;
+    // if ((yRange - yOffset) > parseFloat($globals[`DIRY_ABOVE`])) dirY = 1;
+    // else if ((yRange - yOffset) < parseFloat($globals[`DIRY_BELOW`])) dirY = -1
+    // out(`dirY = ${dirY}`)
+    // console.log(`Y: ${moveName}; ${yRange - yOffset}; ${dirY}`);
+    // out(`disjointX = ${xOffset > 0 ? xOffset + xRange * 2 - parseFloat($globals[`DIRX_FRONT`]) : xOffset + parseFloat($globals[`DIRX_BACK`])}`);
 
     // out(`move_xStart = ${xOffset}`)
     // out(`move_xEnd = ${xOffset + xRange}`);
@@ -184,25 +326,75 @@ export const generateAllMovesGotoKBONLY = () => {
     // out(`move_xEnd = ${(yRange - yOffset)}`);
 
     out(`CalcKnockback move_currKnockback ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
-    out(`LOGVAL move_currKnockback`)
     out(`move_angle = ${angle}`)
     out(`Goto __ANGLE_FIX__`)
     out("Return")
   }
-  out("")
-  out("label __ANGLE_FIX__")
-  out(`if move_angle > 180 && Equal OAirGroundState 1`);
-  out(`  if Equal move_angle 361`)
-  out(`    if move_currKnockback < 32`)
-  out(`      move_angle = 0`)
-  out(`    else`)
-  out(`      move_angle = 44`)
-  out(`    endif`)
-  out(`  endif`)
-  out(`elif Equal move_angle 361`);
-  out(`  move_angle = 45`);
+}
+
+export const pushVarAsValue = (variable) => {
+  clearOut();
+  let item = parseInt((currentScopeItems.lets[variable] ?? variable).substring(3));
+  out(`STACK_PUSH ${item}`);
+
+  return _out;
+}
+
+export const tempVar = (name, source) => {
+  clearOut();
+  let thing = globals.lets;
+  let rawVar = currentScopeItems.lets[source] || thing[source] || source;
+  out(`#let ${name} = ${rawVar}`)
+
+  return _out;
+}
+
+export const generateFetchMoveData = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+
+  out(`if lastAttack >= 0 && lastAttack < ${moves.length}`)
+  out(`GotoByValue lastAttack`)
+  out(`else`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`anotherTempVar = -1`)
+  out(`endif`)
+  out(`if !(True)`)
+  for (const [idx, {origin, moveName, IASA_src, xOffset, yOffset, xRange, yRange, hitFrame, lastHitFrame, dmg, angle, bkb, kbg, isWeightDependent, IASA}] of moves.entries()) {
+    const mn = moveName.toLowerCase();
+    out("");
+    out(`// ${mn}`)
+    out(`label ${mn}`)
+    // angle var
+    out(`immediateTempVar = STACK_POP`);
+    out(`SetVarByNum immediateTempVar ${angle}`)
+    out(`SetVarByNum STACK_POP ${xOffset}`)
+    out(`SetVarByNum STACK_POP ${yOffset}`)
+    out(`SetVarByNum STACK_POP ${xRange}`)
+    out(`SetVarByNum STACK_POP ${yRange}`)
+    out(`SetVarByNum STACK_POP ${hitFrame}`)
+    // duration
+    if (["fthrow", "dthrow", "uthrow", "bthrow"].includes(mn)) {
+      out(`SetVarByNum STACK_POP ${hitFrame + parseInt($globals[`${moveName}_IASA`]) - parseInt($globals[`${moveName}_throwFrame`])}`)
+    } else {
+      out(`SetVarByNum STACK_POP ${lastHitFrame - hitFrame}`)
+    }
+    out(`SetVarByNum STACK_POP ${IASA}`)
+    out(`CalcKnockback anotherTempVar ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
+    out(`Return`)
+  }
   out(`endif`);
-  out("Return");
+  out(`PRINTLN`)
+  out(`SetVarByNum STACK_POP anotherTempVar`);
+  out(`Goto __ANGLE_FIX__`)
+  out("Return")
   return _out; 
 }
 
@@ -257,18 +449,27 @@ export const generateAllMovesGotoLocRange = () => {
 export const generateMoveSnippets = () => {
   clearOut();
   const moves = Object.values(getMoveData());
-  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+  for (const [idx, {origin, moveName, moveVariant, lastHitFrame}] of moves.entries()) {
     out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
+    out(`lastHitFrame = ${lastHitFrame}`);
     switch(origin.toLowerCase()) {
       case 'nair':
       case 'jab123': out('Button A'); break;
       case 'dashattack': out('Goto execDA'); break;
-      case 'ftilt': out('Button A'); out('Stick 0.7'); break;
+      case 'ftilt': 
+        out('Button A'); 
+        out('Goto getHeight')
+        out('Stick 0.7 immediateTempVar'); 
+        break;
       case 'utilt': out('Button A'); out('Stick 0 0.7'); break;
       case 'dair': out('Button A'); out('Stick 0 (-0.6)'); break;
       case 'dtilt': out('Button A'); out('Stick 0 (-0.7)'); break;
       case 'fair':
-      case 'fsmash': out('Button A'); out('Stick 1'); break;
+      case 'fsmash': 
+        out('Button A'); 
+        out('Goto getHeight')
+        out('Stick 1'); 
+        break;
       case 'uair':
       case 'usmash': out('Button A'); out('Stick 0 1'); break;
       case 'bair': out('Button A'); out('Stick (-1) 0'); break;
@@ -284,14 +485,14 @@ export const generateMoveSnippets = () => {
       case 'grab': out('Button R|A'); break;
     }
     if (moveVariant !== 0) {
-      out(`LOGSTR str("-------")`);
-      out(`LOGVAL PlayerNum`);
-      out(`LOGSTR str("${moveName.toLowerCase()}")`);
+      // out(`LOGSTR str("-------")`);
+      // out(`LOGVAL PlayerNum`);
+      // out(`LOGSTR str("${moveName.toLowerCase()}")`);
       out(`Seek ${moveName.toLowerCase()}`);
     } else {
-      out(`LOGSTR str("-------")`);
-      out(`LOGVAL PlayerNum`);
-      out(`LOGSTR str("${moveName.toLowerCase()}")`);
+      // out(`LOGSTR str("-------")`);
+      // out(`LOGVAL PlayerNum`);
+      // out(`LOGSTR str("${moveName.toLowerCase()}")`);
       out(`Seek ${origin.toLowerCase()}`);
     }
     out('Return');
@@ -304,8 +505,8 @@ export const generateMoveSnippets = () => {
     if (moveVariant !== 0) {
       out(`label ${moveName.toLowerCase()}`);
       out('Goto PFC')
-      if (origin.endsWith("special")) {
-        out("if AnimFrame <= 7")
+      if (origin.toLowerCase().includes("special")) {
+        out("if AnimFrame >= 2 && AnimFrame <= 7")
         out("  AbsStick OPos")
         out("endif")
       }
@@ -315,8 +516,8 @@ export const generateMoveSnippets = () => {
     } else {
       out(`label ${origin.toLowerCase()}`);
       out('Goto PFC')
-      if (origin.endsWith("special")) {
-        out("if AnimFrame <= 7")
+      if (origin.toLowerCase().includes("special")) {
+        out("if AnimFrame >= 2 && AnimFrame <= 7")
         out("  AbsStick OPos")
         out("endif")
       }
@@ -360,32 +561,46 @@ export const generateChecks = (labelName) => {
   clearOut();
   const moves = Object.values(getMoveData());
 
-  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+  out(`if !(True)`)
+  for (const [idx, {origin, moveName, moveVariant, xRange, xOffset}] of moves.entries()) {
     if (moveName.toLowerCase() == "grab") continue;
+    out(`label ${moveName}`)
+    // out(`immediateTempVar = (${4 + Math.floor(1.35 * 8 / moves.length * 100) / 100} - PlayerCount) * 0.25`);
+    // out(`if DiceCount < 100`)
     out(`lastAttack = ${idx}`);
-    out(`Goto ${origin.toLowerCase()}`);
-    if (moveVariant !== 0) {
-      out(`Goto ${moveName.toLowerCase()}`);
-    }
+    out(`Goto __FETCH_DATA__`)
+    // out(`disjointX = ${(xRange + xOffset > 0) ? `${xRange + xOffset} - Width` : `${xRange + xOffset} + Width`}`);
     out(`Goto ${labelName}`);
+    // out("endif");
+    // out(`Return`)
   }
+  out(`endif`)
+  out(`if !(True)`)
+  out(`label __FETCH_DATA__`)
+  out(`GET_MOVE_DATA(move_angle, move_xOffset, move_yOffset, move_xRange, move_yRange, move_hitFrame, move_duration, move_IASA, move_knockback)`)
+  // out(`GET_CHAR_TRAIT(dirX, chr_get_moveDir)`)
+  // out(`GET_CHAR_TRAIT(dirY, chr_get_moveDirY)`)
+  out(`Return`)
+  out(`endif`)
+
   return _out;
 }
 
-export const generateAerialChecks = (labelName) => {
+export const generateInitialAttackDiceRolls = () => {
   clearOut();
   const moves = Object.values(getMoveData());
 
-  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
-    if (origin.toLowerCase() == "grab") continue;
-    else if (!origin.toLowerCase().endsWith("air")) continue;
-    out(`lastAttack = ${idx}`);
-    out(`Goto ${origin.toLowerCase()}`);
-    if (moveVariant !== 0) {
-      out(`Goto ${moveName.toLowerCase()}`);
-    }
-    out(`Goto ${labelName}`);
+  const moveRoots = {};
+  for (const [idx, {origin}] of moves.entries()) {
+    if (!moveRoots[origin]) moveRoots[origin] = [];
+    moveRoots[origin].push(idx);
   }
+
+  out(`DynamicDiceClear dslot0`)
+  for (const [idx, {origin}] of moves.entries()) {
+    out(`DynamicDiceAdd dslot0 ${idx} ${1 / moveRoots[origin].length}`);
+  }
+
   return _out;
 }
 
@@ -417,18 +632,21 @@ export const setLastAttack = (moveName) => {
   const moves = Object.values(getMoveData());
 
   const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
+  // console.log(idx);
 
   out(`lastAttack = ${idx}`);
   return _out;
 }
 
-export const addToDice = (moveName) => {
+export const addToDice = (slot, moveName, weight) => {
   clearOut();
   const moves = Object.values(getMoveData());
 
   const idx = moves.findIndex(m => m.moveName.toLowerCase() == moveName.toLowerCase());
+  // console.log("idx:" + idx);
+  // console.log(moves[idx].moveName);
 
-  out(`DynamicDiceAdd ${idx}`);
+  out(`DynamicDiceAdd dslot${slot} ${idx} ${weight}`);
   return _out;
 }
 
@@ -463,6 +681,7 @@ export const ifAerialAttack = () => {
 
   for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
     if (origin.toLowerCase().endsWith('air')) {
+      // console.log(`moveName: ${moveName}`)
       str += `|| Equal lastAttack ${idx}`;
     }
   }
@@ -477,17 +696,9 @@ export const printMoveName = () => {
   for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
     out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
     if (moveVariant !== 0) {
-      out(`LOGSTR str("${moveName}")`)
-      out(`LOGSTR str("${moveName}")`)
-      out(`LOGSTR str("${moveName}")`)
-      out(`LOGSTR str("${moveName}")`)
-      out(`LOGSTR str("${moveName}")`)
+      out(`LOGSTR str("${moveName}") // ${moveName}`) 
     } else {
-      out(`LOGSTR str("${origin}")`)
-      out(`LOGSTR str("${origin}")`)
-      out(`LOGSTR str("${origin}")`)
-      out(`LOGSTR str("${origin}")`)
-      out(`LOGSTR str("${origin}")`)
+      out(`LOGSTR str("${origin}") // ${origin}`)
     }
   }
   out ('endif')
@@ -512,8 +723,10 @@ const getMoveData = () => {
     bkb = parseFloat(bkb);
     kbg = parseFloat(kbg);
     angle = parseFloat(angle);
-    if (angle < 0) {
-      angle = 180 - (angle * -1);
+    if (angle < 0 && angle != -361) {
+      angle *= -1;
+      if (angle > 180) angle = (angle - 180) * 2;
+      else angle = 180 - angle;
     }
 
     const moveName = name.substring(0, name.length - "_damage_info".length);

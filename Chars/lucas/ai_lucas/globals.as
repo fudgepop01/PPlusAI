@@ -1,25 +1,26 @@
 #const DIRY_ABOVE = 8.1
-#const DIRY_BELOW = 3
+#const DIRY_BELOW_AIR = 0
+#const DIRY_BELOW_GROUND = 0
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -3
 
-#const pt_jumpiness = 0.2
-#const pt_djumpiness = 0.05
-#const pt_aggression = 0.9
-#const pt_bait_dashAwayChance = 0.15
-#const pt_bait_wdashAwayChance = 0.5
+#const pt_jumpiness = 0.05
+#const pt_djumpiness = 0.03
+#const pt_aggression = 1.5
+#const pt_bait_dashAwayChance = 0.30
+#const pt_bait_wdashAwayChance = 0.65
 #const pt_wall_chance = 0.45
 #const pt_platChance = 0.23
-#const pt_baitChance = 0.65
-#const pt_braveChance = 0.85
-#const pt_circleCampChance = 0.2
+#const pt_baitChance = 0.75
+#const pt_braveChance = 0.65
+#const pt_circleCampChance = 0.5
 
-#const pt_dashForceTurnFrame = 8
-#const pt_dashDanceMinFrames = 3
+#const cs_dashForceTurnFrame = 8
+#const cs_dashDanceMinFrames = 3
 
-#const pt_shortHopHeight = 12.344
-#const pt_djumpHeight = 23.514
-#const pt_wavedashDist = 35
+#const cs_shortHopHeight = 12.344
+#const cs_djumpHeight = 23.514
+#const cs_wavedashDist = 35
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -124,7 +125,19 @@
 #const fsmash_strong_damage_info = FSmash|16|60|85|361
 
 // usmash
-#const usmash_IASA = 50
+#const usmash_IASA = 83
+#const usmash_IASA = 78
+#const usmash_xOffset = -10
+#const usmash_yOffset = -7
+#const usmash_xRange = 10
+#const usmash_yRange = 14.5
+#const usmash_hitFrame = 17
+#const usmash_lastHitFrame = 28
+#const usmash_damage_info = USmash|20|50|84|95
+
+#const mv_usmash_strong = 1
+#const usmash_strong_damage_info = USmash|24|53|75|95
+
 
 // dsmash
 #const dsmash_IASA = 38
@@ -252,9 +265,20 @@
 #const grab_lastHitFrame = 13
 #const grab_damage_info = Grab|0|0|0|0
 
+#const fthrow_IASA = 47
+#const fthrow_throwFrame = 16
 #const fthrow_damage_info = Grab|10|65|50|45
-#const dthrow_damage_info = Grab|7|85|50|75|
-#const bthrow_damage_info = Grab|10|70|75|-45|
+
+#const dthrow_IASA = 42
+#const dthrow_throwFrame = 20
+#const dthrow_damage_info = Grab|7|85|50|75
+
+#const bthrow_IASA = 52
+#const bthrow_throwFrame = 19
+#const bthrow_damage_info = Grab|10|70|75|45
+
+#const uthrow_IASA = 63
+#const uthrow_throwFrame = 40
 #const uthrow_damage_info = Grab|8|75|110|90
 
 // NAir

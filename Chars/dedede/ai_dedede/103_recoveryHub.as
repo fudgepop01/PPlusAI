@@ -41,8 +41,9 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
-    immediateTempVar = calc(pt_djumpHeight - 6)
+  {PRE_CONDITIONS}
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    immediateTempVar = calc(cs_djumpHeight - 6)
     if !(NoOneHanging)
       immediateTempVar -= 20
     endif
@@ -53,7 +54,7 @@
       jumpValue *= 1.25
       Return
     endif
-  elif YDistBackEdge > calc(pt_djumpHeight + UpBYDist - 20) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -136,8 +137,8 @@
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
   elif nearCliffX > 6 || nearCliffX < -6
-    // globTempVar = nearCliffX * -1
-    // AbsStick globTempVar
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
     immediateTempVar = HurtboxSize - 5
     if NoOneHanging && YDistBackEdge < immediateTempVar && highUpBValue < highUpBChance
       AbsStick 0 (-1)

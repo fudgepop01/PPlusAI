@@ -5,54 +5,70 @@ unk 0x0
 XReciever
 EnableDebugOverlay 
 SetDebugOverlayColor color(0xDDDD0088)
-if Equal currGoal cg_recover
-  scriptVariant = sv_aerialdrift_away
-  CallI AerialDrift
-  Return
-endif
 currGoal = cg_defend
 label begin
 XGoto PerFrameChecks
 XReciever
 
+#let aggression = var0
+aggression = PT_AGGRESSION
+
+#let baitChance = var1
+baitChance = PT_BAITCHANCE
+
+immediateTempVar = aggression * 0.3
+PredictOMov globTempVar mov_grab LevelValue
+globTempVar *= 3
+if Rnd < immediateTempVar || Rnd < globTempVar
+  immediateTempVar *= 2
+  if !(Equal lastAttack -1) && Rnd < immediateTempVar
+    skipMainInit = sm_execAttack
+    CallI MainHub
+  elif Rnd < immediateTempVar && Rnd < immediateTempVar && Rnd < 0.45
+    XGoto CalcAttackGoal
+    XReciever
+    skipMainInit = mainInitSkip
+    CallI MainHub
+  endif 
+endif
+
 if Equal AirGroundState 1
-  #let aggression = var0
-  GET_CHAR_TRAIT(aggression, chr_pt_aggression)
-
-  #let baitChance = var1
-  GET_CHAR_TRAIT(baitChance, chr_pt_baitChance)
-
-  immediateTempVar = aggression * 0.5
-  if !(Equal OCurrAction hex(0x0)) && Rnd < immediateTempVar
-    if !(Equal lastAttack -1) && Rnd < aggression
-      CallI ExecuteAttack
-    elif Rnd < aggression && Rnd < aggression && Rnd < 0.45
-      CallI CalcAttackGoal
-    endif 
-  endif
-
   predictOOption immediateTempVar man_ODefendOption LevelValue
   predictionConfidence globTempVar man_ODefendOption LevelValue
   globTempVar *= 2
-  if Rnd > aggression && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
-    CallI Shield
+  if CHANCE_MUL_GE PT_AGGRESSION 0.35 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
+    PredictOMov immediateTempVar mov_grab LevelValue
+    immediateTempVar *= 2.5
+    if immediateTempVar < 0.20
+      CallI Shield
+    endif
   endif
 
-  #let OXHitDist = var0
+  immediateTempVar = aggression * 0.2
+  if Rnd < 0.5
+    currGoal = cg_bait
+  else
+    currGoal = cg_bait_dashdance
+  endif
+  skipMainInit = mainInitSkip
+  if Rnd < immediateTempVar && Rnd < immediateTempVar
+    currGoal = cg_attack_reversal
+    skipMainInit = mainInitSkip
+  endif
+
+  #let OXHitDist = var2
   predictAverage OXHitDist man_OXHitDist LevelValue
-  anotherTempVar = OXHitDist + 5
+  anotherTempVar = OXHitDist + 15
+
+  #let dashAwayChance = var3
+  dashAwayChance = PT_BAIT_DASHAWAYCHANCE
 
   GetAttribute immediateTempVar attr_dashInitVel 0
 
-  currGoal = cg_bait_dashdance
-  skipMainInit = mainInitSkip
-
-  #let dashAwayChance = var0
-  GET_CHAR_TRAIT(dashAwayChance, chr_pt_bait_dashAwayChance)
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= LV7
     CallI Shield
-  elif immediateTempVar > 0.8 && Rnd < dashAwayChance && LevelValue >= LV5 && Rnd < 0.85 && !(ODistLE anotherTempVar)
-    scriptVariant = sv_dash_away
+  elif immediateTempVar > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 1.25 && LevelValue >= LV5 && Rnd < 0.85 && ODistLE anotherTempVar
+    scriptVariant = sv_dash_away_defense
     CallI DashScr
   endif
 
@@ -75,12 +91,13 @@ if Equal AirGroundState 1
       endif
     elif Rnd < 0.2
       #let djumpiness = var0
-      GET_CHAR_TRAIT(djumpiness, chr_pt_djumpiness)
+      djumpiness = PT_DJUMPINESS
       if Rnd < 0.2
         scriptVariant = sv_roll_through
         CallI Roll
       elif Rnd < 0.4 && Rnd < djumpiness
         scriptVariant = sv_jump_over
+        scriptVariant += svp_jump_fullhop
         CallI JumpScr
       endif
       GetAttribute immediateTempVar attr_dashInitVel 0
@@ -92,23 +109,25 @@ if Equal AirGroundState 1
     endif
   endif
 
+  #let wdashAwayChance = var0
+  wdashAwayChance = PT_BAIT_WDASHAWAYCHANCE
+
   GetAttribute immediateTempVar attr_jumpSquatFrames 0
   immediateTempVar *= 0.1
   immediateTempVar = 0.7 - immediateTempVar
-  #let wdashAwayChance = var0
-  GET_CHAR_TRAIT(wdashAwayChance, chr_pt_bait_wdashAwayChance)
   if Rnd < immediateTempVar && Rnd < wdashAwayChance
     scriptVariant = sv_wavedash_out
     CallI Wavedash
   endif
+
+  #let dashAwayChance = var0
+  dashAwayChance = PT_BAIT_DASHAWAYCHANCE
 
   GetAttribute immediateTempVar attr_dashInitVel 0
   immediateTempVar *= 5
   globTempVar = OTopNX - TopNX
   Abs globTempVar
   immediateTempVar += globTempVar
-  #let dashAwayChance = var0
-  GET_CHAR_TRAIT(dashAwayChance, chr_pt_bait_dashAwayChance)
 
   if OXHitDist < immediateTempVar && Rnd < dashAwayChance && Rnd < 0.6
     scriptVariant = sv_dash_away
@@ -120,22 +139,40 @@ endif
 #let OXHitDist = var0
 predictAverage OXHitDist man_OXHitDist LevelValue
 OXHitDist += 15
-if Rnd < 0.1 && !(ODistLE OXHitDist)
-  if NumJumps > 0 && Rnd < 0.4
-    scriptVariant = sv_jump_over
-    CallI JumpScr
-  elif NumJumps > 0 && Rnd < 0.4
-    scriptVariant = sv_jump_away
-    CallI JumpScr
-  elif Rnd < 0.4 && !(OutOfStage) 
-    scriptVariant = sv_aerialdrift_away
-    CallI AerialDrift
+if Rnd < 0.35
+  immediateTempVar = PT_JUMPINESS
+  if Rnd < immediateTempVar 
+    if NumJumps > 0 && Rnd < 0.4
+      scriptVariant = sv_jump_over
+      scriptVariant += svp_jump_fullhop
+      CallI JumpScr
+    elif NumJumps > 0 && Rnd < 0.1
+      scriptVariant = sv_jump_away
+      scriptVariant += svp_jump_fullhop
+      CallI JumpScr
+    elif Rnd < 0.4 && YDistFloor > 25
+      scriptVariant = sv_aerialdrift_away
+      CallI AerialDrift
+    endif
   endif
 endif
 
-if Equal AirGroundState 1
-  CallI Shield
+PredictOMov immediateTempVar mov_grab LevelValue
+immediateTempVar *= 2
+if immediateTempVar < 0.30 && Rnd > immediateTempVar
+  if Equal AirGroundState 1
+    CallI Shield
+  endif
+elif True
+  if !(Equal lastAttack -1)
+    skipMainInit = sm_execAttack
+    CallI MainHub
+  else
+    XGoto CalcAttackGoal
+    XReciever
+    skipMainInit = mainInitSkip
+    CallI MainHub
+  endif 
 endif
-CallI FastAerial
 Return
 Return

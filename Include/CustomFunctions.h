@@ -243,6 +243,28 @@ func OCenterX : 0x15B
 func CenterY : 0x5C
 func OCenterY : 0x15C
 
+func PlayerCount : 0x5D
+
+/// functional stack pop
+func STACK_POP : 0x5E
+
 /// current training script selected
 /// 0xFFFF = default
 func TrainingScript : 0x60
+
+/// FETCH PERSONALITY TRAIT VALUES WITH THESE
+func PT_AGGRESSION : 0x80
+func PT_BAIT_DASHAWAYCHANCE : 0x81
+func PT_BAIT_WDASHAWAYCHANCE : 0x82
+func PT_BAITCHANCE : 0x83
+func PT_BRAVECHANCE : 0x84
+func PT_CIRCLECAMPCHANCE : 0x85
+func PT_DJUMPINESS : 0x86
+func PT_JUMPINESS : 0x87
+func PT_PLATCHANCE : 0x88
+func PT_SDICHANCE : 0x89
+func PT_WALL_CHANCE : 0x8A
+func PT_REACTION_TIME : 0x8B
+
+/// TEMPORARY FOR TOGGLING DEBUG CODE
+func TEMP_DEBUG_TOGGLE : 0xFF

@@ -2,10 +2,24 @@
 id 0x8100
 unk 0x0
 
+str "PERSONALITY"
+str "0.85"
+str "0.15"
+str "0.75"
+str "0.65"
+str "0.65"
+str "0.35"
+str "0.04"
+str "0.05"
+str "0.05"
+str "0"
+str "1"
+str "0.45"
+
 XReciever
 SetAutoDefend 0
 SetDisabledSwitch 1
-SetDebugMode 0
+SetDebugMode TEMP_DEBUG_TOGGLE
 
 if ODistLE 180
   SetDisabledMd 6
@@ -35,9 +49,10 @@ endif
 
 if Equal var15 -1
   var15 = -100
-  if OCurrAction >= 66 && OCurrAction <= 89
-    var21 = 16
-  elif Equal HitboxConnected 1 || Equal PrevAction 60
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
+  if Equal var22 1
     var21 = 16
   elif Rnd < 0.45 && !(Equal var21 16.4) && OFramesHitstun <= 0
     var21 = 10.5
@@ -50,6 +65,16 @@ elif Equal var15 -2
   XReciever
   Seek empty_0
 
+  if Equal CurrAction 3 || Equal CurrAction 4
+if !(True) || Equal var20 1
+    elif True
+      if Equal var21 13
+        var16 = 2
+      endif
+      var16 = 3
+      CallI Wavedash 
+    endif
+  endif
   if Equal CurrAction 22 
     if Equal PrevAction 33
       Return
@@ -64,7 +89,7 @@ elif Equal var15 -2
   var15 = -100
 
   CallI ExecuteAttack
-elif Equal var21 16.3 && Rnd < 0.63 && Rnd > 0.22749999999999998 && OCurrAction <= 21
+elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 1.4 && CHANCE_MUL_GE PT_BRAVECHANCE 0.35 && OCurrAction <= 21
   label empty_1
   Goto PFC
   XReciever
@@ -86,7 +111,7 @@ elif Equal var21 16.3 && Rnd < 0.63 && Rnd > 0.22749999999999998 && OCurrAction 
   XReciever
   Seek setupWallDelay
 
-  if Rnd < 0.1 && Rnd < 0.45
+  if Rnd < 0.1 && CHANCE_MUL_LE PT_WALL_CHANCE 1
     XGoto CalcAttackGoal
     XReciever
   endif
@@ -107,7 +132,7 @@ elif Equal var21 16.3 && Rnd < 0.63 && Rnd > 0.22749999999999998 && OCurrAction 
   endif
   var0 -= 1
   Return
-elif Equal var21 7.1 && Rnd < 0.45499999999999996 && Rnd < 0.85
+elif Equal var21 7.1 && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1.3 && CHANCE_MUL_LE PT_AGGRESSION 1
   label empty_2
   Goto PFC
   XReciever
@@ -132,44 +157,49 @@ elif Equal var21 10.4
 endif
 
 Goto PFC
+XReciever
 
 var16 = 0
 var20 = -1
 
-DynamicDiceClear
-if Rnd < 0.35
-  DynamicDiceAdd 7
+DynamicDiceClear 0
+if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
+  DynamicDiceAdd 0 7 1
 endif
-if Rnd < 0.65
-  DynamicDiceAdd 10
-  DynamicDiceAdd 10.5
+if CHANCE_MUL_LE PT_BAITCHANCE 1
+  DynamicDiceAdd 0 10 1.75
+  DynamicDiceAdd 0 10.5 3
 endif
-if Rnd < 0.85
+if CHANCE_MUL_LE PT_AGGRESSION 1
   predictionConfidence var22 9 LevelValue
-  if var22 > 0.4 || Rnd < 0.2975
-    DynamicDiceAdd 16
+  if var22 > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
+    DynamicDiceAdd 0 16 2
   endif
 endif
-DynamicDiceRoll var21
+DynamicDiceRoll 0 var21 0
+
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
 if Equal var3 1
   var21 = 7
 elif Equal HitboxConnected 1 || Equal PrevAction 60
   var21 = 16
-elif OCurrAction >= 66 && OCurrAction <= 89
+elif Equal var22 1
   var21 = 16
 endif
-var9 = BBoundary
+var14 = BBoundary
 if Equal var21 -1
   Call MainHub
 elif Equal var21 16
-  var9 = BBoundary
+  var14 = BBoundary
 endif
 
 label initial
 Goto PFC
 XReciever
 Seek initial
-if Equal var8 0 && Equal var9 0
+if Equal var13 0 && Equal var14 0
   XGoto GoalChoiceHub
   XReciever
   Seek initial
@@ -214,7 +244,7 @@ if Equal var21 10.4
     Seek selectGoal
   endif
   Return
-elif Equal var9 BBoundary
+elif Equal var14 BBoundary
   Seek selectGoal
   if Rnd < 0.1
     var21 = 10.5
@@ -224,10 +254,7 @@ elif Equal var21 16 && Equal var20 -1
   Seek selectGoal
   Return
 endif
-LOGSTR 1936026624 1701016576 1701052416 0 0
 label navigateToGoal
-LOGSTR 1129665024 1380273664 1411401472 1329679360 973078528
-LOGVAL var21
 Goto PFC
 XReciever
 Seek selectGoal

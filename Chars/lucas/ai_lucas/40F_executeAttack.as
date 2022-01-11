@@ -7,7 +7,10 @@
   $ifAerialAttack()
     if Equal scriptVariant sv_execute_hardfall
       label
-      Button X
+      MOD immediateTempVar AnimFrame 2
+      if Equal immediateTempVar 0
+        Button X
+      endif
       AbsStick OPos
       if Equal CurrAction hex(0xC) && AnimFrame >= 1
       else
@@ -15,9 +18,12 @@
       endif
     elif Equal scriptVariant sv_execute_rising
       label
-      Button X
+      MOD immediateTempVar AnimFrame 2
+      if Equal immediateTempVar 0
+        Button X
+      endif
       AbsStick OPos
-      if Equal CurrAction hex(0xC) && AnimFrame >= 1
+      if Equal CurrAction hex(0xC)
       else
         Return
       endif
@@ -27,7 +33,7 @@
 #endsnippet
 
 #snippet COMMON_EXTENSION
-  if Equal scriptVariant sv_execute_hardfall
+  if Equal scriptVariant sv_execute_hardfall && YSpeed <= 0
     AbsStick 0 (-1)
   elif Equal scriptVariant sv_execute_rising
     Button X
@@ -35,7 +41,9 @@
 #endsnippet
 
 #snippet NSPECIAL_CHARGE
-  Button B
+  if !(ODistLE 60) 
+    Button B
+  endif
 #endsnippet
 
 #snippet DSPECIAL

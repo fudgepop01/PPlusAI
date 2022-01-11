@@ -79,11 +79,11 @@ var getNameFromPage = function () {
         case "SpecialAirS": return "SSpecialAir";
         case "SpecialAirHi": return "USpecialAir";
         case "SpecialAirLw": return "DSpecialAir";
-        case "Catch":
-        case "ThrowF":
-        case "ThrowLw":
-        case "ThrowB":
-        case "ThrowHi": return "Grab";
+        case "Catch": return "Grab";
+        case "ThrowF": return "fthrow";
+        case "ThrowLw": return "dthrow";
+        case "ThrowB": return "bthrow";
+        case "ThrowHi": return "uthrow";
         case "AttackAirN": return "NAir";
         case "AttackAirF": return "FAir";
         case "AttackAirB": return "BAir";
@@ -309,6 +309,16 @@ var DataCalculator = /** @class */ (function () {
                 for (var _e = __values(_this.data.frames.entries()), _f = _e.next(); !_f.done; _f = _e.next()) {
                     var _g = __read(_f.value, 2), i = _g[0], frame = _g[1];
                     var newFrameBounds = false;
+                    if (frame["throw"]) {
+                        _this.throwData = {
+                            frame: i,
+                            damage: frame["throw"].damage,
+                            bkb: frame["throw"].bkb,
+                            kbg: frame["throw"].kbg,
+                            angle: frame["throw"].trajectory,
+                            wdsk: frame["throw"].wdsk
+                        };
+                    }
                     if (frame.hit_boxes.length > 0 && frameBounds.length === 0) {
                         newFrameBounds = true;
                     }
@@ -442,37 +452,44 @@ var DataCalculator = /** @class */ (function () {
             var append = function (s) { out += s + "\n"; };
             var round = function (num) { return roundToDec(num, 2); };
             var rootName = (_this.rootName.value.length > 0) ? _this.rootName.value : getNameFromPage();
-            try {
-                for (var _b = __values(_this.selectors.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var _d = __read(_c.value, 2), idx = _d[0], selector = _d[1];
-                    var name_1 = selector.getName();
-                    var bbox = selector.getSelectedBBox();
-                    if (idx === 0) {
-                        append(getSubactionName() + " unk=" + (_this.data.iasa || 0) + ",start=" + selector.getStartFrame() + ",end=" + selector.getEndFrame() + ",xmin=" + round(bbox.minX).toFixed(2) + ",xmax=" + round(bbox.maxX).toFixed(2) + ",ymin=" + round(bbox.minY).toFixed(2) + ",ymax=" + round(bbox.maxY).toFixed(2));
-                        append("==========================");
-                        name_1 = rootName.toLowerCase();
-                        append("#const " + name_1 + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
-                        customBBox = bbox;
-                    }
-                    else {
-                        append("#const mv_" + name_1 + " = " + idx);
-                    }
-                    append("#const " + name_1 + "_xOffset = " + round(bbox.minX));
-                    append("#const " + name_1 + "_yOffset = " + round(bbox.minY) * -1);
-                    append("#const " + name_1 + "_xRange = " + round((bbox.maxX - bbox.minX) / 2));
-                    append("#const " + name_1 + "_yRange = " + round((bbox.maxY - bbox.minY) / 2));
-                    append("#const " + name_1 + "_hitFrame = " + selector.getStartFrame());
-                    append("#const " + name_1 + "_lastHitFrame = " + selector.getEndFrame());
-                    append("#const " + name_1 + "_damage_info = " + rootName + "|" + selector.getAttackData());
-                    append("---------------------------");
-                }
+            if (['uthrow', 'bthrow', 'dthrow', 'fthrow'].includes(getNameFromPage()) && _this.throwData) {
+                append("#const " + rootName + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
+                append("#const " + rootName + "_throwFrame = " + _this.throwData.frame);
+                append("#const " + rootName + "_damage_info = Grab|" + _this.throwData.damage + "|" + _this.throwData.bkb + "|" + _this.throwData.kbg + "|" + _this.throwData.angle);
             }
-            catch (e_10_1) { e_10 = { error: e_10_1 }; }
-            finally {
+            else {
                 try {
-                    if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+                    for (var _b = __values(_this.selectors.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var _d = __read(_c.value, 2), idx = _d[0], selector = _d[1];
+                        var name_1 = selector.getName();
+                        var bbox = selector.getSelectedBBox();
+                        if (idx === 0) {
+                            append(getSubactionName() + " unk=" + (_this.data.iasa || 0) + ",start=" + selector.getStartFrame() + ",end=" + selector.getEndFrame() + ",xmin=" + round(bbox.minX).toFixed(2) + ",xmax=" + round(bbox.maxX).toFixed(2) + ",ymin=" + round(bbox.minY).toFixed(2) + ",ymax=" + round(bbox.maxY).toFixed(2));
+                            append("==========================");
+                            name_1 = rootName.toLowerCase();
+                            append("#const " + name_1 + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
+                            customBBox = bbox;
+                        }
+                        else {
+                            append("#const mv_" + name_1 + " = " + idx);
+                        }
+                        append("#const " + name_1 + "_xOffset = " + round(bbox.minX));
+                        append("#const " + name_1 + "_yOffset = " + round(bbox.minY) * -1);
+                        append("#const " + name_1 + "_xRange = " + round((bbox.maxX - bbox.minX) / 2));
+                        append("#const " + name_1 + "_yRange = " + round((bbox.maxY - bbox.minY) / 2));
+                        append("#const " + name_1 + "_hitFrame = " + selector.getStartFrame());
+                        append("#const " + name_1 + "_lastHitFrame = " + selector.getEndFrame());
+                        append("#const " + name_1 + "_damage_info = " + rootName + "|" + selector.getAttackData());
+                        append("---------------------------");
+                    }
                 }
-                finally { if (e_10) throw e_10.error; }
+                catch (e_10_1) { e_10 = { error: e_10_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+                    }
+                    finally { if (e_10) throw e_10.error; }
+                }
             }
             _this.resultBox.innerHTML = out;
             rerender();

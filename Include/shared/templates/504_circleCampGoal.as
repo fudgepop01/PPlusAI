@@ -35,7 +35,7 @@ endif
 if Equal globTempVar -1
   XGoto RandomizeGoal
   XReciever
-  DynamicDiceClear
+  DynamicDiceClear dslot0
   Return
 endif
 
@@ -44,9 +44,9 @@ anotherTempVar = TopNX
 Abs anotherTempVar
 if immediateTempVar < 50 && !(Equal immediateTempVar -1) && anotherTempVar < validRange
   if OTopNY < threatValueY
-    DynamicDiceAdd topPlat
+    DynamicDiceAdd dslot0 topPlat 1
   elif TopNY < 60
-    DynamicDiceAdd center
+    DynamicDiceAdd dslot0 center 1
   endif
 endif
 globTempVar *= -1
@@ -58,9 +58,9 @@ if immediateTempVar < 60 && !(Equal immediateTempVar -1) && anotherTempVar < val
   Abs anotherTempVar
   if anotherTempVar > threatRangeX
     if OTopNY < threatValueY
-      DynamicDiceAdd leftPlat
+      DynamicDiceAdd dslot0 leftPlat 1
     else
-      DynamicDiceAdd underLeft
+      DynamicDiceAdd dslot0 underLeft 1
     endif
   endif
 endif
@@ -73,14 +73,14 @@ if immediateTempVar < 60 && !(Equal immediateTempVar -1) && anotherTempVar < val
   Abs anotherTempVar
   if anotherTempVar > threatRangeX
     if OTopNY < threatValueY
-      DynamicDiceAdd rightPlat
+      DynamicDiceAdd dslot0 rightPlat 1
     else
-      DynamicDiceAdd underRight
+      DynamicDiceAdd dslot0 underRight 1
     endif
   endif
 endif
 
-DynamicDiceRoll anotherTempVar
+DynamicDiceRoll dslot0 anotherTempVar 0
 GetYDistFloorAbsPos immediateTempVar 0 30
 if Equal anotherTempVar topPlat
   GetYDistFloorAbsPos immediateTempVar 0 100
@@ -107,13 +107,13 @@ elif Equal anotherTempVar underRight
 else
   XGoto RandomizeGoal
   XReciever
-  DynamicDiceClear
+  DynamicDiceClear dslot0
   Return
 endif
 
 anotherTempVar = Rnd * 20 - 10
 goalX += anotherTempVar
-DynamicDiceClear
+DynamicDiceClear dslot0
 
 Return
 Return

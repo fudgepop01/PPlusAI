@@ -4,14 +4,14 @@ unk 0x0
 
 XReciever
 label setup
-  var10 = 12
+  var22 = 12
   XGoto GetChrSpecific
   XReciever
-  var3 = var10
-  var10 = 13
+var3 = var22
+  var22 = 13
   XGoto GetChrSpecific
   XReciever
-  var4 = var10
+var4 = var22
   Seek setup
 
 var1 = 0
@@ -25,7 +25,7 @@ if Equal CurrAction 4 || Equal CurrAction 5
     endif
   elif Equal var16 2
     var16 = 2 
-  elif Equal var16 3
+  elif Equal var16 4
     var16 = 3
   endif
   CallI Wavedash
@@ -40,48 +40,59 @@ if Equal var16 2
   if var0 >= var3
     var0 = var3
   endif
+elif Equal var16 3
+  var0 += 20
 endif
 label execution
 XGoto PerFrameChecks
 XReciever
+if !(Equal var20 -1) && !(Equal var16 2) && !(Equal var16 3)
+  XGoto SetAttackGoal
+  XReciever
+  XGoto CheckAttackWillHit
+  XReciever
+endif
 Seek execution
+
 
 if XDistFrontEdge < 15
   Call MainHub
-elif XDistBackEdge > -25
+elif XDistBackEdge > -25 && Equal Direction OPos && !(Equal var16 5)
   var16 = 1
 endif
 
-if var1 < var3 && !(Equal var16 4)
+if var1 < var3 && !(Equal var16 5) || Equal var16 3
   if Equal var16 1
     AbsStick OPos
-  elif Equal var16 2
-    if XDistBackEdge > -20
-      var16 = 4
+  elif Equal var16 2 || Equal var16 3
+    if XDistBackEdge > -10
+      var16 = 5
       AbsStick OPos
       Return
     endif
     var22 = OPos * -1
     AbsStick var22
-  elif Equal var16 3
+
+    if Equal var16 3
+  var22 = 0.004
+  XGoto GetChrSpecific
+  XReciever
+      Seek execution
+      if var22 >= 10
+        var21 = 16.4
+        var15 = -1
+        if Equal CurrAction 4
+          var16 = 5
+          CallI Wavedash
+        endif
+        CallI MainHub
+      endif
+    endif
+  elif Equal var16 4
     var22 = TopNX * -1
     AbsStick var22
   endif
-elif Equal var16 4
-  if TopNX < 0 && OTopNX > 0
-  elif TopNX > 0 && OTopNX < 0
-  else
-    var22 = OTopNX
-    var17 = TopNX 
-    Abs var22
-    Abs var17
-    if var17 < var22 && var17 > 20
-      var16 = 3
-      AbsStick OPos
-      Return
-    endif
-  endif
-
+elif Equal var16 5
   AbsStick OPos
   if !(Equal var2 OPos)
     Call MainHub

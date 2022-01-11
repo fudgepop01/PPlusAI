@@ -15,11 +15,11 @@ endif
 goalY = globTempVar
 goalY += 2
 
-if Rnd < pt_jumpiness
+if CHANCE_MUL_LE PT_JUMPINESS 1
   GetAttribute immediateTempVar attr_jumpYInitVel 0
   immediateTempVar *= 3.5
   goalY = goalY + Rnd * immediateTempVar * 10
-  if Rnd < pt_djumpiness
+  if CHANCE_MUL_LE PT_DJUMPINESS 1
     GetAttribute immediateTempVar attr_airJumpYMult 0
     goalY = goalY + Rnd * immediateTempVar * 10
   endif

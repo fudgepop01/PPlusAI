@@ -20,9 +20,11 @@ else
 endif
 //--- prevent auto-attack
 Cmd30
-
+// keeps the AI from targeting itself because that can happen for some reason
+if Equal PlayerNum OPlayerNum
+  SwitchTarget
+endif
 //--- track target stuff 
-LOGSTR str("TRACKERS")
 // out of tumble action
 if Equal OPrevAction hex(0x44) || Equal OPrevAction hex(0x45) || Equal OPrevAction hex(0x49)
   if Equal OCurrAction hex(0x49) && Equal OAnimFrame 30
@@ -36,6 +38,15 @@ if Equal OPrevAction hex(0x44) || Equal OPrevAction hex(0x45) || Equal OPrevActi
       trackOAction man_OOutOfHitstun op_hitstun_attack
     endif
   endif
+endif
+// frame count after hitstun ends
+if OFramesHitstun < 0
+  getCurrentPredictValue immediateTempVar man_OFramesPostHitstun
+  if immediateTempVar < 100
+    incrementPrediction man_OFramesPostHitstun
+  endif
+elif Equal OFramesHitstun 1
+  trackOAction man_OFramesPostHitstun 0
 endif
 // O OOS Option
 if Equal OAnimFrame 0 && OFramesSinceShield < 20
@@ -59,6 +70,15 @@ elif OAttackCond && Equal OAnimFrame 0
     trackOAction man_OXAttackDist op_attack_mid
   else
     trackOAction man_OXAttackDist op_attack_far
+  endif
+
+  RetrieveFullATKD anotherTempVar anotherTempVar anotherTempVar globTempVar immediateTempVar anotherTempVar anotherTempVar OCurrSubaction 1
+  Abs globTempVar
+  Abs immediateTempVar
+  if globTempVar < immediateTempVar
+    trackOAction man_OXHitDist immediateTempVar
+  else
+    trackOAction man_OXHitDist globTempVar
   endif
 endif
 // O Tech Option
@@ -88,14 +108,19 @@ if Equal OAnimFrame 10
   endif
 endif
 // O Bait/Defend Option
-if currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
+if currGoal >= cg_circleCamp && currGoal < calc(cg_bait + 1)
   Goto baitDefendOption
+  XReciever
 elif Equal currGoal cg_defend
   Goto baitDefendOption
+  XReciever
+elif Rnd < 0.2
+  Goto baitDefendOption
+  XReciever
 endif
 if !(True)
   label baitDefendOption
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 7
+  immediateTempVar = (1 - (LevelValue / 100)) * 30
   MOD immediateTempVar AnimFrame immediateTempVar
   if Equal immediateTempVar 1
     globTempVar = man_OBaitOption
@@ -108,7 +133,7 @@ if !(True)
     if ODistLE immediateTempVar
       if hex(0x3) <= OCurrAction && OCurrAction <= hex(0x5) && Rnd < 0.4 && !(Equal currGoal cg_defend)
         trackOAction man_OBaitOption op_bait_move
-        if OAnimFrame >= 6 || Equal OCurrAction hex(0x4) || Equal OCurrAction hex(0x3)
+        if OAnimFrame >= 4 || Equal OCurrAction hex(0x4) || Equal OCurrAction hex(0x5)
           // the target is running in a direction as a result of a bait
           if !(Equal OPos ODirection) 
             // the target is running away, therefor overshoot
@@ -122,10 +147,10 @@ if !(True)
         // the target is roughly in-place, therefor neutral
         trackOAction man_OBaitOption op_bait_move
         trackOAction man_OBaitDirection op_baitdir_neutral
-      elif Equal OCurrAction hex(0x34) || Equal OCurrAction hex(0x36) || Equal OCurrAction hex(0x38) 
-        trackOAction globTempVar op_bait_grab
       elif OAttacking && Rnd < 0.5 && Equal currGoal cg_defend
         trackOAction globTempVar op_defend_attack
+      elif OAttacking && Rnd < 0.5 && !(Equal currGoal cg_defend)
+        trackOAction man_OBaitOption op_bait_attack
       elif hex(0x1A) <= OCurrAction && OCurrAction <= hex(0x1C) && Rnd < 0.6
         trackOAction globTempVar op_bait_shield
       endif
@@ -133,8 +158,6 @@ if !(True)
   endif
   Return
 endif
-
-LOGSTR str("SWITCHES")
 
 //--- special state switches
 if Equal CurrAction hex(0x7C) || Equal CurrAction hex(0x7D)
@@ -145,41 +168,62 @@ elif !(Equal currGoal cg_ledge) && CurrAction >= hex(0x73) && CurrAction <= hex(
   CallI OnLedge
 endif
 
-LOGSTR str("TACTIC")
-
 //--- switch tactic if conditions are met
-if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal currGoal cg_inHitstun)
+if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal currGoal cg_inHitstun) && !(Equal OCurrAction hex(0x49))
   immediateTempVar = LevelValue * 0.01 - 0.15
-  if Equal AirGroundState 1 && Rnd < immediateTempVar
-    ClearStick
-    AbsStick 0 (-1)
-  endif
   if FramesHitstun > 0
+    Goto OnGotHitAdjustments
     CallI AttackedHub
   elif Equal CurrAction hex(0x42)
+    Goto OnGotHitAdjustments
     CallI AttackedHub
   endif
 endif
+
+if Equal OFramesHitlag 1 && OFramesHitstun > 0 && Equal HitboxConnected 0
+  CALL_EVENT(evt_rangedHit)
+endif
+
+CALL_EVENT(evt_chrChecks)
+
+if !(True)
+  label OnGotHitAdjustments
+    CALL_EVENT(evt_gotHit)
+  Return
+endif
+
 if Equal currGoal cg_edgeguard && Equal OIsOnStage 0 && Equal IsOnStage 0
-  GET_CHAR_TRAIT(globTempVar, chr_pt_recoveryDistX)
+  GET_CHAR_TRAIT(globTempVar, chr_cs_recoveryDistX)
   NEAREST_CLIFF(immediateTempVar, anotherTempVar)
   Abs immediateTempVar
   if immediateTempVar > globTempVar
-    GET_CHAR_TRAIT(immediateTempVar, chr_pt_recoveryDistY)
+    GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
     if YDistBackEdge >= immediateTempVar
       CallI RecoveryHub
     endif
   endif
+  Norm immediateTempVar OXDistBackEdge OYDistBackEdge
+  Norm globTempVar XDistBackEdge YDistBackEdge
+
+  if immediateTempVar < globTempVar && YDistBackEdge > 0
+    CallI RecoveryHub
+  endif
 elif Equal currGoal cg_edgeguard && Equal OIsOnStage 0
 elif !(Equal currGoal cg_recover) && !(Equal currGoal cg_ledge) && Equal FramesHitstun 0  
   if Equal IsOnStage 0
-    GetYDistFloorOffset immediateTempVar 0 25 0
-    if Equal immediateTempVar -1
+    GetYDistFloorOffset immediateTempVar 15 15 0
+    GetYDistFloorOffset globTempVar -15 15 0
+    if Equal immediateTempVar -1 && Equal globTempVar -1
       CallI RecoveryHub
     endif
-  elif Equal OIsOnStage 0
-    currGoal = cg_edgeguard
-    CallI MainHub
+  elif Equal OIsOnStage 0 && !(Equal currGoal cg_edgeguard)
+    GetYDistFloorOffset immediateTempVar 15 15 1
+    GetYDistFloorOffset globTempVar -15 15 1
+    if Equal immediateTempVar -1 && Equal globTempVar -1
+      currGoal = cg_edgeguard
+      skipMainInit = mainInitSkip
+      CallI MainHub
+    endif
   endif
 endif
 
@@ -187,8 +231,7 @@ if Equal CurrAction hex(0xBE)
   Stick 1
 endif
 
-LOGSTR str("SHIELD")
-if Equal CurrAction hex(0x1D) && !(CalledAs Shield)
+if Equal CurrAction hex(0x1D) && !(CalledFrom Shield)
   CallI Shield
 endif
 
@@ -198,45 +241,52 @@ endif
 
 ACTIONABLE_ON_GROUND
 
-LOGSTR str("DEFENSE")
-
 // react to/read the opponent's attack patterns
 immediateTempVar = (1 - (LevelValue / 100)) * 30 + 1
+immediateTempVar *= PT_REACTION_TIME
 anotherTempVar = AnimFrame - 1
 MOD globTempVar anotherTempVar immediateTempVar
-anotherTempVar = OAnimFrame - 1
+anotherTempVar = OAnimFrame - 8
 MOD anotherTempVar anotherTempVar immediateTempVar
-if !(Equal globTempVar 0) || !(Equal anotherTempVar 0)
-elif !(Equal currGoal cg_defend) && !(Equal currGoal cg_attack_reversal) && OFramesHitstun <= 0 && !(CalledAs Shield) && !(Equal currGoal cg_edgeguard)
+if globTempVar > 1 || anotherTempVar > 1
+elif Equal OCurrAction hex(0x4D) && OAnimFrame > 25
+elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1) && !(Equal currGoal cg_attack) && CHANCE_MUL_LE PT_AGGRESSION 0.3
+elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
   if OCurrAction < hex(0x42) || OCurrAction >= hex(0x48)
-    if Equal AirGroundState 2 && Rnd < 0.3
-      Return
-    endif
     predictAverage immediateTempVar man_OXHitDist LevelValue
-    immediateTempVar += 10
+    immediateTempVar += 15
     if Equal currGoal cg_inHitstun || Equal CurrAction hex(0x49)
       immediateTempVar += 14
     endif
     if ODistLE immediateTempVar
       GetCommitPredictChance globTempVar LevelValue
-      globTempVar *= 4
+      PredictOMov anotherTempVar mov_grab LevelValue
+      if anotherTempVar > globTempVar
+        globTempVar = anotherTempVar
+      endif
+      globTempVar *= 1.5
+      immediateTempVar = 2 - PT_AGGRESSION
+      if immediateTempVar > 0.75
+        globTempVar *= immediateTempVar
+      endif
       if Equal currGoal cg_inHitstun || Equal CurrAction hex(0x49)
         immediateTempVar = Damage * 0.1
         globTempVar += immediateTempVar
       endif
-      immediateTempVar = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 5
-      if Rnd < globTempVar && Rnd < globTempVar
-        if Rnd < 0.6
+      // immediateTempVar = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 8
+      // immediateTempVar *= PT_REACTION_TIME
+      if Rnd < globTempVar && CHANCE_MUL_LE globTempVar 2
+        if Rnd < 0.7
           CallI DefendHub
-        elif Rnd < 0.75 || Equal currGoal cg_inHitstun || Equal CurrAction hex(0x49)
-          CallI DefendHub
-        endif
-      elif OAnimFrame >= immediateTempVar && OAttackCond
-        if Rnd < 0.1
-          CallI DefendHub
-        elif Rnd < 0.3 || Equal currGoal cg_inHitstun || Equal CurrAction hex(0x49)
+        elif Rnd < 0.8 || Equal currGoal cg_inHitstun || Equal CurrAction hex(0x49)
           CallI DefendHub
         endif
+      // elif OAnimFrame >= immediateTempVar && OAttackCond
+      //   if Rnd < 0.1
+      //     CallI DefendHub
+      //   elif Rnd < 0.3 || Equal currGoal cg_inHitstun || Equal CurrAction hex(0x49)
+      //     CallI DefendHub
+      //   endif
       endif
     endif
   endif

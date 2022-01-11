@@ -20,14 +20,15 @@ if CurrAction <= hex(0x20) || Equal CanCancelAttack 1
 endif
 
 // react to/read the opponent's attack patterns
-immediateTempVar = (1 - (LevelValue / 100)) * 30 + 4
+immediateTempVar = (1 - (LevelValue / 100)) * 30
+immediateTempVar *= PT_REACTION_TIME
 MOD immediateTempVar AnimFrame immediateTempVar
 if Equal immediateTempVar 0
   predictAverage immediateTempVar man_OXHitDist LevelValue
   immediateTempVar += 35
   if ODistLE immediateTempVar
     GetCommitPredictChance globTempVar LevelValue
-    globTempVar *= 5
+    globTempVar *= 0.9
     immediateTempVar = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
     if Rnd < globTempVar
       if ODistLE 50 && Rnd < 0.25

@@ -4,8 +4,14 @@
       #let fastfallDist = var4
       CALC_FASTFALL_DIST(fastfallDist, move_hitFrame)
 
-      immediateTempVar = fastfallDist + (OSCDBottom - TopNY)
-      immediateTempVar -= YDistBackEdge
+      LOGSTR str("FASTFALL DIST")
+      LOGVAL fastfallDist
+      LOGSTR str("CURRENT YPOS")
+      LOGVAL TopNY
+      PRINTLN
+
+      immediateTempVar = fastfallDist + (CenterY - TopNY)
+      immediateTempVar += YDistBackEdge
       if immediateTempVar > 0
         globTempVar = distX - TopNX
         immediateTempVar = distY - TopNY + fastfallDist

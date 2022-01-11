@@ -1,25 +1,26 @@
 #const DIRY_ABOVE = 14
-#const DIRY_BELOW = 1
+#const DIRY_BELOW_AIR = 1
+#const DIRY_BELOW_GROUND = -1
 #const DIRX_FRONT = 4
-#const DIRX_BACK = -2
+#const DIRX_BACK = -3
 
-#const pt_shortHopHeight = 14
-#const pt_djumpHeight = 25
-#const pt_wavedashDist = 25
+#const cs_shortHopHeight = 14
+#const cs_djumpHeight = 25
+#const cs_wavedashDist = 25
 
-#const pt_jumpiness = 0.4
-#const pt_djumpiness = 0.2
-#const pt_aggression = 0.8
-#const pt_bait_dashAwayChance = 0.65
-#const pt_bait_wdashAwayChance = 0.55
+#const pt_jumpiness = 0.1
+#const pt_djumpiness = 0.07
+#const pt_aggression = 1.5
+#const pt_bait_dashAwayChance = 0.55
+#const pt_bait_wdashAwayChance = 0.2
 #const pt_wall_chance = 0.5
-#const pt_platChance = 0.17
+#const pt_platChance = 0.08
 #const pt_baitChance = 0.75
 #const pt_braveChance = 0.8
 #const pt_circleCampChance = 0.12
 
-#const pt_dashForceTurnFrame = 8
-#const pt_dashDanceMinFrames = 3
+#const cs_dashForceTurnFrame = 8
+#const cs_dashDanceMinFrames = 3
 
 #const recovery_moves = uspecial|sspecial
 
@@ -224,9 +225,17 @@
 #const grab_lastHitFrame = 7
 #const grab_damage_info = Grab|0|0|0|0
 
+#const fthrow_IASA = 29
+#const fthrow_throwFrame = 4
 #const fthrow_damage_info = Grab|3|50|140|65
+#const dthrow_IASA = 71
+#const dthrow_throwFrame = 49
 #const dthrow_damage_info = Grab|1|20|220|52
-#const bthrow_damage_info = Grab|3|60|140|-45
+#const bthrow_IASA = 36
+#const bthrow_throwFrame = 16
+#const bthrow_damage_info = Grab|3|60|140|45
+#const uthrow_IASA = 72
+#const uthrow_throwFrame = 43
 #const uthrow_damage_info = Grab|10|69|70|90
 
 // NAir

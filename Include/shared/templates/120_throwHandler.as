@@ -2,7 +2,6 @@
 id 0x1120
 unk 0x0
 
-
 if CurrAction < hex(0x34) || CurrAction > hex(0x3C)
   CallI MainHub
 elif Equal CurrAction hex(0x39) && AnimFrame > 8

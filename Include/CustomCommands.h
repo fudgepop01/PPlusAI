@@ -102,14 +102,26 @@ cmd getCurrentPredictValue : 0x55 variable managerType
 /// predicts the chance that a target will attack based on their prior actions
 cmd GetCommitPredictChance : 0x58 variable LevelValue
 
+/// predicts the chance that a target will choose X option based on their prior actions
+cmd PredictOMov : 0x59 variable mov LevelValue
+
 // MISSING OPERATOR CODES
 cmd OR : 0x60 variable op1 op2
 cmd AND : 0x61 variable op1 op2
 cmd LSHIFT : 0x62 variable op1 op2
 cmd RSHIFT : 0x63 variable op1 op2
+/// IF OP2 IS BELOW 1 THEN IT WILL BE SET TO 1
 cmd MOD : 0x64 variable op1 op2
 cmd COS : 0x65 variable value
 cmd SIN : 0x66 variable value
+
+cmd SetVarByNum : 0x67 varNum value
+cmd CopyVarByNum : 0x68 to from
+
+cmd STACK_PUSH : 0x69 value
+
+cmd GotoByValue : 0x6A value
+cmd SeekNoCommit : 0x6B ID
 
 // ITEM CODES
 cmd GetItemLocFromIdx : 0x70 variable1 variable2 idx
@@ -124,9 +136,12 @@ cmd NoRepeat : 0x82
 /// literally just a noop
 /// makes XGoto play nice
 cmd XReciever : 0x83
-cmd DynamicDiceAdd : 0x84 value
-cmd DynamicDiceRoll : 0x85 variable
-cmd DynamicDiceClear : 0x86
+cmd DynamicDiceAdd : 0x84 ds val weightVal
+cmd DynamicDiceRoll : 0x85 ds variable shouldRemove
+cmd DynamicDiceClear : 0x86 ds
+cmd DynamicDiceSize : 0x87 ds variable
+
+cmd ADJUST_PERSONALITY : 0x90 pt_index amount
 
 //DEBUGGING CODES
 
@@ -196,3 +211,6 @@ cmd LOGSTR : 0xF3 p1 p2 p3 p4 p5
 
 ///logs a value to the console
 cmd PRINTLN : 0xF4
+
+///brings up fudge menu, effectively pausing the game
+cmd PAUSE : 0xF5

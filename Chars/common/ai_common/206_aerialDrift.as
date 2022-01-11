@@ -13,6 +13,12 @@ label execution
 
 XGoto PerFrameChecks
 XReciever
+if !(Equal lastAttack -1) 
+  XGoto SetAttackGoal
+  XReciever
+  XGoto CheckAttackWillHit
+  XReciever
+endif
 Seek execution
 
 if Equal scriptVariant sv_aerialdrift_towards
@@ -22,7 +28,7 @@ elif Equal scriptVariant sv_aerialdrift_away
   AbsStick immediateTempVar
 endif
 
-if timer <= 0 || !(Equal AirGroundState 2)
+if timer <= 0 || !(Equal AirGroundState 2) || Equal IsOnStage 0
   Call MainHub
 endif
 timer -= 1

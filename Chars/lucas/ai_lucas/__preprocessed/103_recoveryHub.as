@@ -14,6 +14,8 @@ label reroll
   var10 = Rnd
 label begin
 var21 = 3
+SetDebugOverlayColor 255 136 0 221
+EnableDebugOverlay
 
 if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
@@ -33,9 +35,9 @@ var17 = var1 - var0
 var16 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
-    var2 = 5
+    var2 = 4
   else
-    var2 = -5
+    var2 = -4
   endif
 elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
@@ -102,6 +104,9 @@ endif
 
 if Equal var2 0 || Equal AirGroundState 1
   var21 = 0
+  var20 = -1
+  var14 = BBoundary
+  var13 = 0
   Call MainHub
 endif
 
@@ -124,7 +129,15 @@ endif
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
-  if Equal var4 1 || var5 <= 0.3
+  if !(NoOneHanging) && !(Equal var16 1)
+    var1 -= 25
+  endif
+  if YDistBackEdge < 19.514 && var2 <= 15 && NumJumps > 0
+    Button X
+    Goto handleJumpToStage
+    Return
+  endif
+  if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
     if YDistBackEdge > 11.514 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -192,6 +205,23 @@ label handleUSpecial
   var1 *= -1
   var2 *= -1
   var2 = var2 - (TopNY * -1)
+  if !(Equal var16 1)
+    if !(NoOneHanging)
+      var2 -= 20
+    endif
+    if var10 < 0.6
+      var22 = 20
+      var2 += YDistBackEdge
+      var2 -= var22
+    endif
+    if var9 <= 0.2 && YDistBackEdge > -20 || var6 <= 0.4 && YDistBackEdge > 40
+      if TopNX > 0
+        var1 += 3
+      else
+        var1 -= 3
+      endif
+    endif
+  endif
   var17 = var0 / 30
   var17 *= 34
   var17 += 6
@@ -257,7 +287,7 @@ label handleDSpecial
 Return
 
 label handleSFall
-  var17 = var1 * -1
+  var17 = TopNX * -1
   AbsStick var17
 Return
 
@@ -268,6 +298,9 @@ label handleJumpToStage
     AbsStick var17
   elif var1 > 6 || var1 < -6
     var17 = var1 * -1
+    AbsStick var17
+  elif YDistBackEdge < 23.514
+    var17 = var1 * -3
     AbsStick var17
   endif
 Return

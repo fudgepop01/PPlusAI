@@ -326,11 +326,11 @@ const getNameFromPage = () => {
     case "SpecialAirS": return "SSpecialAir";
     case "SpecialAirHi": return "USpecialAir";
     case "SpecialAirLw": return "DSpecialAir";
-    case "Catch": 
-    case "ThrowF": 
-    case "ThrowLw":
-    case "ThrowB":
-    case "ThrowHi": return "Grab";
+    case "Catch": return "Grab";
+    case "ThrowF": return "fthrow";
+    case "ThrowLw": return "dthrow";
+    case "ThrowB": return "bthrow";
+    case "ThrowHi": return "uthrow";
     case "AttackAirN": return "NAir";
     case "AttackAirF": return "FAir";
     case "AttackAirB": return "BAir";
@@ -494,6 +494,7 @@ class DataCalculator {
   private rootElement: HTMLElement = document.createElement("div");
   private resultBox: HTMLTextAreaElement = document.createElement("textarea");
 
+  private throwData?: {frame: number;} & AttackData;
   private baseRegionData: FrameBounds[];
   constructor(
     public data: SubactionData, 
@@ -563,6 +564,16 @@ class DataCalculator {
 
     for (const [i, frame] of this.data.frames.entries()) {
       let newFrameBounds = false;
+      if (frame.throw) {
+        this.throwData = {
+          frame: i,
+          damage: frame.throw.damage,
+          bkb: frame.throw.bkb,
+          kbg: frame.throw.kbg,
+          angle: frame.throw.trajectory,
+          wdsk: frame.throw.wdsk
+        };
+      }
       if (frame.hit_boxes.length > 0 && frameBounds.length === 0) {
         newFrameBounds = true;
       } else if (frameBounds.length > 0) {
@@ -652,26 +663,34 @@ class DataCalculator {
     let append = (s: string) => {out += `${s}\n`};
     let round = (num: number) => roundToDec(num, 2);
     const rootName = (this.rootName.value.length > 0) ? this.rootName.value : getNameFromPage();
-    for (const [idx, selector] of this.selectors.entries()) {
-      let name = selector.getName();
-      const bbox = selector.getSelectedBBox();
-      if (idx === 0) {
-        append(`${getSubactionName()} unk=${this.data.iasa || 0},start=${selector.getStartFrame()},end=${selector.getEndFrame()},xmin=${round(bbox.minX).toFixed(2)},xmax=${round(bbox.maxX).toFixed(2)},ymin=${round(bbox.minY).toFixed(2)},ymax=${round(bbox.maxY).toFixed(2)}`);
-        append("==========================");
-        name = rootName.toLowerCase();
-        append(`#const ${name}_IASA = ${this.data.iasa || (this.data.frames.length + 1)}`)
-        customBBox = bbox;
-      } else {
-        append(`#const mv_${name} = ${idx}`);
+    if (['uthrow', 'bthrow', 'dthrow', 'fthrow'].includes(getNameFromPage()) && this.throwData) {
+      append(`#const ${rootName}_IASA = ${this.data.iasa || (this.data.frames.length + 1)}`);
+      append(`#const ${rootName}_throwFrame = ${this.throwData.frame}`);
+      append(`#const ${rootName}_damage_info = Grab|${this.throwData.damage}|${this.throwData.bkb}|${this.throwData.kbg}|${this.throwData.angle}`);
+    } else {
+      for (const [idx, selector] of this.selectors.entries()) {
+        let name = selector.getName();
+        const bbox = selector.getSelectedBBox();
+        if (idx === 0) {
+          append(`${getSubactionName()} unk=${this.data.iasa || 0},start=${selector.getStartFrame()},end=${selector.getEndFrame()},xmin=${round(bbox.minX).toFixed(2)},xmax=${round(bbox.maxX).toFixed(2)},ymin=${round(bbox.minY).toFixed(2)},ymax=${round(bbox.maxY).toFixed(2)}`);
+          append("==========================");
+          name = rootName.toLowerCase();
+          append(`#const ${name}_IASA = ${this.data.iasa || (this.data.frames.length + 1)}`)
+          customBBox = bbox;
+        } else {
+          append(`#const mv_${name} = ${idx}`);
+        }
+        
+        append(`#const ${name}_xOffset = ${round(bbox.minX)}`);
+        append(`#const ${name}_yOffset = ${round(bbox.minY) * -1}`);
+        append(`#const ${name}_xRange = ${round((bbox.maxX - bbox.minX) / 2)}`);
+        append(`#const ${name}_yRange = ${round((bbox.maxY - bbox.minY) / 2)}`);
+        append(`#const ${name}_hitFrame = ${selector.getStartFrame()}`);
+        append(`#const ${name}_lastHitFrame = ${selector.getEndFrame()}`);
+        append(`#const ${name}_damage_info = ${rootName}|${selector.getAttackData()}`);
+
+        append("---------------------------");
       }
-      append(`#const ${name}_xOffset = ${round(bbox.minX)}`);
-      append(`#const ${name}_yOffset = ${round(bbox.minY) * -1}`);
-      append(`#const ${name}_xRange = ${round((bbox.maxX - bbox.minX) / 2)}`);
-      append(`#const ${name}_yRange = ${round((bbox.maxY - bbox.minY) / 2)}`);
-      append(`#const ${name}_hitFrame = ${selector.getStartFrame()}`);
-      append(`#const ${name}_lastHitFrame = ${selector.getEndFrame()}`);
-      append(`#const ${name}_damage_info = ${rootName}|${selector.getAttackData()}`);
-      append("---------------------------");
     }
     this.resultBox.innerHTML = out;
     rerender();

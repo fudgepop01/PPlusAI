@@ -5,6 +5,34 @@ unk 0x0
 XReciever
 scriptVariant = sv_none
 
+#let OCommitAttack = var0
+GetCommitPredictChance OCommitAttack LevelValue
+if currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
+elif OCommitAttack >= 0.35
+  if CHANCE_MUL_LE PT_AGGRESSION 0.25
+    currGoal = cg_attack_undershoot
+  else
+    currGoal = cg_bait_dashawayWhenApproached
+  endif
+elif OCommitAttack >= 0.2
+  if CHANCE_MUL_LE PT_AGGRESSION 0.75
+    currGoal = cg_attack_undershoot
+  else
+    currGoal = cg_bait_shield
+  endif
+endif
+#let OCommitGrab = var0
+PredictOMov OCommitGrab mov_grab LevelValue
+if OCommitGrab >= 0.25
+  if CHANCE_MUL_LE PT_AGGRESSION 0.75
+    currGoal = cg_attack_undershoot
+  elif CHANCE_MUL_LE PT_AGGRESSION 0.5
+    currGoal = cg_bait_dashawayWhenApproached
+  else
+    currGoal = cg_bait_dashdance
+  endif
+endif
+
 if Equal goalY BBoundary
   XGoto GoalChoiceHub
   XReciever
@@ -13,6 +41,10 @@ endif
 #let teamCloser = var3
 GetIsTeammateCloser teamCloser
 if Equal teamCloser 1
+  if Rnd <= 0.02
+    SwitchTarget
+    Return
+  endif
   lastAttack = -1
   currGoal = cg_circleCamp
 endif
@@ -28,22 +60,35 @@ endif
 //     lastAttack = -1
 //   endif
 // endif
-
 #let OEndLag = var0
-OEndLag = 0
-if currGoal < cg_attack || currGoal >= calc(cg_attack + 1)
+OEndLag = -1
+immediateTempVar = (1 - (LevelValue / 100)) * 30
+immediateTempVar *= PT_REACTION_TIME
+if immediateTempVar <= 1
   Goto EndlagCheck
 endif
 if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
+  Norm immediateTempVar TopNX TopNY
+  Norm globTempVar OTopNX OTopNY
+  Abs immediateTempVar
+  Abs globTempVar
+  if immediateTempVar < globTempVar
+    currGoal = cg_bait
+    Return
+  endif
+
   SetDebugOverlayColor color(0x0000FF88)
   EnableDebugOverlay
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10
+  GET_CHAR_TRAIT(globTempVar, chr_calc_certainty)
+  globTempVar = (1 - globTempVar)
+  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10 * globTempVar
+  immediateTempVar *= PT_REACTION_TIME
+
   MOD immediateTempVar AnimFrame immediateTempVar
-  // $LV9Check(immediateTempVar = 1)
-  if Equal immediateTempVar 1
+  if immediateTempVar <= 1
     globTempVar = OTopNY - TopNY
     if globTempVar > 45 || OYDistBackEdge < -35 && Equal AirGroundState 1
-      if Rnd < pt_aggression
+      if CHANCE_MUL_LE PT_AGGRESSION 1.4
         currGoal = cg_attack
         Return
       endif
@@ -51,7 +96,7 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
 
     // predictOOption immediateTempVar man_OXHitDist LevelValue 
     // immediateTempVar += 10
-    if Rnd < calc(pt_aggression * 0.35)
+    if CHANCE_MUL_LE PT_AGGRESSION 1.25
       // if XDistLE immediateTempVar 
       //   currGoal = cg_bait
       //   Return
@@ -59,6 +104,7 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
       currGoal = cg_camp_attack
       XGoto CalcAttackGoal
       XReciever
+      currGoal = cg_circleCamp
       
       if !(Equal lastAttack -1)
         skipMainInit = sm_execAttack
@@ -82,6 +128,14 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
     Return
   endif
 
+  globTempVar = immediateTempVar * 0.75
+  Goto getDist
+  if globTempVar < immediateTempVar
+    XGoto GoalChoiceHub
+    XReciever
+    Return
+  endif
+
   Goto getDist
   if immediateTempVar <= 13
     if ODistLE globTempVar || Rnd <= 0.04
@@ -89,20 +143,23 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
       XReciever
       Return
     endif
-    immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10
+    GET_CHAR_TRAIT(globTempVar, chr_calc_certainty)
+    globTempVar = (1 - globTempVar)
+    immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10 * globTempVar
+    immediateTempVar *= PT_REACTION_TIME
     MOD immediateTempVar AnimFrame immediateTempVar
     // $LV9Check(immediateTempVar = 1)
-    if Equal immediateTempVar 1
+    if immediateTempVar <= 1
       // Goto EndlagCheck
 
-      if Equal AirGroundState 1 && Rnd < pt_jumpiness
-        goalY += calc(pt_shortHopHeight - 3) 
-        if Rnd < pt_jumpiness && Rnd < pt_jumpiness
+      if Equal AirGroundState 1 && CHANCE_MUL_LE PT_JUMPINESS 1
+        goalY += calc(cs_shortHopHeight - 3) 
+        if CHANCE_MUL_LE PT_JUMPINESS 1 && CHANCE_MUL_LE PT_JUMPINESS 1
           goalY += 5
         endif
       elif Equal AirGroundState 2 && YDistBackEdge < -5
-        if Rnd < pt_djumpiness && Rnd < pt_djumpiness && NumJumps > 0
-          goalY += pt_djumpHeight
+        if CHANCE_MUL_LE PT_DJUMPINESS 1 && CHANCE_MUL_LE PT_DJUMPINESS 1 && NumJumps > 0
+          goalY += cs_djumpHeight
         else
           goalY += 1
           GetYDistFloorAbsPos immediateTempVar goalX goalY
@@ -112,20 +169,40 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
     endif
   endif
 elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+  if Equal immediateTempVar 1
+    currGoal = cg_attack
+    Return
+  endif
+
   SetDebugOverlayColor color(0xFF00FF88)
   if Equal currGoal cg_bait_dashdance
     SetDebugOverlayColor color(0xFF00FFFF)
   endif
   EnableDebugOverlay
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 13
+
+  GET_CHAR_TRAIT(globTempVar, chr_calc_certainty)
+  globTempVar = (1 - globTempVar)
+  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10 * globTempVar
+
+  immediateTempVar *= PT_REACTION_TIME
   MOD immediateTempVar AnimFrame immediateTempVar
   // $LV9Check(immediateTempVar = 1)
-  if Equal immediateTempVar 1
+  if immediateTempVar <= 1 && OAnimFrame > globTempVar
+    predictAverage immediateTempVar man_OXHitDist LevelValue
+    immediateTempVar += 15
+    if Equal currGoal cg_bait && ODistLE immediateTempVar && CHANCE_MUL_LE PT_AGGRESSION 0.65
+      if !(OAttacking) || !(Equal OEndLag -1)
+        currGoal = cg_attack
+        Return
+      endif
+    endif
+
     Goto OPosGoal
 
     globTempVar = OTopNY - TopNY
     if globTempVar > 45 || OYDistBackEdge < -35 && Equal AirGroundState 1
-      if Rnd < pt_aggression
+      if CHANCE_MUL_LE PT_AGGRESSION 1.25
         currGoal = cg_attack
         Return
       endif
@@ -135,12 +212,12 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
       Return
     endif
 
-    if !(Equal currGoal cg_bait_shield) && !(Equal currGoal cg_bait_dashdance)
+    if !(Equal currGoal cg_bait_shield) && !(Equal currGoal cg_bait_dashdance) && !(Equal currGoal cg_bait_dashawayWhenApproached)
       predictOOption immediateTempVar man_OXAttackDist LevelValue 
       predictionConfidence anotherTempVar man_OXAttackDist LevelValue
       if Equal immediateTempVar op_attack_close && Rnd < anotherTempVar
-        if Rnd < pt_circleCampChance && Equal teamCloser 0
-          if Rnd < calc(pt_baitChance * 0.5)
+        if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1 && Equal teamCloser 0
+          if CHANCE_MUL_LE PT_BAITCHANCE 0.25
             currGoal = cg_bait_dashdance
           else 
             currGoal = cg_circleCamp
@@ -148,18 +225,18 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
         endif
         immediateTempVar = 1
         Return
-      elif Equal immediateTempVar op_attack_mid && Rnd < anotherTempVar && Rnd < pt_braveChance
+      elif Equal immediateTempVar op_attack_mid && Rnd < anotherTempVar && CHANCE_MUL_LE PT_BRAVECHANCE 1
         immediateTempVar = 1
       else
         immediateTempVar = 0
       endif
 
       predictAverage immediateTempVar man_OXHitDist LevelValue
-      immediateTempVar += 45
+      immediateTempVar += 10
       anotherTempVar = immediateTempVar - 20
-      if XDistLE immediateTempVar && !(XDistLE anotherTempVar) && Rnd < calc(pt_aggression * 0.25) && Equal teamCloser 0
-        if Rnd < calc(pt_braveChance * 0.5)
-          if Rnd < calc(pt_wall_chance * 0.75)
+      if XDistLE immediateTempVar && !(XDistLE anotherTempVar) && CHANCE_MUL_LE PT_AGGRESSION 0.65 && Equal teamCloser 0
+        if CHANCE_MUL_LE PT_BRAVECHANCE 0.5
+          if CHANCE_MUL_LE PT_WALL_CHANCE 0.75
             currGoal = cg_attack_wall
           else  
             currGoal = cg_bait_attack
@@ -183,17 +260,26 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
     if anotherTempVar < 8
       anotherTempVar = 8
     endif
-    anotherTempVar += 15
+    anotherTempVar += 45
     anotherTempVar *= OPos
-    GetYDistFloorOffset anotherTempVar anotherTempVar 5 0
-    if Equal anotherTempVar -1 || Equal teamCloser 1
+    
+    Norm immediateTempVar TopNX TopNY
+    Norm globTempVar OTopNX OTopNY
+    Abs immediateTempVar
+    Abs globTempVar
+
+    GetYDistFloorOffset anotherTempVar anotherTempVar 5 1
+    if Equal currGoal cg_edgeguard
+    elif Equal anotherTempVar -1 || Equal teamCloser 1 || immediateTempVar < globTempVar
       shouldApproach = 0
+      predictAverage anotherTempVar man_OXHitDist LevelValue
+      goalX -= anotherTempVar
     endif
 
     Goto getDist
-    if immediateTempVar >= 25
+    if immediateTempVar >= 120 && !(Equal shouldApproach 0)
       shouldApproach = 1
-    elif Rnd < calc(pt_baitChance * 0.3)
+    elif CHANCE_MUL_LE PT_BAITCHANCE 0.3
       shouldApproach = -1
     endif 
 
@@ -201,7 +287,7 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
     if !(Equal shouldApproach 1)
       globTempVar = globTempVar + 15 * Rnd + 10
     elif True
-      if Rnd < pt_braveChance && Rnd < calc(pt_braveChance * 0.75)
+      if CHANCE_MUL_LE PT_BRAVECHANCE 1 && CHANCE_MUL_LE PT_BRAVECHANCE 0.75
       else
         globTempVar = globTempVar + 15 * Rnd + 10
       endif
@@ -210,29 +296,79 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
 
     globTempVar += 20
     GetAttribute anotherTempVar attr_dashInitVel 0
-    anotherTempVar *= 5
+    anotherTempVar *= 2
     globTempVar -= anotherTempVar
+    GetAttribute anotherTempVar attr_dashInitVel 1
+    anotherTempVar *= 4
+    globTempVar += anotherTempVar
     if ODistLE globTempVar && Equal AirGroundState 1 && Equal currGoal cg_bait_dashdance
-      if Rnd < calc(pt_bait_dashAwayChance * 0.35) || Rnd < calc(pt_bait_wdashAwayChance * 0.35)
+      if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.45 || CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.45
         skipMainInit = mainInitSkip
-        if Rnd < calc(pt_bait_wdashAwayChance * 0.5)
+        if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.5
           scriptVariant = sv_wavedash_out
           Call Wavedash
         endif
         scriptVariant = sv_dash_away
         Call DashScr
       endif
+    elif CHANCE_MUL_LE PT_AGGRESSION 0.2 && Equal AirGroundState 1 && !(ODistLE immediateTempVar)
+      predictAverage immediateTempVar man_OXHitDist LevelValue
+      immediateTempVar += 30
+      if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.75
+        currGoal = cg_camp_attack
+        XGoto CalcAttackGoal
+        XReciever
+        currGoal = cg_bait
+        if !(Equal lastAttack -1)
+          skipMainInit = sm_execAttack
+          CallI MainHub
+        else
+          XGoto GoalChoiceHub
+          XReciever
+          Return
+        endif
+      elif CHANCE_MUL_LE PT_BAITCHANCE 0.45 || XDistLE immediateTempVar
+        currGoal = cg_attack_undershoot
+        if XDistLE immediateTempVar && CHANCE_MUL_LE PT_AGGRESSION 0.2
+          currGoal = cg_attack
+        endif
+        XGoto CalcAttackGoal
+        XReciever
+        Return
+      endif
     endif
 
-    if ODistLE immediateTempVar && !(Equal shouldApproach -1)
-      // LOGSTR str("===IN 1===")
-      immediateTempVar -= 8
-      if Equal currGoal cg_bait_shield && Equal AirGroundState 1 && ODistLE immediateTempVar
-        currGoal = cg_attack_reversal
-        CallI Shield
+    immediateTempVar += 13
+    if ODistLE immediateTempVar
+      if Equal currGoal cg_bait_shield && Equal AirGroundState 1
+        label startup
+        Stick 1
+        if Equal CurrAction hex(0x3) && AnimFrame >= 5
+          Seek slide
+          Jump
+        elif CurrAction <= hex(0x5) && !(Equal CurrAction hex(0x0))
+          Seek slide
+          Jump
+        endif
+        Return
+        label slide
+        Stick 1
+        Button R
+        if -0.2 < XSpeed && XSpeed < 0.2
+          CallI Shield
+        endif
+        Return
+      elif Equal currGoal cg_bait_dashawayWhenApproached && Equal AirGroundState 1
+        scriptVariant = sv_dash_away_defense
+        Call DashScr
       endif
+    endif
+    immediateTempVar -= 13
 
-      DynamicDiceClear
+    if XDistLE immediateTempVar && !(Equal shouldApproach -1)
+      // LOGSTR str("===IN 1===")
+
+      DynamicDiceClear dslot0
       if Equal AirGroundState 1
         #const dr_dash = 1
         #const dr_jump = 2
@@ -243,25 +379,28 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
         #const dr_wait = 7
 
         predictAverage anotherTempVar man_OXHitDist LevelValue
-        anotherTempVar += 35
+        anotherTempVar += 10
         anotherTempVar *= OPos
         GetYDistFloorOffset anotherTempVar anotherTempVar 5 0
 
-        DynamicDiceAdd dr_dash
-        DynamicDiceAdd dr_jump
-        DynamicDiceAdd dr_jump
-        DynamicDiceAdd dr_wdash
-        DynamicDiceAdd dr_shield
-        DynamicDiceAdd dr_wait
+        DynamicDiceAdd dslot0 dr_dash 1
+        DynamicDiceAdd dslot0 dr_jump 2
+        DynamicDiceAdd dslot0 dr_wdash 1
+        DynamicDiceAdd dslot0 dr_shield 1
+        DynamicDiceAdd dslot0 dr_wait 1
         if Equal anotherTempVar -1
-        elif Equal shouldApproach 1 && Rnd < calc(pt_aggression * 0.6)
-          DynamicDiceAdd dr_dashthrough
-          DynamicDiceAdd dr_dashthrough
-          if Rnd < calc(pt_aggression * 0.45)
-            scriptVariant = sv_jump_over
-            scriptVariant += svp_jump_fullhop
-            if Rnd < calc(pt_aggression * 0.6)
+        elif Equal shouldApproach 1 && CHANCE_MUL_LE PT_AGGRESSION 0.7
+          DynamicDiceAdd dslot0 dr_dashthrough 4
+          if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.35 || CHANCE_MUL_LE PT_BRAVECHANCE 0.55
+            if ODistLE 15
+              scriptVariant = sv_jump_over
+              scriptVariant += svp_jump_fullhop
+            else
+              scriptVariant = sv_jump_away
+            endif
+            if CHANCE_MUL_LE PT_AGGRESSION 0.9
               currGoal = cg_attack
+              skipMainInit = mainInitSkip
             endif
             Call JumpScr
           endif
@@ -269,34 +408,37 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
         GetYDistFloorOffset immediateTempVar 0 40 0
         GetColDistPosRel globTempVar anotherTempVar TopNX SCDBottom 0 40 1
         if Equal globTempVar -1 && !(Equal immediateTempVar -1) && immediateTempVar < 40
-          DynamicDiceAdd dr_plat 
+          DynamicDiceAdd dslot0 dr_plat 1 
         endif
-        DynamicDiceRoll immediateTempVar
-        if Rnd > calc(pt_aggression * 0.75)
-          LOGSTR_NL str("START WAIT")
+        DynamicDiceRoll dslot0 immediateTempVar 0
+        if CHANCE_MUL_GE PT_AGGRESSION 0.6
           currGoal = cg_bait_wait
         endif
-        if Rnd < calc(pt_bait_dashAwayChance * 1.3)
+        if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.6
           scriptVariant = sv_dash_away
           Call DashScr
-        elif Rnd < calc(pt_bait_wdashAwayChance * 1.3)
+        elif CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.6
           scriptVariant = sv_wavedash_out
           Call Wavedash
         endif
         if Equal immediateTempVar dr_dash
           scriptVariant = sv_dash_away
+          if CHANCE_MUL_LE PT_AGGRESSION 1.4
+            scriptVariant = sv_dash_towards
+          endif
           Call DashScr
         elif Equal immediateTempVar dr_dashthrough
           scriptVariant = sv_dash_through
           Call DashScr
         elif Equal immediateTempVar dr_jump
-          scriptVariant = sv_jump_away
-          if Rnd < pt_jumpiness
-            scriptVariant += svp_jump_fullhop
+          scriptVariant = sv_jump_neutral
+          if CHANCE_MUL_GE PT_AGGRESSION 1.2
+            scriptVariant = sv_jump_away
           endif
           Goto getDist
-          if Rnd < calc(pt_aggression * 0.6) && immediateTempVar <= 30
+          if CHANCE_MUL_LE PT_AGGRESSION 0.95 && immediateTempVar <= 30
             currGoal = cg_attack
+            skipMainInit = mainInitSkip
           endif
           Call JumpScr
         elif Equal immediateTempVar dr_wdash
@@ -308,37 +450,42 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
           currGoal = cg_bait_wait
         endif
         GetYDistFloorOffset globTempVar 0 50 0
-        if globTempVar > -40 && Rnd < pt_platChance
+        if globTempVar > -40 && CHANCE_MUL_LE PT_PLATCHANCE 1
           Call BoardPlatform
         endif
-      elif NumJumps > 0 && Rnd < pt_djumpiness && Rnd < pt_djumpiness && OYDistBackEdge > -20
-        scriptVariant = sv_jump_over
-        if Rnd < 0.5
+      elif NumJumps > 0 && CHANCE_MUL_LE PT_DJUMPINESS 1 && CHANCE_MUL_LE PT_DJUMPINESS 1 && YDistFloor < 20
+        
+        scriptVariant = sv_jump_neutral
+        if CHANCE_MUL_LE PT_AGGRESSION 1.25 && XDistLE 25
+          scriptVariant = sv_jump_over
+        elif Rnd < 0.5
           scriptVariant = sv_jump_away
         endif
         scriptVariant += svp_jump_fullhop
         Call JumpScr
       endif
-    elif ODistLE globTempVar && Rnd < pt_jumpiness && Equal OAirGroundState 1 && Equal shouldApproach 1
+    elif ODistLE globTempVar && CHANCE_MUL_LE PT_JUMPINESS 1 && Equal OAirGroundState 1 && Equal shouldApproach 1
       // LOGSTR str("===IN 2===")
-      if Rnd < pt_jumpiness
+      if CHANCE_MUL_LE PT_JUMPINESS 1 && XDistLE 25
         scriptVariant = sv_jump_over
         scriptVariant += svp_jump_fullhop
-      elif Rnd < pt_jumpiness
-        scriptVariant = sv_jump_away
       else
         scriptVariant = sv_jump_neutral
+      endif
+      if CHANCE_MUL_LE PT_AGGRESSION 1.1 && immediateTempVar <= 30
+        currGoal = cg_attack
+        skipMainInit = mainInitSkip
       endif
       Call JumpScr
     elif True
       // LOGSTR str("===IN 3===")
-      Goto OPosGoal
-      if Equal shouldApproach 1
-      elif True
-        predictAverage immediateTempVar man_OXHitDist LevelValue
-        immediateTempVar += 15
-        goalX = goalX + immediateTempVar * OPos * -1 
-      endif
+      // Goto OPosGoal
+      // if Equal shouldApproach 1
+      // elif True
+      //   predictAverage immediateTempVar man_OXHitDist LevelValue
+      //   immediateTempVar += 15
+      //   goalX = goalX + immediateTempVar * OPos * -1 
+      // endif
     endif
 
     // Goto EndlagCheck
@@ -354,65 +501,99 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
   immediateTempVar += 10
   DrawDebugRectOutline goalX goalY immediateTempVar immediateTempVar color(0xFFFF0022)
 elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
-  if CalledAs ExecuteAttack
+  if CalledFrom ExecuteAttack
     XGoto SetAttackGoal
     XReciever
     Return
   endif
+  
+  // if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59) && !(Equal OCurrAction hex(0x49))
+  // elif Equal OCurrAction hex(0x49) && OYDistFloor > 15
+  // elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
+  // elif Equal currGoal cg_edgeguard && Equal OIsOnStage 1
+  //   currGoal = cg_attack
+  // endif 
+
   if !(Equal currGoal cg_edgeguard)
     SetDebugOverlayColor color(0xFF000088)
   else
     SetDebugOverlayColor color(0x00FFFF88)
   endif
-    EnableDebugOverlay
+  EnableDebugOverlay
 
   if Equal lastAttack -1
-    XGoto GoalChoiceHub
-    XReciever
-    XGoto SetAttackGoal
-    XReciever
+    Goto changeGoal
     Return
   endif
 
-  globTempVar = TopNX
-  immediateTempVar = OTopNX
-  Abs globTempVar
-  Abs immediateTempVar
-  if Equal currGoal cg_attack_wall
-    $ifAerialAttack()
-      if globTempVar < immediateTempVar
-        Call ExecuteAttack
-      elif Rnd < 0.3
-        Call ExecuteAttack
-      endif
-    elif Equal AirGroundState 1
-      if globTempVar < immediateTempVar
-        Call ExecuteAttack
-      elif Rnd < 0.3
-        Call ExecuteAttack
-      endif
+  $ifLastOrigin(grab,false)
+    if CHANCE_MUL_LE PT_AGGRESSION 0.45
+      if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D) || Equal OCurrAction hex(0x53) || Equal OCurrAction hex(0x54)
+        Goto changeGoal
+        Return
+      elif OCurrAction >= hex(0x44) && OCurrAction <= hex(0x49) || Equal OCurrAction hex(0x42)
+        if OYDistBackEdge > -8 && OYSpeed < 0
+          Goto changeGoal
+          Return
+        endif
+      endif 
     endif
   endif
+  $ifAerialAttack()
+  elif YDistFloor > 25
+    Goto changeGoal
+    Return
+  endif
+
+  predictAverage immediateTempVar man_OXHitDist LevelValue
+  immediateTempVar += 10
+  if Equal currGoal cg_attack_crossup && XDistLE immediateTempVar
+    scriptVariant = sv_jump_over
+    scriptVariant += svp_jump_fullhop
+    skipMainInit = mainInitSkip
+    currGoal = cg_attack_reversal
+    CallI JumpScr 
+  endif
+
+  // globTempVar = TopNX
+  // immediateTempVar = OTopNX
+  // Abs globTempVar
+  // Abs immediateTempVar
+  // if Equal currGoal cg_attack_wall
+  //   $ifAerialAttack()
+  //     if globTempVar < immediateTempVar
+  //       Call ExecuteAttack
+  //     elif Rnd < 0.2
+  //       Call ExecuteAttack
+  //     endif
+  //   elif Equal AirGroundState 1
+  //     if globTempVar < immediateTempVar
+  //       Call ExecuteAttack
+  //     elif Rnd < 0.2
+  //       Call ExecuteAttack
+  //     endif
+  //   endif
+  // endif
 
 
   #let shouldApproach = var1
   shouldApproach = 1
   predictAverage anotherTempVar man_OXHitDist LevelValue
-  anotherTempVar += 20
+  anotherTempVar += 10
   anotherTempVar *= OPos
-  GetYDistFloorOffset anotherTempVar anotherTempVar 5 0
-  if Equal anotherTempVar -1
+  GetYDistFloorOffset anotherTempVar anotherTempVar 5 1
+  if Equal anotherTempVar -1 && !(Equal currGoal cg_edgeguard) && !(Equal currGoal cg_attack_reversal)
     shouldApproach = 0
     if !(Equal currGoal cg_attack_wall) && !(Equal currGoal cg_attack_undershoot)
-      if Rnd < calc(pt_wall_chance * 0.75)
-        if Rnd < pt_wall_chance
-          currGoal = cg_attack_wall
-        else
+      if CHANCE_MUL_LE PT_WALL_CHANCE 0.75 || CHANCE_MUL_LE PT_BAITCHANCE 1
+        if CHANCE_MUL_LE PT_BAITCHANCE 1
           currGoal = cg_attack_undershoot
+        else
+          currGoal = cg_attack_wall
         endif
         lastAttack = -1
         Return
-      elif Rnd < calc(pt_baitChance * 0.3) || Rnd < calc(pt_circleCampChance * 0.3)
+      elif CHANCE_MUL_LE PT_BAITCHANCE 0.1 || CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.1
         currGoal = cg_bait_dashdance
         lastAttack = -1
         Return
@@ -420,59 +601,67 @@ elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
     endif
   endif
 
-  LOGSTR str("==ATTACK==")
+  LOGSTR str("==ATTACK:")
   $printMoveName()
-  LOGSTR str("==========")
+  
   #let shouldUpdate = var2
   // combos
-  shouldUpdate = (1 - (LevelValue / 100)) * 30 + 3
-  immediateTempVar = OAnimFrame - 2
+  shouldUpdate = (1 - (LevelValue / 100)) * 25 + 1
+  globTempVar = OAnimFrame - 15
   // standard
-  if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
-  elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+  if Equal immediateTempVar 1
   else
-    shouldUpdate = (1 - (LevelValue / 100)) * 30 + 7
-    immediateTempVar = OAnimFrame - 3
+    shouldUpdate = (1 - (LevelValue / 100)) * 30 + 2
+    globTempVar = OAnimFrame - 25
   endif
-  
-  MOD shouldUpdate immediateTempVar shouldUpdate
-  globTempVar = shouldUpdate * 3
-  MOD anotherTempVar immediateTempVar globTempVar
-  globTempVar -= 1
-  // $LV9Check(shouldUpdate = 1)
 
-  // if OAnimFrame <= 4
-  //   shouldUpdate = 0
-  // endif
+  GET_CHAR_TRAIT(anotherTempVar, chr_calc_certainty)
+  anotherTempVar = (1 - anotherTempVar)
+  shouldUpdate *= anotherTempVar
+  shouldUpdate += 4
 
-  if Equal shouldUpdate 1 && !(Equal currGoal cg_edgeguard)
-    globTempVar = OTopNY - TopNY
-    if globTempVar > 45 || OYDistBackEdge < -45 && Equal AirGroundState 1
-    elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
-    elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
-    elif !(Equal currGoal cg_attack_reversal) && OYDistFloor < 30
-      predictOOption immediateTempVar man_OXAttackDist LevelValue 
-      predictionConfidence anotherTempVar man_OXAttackDist LevelValue
-      if Equal immediateTempVar op_attack_close && Rnd < anotherTempVar
-        currGoal = cg_bait
-        Return
-      elif Equal immediateTempVar op_attack_mid && Rnd > calc(pt_braveChance * 0.5)
+  shouldUpdate *= PT_REACTION_TIME
+
+  MOD shouldUpdate globTempVar shouldUpdate
+
+  Goto getODist
+  anotherTempVar = 12 * PT_REACTION_TIME
+  if OAnimFrame <= anotherTempVar && globTempVar < 25
+    shouldUpdate = 2
+  endif
+
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+  globTempVar = OTopNY - TopNY
+  if Equal immediateTempVar 1
+    if globTempVar > 30 || OYDistBackEdge < -35 && Equal AirGroundState 1
+    elif !(Equal currGoal cg_attack_reversal) && OYDistFloor < 45
+    elif Equal currGoal cg_edgeguard
+    elif True
+      if shouldUpdate <= 1
+        predictOOption immediateTempVar man_OXAttackDist LevelValue 
+        predictionConfidence anotherTempVar man_OXAttackDist LevelValue
+        if Equal immediateTempVar op_attack_close && Rnd < anotherTempVar
+          currGoal = cg_bait
+          Return
+        elif Equal immediateTempVar op_attack_mid && CHANCE_MUL_GE PT_BRAVECHANCE 0.5
+          currGoal = cg_bait_dashdance
+          Return
+        elif Equal immediateTempVar op_attack_far && Rnd < anotherTempVar
+          currGoal = cg_circleCamp
+          Return
+        endif
+      endif
+      if shouldUpdate <= 1 && Equal shouldApproach 0 && CHANCE_MUL_GE PT_BRAVECHANCE 0.5 && Equal AirGroundState 1
         currGoal = cg_bait_dashdance
         Return
-      elif Equal immediateTempVar op_attack_far && Rnd < anotherTempVar
+      endif
+      immediateTempVar += 30
+      if !(ODistLE immediateTempVar) && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1 && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1 && OFramesHitstun <= 0
         currGoal = cg_circleCamp
         Return
       endif
     endif
-  endif
-
-  globTempVar = OTopNY - TopNY
-  if globTempVar > 30 || OYDistBackEdge < -35 && Equal AirGroundState 1
-  elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59) 
-  elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
-  elif Equal shouldUpdate 1 && Equal shouldApproach 0 && Rnd > calc(pt_braveChance * 0.5) && Equal AirGroundState 1 && !(Equal currGoal cg_edgeguard)
-    currGoal = cg_bait_dashdance
-    Return
   endif
 
   predictAverage immediateTempVar man_OXHitDist LevelValue
@@ -485,11 +674,6 @@ elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
         Call Shield
       endif
     endif
-  endif
-  immediateTempVar += 30
-  if !(ODistLE immediateTempVar) && Rnd < pt_circleCampChance && Rnd < pt_circleCampChance && OFramesHitstun <= 0 && !(Equal currGoal cg_edgeguard)
-    currGoal = cg_circleCamp
-    Return
   endif
 
   // if Equal anotherTempVar globTempVar && immediateTempVar > 55
@@ -508,10 +692,10 @@ elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
 
   scriptVariant = sv_none
   if OCurrAction <= hex(0x21) && !(Equal CurrAction hex(0xA)) && Equal OFramesHitstun 0
-    if Equal shouldUpdate 1 && !(Equal currGoal cg_edgeguard)
+    if shouldUpdate <= 1 && !(Equal currGoal cg_edgeguard)
       anotherTempVar = OPos * -15
       GetYDistFloorOffset anotherTempVar anotherTempVar 0 0
-      if Equal anotherTempVar -1 && Rnd > calc(pt_aggression * 0.5)
+      if Equal anotherTempVar -1 && CHANCE_MUL_GE PT_AGGRESSION 0.8
         currGoal = cg_bait_dashdance
         Return
       endif
@@ -531,19 +715,21 @@ elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
       XReciever
     endif
   // otherwise carry on as normal
-  elif Equal shouldUpdate 1 || Equal CurrAction hex(0xA) || Equal OCurrAction hex(0x49) || OFramesHitstun > 1 || Equal HitboxConnected 1
+  elif shouldUpdate <= 1 || Equal CurrAction hex(0xA) || Equal OCurrAction hex(0x49) || OFramesHitstun > 1 || Equal HitboxConnected 1
     if OAnimFrame <= 9 || Equal CurrAction hex(0xA) || Equal OCurrAction hex(0x49) || OFramesHitstun > 1 || Equal HitboxConnected 1
       anotherTempVar = OPos * -15
       GetYDistFloorOffset anotherTempVar anotherTempVar 0 0
       if Equal OCurrAction hex(0x49) || OFramesHitstun > 1 || Equal HitboxConnected 1
-      elif Equal anotherTempVar -1 && Rnd > pt_aggression && Rnd > pt_aggression
+      elif Equal anotherTempVar -1 && CHANCE_MUL_GE PT_AGGRESSION 0.85 && CHANCE_MUL_GE PT_AGGRESSION 0.65 && !(Equal currGoal cg_edgeguard)
         currGoal = cg_bait_dashdance
         Return
       endif
 
       if immediateTempVar > anotherTempVar
-        if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59)
-        elif !(SamePlane) && Rnd < pt_baitChance && Rnd < 0.2 && Equal shouldUpdate 1 && OFramesHitstun <= 0
+        GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+        if Equal immediateTempVar 1
+        elif Equal currGoal cg_edgeguard
+        elif !(SamePlane) && CHANCE_MUL_LE PT_BAITCHANCE 1 && Rnd < 0.2 && shouldUpdate <= 1 && OFramesHitstun <= 0
           currGoal = cg_bait
           Return
         endif
@@ -558,12 +744,19 @@ elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
       endif
     endif
   endif
-  if Equal shouldUpdate 0
-    scriptVariant = sv_attackgoal_self
+  if Equal currGoal cg_edgeguard
+    scriptVariant = sv_none
     XGoto SetAttackGoal
     XReciever
   endif
 
+  // Goto getDist
+  // if immediateTempVar > 35 && shouldUpdate <= 1 && ODistLE 35 && !(Equal currGoal cg_edgeguard)
+  //   Goto changeGoal
+  //   Return
+  // endif
+
+  scriptVariant = sv_none
   XGoto CheckAttackWillHit
   XReciever
 else
@@ -576,21 +769,41 @@ else
 endif
 Return
 label EndlagCheck
-CALC_ENDLAG(OEndLag)
+GET_CHAR_TRAIT(OEndLag, chr_get_OEndlag)
 predictAverage immediateTempVar man_OXHitDist LevelValue
-LOGSTR str("ENDLAG")
-LOGVAL OEndLag
-anotherTempVar = OEndLag * 1.25
+anotherTempVar = OEndLag * 1.35
 immediateTempVar += anotherTempVar + 10
-if OEndLag >= 10 && ODistLE immediateTempVar && OFramesHitstun <= 0 && Rnd < pt_aggression
-  predictOOption immediateTempVar man_OBaitOption LevelValue
+if Equal currGoal cg_attack_reversal || Equal currGoal cg_bait_shield
+elif OEndLag >= 5 && CHANCE_MUL_LE PT_AGGRESSION 1.35
   predictionConfidence globTempVar man_OBaitOption LevelValue
-  globTempVar *= 1.1
-  globTempVar = globTempVar + Damage * 0.01 - ODamage * 0.01
-  if Rnd < globTempVar && Equal immediateTempVar op_bait_move 
+  globTempVar *= 0.2
+  globTempVar = globTempVar + Damage * 0.003 - ODamage * 0.001
+  // LOGSTR str("CHOICE")
+  // LOGVAL anotherTempVar
+  // LOGSTR str("CONFIDENCE")
+  // LOGVAL globTempVar
+  // PRINTLN
+  predictOOption anotherTempVar man_OBaitOption LevelValue
+  if OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
+  elif Rnd < globTempVar && Equal anotherTempVar op_bait_attack && Equal AirGroundState 1
     currGoal = cg_bait_shield
-  else
-    currGoal = cg_attack_reversal
+    if CHANCE_MUL_LE PT_AGGRESSION 1
+      currGoal = cg_bait_dashawayWhenApproached
+    endif
+    Return
+  endif
+  if ODistLE immediateTempVar || OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
+    if OCurrAction >= hex(0x1A) && OCurrAction <= hex(0x1D)
+      currGoal = cg_attack_reversal
+      if CHANCE_MUL_LE PT_JUMPINESS 1
+        currGoal = cg_attack_crossup
+      endif
+    elif CHANCE_MUL_LE PT_JUMPINESS 1.45
+      currGoal = cg_attack_crossup
+    elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
+    elif OAnimFrame > 8
+      currGoal = cg_attack_reversal
+    endif
   endif
 endif
 Return
@@ -598,14 +811,14 @@ label OPosGoal
 if OAnimFrame < 2
   goalX = OTopNX + OTotalXSpeed * 10 * OPos * ODirection * -1
 else
-  EstOXCoord goalX 18
+  EstOXCoord goalX 10
   goalX -= OTopNX
   goalX *= OPos * ODirection * -1
   goalX += OTopNX
 endif
 goalY = OYDistBackEdge + OTopNY
 // if OYDistBackEdge < -30
-//   goalY += calc(pt_shortHopHeight - 3) 
+//   goalY += calc(cs_shortHopHeight - 3) 
 // endif
 Return
 label getDist
@@ -621,5 +834,11 @@ Return
 label normalize
 Norm immediateTempVar immediateTempVar anotherTempVar
 Abs immediateTempVar
+Return
+label changeGoal
+XGoto GoalChoiceHub
+XReciever
+XGoto SetAttackGoal
+XReciever
 Return
 Return

@@ -12,6 +12,12 @@ label execution
 
 XGoto PerFrameChecks
 XReciever
+if !(Equal var20 -1) 
+  XGoto SetAttackGoal
+  XReciever
+  XGoto CheckAttackWillHit
+  XReciever
+endif
 Seek execution
 
 if Equal var16 1
@@ -21,7 +27,7 @@ elif Equal var16 2
   AbsStick var22
 endif
 
-if var0 <= 0 || !(Equal AirGroundState 2)
+if var0 <= 0 || !(Equal AirGroundState 2) || Equal IsOnStage 0
   Call MainHub
 endif
 var0 -= 1

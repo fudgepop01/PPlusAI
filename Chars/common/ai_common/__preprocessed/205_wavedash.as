@@ -12,11 +12,13 @@ label setup
   var0 = 1 - var0
   var0 *= Rnd * 4
   if Equal AirGroundState 2
-    if YDistBackEdge < -15
+    if YDistFloor > 15
       CallI MainHub
     endif
     Seek landing
   endif
+  if CurrAction >= 26 && CurrAction <= 29
+  elif True
   if Equal CurrAction 22 
     if Equal PrevAction 33
       Return
@@ -28,6 +30,7 @@ label setup
   elif CurrAction >= 24
     Return
   endif
+  endif  
   Button X
   Seek
   Return
@@ -77,8 +80,24 @@ label landing
       endif
       var22 = OPos * -1
       AbsStick var22 (-1)
+    elif Equal var16 5
+  var22 = 16
+  XGoto GetChrSpecific
+  XReciever
+var17 = var22
+      var22 = var13 - TopNX
+      var17 = 1 / var17
+      var22 *= var17
+      var17 = var22
+      Abs var17
+      var17 = 1 - var22
+      if var17 > -0.3
+        var17 = -0.3
+      endif
+      AbsStick var22 var17
     else
       label
+      ClearStick
       AbsStick 0 (-1)
     endif 
     Call MainHub
