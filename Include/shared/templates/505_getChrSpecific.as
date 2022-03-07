@@ -27,7 +27,7 @@ elif Equal chr_trait_select chr_chk_isAerialAttack
   endif
 elif Equal chr_trait_select chr_chk_OInCombo
   getCurrentPredictValue globTempVar man_OFramesPostHitstun
-  anotherTempVar = PT_AGGRESSION * 20
+  anotherTempVar = PT_AGGRESSION * 25
   if globTempVar <= anotherTempVar
     if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59) && !(Equal OCurrAction hex(0x49))
     elif Equal OCurrAction hex(0x49) && OYDistFloor > 15
@@ -47,8 +47,10 @@ elif Equal chr_trait_select evt_chrChecks
   {EVT_CHR_CHECKS}
 elif Equal chr_trait_select evt_rangedHit
   {EVT_RANGED_HIT}
+elif Equal chr_trait_select evt_checkDefend
+  {EVT_CHECK_DEFEND}
 elif Equal chr_trait_select chr_get_OEndlag || Equal chr_trait_select chr_get_OEndlagSafe
-  STACK_PUSH chr_trait_select
+  STACK_PUSH chr_trait_select 0
   CALC_ENDLAG(chr_trait_return)
   if Equal STACK_POP chr_get_OEndlagSafe
     if OAttacking
@@ -108,5 +110,7 @@ elif Equal immediateTempVar 361
 elif Equal immediateTempVar -361
   immediateTempVar = 135
 endif
+anotherTempVar = STACK_POP
+SetVarByNum anotherTempVar immediateTempVar
 Return
 Return

@@ -9,13 +9,15 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
 elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
   XGoto CalcAttackGoal
   XReciever
+  XGoto SetAttackGoal
+  XReciever
 elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
   Return
 else
   currGoal = cg_nothing
   XGoto RandomizeGoal
   XReciever
-  if Rnd < pt_baitChance
+  if CHANCE_MUL_LE PT_BAITCHANCE 1
     currGoal = cg_bait
   endif
 endif

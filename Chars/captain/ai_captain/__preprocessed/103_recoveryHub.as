@@ -74,7 +74,11 @@ elif Equal CurrAction 277 || Equal CurrAction 283
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -127,9 +131,10 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 25 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 25.93 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
@@ -144,12 +149,12 @@ endif
     AbsStick 0 (-1)
     Return
   elif Equal var4 1 || var5 <= 0.3 && NumJumps > 0
-    if YDistBackEdge > 23 && Rnd < 0.5
+    if YDistBackEdge > 23.93 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 67 || var17 < 18
+  elif YDistBackEdge > 67.93 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -236,7 +241,7 @@ label handleJumpToStage
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17
-  elif YDistBackEdge < 29
+  elif YDistBackEdge < 29.93
     var17 = var0 * -3
     AbsStick var17
   endif

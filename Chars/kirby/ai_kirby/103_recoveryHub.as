@@ -6,8 +6,8 @@
   #const tolerence = 6
 
   #const jumpChance = 0.8
-  #const highUpBChance = 0.15
-  #const horizUpBChance = 0.6
+  #const highUpBChance = 0.4
+  #const horizUpBChance = 0.75
   #let hasTriedToUpB = var4
   #let jumpValue = var5
   #let highUpBValue = var6

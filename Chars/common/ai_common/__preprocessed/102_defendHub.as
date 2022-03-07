@@ -14,20 +14,22 @@ var0 = PT_AGGRESSION
 
 var1 = PT_BAITCHANCE
 
-var22 = var0 * 0.3
+var22 = var0 * 0.2
 PredictOMov var17 15 LevelValue
-var17 *= 3
-if Rnd < var22 || Rnd < var17
-  var22 *= 2
-  if !(Equal var20 -1) && Rnd < var22
-    var15 = -2
-    CallI MainHub
-  elif Rnd < var22 && Rnd < var22 && Rnd < 0.45
-    XGoto CalcAttackGoal
-    XReciever
-    var15 = -1
-    CallI MainHub
-  endif 
+var17 *= 1.75
+if !(CalledFrom AttackedHub)
+  if Rnd < var22 || Rnd < var17
+    var22 *= 2
+    if !(Equal var20 -1) && Rnd < var22
+      var15 = -1
+      CallI MainHub
+    elif Rnd < var22 && Rnd < var22 && Rnd < 0.45
+      XGoto CalcAttackGoal
+      XReciever
+      var15 = -1
+      CallI MainHub
+    endif 
+  endif
 endif
 
 if Equal AirGroundState 1
@@ -63,7 +65,7 @@ if Equal AirGroundState 1
 
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= 60
     CallI Shield
-  elif var22 > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 1.25 && LevelValue >= 42 && Rnd < 0.85 && ODistLE var23
+  elif var22 > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.8 && LevelValue >= 42 && Rnd < 0.85 && ODistLE var23
     var16 = 3
     CallI DashScr
   endif
@@ -85,7 +87,7 @@ if Equal AirGroundState 1
         var16 = 5
         CallI DashScr
       endif
-    elif Rnd < 0.2
+    elif Rnd < 0.2 && NumJumps > 0
       var0 = PT_DJUMPINESS
       if Rnd < 0.2
         var16 = 1
@@ -105,6 +107,7 @@ if Equal AirGroundState 1
   endif
 
   var0 = PT_BAIT_WDASHAWAYCHANCE
+  var0 *= 0.75
 
   GetAttribute var22 940; 0
   var22 *= 0.1
@@ -115,6 +118,7 @@ if Equal AirGroundState 1
   endif
 
   var0 = PT_BAIT_DASHAWAYCHANCE
+  var0 *= 0.75
 
   GetAttribute var22 40; 0
   var22 *= 5
@@ -130,41 +134,42 @@ endif
 
 // maybe make driftAway based on air mobility?
 predictAverage var0 10 LevelValue
-var0 += 15
-if Rnd < 0.35
-  var22 = PT_JUMPINESS
-  if Rnd < var22 
-    if NumJumps > 0 && Rnd < 0.4
-      var16 = 1
-      var16 += 0.1
-      CallI JumpScr
-    elif NumJumps > 0 && Rnd < 0.1
-      var16 = 3
-      var16 += 0.1
-      CallI JumpScr
-    elif Rnd < 0.4 && YDistFloor > 25
-      var16 = 2
-      CallI AerialDrift
-    endif
+var0 += 25
+PredictOMov var22 14 LevelValue
+if ODistLE var0 && CHANCE_MUL_LE var22 4
+  if NumJumps > 0 && Rnd < 0.4
+    var16 = 1
+    var16 += 0.1
+    CallI JumpScr
+  elif NumJumps > 0 && Rnd < 0.1
+    var16 = 3
+    var16 += 0.1
+    CallI JumpScr
+  elif CalledFrom AttackedHub && NumJumps > 0 && OTopNY < TopNY
+    var16 = 3
+    var16 += 0.1
+    var15 = -1
+    var21 = 16.4
+    CallI JumpScr
+  elif Rnd < 0.4 && YDistFloor > 25
+    var16 = 2
+    CallI AerialDrift
   endif
 endif
 
 PredictOMov var22 15 LevelValue
 var22 *= 2
-if var22 < 0.30 && Rnd > var22
-  if Equal AirGroundState 1
-    CallI Shield
-  endif
-elif True
-  if !(Equal var20 -1)
-    var15 = -2
-    CallI MainHub
-  else
-    XGoto CalcAttackGoal
-    XReciever
-    var15 = -1
-    CallI MainHub
-  endif 
+if var22 < 0.30 && Rnd > var22 && Equal AirGroundState 1
+  CallI Shield
 endif
+if !(Equal var20 -1)
+  var15 = -1
+  CallI MainHub
+else
+  XGoto CalcAttackGoal
+  XReciever
+  var15 = -1
+  CallI MainHub
+endif 
 Return
 Return

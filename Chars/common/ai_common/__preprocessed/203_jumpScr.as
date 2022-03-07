@@ -20,7 +20,7 @@ elif True
     endif
   elif CurrAction >= 66 && CurrAction <= 73
   elif Equal CanCancelAttack 1
-  elif CurrAction >= 24
+elif CurrAction >= 24
     Return
   endif
 endif
@@ -46,6 +46,7 @@ label locomotion
 XGoto PerFrameChecks
 XReciever
 if !(Equal var20 -1) 
+  NoRepeat
   XGoto SetAttackGoal
   XReciever
   XGoto CheckAttackWillHit

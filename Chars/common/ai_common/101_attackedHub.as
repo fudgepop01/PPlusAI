@@ -92,7 +92,7 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     if KBAngle > 90 && KBAngle < 170
       stickX *= -1
     endif  
-    if Rnd < 0.2 || KBSpeed > 3
+    if Rnd < 0.2 || KBSpeed > 2.3
       stickX *= -1
     endif
   else
@@ -151,7 +151,9 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     endif
     if !(True)
       label exec_DI
+      LOGSTR str("EXEC DI")
       LOGVAL stickX
+      PRINTLN
       ClearStick
       if Equal stickX 1 || Equal stickX -1.2 || Equal stickX -3
         if Equal stickX 0
@@ -280,17 +282,21 @@ Return
 
 label _hitstunEnd
   predictionConfidence globTempVar man_ODefendOption LevelValue
-  globTempVar *= 2
+  globTempVar *= 4
   predictOOption anotherTempVar man_ODefendOption LevelValue 
-  if Rnd < globTempVar && !(Equal anotherTempVar op_defend_shield)
+  if Equal IsOnStage 0
+    CallI RecoveryHub
+  elif Rnd < globTempVar && YDistFloor < 5
     XGoto CalcAttackGoal
     XReciever
 
     XGoto SetAttackGoal
     XReciever
 
-    skipMainInit = sm_execAttack
+    skipMainInit = mainInitSkip
     CallI MainHub
+  elif ODistLE 70
+    CallI DefendHub
   endif 
 Return
 

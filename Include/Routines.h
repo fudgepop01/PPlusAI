@@ -372,6 +372,8 @@ act ShieldDrop : 0x8208
 act LyingDown : 0x8209
 act OnLedge : 0x820A
 act Respawn : 0x820B
+act LedgeStall : 0x820C
+act LedgeDash : 0x820D
 
 act FastAerial : 0x8401
 act ExecuteAttack : 0x840F

@@ -6,7 +6,7 @@
 
 #const pt_jumpiness = 0.1
 #const pt_djumpiness = 0.04
-#const pt_aggression = 1.5
+#const pt_aggression = 0.8
 #const pt_bait_dashAwayChance = 0.6
 #const pt_bait_wdashAwayChance = 0.15
 #const pt_wall_chance = 0.4
@@ -18,11 +18,14 @@
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 6
 
-#const cs_shortHopHeight = 25.344
-#const cs_djumpHeight = 39.514
+#const cs_shortHopHeight = 11.8
+#const cs_jumpHeight = 33.23
+#const cs_djumpHeight = 42.39
 #const cs_wavedashDist = 32
+#const cs_recoveryDistX = 90
+#const cs_recoveryDistY = -90
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrSubaction hex(0x1de)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
 #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
 #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) 
@@ -159,7 +162,7 @@
 #const dspecial_lastHitFrame = 1
 #const dspecial_damage_info = DSpecial|5|w80|100|1
 
-#const dspecialair_IASA = 70
+#const dspecialair_IASA = 8
 #const dspecialair_xOffset = -8
 #const dspecialair_yOffset = 1.5
 #const dspecialair_xRange = 8

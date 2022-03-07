@@ -74,7 +74,7 @@ if Equal AirGroundState 1
     endif
   elif CurrAction >= 66 && CurrAction <= 73
   elif Equal CanCancelAttack 1
-  elif CurrAction >= 24
+elif CurrAction >= 24
     Return
   endif
   Button X

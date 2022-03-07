@@ -4,9 +4,12 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -3
 
-#const cs_shortHopHeight = 15
-#const cs_djumpHeight = 22
+#const cs_shortHopHeight = 13.47
+#const cs_jumpHeight = 35.57
+#const cs_djumpHeight = 12.8
 #const cs_wavedashDist = 15
+#const cs_recoveryDistX = 70
+#const cs_recoveryDistY = -90
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.04

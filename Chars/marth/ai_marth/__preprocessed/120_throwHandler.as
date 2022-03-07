@@ -2,7 +2,58 @@
 id 0x1120
 unk 0x0
 
+XReciever
+
+var0 = 0
+
+  var22 = 19
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 1 0
+  XGoto GetChrSpecific
+  XReciever
+
+label start
+
+if OFramesHitlag <= 0 && OFramesHitstun > 0
+  var0 += 1
+  if Equal var0 2
+    if !(True)
+      label correctMoveAngle
+    endif
+    if var1 > 90
+      var1 -= 90
+      if var1 > 90
+        SeekNoCommit correctMoveAngle
+      endif
+    endif
+
+    var22 = var1 + 3
+    var23 = var1 - 3
+    if OKBAngle > var22
+      trackOAction 5 1
+    elif OKBAngle < var23
+      trackOAction 5 3
+    elif Rnd < 0.5
+      trackOAction 5 2
+    endif
+  endif
+endif
+
 if CurrAction < 52 || CurrAction > 60
+  XGoto CalcAttackGoal
+  XReciever
+  var15 = -1
+  var21 = 16.4
   CallI MainHub
 elif Equal CurrAction 57 && AnimFrame > 8
   if Rnd < 0.7
@@ -18,13 +69,13 @@ elif Equal CurrAction 57 && AnimFrame > 8
     endif
   endif
 
-if Equal var20 30
+if Equal var20 23
     Stick 1 0
-elif Equal var20 31
+elif Equal var20 24
     Stick 0 (-1)
-elif Equal var20 32
+elif Equal var20 25
     Stick -1 0
-elif Equal var20 33
+elif Equal var20 26
     Stick 0 1
   elif True
     if Rnd < 0.5

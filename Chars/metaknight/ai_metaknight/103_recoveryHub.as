@@ -3,19 +3,20 @@
   #const UpBYDist = 58
   #const sideBHeight = 20
   #const sideBRange = 60
+  #const downBRadius = 45
   #const tolerence = 25
 
   #const jumpChance = 0.4
-  #const highUpBChance = 0.25
   #const sideBChance = 0.75
+  #const downBChance = 0.6
   #let hasTriedToUpB = var4
   #let jumpValue = var5
-  #let highUpBValue = var6
   #let sideBValue = var7
+  #let downBValue = var8
   hasTriedToUpB = 0
   jumpValue = Rnd
-  highUpBValue = Rnd
   sideBValue = Rnd
+  downBValue = Rnd
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -27,8 +28,11 @@
   #let nearCliffX = var0
   #let nearCliffY = var1
   #let absNCX = var2
+  #let distFromEdge = var3
   NEAREST_CLIFF(nearCliffX, nearCliffY)
-  
+  Norm distFromEdge nearCliffX nearCliffY
+  Abs distFromEdge
+
   // drift towards goal
   globTempVar = nearCliffX * -1
   ClearStick
@@ -37,6 +41,7 @@
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
+  {PRE_CONDITIONS}
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
@@ -44,17 +49,18 @@
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
     endif
+  endif
+  if downBValue <= downBChance && distFromEdge < downBRadius
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (-0.7)
+    Return
   endif
   if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
     Button B
@@ -62,20 +68,13 @@
     Stick 1
     Return
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+  if absNCX <= UpBXDist && YDistBackEdge > 10 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 #endsnippet
 
 #snippet SSPECIAL
@@ -119,6 +118,25 @@
 #endsnippet
 
 #snippet DSPECIAL
+  if Equal CurrAction hex(0x11c)
+    immediateTempVar = nearCliffX * -1
+    ClearStick
+    AbsStick immediateTempVar
+  else
+    Norm globTempVar nearCliffX nearCliffY
+    nearCliffX /= globTempVar
+    nearCliffY /= globTempVar
+    nearCliffX *= -1
+    nearCliffY *= -1
+
+    if 0.1 < nearCliffX && nearCliffX < 0.25
+      AbsStick 0.3 nearCliffY
+    elif -0.25 < nearCliffX && nearCliffX < -0.1
+      AbsStick -0.3 nearCliffY
+    else
+      AbsStick nearCliffX nearCliffY
+    endif
+  endif
 #endsnippet
 
 #snippet NSPECIAL

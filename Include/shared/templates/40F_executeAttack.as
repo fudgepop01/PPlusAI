@@ -6,6 +6,10 @@ XReciever
 
 label start
 #let techSkill = var7
+#let lastHitFrame = var6
+#let framesAfterHitlag = var16
+framesAfterHitlag = 0
+#let moveAngle = var18
 techSkill = LevelValue * 0.01
 if techSkill < 0.2
   techSkill = 0.2
@@ -28,26 +32,37 @@ if Equal AirGroundState 1
     Return
   endif
 endif
+if currGoal < cg_edgeguard && Equal IsOnStage 0
+  CallI RecoveryHub
+endif
 
 ACTIONABLE_ON_GROUND
 
 $ifAerialAttack()
   if Equal AirGroundState 1
-    if !(Equal CurrSubaction JumpSquat)
+    MOD immediateTempVar AnimFrame 3
+    if !(Equal CurrSubaction JumpSquat) && immediateTempVar <= 1
       Button X
     endif
     Return
   endif
-endif
-
-if Rnd > techSkill
+elif !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
   Return
 endif
-#let lastHitFrame = var6
+
+$ifLastOrigin(dashattack,false)
+  Seek execDA
+  Jump
+elif Rnd > techSkill
+  Return
+endif
 if Equal AirGroundState 1
   Seek
   Return
 endif
+
+GET_MOVE_DATA(moveAngle, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
+
 label
 Cmd30
 ClearStick
@@ -93,68 +108,98 @@ label PFC
   $ifAerialAttack()
     XGoto SetAttackGoal
     XReciever
-    XGoto MoveToGoal
-    XReciever
+    if Equal currGoal cg_attack_reversal
+      XGoto MoveToGoal
+      XReciever
+    else
+      GetCommitPredictChance immediateTempVar LevelValue
+      if immediateTempVar >= 0.4 && XDistBackEdge < -10
+        immediateTempVar = OPos * -1
+        AbsStick immediateTempVar
+      endif
+    endif
   endif
 Return
 label common_checks
   XGoto PerFrameChecks
   XReciever
 
-  if Equal CanCancelAttack 1 && CurrAction >= hex(0x24) && CurrAction <= hex(0x34)
+  if Equal CanCancelAttack 1 && CurrAction >= hex(0x18) && CurrAction <= hex(0x34)
     Seek finish
     Jump
-  elif CurrAction <= hex(0x20)
+  elif CurrAction <= hex(0x20) && !(Equal CurrAction hex(0x18))
     Seek finish
     Jump
   endif
 
-  if Equal OFramesHitlag 1
-    ADJUST_PERSONALITY idx_aggression 0.002
-    if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
-      ADJUST_PERSONALITY idx_circleCampChance 0.015
-      if Equal currGoal cg_camp_attack
-        ADJUST_PERSONALITY idx_aggression 0.002
-      endif
-    elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
-      ADJUST_PERSONALITY idx_baitChance -0.04
-      ADJUST_PERSONALITY idx_aggression 0.002
-      if Equal currGoal cg_attack_reversal
-        ADJUST_PERSONALITY idx_aggression 0.005
-      elif Equal currGoal cg_attack_overshoot || Equal currGoal cg_attack_undershoot
-        ADJUST_PERSONALITY idx_baitChance 0.01
-      elif Equal currGoal cg_attack_wall
-        ADJUST_PERSONALITY idx_baitChance 0.005
-        ADJUST_PERSONALITY idx_circleCampChance 0.025
-      endif
-    elif Equal currGoal cg_bait_attack
-      ADJUST_PERSONALITY idx_baitChance 0.01
-    endif
+  if OFramesHitlag <= 0 && OFramesHitstun > 0
+    framesAfterHitlag += 1
+    if Equal framesAfterHitlag 2
+      immediateTempVar = LevelValue * 0.25
 
-    if Equal AirGroundState 2
-      ADJUST_PERSONALITY idx_jumpiness 0.003
-      if Rnd < 0.3
-        ADJUST_PERSONALITY idx_djumpiness 0.002
+      ADJUST_PERSONALITY idx_aggression 0.002 immediateTempVar
+      if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
+        ADJUST_PERSONALITY idx_circleCampChance 0.0015 immediateTempVar
+        if Equal currGoal cg_camp_attack
+          ADJUST_PERSONALITY idx_aggression 0.002 immediateTempVar
+        endif
+      elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
+        ADJUST_PERSONALITY idx_baitChance -0.004 immediateTempVar
+        ADJUST_PERSONALITY idx_aggression 0.002 immediateTempVar
+        if Equal currGoal cg_attack_reversal
+          ADJUST_PERSONALITY idx_aggression 0.005 immediateTempVar
+        elif Equal currGoal cg_attack_overshoot || Equal currGoal cg_attack_undershoot
+          ADJUST_PERSONALITY idx_baitChance 0.001 immediateTempVar
+        elif Equal currGoal cg_attack_wall
+          ADJUST_PERSONALITY idx_baitChance 0.005 immediateTempVar
+          ADJUST_PERSONALITY idx_circleCampChance 0.0025 immediateTempVar
+        endif
+      elif Equal currGoal cg_bait_attack
+        ADJUST_PERSONALITY idx_baitChance 0.001 immediateTempVar
       endif
-    else
-      ADJUST_PERSONALITY idx_jumpiness -0.002
-      ADJUST_PERSONALITY idx_djumpiness -0.002
-    endif
 
-    if OKBSpeed > 3
-      if CHANCE_MUL_LE PT_AGGRESSION 0.6
-        currGoal = cg_attack
+      if OKBSpeed > 3
+        if CHANCE_MUL_LE PT_AGGRESSION 0.6
+          currGoal = cg_attack
+        else
+          currGoal = cg_bait_dashdance
+        endif
       else
-        currGoal = cg_bait_dashdance
+        currGoal = cg_attack
+      endif  
+
+      if !(True)
+        label correctMoveAngle
       endif
-    else
-      currGoal = cg_attack
+      if moveAngle > 90
+        moveAngle -= 90
+        if moveAngle > 90
+          SeekNoCommit correctMoveAngle
+        endif
+      endif
+
+      immediateTempVar = moveAngle + 3
+      anotherTempVar = moveAngle - 3
+      if OKBAngle > immediateTempVar
+        trackOAction man_ODIAngle op_DI_in
+      elif OKBAngle < anotherTempVar
+        trackOAction man_ODIAngle op_DI_out
+      elif Rnd < 0.5
+        trackOAction man_ODIAngle op_DI_neutral
+      endif
     endif
   endif
 
   // L cancel
-  if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.3 && YDistFloor < 7 && Equal CurrAction hex(0x33)
-    Button R
+  if Equal CurrAction hex(0x33)
+    RetrieveFullATKD immediateTempVar globTempVar globTempVar globTempVar globTempVar globTempVar globTempVar CurrSubaction 0
+    if Equal immediateTempVar 0
+      immediateTempVar = 999
+    endif 
+    immediateTempVar -= 2
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && immediateTempVar > AnimFrame
+      Button R
+    endif
   endif
 
   // just for those with FSM

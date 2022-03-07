@@ -68,6 +68,10 @@ cmd GetColDistPosRel : 0x4C colXVar colYVar startX startY relDestX relDestY dete
 
 cmd SetDebugMode : 0x4D value
 
+cmd CalcPercentForKnockback : 0x4E percent target damage bkb kbg weight isWeightDependent
+
+cmd CalcMoveWeight : 0x4F rollWeightVariable ODamage OWeight moveAngle moveBaseKnockback moveKnockbackGrowth moveHitFrame moveDuration moveIASA moveDamage moveIsWeightDependent stageWidth nearXBlastzone TBoundary TopNX TopNY OTopNX OTopNY OInCombo jumpVelocity XTerminalVelocity
+
 //AI TRACKING CODES
 
 /// configurable opponent option tracking
@@ -118,10 +122,12 @@ cmd SIN : 0x66 variable value
 cmd SetVarByNum : 0x67 varNum value
 cmd CopyVarByNum : 0x68 to from
 
-cmd STACK_PUSH : 0x69 value
+cmd STACK_PUSH : 0x69 value stackType
 
 cmd GotoByValue : 0x6A value
 cmd SeekNoCommit : 0x6B ID
+
+cmd RESET_LTF_STACK_PTR : 0x6C
 
 // ITEM CODES
 cmd GetItemLocFromIdx : 0x70 variable1 variable2 idx
@@ -141,7 +147,7 @@ cmd DynamicDiceRoll : 0x85 ds variable shouldRemove
 cmd DynamicDiceClear : 0x86 ds
 cmd DynamicDiceSize : 0x87 ds variable
 
-cmd ADJUST_PERSONALITY : 0x90 pt_index amount
+cmd ADJUST_PERSONALITY : 0x90 pt_index amount multiplier
 
 //DEBUGGING CODES
 

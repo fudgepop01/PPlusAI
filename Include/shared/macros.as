@@ -27,9 +27,12 @@
   $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
 #endmacro
 
-#macro GET_MOVE_DATA(angle, xOffset, yOffset, xRange, yRange, hitFrame, duration, IASA, knockback)
+#macro GET_MOVE_DATA(angle, xOffset, yOffset, xRange, yRange, hitFrame, duration, IASA, damage, isWeightDependent, baseKnockback, knockbackGrowth)
   chr_trait_select = chr_cs_moveData
-  $pushVarAsValue({knockback})
+  $pushVarAsValue({knockbackGrowth})
+  $pushVarAsValue({baseKnockback})
+  $pushVarAsValue({isWeightDependent})
+  $pushVarAsValue({damage})
   $pushVarAsValue({IASA})
   $pushVarAsValue({duration})
   $pushVarAsValue({hitFrame})

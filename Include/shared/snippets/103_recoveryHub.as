@@ -46,12 +46,34 @@
 
 #snippet PRE_CONDITIONS
   if !(NoOneHanging) && !(Equal isBelowStage 1)
+    LOGSTR_NL str("someone hanging")
     nearCliffY -= 25
   endif
   if YDistBackEdge < calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
+  endif
+#endsnippet
+
+#snippet DRAW_RADIUS
+  #const parts = 32
+  GetNearestCliff nearCliffX
+  globTempVar = 0
+  if !(True)
+    label NC_draw
+  endif
+  globTempVar += 1
+  immediateTempVar = calc(360 / parts) * globTempVar
+  COS anotherTempVar immediateTempVar
+  SIN immediateTempVar immediateTempVar
+  anotherTempVar *= UpBRadius
+  immediateTempVar *= UpBRadius
+  anotherTempVar += nearCliffX
+  immediateTempVar += nearCliffY
+  DrawDebugLine nearCliffX nearCliffY anotherTempVar immediateTempVar color(0xFFFFFFDD)
+  if globTempVar < parts
+    SeekNoCommit NC_draw
   endif
 #endsnippet
 

@@ -248,6 +248,9 @@ func PlayerCount : 0x5D
 /// functional stack pop
 func STACK_POP : 0x5E
 
+// long-term-frame stack read
+func LTF_STACK_READ : 0x5F
+
 /// current training script selected
 /// 0xFFFF = default
 func TrainingScript : 0x60

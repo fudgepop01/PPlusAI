@@ -87,6 +87,7 @@
 #const evt_rangedHit = 10000
 #const evt_chrChecks = 20000
 #const evt_gotHit = 30000
+#const evt_checkDefend = 40000
 
 #const shortEdgeRange = 15
 
@@ -351,14 +352,17 @@
 #const cg_defend = 13
 #const cg_special = 14
 #const cg_ledge = 15
+#const cg_ledge_edgeguard = 15.1
 #const cg_attack = 16
 #const cg_attack_overshoot = 16.1
 #const cg_attack_undershoot = 16.2
 #const cg_attack_wall = 16.3
 #const cg_attack_reversal = 16.4
-#const cg_edgeguard = 16.5
-#const cg_attack_shieldPunish = 16.6
-#const cg_attack_crossup = 16.7
+#const cg_attack_shieldPunish = 16.5
+#const cg_attack_crossup = 16.6
+#const cg_edgeguard = 16.7
+#const cg_edgeguard_ledge = 16.8
+#const cg_recover_reversal = 16.9
 #const cg_lying = 17
 
 #const techRollVulFrame = 22
@@ -426,6 +430,10 @@
 #const man_OTechOption = 13
 #const man_OOOSOption = 14
 #const man_OOutOfHitstun = 15
+
+#const op_DI_in = 1
+#const op_DI_neutral = 2
+#const op_DI_out = 3
 
 #const op_null = 0
 #const op_attack = 1

@@ -7,6 +7,8 @@
 #const cs_shortHopHeight = 8
 #const cs_djumpHeight = 25
 #const cs_wavedashDist = 30
+#const cs_recoveryDistX = 60
+#const cs_recoveryDistY = -60
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 4

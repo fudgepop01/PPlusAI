@@ -74,7 +74,11 @@ elif Equal CurrAction 277
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -127,6 +131,7 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
   if YDistBackEdge < 21 && var2 <= 15 && NumJumps > 0

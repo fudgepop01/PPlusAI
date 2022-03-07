@@ -194,9 +194,6 @@ if !(Equal AirGroundState 3)
   else
     Stick 1 (-1)
   endif
-// elif AbsOXDistFrontEdge < 10 && EstOYDistFrontEdge < 10
-//   Button R
-//   Call AIHub
 endif
 Return
 Return

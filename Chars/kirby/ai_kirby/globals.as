@@ -4,13 +4,14 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -3
 
-#const cs_shortHopHeight = 15
-#const cs_djumpHeight = 28
+#const cs_shortHopHeight = 15.6
+#const cs_jumpHeight = 27.04
+#const cs_djumpHeight = 27.04
 #const cs_wavedashDist = 20
 
 #const pt_jumpiness = 0.15
 #const pt_djumpiness = 0.15
-#const pt_aggression = 1.5
+#const pt_aggression = 0.8
 #const pt_bait_dashAwayChance = 0.2
 #const pt_bait_wdashAwayChance = 0.3
 #const pt_wall_chance = 0.6
@@ -21,6 +22,8 @@
 
 #const cs_dashForceTurnFrame = 10
 #const cs_dashDanceMinFrames = 3
+#const cs_recoveryDistX = 90
+#const cs_recoveryDistY = -100
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)

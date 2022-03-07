@@ -31,7 +31,6 @@ if Equal CurrAction 4 || Equal CurrAction 5
   CallI Wavedash
 endif
 
-
 var0 = var3 * 2 - var4 + Rnd * 20
 var0 = Rnd * var0 + var4 
 var2 = OPos
@@ -41,7 +40,7 @@ if Equal var16 2
     var0 = var3
   endif
 elif Equal var16 3
-  var0 += 20
+  var0 += 5
 endif
 label execution
 XGoto PerFrameChecks
@@ -53,7 +52,10 @@ if !(Equal var20 -1) && !(Equal var16 2) && !(Equal var16 3)
   XReciever
 endif
 Seek execution
-
+if Equal CurrAction 1
+  ClearStick
+  Return
+endif
 
 if XDistFrontEdge < 15
   Call MainHub
@@ -65,8 +67,8 @@ if var1 < var3 && !(Equal var16 5) || Equal var16 3
   if Equal var16 1
     AbsStick OPos
   elif Equal var16 2 || Equal var16 3
-    if XDistBackEdge > -10
-      var16 = 5
+    if XDistBackEdge > -10 || XDistFrontEdge < 4
+      var16 = 1
       AbsStick OPos
       Return
     endif

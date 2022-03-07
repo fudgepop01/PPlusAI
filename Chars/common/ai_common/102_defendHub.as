@@ -16,20 +16,22 @@ aggression = PT_AGGRESSION
 #let baitChance = var1
 baitChance = PT_BAITCHANCE
 
-immediateTempVar = aggression * 0.3
+immediateTempVar = aggression * 0.2
 PredictOMov globTempVar mov_grab LevelValue
-globTempVar *= 3
-if Rnd < immediateTempVar || Rnd < globTempVar
-  immediateTempVar *= 2
-  if !(Equal lastAttack -1) && Rnd < immediateTempVar
-    skipMainInit = sm_execAttack
-    CallI MainHub
-  elif Rnd < immediateTempVar && Rnd < immediateTempVar && Rnd < 0.45
-    XGoto CalcAttackGoal
-    XReciever
-    skipMainInit = mainInitSkip
-    CallI MainHub
-  endif 
+globTempVar *= 1.75
+if !(CalledFrom AttackedHub)
+  if Rnd < immediateTempVar || Rnd < globTempVar
+    immediateTempVar *= 2
+    if !(Equal lastAttack -1) && Rnd < immediateTempVar
+      skipMainInit = mainInitSkip
+      CallI MainHub
+    elif Rnd < immediateTempVar && Rnd < immediateTempVar && Rnd < 0.45
+      XGoto CalcAttackGoal
+      XReciever
+      skipMainInit = mainInitSkip
+      CallI MainHub
+    endif 
+  endif
 endif
 
 if Equal AirGroundState 1
@@ -67,7 +69,7 @@ if Equal AirGroundState 1
 
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= LV7
     CallI Shield
-  elif immediateTempVar > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 1.25 && LevelValue >= LV5 && Rnd < 0.85 && ODistLE anotherTempVar
+  elif immediateTempVar > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.8 && LevelValue >= LV5 && Rnd < 0.85 && ODistLE anotherTempVar
     scriptVariant = sv_dash_away_defense
     CallI DashScr
   endif
@@ -89,7 +91,7 @@ if Equal AirGroundState 1
         scriptVariant = sv_dash_through
         CallI DashScr
       endif
-    elif Rnd < 0.2
+    elif Rnd < 0.2 && NumJumps > 0
       #let djumpiness = var0
       djumpiness = PT_DJUMPINESS
       if Rnd < 0.2
@@ -111,6 +113,7 @@ if Equal AirGroundState 1
 
   #let wdashAwayChance = var0
   wdashAwayChance = PT_BAIT_WDASHAWAYCHANCE
+  wdashAwayChance *= 0.75
 
   GetAttribute immediateTempVar attr_jumpSquatFrames 0
   immediateTempVar *= 0.1
@@ -122,6 +125,7 @@ if Equal AirGroundState 1
 
   #let dashAwayChance = var0
   dashAwayChance = PT_BAIT_DASHAWAYCHANCE
+  dashAwayChance *= 0.75
 
   GetAttribute immediateTempVar attr_dashInitVel 0
   immediateTempVar *= 5
@@ -138,41 +142,42 @@ endif
 // maybe make driftAway based on air mobility?
 #let OXHitDist = var0
 predictAverage OXHitDist man_OXHitDist LevelValue
-OXHitDist += 15
-if Rnd < 0.35
-  immediateTempVar = PT_JUMPINESS
-  if Rnd < immediateTempVar 
-    if NumJumps > 0 && Rnd < 0.4
-      scriptVariant = sv_jump_over
-      scriptVariant += svp_jump_fullhop
-      CallI JumpScr
-    elif NumJumps > 0 && Rnd < 0.1
-      scriptVariant = sv_jump_away
-      scriptVariant += svp_jump_fullhop
-      CallI JumpScr
-    elif Rnd < 0.4 && YDistFloor > 25
-      scriptVariant = sv_aerialdrift_away
-      CallI AerialDrift
-    endif
+OXHitDist += 25
+PredictOMov immediateTempVar mov_attack LevelValue
+if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
+  if NumJumps > 0 && Rnd < 0.4
+    scriptVariant = sv_jump_over
+    scriptVariant += svp_jump_fullhop
+    CallI JumpScr
+  elif NumJumps > 0 && Rnd < 0.1
+    scriptVariant = sv_jump_away
+    scriptVariant += svp_jump_fullhop
+    CallI JumpScr
+  elif CalledFrom AttackedHub && NumJumps > 0 && OTopNY < TopNY
+    scriptVariant = sv_jump_away
+    scriptVariant += svp_jump_fullhop
+    skipMainInit = mainInitSkip
+    currGoal = cg_attack_reversal
+    CallI JumpScr
+  elif Rnd < 0.4 && YDistFloor > 25
+    scriptVariant = sv_aerialdrift_away
+    CallI AerialDrift
   endif
 endif
 
 PredictOMov immediateTempVar mov_grab LevelValue
 immediateTempVar *= 2
-if immediateTempVar < 0.30 && Rnd > immediateTempVar
-  if Equal AirGroundState 1
-    CallI Shield
-  endif
-elif True
-  if !(Equal lastAttack -1)
-    skipMainInit = sm_execAttack
-    CallI MainHub
-  else
-    XGoto CalcAttackGoal
-    XReciever
-    skipMainInit = mainInitSkip
-    CallI MainHub
-  endif 
+if immediateTempVar < 0.30 && Rnd > immediateTempVar && Equal AirGroundState 1
+  CallI Shield
 endif
+if !(Equal lastAttack -1)
+  skipMainInit = mainInitSkip
+  CallI MainHub
+else
+  XGoto CalcAttackGoal
+  XReciever
+  skipMainInit = mainInitSkip
+  CallI MainHub
+endif 
 Return
 Return

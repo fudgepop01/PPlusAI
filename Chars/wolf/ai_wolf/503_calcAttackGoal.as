@@ -43,5 +43,30 @@
 #endsnippet
 
 #snippet CAMP_MOVES
+  DynamicDiceClear dslot0
   $addToDice(1, nspecialair, 3)
+#endsnippet
+
+#snippet COMBO_ROUTINES
+  // if OFramesHitstun > 0 || OFramesHitlag > 0
+  //   $ifLastOrigin(dair, false)
+  //     DynamicDiceClear dslot0
+  //     $addToDice(0, jab123, 1)
+  //     $addToDice(0, utilt, 1)
+  //     $addToDice(0, dspecial, 1)
+  //     $addToDice(0, dair, 1)
+  //     $addToDice(0, nair, 1)
+  //   $ifLastOrigin(dspecial, true)
+  //     DynamicDiceClear dslot0
+  //     $addToDice(0, uair, 1)
+  //     $addToDice(0, sspecial, 1)
+  //     $addToDice(0, sspecialair, 1)
+  //     $addToDice(0, dair, 1)
+  //     $addToDice(0, nair, 1)
+  //   $elifLastAttack(uthrow)
+  //     $addToDice(1, sspecialair, 80)
+  //   $elifLastAttack(bthrow)
+  //     $addToDice(1, sspecialair, 80)
+  //   endif
+  // endif
 #endsnippet

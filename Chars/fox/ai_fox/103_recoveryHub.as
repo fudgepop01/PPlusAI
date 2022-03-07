@@ -1,14 +1,13 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 100
-  #const UpBYDist = 100
-  #const sideBHeight = 2
+  #const UpBRadius = 85
+  #const sideBHeight = 3
   #const sideBRange = 100
-  #const tolerence = 15
+  #const tolerence = 20
 
-  #const jumpChance = 0.3
-  #const highUpBChance = 0.4
-  #const highHighUpBChance = 0.2
-  #const sideBChance = 0.4
+  #const jumpChance = 0.5
+  #const highUpBChance = 0.7
+  #const highHighUpBChance = 0.5
+  #const sideBChance = 0.7
   #const sideBLedgeChance = 0.7
   #const trickAngleChance = 0.6
   #let hasTriedToUpB = var4
@@ -36,7 +35,19 @@
   #let nearCliffX = var0
   #let nearCliffY = var1
   #let absNCX = var2
+  #let distFromEdge = var3
+
   NEAREST_CLIFF(nearCliffX, nearCliffY)
+
+  Norm distFromEdge nearCliffX nearCliffY
+  Abs distFromEdge
+
+  if highUpBValue < highUpBChance
+    distFromEdge += 15
+  endif
+  if highHighUpBValue < highHighUpBChance
+    distFromEdge += 15
+  endif
   
   // drift towards goal
   globTempVar = nearCliffX * -1
@@ -48,12 +59,12 @@
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
+    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -72,35 +83,28 @@
     Stick 1
     Return
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+  if highUpBValue <= highUpBChance && distFromEdge < UpBRadius && YDistBackEdge < 20 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if highHighUpBValue <= highHighUpBChance && YDistBackEdge > calc(UpBYDist - 100) && Equal hasTriedToUpB 0
+  if distFromEdge > calc(UpBRadius - tolerence) && distFromEdge < UpBRadius && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 #endsnippet
 
 #snippet USPECIAL
   if Equal isBelowStage 1
     if nearCliffX > TopNX
-      nearCliffX += 2
+      nearCliffX += 3
     else
-      nearCliffX -= 2
+      nearCliffX -= 3
     endif
   endif
 
@@ -144,13 +148,6 @@
     AbsStick immediateTempVar
   else
     Stick 1
-  endif
-
-  if sideBLedgeValue < sideBLedgeChance
-    Abs nearCliffX
-    if Equal CurrSubaction hex(0x1d5) && nearCliffX < 50
-      Button B
-    endif
   endif
 #endsnippet
 

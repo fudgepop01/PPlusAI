@@ -335,7 +335,7 @@ export const generateAllMovesGotoKBONLY = () => {
 export const pushVarAsValue = (variable) => {
   clearOut();
   let item = parseInt((currentScopeItems.lets[variable] ?? variable).substring(3));
-  out(`STACK_PUSH ${item}`);
+  out(`STACK_PUSH ${item} 0`);
 
   return _out;
 }
@@ -345,7 +345,7 @@ export const tempVar = (name, source) => {
   let thing = globals.lets;
   let rawVar = currentScopeItems.lets[source] || thing[source] || source;
   out(`#let ${name} = ${rawVar}`)
-
+  // console.log(_out);
   return _out;
 }
 
@@ -355,7 +355,12 @@ export const generateFetchMoveData = () => {
 
   out(`if lastAttack >= 0 && lastAttack < ${moves.length}`)
   out(`GotoByValue lastAttack`)
+  out(`Goto __ANGLE_FIX__`)
   out(`else`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
+  out(`SetVarByNum STACK_POP -1`)
   out(`SetVarByNum STACK_POP -1`)
   out(`SetVarByNum STACK_POP -1`)
   out(`SetVarByNum STACK_POP -1`)
@@ -374,7 +379,6 @@ export const generateFetchMoveData = () => {
     out(`label ${mn}`)
     // angle var
     out(`immediateTempVar = STACK_POP`);
-    out(`SetVarByNum immediateTempVar ${angle}`)
     out(`SetVarByNum STACK_POP ${xOffset}`)
     out(`SetVarByNum STACK_POP ${yOffset}`)
     out(`SetVarByNum STACK_POP ${xRange}`)
@@ -387,13 +391,16 @@ export const generateFetchMoveData = () => {
       out(`SetVarByNum STACK_POP ${lastHitFrame - hitFrame}`)
     }
     out(`SetVarByNum STACK_POP ${IASA}`)
-    out(`CalcKnockback anotherTempVar ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent ? '1' : '0'}`);
+    out(`SetVarByNum STACK_POP ${dmg}`);
+    out(`SetVarByNum STACK_POP ${isWeightDependent}`);
+    out(`SetVarByNum STACK_POP ${bkb}`);
+    out(`SetVarByNum STACK_POP ${kbg}`);
+    out(`STACK_PUSH immediateTempVar 0`);
+    out(`immediateTempVar = ${angle}`);
+    out(`CalcKnockback anotherTempVar ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent}`);
     out(`Return`)
   }
   out(`endif`);
-  out(`PRINTLN`)
-  out(`SetVarByNum STACK_POP anotherTempVar`);
-  out(`Goto __ANGLE_FIX__`)
   out("Return")
   return _out; 
 }
@@ -647,6 +654,15 @@ export const addToDice = (slot, moveName, weight) => {
   // console.log(moves[idx].moveName);
 
   out(`DynamicDiceAdd dslot${slot} ${idx} ${weight}`);
+  return _out;
+}
+
+export const addOriginToDice = (slot, origin, weight) => {
+  clearOut();
+  const moves = Object.values(getMoveData()).map((m, i) => [i, m]).filter(([_, m]) => m.origin.toLowerCase() == origin.toLowerCase());
+  for (const [i, m] of moves) {
+    out(`DynamicDiceAdd dslot${slot} ${i} ${1 / moves.length}`);
+  }
   return _out;
 }
 

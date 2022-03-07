@@ -14,15 +14,18 @@ var2 = 0
 
 
   var22 = 19
-STACK_PUSH 17
-STACK_PUSH 17
-STACK_PUSH 17
-STACK_PUSH 8
-STACK_PUSH 8
-STACK_PUSH 9
-STACK_PUSH 10
-STACK_PUSH 11
-STACK_PUSH 17
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 7 0
+STACK_PUSH 8 0
+STACK_PUSH 9 0
+STACK_PUSH 10 0
+STACK_PUSH 11 0
+STACK_PUSH 17 0
   XGoto GetChrSpecific
   XReciever
 
@@ -37,15 +40,15 @@ if True
   endif
   var17 *= 0.1
 endif
-var17 += var8
-if OFramesHitstun > 0 && OFramesHitstun > var8
-  var17 = OFramesHitstun
-endif
+var17 += var7
+// if OFramesHitstun > 0 && OFramesHitstun > var7
+//   var17 = OFramesHitstun
+// endif
 
 if !(True) || Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
   if Equal AirGroundState 1
     GetAttribute var23 940; 0
-    var17 -= var23 - 1
+    var17 += var23
   endif
 endif
 // var17 *= 0.5
@@ -62,12 +65,10 @@ if Equal var16 3
   var23 -= var2
   var23 += 1
 endif
-if OAnimFrame < 2
+// if OAnimFrame <= 3
   var13 = OTopNX + OTotalXSpeed * var23
-else
-  EstOXCoord var13 var23
   DrawDebugRectOutline var13 OTopNY 5 5 255 255 0 136
-endif
+// endif
 // var13 = OTopNX
 
 if !(True) || Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
@@ -79,16 +80,15 @@ if !(True) || Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|
   //     var23 *= 0.35
   //   endif
   // endif
-  if AnimFrame < 2
-    var23 = TopNX + TotalXSpeed * var23
-  else
-    EstXCoord var23 var23
+  // if AnimFrame <= 3
+    var23 = TopNX //+ TotalXSpeed * var23
     DrawDebugRectOutline var23 TopNY 5 5 0 255 255 136
-  endif
+  // endif
+  // var23 *= -1
 elif True
   var23 = TopNX
 endif
-// var13 -= OTopNX
+// var13 += OTopNX
 // var23 -= TopNX
 var13 -= var23
 var23 = var11 + var9
@@ -121,23 +121,27 @@ else
   var23 *= OPos
 endif
 
+var23 *= 0.5
 var13 -= var23
 var13 += TopNX
 
-// TODO: under/overshoot
 if Equal var16 3
   var17 -= var2
   var17 += 1
 endif
-if OAnimFrame < 2 && !(Equal OYSpeed 0)
-  var14 = OSCDBottom + OTotalYSpeed * var17 - OGravity * OGravity * var17
+// CalcYChange var14 var17 OTotalYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
+// var14 *= -1
+// var14 += OSCDBottom
+if OAnimFrame <= 3 && !(Equal OYSpeed 0)
+  if OTotalYSpeed > 0
+    var14 = OSCDBottom + OTotalYSpeed * var17 - OGravity * var17 * var17
+  else
+    var14 = OSCDBottom + OTotalYSpeed * var17
+  endif
 else
   EstOYCoord var14 var17
 endif
 var22 = OTopNY - var14
-if var22 > OYDistFloor
-  var14 = OTopNY - OYDistFloor
-endif
 if Equal OCurrAction 84
   var14 = OTopNY
 endif
@@ -148,18 +152,26 @@ endif
 
   if AnimFrame < 2
     if TotalYSpeed > 0
-      var23 = TopNY + TotalYSpeed * var17 - Gravity * var17 * Gravity
+      var23 = TopNY + TotalYSpeed * var17 - Gravity * var17 * var17
     else
       var23 = TopNY + TotalYSpeed * var17
     endif
   else
     EstYCoord var23 var17
   endif
+  if Equal CurrAction 33 || Equal AirGroundState 1
+    var23 = TopNY
+  endif
+  LOGSTR 1197015040 0 0 0 0
+  LOGVAL var14
+  LOGSTR 1096046080 1634861056 0 0 0
+  LOGVAL var23
+  PRINTLN
   var14 -= var23
 var14 += TopNY
 
 // if OYDistBackEdge < -30
-//   var14 -= 22
+//   var14 -= 10.39
 // endif
 
 // var17 = TopNY + YDistBackEdge
@@ -168,7 +180,13 @@ var14 += TopNY
 // endif
 
 var23 = (var10 * -1) + var8
+var23 *= 0.5
 var14 -= var23
+
+var22 = OTopNY - var14
+if var22 > OYDistFloor && !(Equal OYDistFloor -1) 
+  var14 = OTopNY - OYDistFloor
+endif
 
 // var23 = OHurtboxSize * 0.5
 // tempYRange += var23
@@ -189,17 +207,24 @@ var14 -= var23
 // tempGoalY += var23
 
 if !(True) || Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25
-  var22 = (TopNY - YDistFloor) + 25
+  var22 = (TopNY - YDistFloor) + 13.39
   if var14 < var22 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane && OYDistFloor < var8
-    var14 = TopNY + 25
+    var14 = TopNY + 13.39
   endif
 
   if SamePlane && OYDistFloor < var8 && Equal AirGroundState 1 && !(Equal CurrAction 10)
-    var14 = TopNY + 25
+    var14 = TopNY + 13.39
+  endif
+
+  var17 = OTopNY + OHurtboxSize
+  if TopNY > var17
+    if OCurrAction >= 10 && OCurrAction <= 11 && OAnimFrame < 10
+      var14 = OTopNY - OYDistFloor
+    endif
   endif
 
   // if Equal AirGroundState 1
-  //   var14 = TopNY + 25 * 4
+  //   var14 = TopNY + 13.39 * 4
   // endif
 endif
   var22 = 200
@@ -208,34 +233,53 @@ endif
 var17 = OTopNY - TopNY
 if Equal var22 1
 elif var17 > 30 || OYDistBackEdge < -35
-elif !(Equal var21 16.4) && !(Equal var21 16.5) && OYDistFloor < 30
+elif !(Equal var21 16.4) && var21 < 16.7 && OYDistFloor < 30
   predictAverage var22 10 LevelValue
   if var22 < 7
     var22 = 7
   endif
-  if Equal var21 16.1
+  predictOOption var23 8 LevelValue 
+  if Equal var21 16.3
+    var22 *= OPos * 3
+    var13 -= var22
+  elif Equal var23 2
     if OXDistBackEdge > -20 && OXDistFrontEdge < 20
       var17 = OXSpeed * OPos
       if OCurrAction >= 2 && OCurrAction <= 25 && var17 > 0
       else
         var22 *= OPos * 2
-        var13 += var22
+        var13 -= var22
       endif
     endif
-  elif Equal var21 16.3
-    var22 *= OPos * 3
-    var13 -= var22
-  elif Equal var21 16.2
+  elif Equal var23 3
     var22 *= OPos * 2
-    var13 -= var22
-  endif 
+    var13 += var22
+  endif
 endif
 
-if Equal CurrAction 10 || Equal var16 1
-  var13 = var0
-elif Equal var16 2
-  var14 = var1
+GetYDistFloorOffset var22 50 10 1
+if Equal var22 -1 && Equal OPos -1
+  var13 -= 20 
 endif
+GetYDistFloorOffset var22 -50 10 1
+if Equal var22 -1 && Equal OPos 1
+  var13 += 20 
+endif
+
+// LOGSTR 1196376320 1280846848 542703616 0 0
+// LOGVAL var13
+// LOGVAL var14
+// LOGSTR 1398169856 1919508736 1853095936 0 0
+// LOGVAL var16
+// PRINTLN
+
+// if CalledFrom UpdateGoal
+//   if Equal CurrAction 10 || Equal var16 1
+//     var13 = var0
+//   elif Equal var16 2
+//     var14 = var1
+//   endif
+// endif
 
 Cmd30
 Return

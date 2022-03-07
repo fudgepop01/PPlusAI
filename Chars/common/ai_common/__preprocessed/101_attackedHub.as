@@ -25,7 +25,7 @@ if FramesHitlag > 2
   // level 1: once per 50 frames
   var0 = PT_SDICHANCE
   
-  var22 = (1 - (LevelValue / 100)) * 30 + 20
+  var22 = (1 - (LevelValue / 100)) * 30 + 10
   if PT_REACTION_TIME > 0.5
     var22 *= PT_REACTION_TIME
   else
@@ -85,7 +85,7 @@ if FramesHitstun > 0 || Equal CurrAction 66
     if KBAngle > 90 && KBAngle < 170
       var0 *= -1
     endif  
-    if Rnd < 0.2 || KBSpeed > 3
+    if Rnd < 0.2 || KBSpeed > 2.3
       var0 *= -1
     endif
   else
@@ -144,7 +144,9 @@ if FramesHitstun > 0 || Equal CurrAction 66
     endif
     if !(True)
       label exec_DI
+      LOGSTR 1163412736 1126188032 1224736768 0 0
       LOGVAL var0
+      PRINTLN
       ClearStick
       if Equal var0 1 || Equal var0 -1.2 || Equal var0 -3
         if Equal var0 0
@@ -289,17 +291,21 @@ Return
 
 label _hitstunEnd
   predictionConfidence var17 7 LevelValue
-  var17 *= 2
+  var17 *= 4
   predictOOption var23 7 LevelValue 
-  if Rnd < var17 && !(Equal var23 3)
+  if Equal IsOnStage 0
+    CallI RecoveryHub
+  elif Rnd < var17 && YDistFloor < 5
     XGoto CalcAttackGoal
     XReciever
 
     XGoto SetAttackGoal
     XReciever
 
-    var15 = -2
+    var15 = -1
     CallI MainHub
+  elif ODistLE 70
+    CallI DefendHub
   endif 
 Return
 

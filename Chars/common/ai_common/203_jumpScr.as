@@ -38,6 +38,7 @@ label locomotion
 XGoto PerFrameChecks
 XReciever
 if !(Equal lastAttack -1) 
+  NoRepeat
   XGoto SetAttackGoal
   XReciever
   XGoto CheckAttackWillHit

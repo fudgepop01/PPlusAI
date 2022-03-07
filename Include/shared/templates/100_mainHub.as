@@ -21,14 +21,13 @@ label start
 DisableDebugOverlay
 if Equal currGoal cg_recover
   CallI RecoveryHub
-elif Equal currGoal cg_edgeguard
+elif currGoal >= cg_edgeguard
   Seek navigateToGoal
   Jump
 endif
 
-// JUMP_HEIGHT_TEST
-
 Goto PFC
+XReciever
 Seek start
 
 #let teamCloser = var3
@@ -126,8 +125,8 @@ if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
   DynamicDiceAdd dslot0 cg_circleCamp 1
 endif
 if CHANCE_MUL_LE PT_BAITCHANCE 1
-  DynamicDiceAdd dslot0 cg_bait 1.75
-  DynamicDiceAdd dslot0 cg_bait_dashdance 3
+  DynamicDiceAdd dslot0 cg_bait 1
+  DynamicDiceAdd dslot0 cg_bait_dashdance 4
 endif
 if CHANCE_MUL_LE PT_AGGRESSION 1
   predictionConfidence immediateTempVar man_OBaitOption LevelValue
@@ -219,8 +218,6 @@ XReciever
 Seek selectGoal
 ACTIONABLE_ON_GROUND
 
-Goto PFC
-XReciever
 XGoto MoveToGoal
 XReciever
 Seek selectGoal

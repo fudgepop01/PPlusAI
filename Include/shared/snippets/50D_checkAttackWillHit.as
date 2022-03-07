@@ -5,7 +5,7 @@
 #snippet FASTFALL_CHECK_INNER
   $ifAerialAttack()
     if Equal AirGroundState 2 && !(Equal currGoal cg_edgeguard)
-      #let fastfallDist = var6
+      #let fastfallDist = var18
       CALC_FASTFALL_DIST(fastfallDist, move_hitFrame)
 
       // LOGSTR str("FASTFALL DIST")
@@ -33,25 +33,6 @@
           endif
         endif
       endif
-
-      // globTempVar = move_lastHitFrame - move_hitFrame
-      // GetAttribute anotherTempVar attr_fastFallSpeed 0
-      // anotherTempVar *= globTempVar
-      // globTempVar = distX - TopNX
-      // immediateTempVar = distY - TopNY + fastfallDist + anotherTempVar
-
-      // Abs globTempVar
-      // Abs immediateTempVar
-      // if globTempVar <= tempXRange && immediateTempVar <= tempYRange
-      //   if !(Equal scriptVariant sv_checkHit)
-      //     scriptVariant = sv_execute_fastfall
-      //     CallI ExecuteAttack
-      //     Finish
-      //   else
-      //     scriptVariant = sv_execute_fastfall
-      //     Return
-      //   endif
-      // endif
     endif
   endif
 #endsnippet
@@ -61,9 +42,16 @@
 #endsnippet
 
 #snippet SELF_Y_ADJUST_INNER
-  if AnimFrame < 2
+  if Equal AirGroundState 1
+    $ifAerialAttack()
+      GetAttribute immediateTempVar attr_jumpYInitVelShort 0
+      anotherTempVar = TopNY + immediateTempVar * globTempVar - Gravity * globTempVar * globTempVar
+    else
+      anotherTempVar = TopNY
+    endif
+  elif AnimFrame <= 3
     if TotalYSpeed > 0
-      anotherTempVar = TopNY + TotalYSpeed * globTempVar - Gravity * globTempVar * Gravity
+      anotherTempVar = TopNY + TotalYSpeed * globTempVar - Gravity * globTempVar * globTempVar
     else
       anotherTempVar = TopNY + TotalYSpeed * globTempVar
     endif
@@ -71,4 +59,16 @@
     EstYCoord anotherTempVar globTempVar
   endif
   tempGoalY -= anotherTempVar
+#endsnippet
+
+#snippet SELF_X_ADJUST
+  {SELF_X_ADJUST_INNER}
+#endsnippet
+
+#snippet SELF_X_ADJUST_INNER
+  // immediateTempVar = OTopNX - tempGoalX
+  // tempGoalX += immediateTempVar
+  anotherTempVar = TopNX + TotalXSpeed * globTempVar
+  // anotherTempVar -= TopNX
+  tempGoalX -= anotherTempVar
 #endsnippet

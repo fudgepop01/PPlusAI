@@ -6,14 +6,13 @@ XReciever
 
 // yep, move choice is COOOOOMPLICATED lmao
 
-// $generateChecks(check_hub)
 
 predictOOption var22 8 LevelValue 
 var23 = 0
 if OCurrAction >= 66 && OCurrAction <= 100 && !(Equal OCurrAction 73)
   var23 = 1
 endif
-if !(Equal var22 2) && !(Equal var21 16.5) && !(CalledFrom FastAerial) && Equal var21 16 && !(Equal var21 7.1) && OFramesHitstun <= 0 && Equal var23 0
+if !(Equal var22 2) && var21 < 16.7 && !(CalledFrom FastAerial) && Equal var21 16 && !(Equal var21 7.1) && OFramesHitstun <= 0 && Equal var23 0
   predictOOption var23 7 LevelValue 
   var22 = 200
   XGoto GetChrSpecific
@@ -31,7 +30,7 @@ elif Equal var21 7.1 || Equal var21 10.1 || Equal var21 10.2 || Equal var21 13
 elif !(Equal var21 16.3)
   var21 = 16
 endif
-if OFramesHitstun >= 1 && !(Equal var21 16.5)
+if OFramesHitstun >= 1 && var21 < 16.7
   var21 = 16
 endif
 
@@ -66,7 +65,7 @@ DynamicDiceClear 1
   if XDistLE var17 && var22 > 10
     PredictOMov var22 14 LevelValue
     if var22 > 0.4 && CHANCE_MUL_LE PT_AGGRESSION 1.3 && OFramesHitstun < 15
-      var23 = PT_AGGRESSION * 3
+      var23 = PT_AGGRESSION * 0.5
       DynamicDiceAdd 0 10 var23
     endif
   endif
@@ -172,7 +171,7 @@ if !(True)
     var22 = ODamage * (100 + OWeight - 100) / 2000
     DynamicDiceAdd 0 0 var22
 
-    var22 = 5 * PT_AGGRESSION
+    var22 = 2 * PT_AGGRESSION
     DynamicDiceAdd 0 3 var22
     if OCurrAction >= 26 && OCurrAction <= 29
       DynamicDiceAdd 0 3 2.5
@@ -190,10 +189,10 @@ endif
 
 // if the target is caught in a combo of some sort
 // exclude if they can act freely
-if OCurrAction <= 65 || OCurrAction >= 190
-elif Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0
-  Goto punish_priorities
-elif OPrevAction >= 67 && OPrevAction <= 100  
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
+if Equal var22 1
   Goto punish_priorities
 endif
 if !(True)
@@ -204,53 +203,53 @@ if !(True)
 
     // calculate if we can arrive to the target's position as their hitstun ends
     if OFramesHitstun > 0
-      var23 = OFramesHitstun
+      // var23 = OFramesHitstun
 
-      EstOXCoord var22 var23
+      // EstOXCoord var22 var23
 
-      if Equal AirGroundState 1
-        GetAttribute var17 40; 0
-      else
-        GetAttribute var17 136; 0
-      endif
-      var17 = var17 * var23
-      var17 *= OPos
-      var17 += TopNX
+      // if Equal AirGroundState 1
+      //   GetAttribute var17 40; 0
+      // else
+      //   GetAttribute var17 136; 0
+      // endif
+      // var17 = var17 * var23
+      // var17 *= OPos
+      // var17 += TopNX
 
-      if var17 < var22 && OPos < 0
-        DynamicDiceAdd 0 1 4
-      elif var17 > var22 && OPos > 0
-        DynamicDiceAdd 0 1 4
-      endif
+      // if var17 < var22 && OPos < 0
+      //   DynamicDiceAdd 0 1 15
+      // elif var17 > var22 && OPos > 0
+        DynamicDiceAdd 0 1 15
+      // endif
     elif OCurrAction >= 77 && OCurrAction <= 100
       DynamicDiceAdd 0 2 4
     else
       // otherwise see if we can make a conversion
-      var23 = 20
+      // var23 = 20
 
-      EstOXCoord var22 var23
+      // EstOXCoord var22 var23
 
-      if Equal AirGroundState 1
-        GetAttribute var17 40; 0
-      else
-        GetAttribute var17 136; 0
-      endif
-      var17 = var17 * var23
-      var17 *= OPos
-      var17 += TopNX
+      // if Equal AirGroundState 1
+      //   GetAttribute var17 40; 0
+      // else
+      //   GetAttribute var17 136; 0
+      // endif
+      // var17 = var17 * var23
+      // var17 *= OPos
+      // var17 += TopNX
 
-      if var17 < var22 && OPos < 0
-        DynamicDiceAdd 0 11 2
-      elif var17 > var22 && OPos > 0
-        DynamicDiceAdd 0 11 2
-      endif
+      // if var17 < var22 && OPos < 0
+      //   DynamicDiceAdd 0 11 5
+      // elif var17 > var22 && OPos > 0
+        DynamicDiceAdd 0 11 8
+      // endif
     endif
 
     if OYDistFloor > 1 && OYDistFloor < 8
       DynamicDiceAdd 0 2 2.5
     endif
 
-    var22 = PT_BAITCHANCE * 5
+    var22 = PT_BAITCHANCE
     if OCurrAction >= 26 && OCurrAction <= 29
       var22 *= 2.5
     endif
@@ -259,22 +258,24 @@ if !(True)
 endif
 
 // disadvantage (very similar to advantage - basically just reversed)
+if OFramesHitstun <= 0
 
-var22 = TopNY - OTopNY - OHurtboxSize
-if var22 > 40
-  Goto disadvantage_priorities
-elif True
-  // otherwise if the opponent is 4/10ths of the way to the ledge relative to their direction from you
-  Goto approxStageWidth
-  var17 *= -0.4 * OPos
-  // take aggression and bravery into account
-  // var23 = (0.5 + PT_AGGRESSION) * (0.5 + PT_BRAVECHANCE) + 1
-  // var17 /= var23
-  GetYDistFloorOffset var22 var17 5 1
-  var23 = OTopNX + var17
-  DrawDebugLine OTopNX OCenterY var23 OCenterY 255 0 0 221
-  if Equal var22 -1
+  var22 = TopNY - OTopNY - OHurtboxSize
+  if var22 > 40
     Goto disadvantage_priorities
+  elif True
+    // otherwise if the opponent is 4/10ths of the way to the ledge relative to their direction from you
+    Goto approxStageWidth
+    var17 *= -0.4 * OPos
+    // take aggression and bravery into account
+    // var23 = (0.5 + PT_AGGRESSION) * (0.5 + PT_BRAVECHANCE) + 1
+    // var17 /= var23
+    GetYDistFloorOffset var22 var17 5 1
+    var23 = OTopNX + var17
+    DrawDebugLine OTopNX OCenterY var23 OCenterY 255 0 0 221
+    if Equal var22 -1
+      Goto disadvantage_priorities
+    endif
   endif
 endif
 if !(True)
@@ -305,15 +306,16 @@ if !(True)
   Return
 endif
 
-DynamicDiceRoll 0 var7 0
+DynamicDiceRoll 0 var11 0
+
 
 
 // ///////////////////////////////////////////////////////////////
-// var7 results
+// var11 results
 // ///////////////////////////////////////////////////////////////
 
 if Equal var21 7.1
-  var7 = 8
+  var11 = 8
 endif
 
 DynamicDiceClear 0
@@ -322,16 +324,21 @@ DynamicDiceClear 0
 // attack rolls
 // ///////////////////////////////////////////////////////////////
 
-var22 = OTopNY - TopNY - OHurtboxSize * 2
+EstOYCoord var22 OFramesHitstun
+var23 = OHurtboxSize * 2
+var22 -= TopNY 
+var22 -= var23
+
 if CurrAction >= 26 && CurrAction <= 29
   var16 = 1
-elif Equal CurrSubaction JumpSquat
+elif Equal CurrSubaction JumpSquat || CalledFrom Shield
   var16 = 1
-elif Equal var7 3
 elif YDistFloor > 15 || YSpeed > 0.2
   var16 = 1
-// elif OCurrAction >= 66 && OCurrAction <= 100 && OYSpeed > 0 && var22 > 0
-//   var16 = 1
+elif var22 > 30
+  var16 = 1
+elif OCurrAction >= 66 && OCurrAction <= 100 && var22 > 20
+  var16 = 1
 endif
 
 DynamicDiceClear 0
@@ -363,7 +370,7 @@ DynamicDiceAdd 0 24 0.5
 DynamicDiceAdd 0 25 0.5
 DynamicDiceAdd 0 26 1
 
-// if Equal var7 1
+// if Equal var11 1
 //   PAUSE
 // endif
 
@@ -371,60 +378,107 @@ DynamicDiceAdd 0 26 1
 // hardcoded situations
 // ///////////////////////////////////////////////////////////////
 
-if Equal var7 0
+if Equal var11 0
   LOGSTR_NL 1263094784 1275068416 0 0 0
 
-elif Equal var7 1
+elif Equal var11 1
   LOGSTR_NL 1129270528 1112473600 0 0 0
   // $addToDice(1, dspecial, 1)
   // $addToDice(1, dair, 2)
   // $addToDice(1, nspecialair, 1)
-elif Equal var7 2
+DynamicDiceAdd 1 11 60
+elif Equal var11 2
   LOGSTR_NL 1413825280 1212368896 1095976192 0 0
 
-elif Equal var7 3
+elif Equal var11 3
   LOGSTR_NL 1347568896 1397970176 1380253696 0 0
   // $addToDice(1, dair, 1)
   // $addToDice(1, nspecialair, 2)
-elif Equal var7 4
+DynamicDiceAdd 1 11 150
+elif Equal var11 4
   LOGSTR_NL 1112687872 1095451392 1124073472 0 0
-  // $addToDice(1, dair, 1)
-  // $addToDice(1, dair, 1)
-  // $addToDice(1, dspecial, 1)
-elif Equal var7 5
+DynamicDiceAdd 1 11 150
+elif Equal var11 5
   LOGSTR_NL 1163084544 1095779584 1129271808 1313165824 0
 
-elif Equal var7 6
+elif Equal var11 6
   LOGSTR_NL 1279350016 1313032192 0 0 0
   if Equal AirGroundState 1
 DynamicDiceAdd 1 12 1
   else
 DynamicDiceAdd 1 13 1
   endif
-elif Equal var7 7
+elif Equal var11 7
   LOGSTR_NL 1347373824 1157627904 0 0 0
 
-elif Equal var7 8
+elif Equal var11 8
   LOGSTR_NL 1128353024 1342177280 0 0 0
-DynamicDiceAdd 1 11 3
-elif Equal var7 9
+  DynamicDiceClear 0
+  if !(XDistLE 10)
+    DynamicDiceClear 0
+DynamicDiceAdd 1 11 4
+DynamicDiceAdd 1 10 0.1
+  endif
+elif Equal var11 9
   LOGSTR_NL 1162102528 1162302720 1095910400 0 0
 
-elif Equal var7 10
+elif Equal var11 10
   LOGSTR_NL 1095652352 1229015296 1375731712 0 0
 
-elif Equal var7 11
+elif Equal var11 11
   LOGSTR_NL 1129270784 1447383552 1397313280 1308622848 0
 
-elif Equal var7 12
+elif Equal var11 12
   LOGSTR_NL 1179795712 1296389120 1380012032 0 0
 
-elif Equal var7 13
+elif Equal var11 13
   LOGSTR_NL 1129467648 1397970176 1342177280 0 0
 
-elif Equal var7 14
+elif Equal var11 14
   LOGSTR_NL 1245790720 1380274944 1163132928 0 0
 
+endif
+
+// {COMBO_ROUTINES}
+
+// perform these expensive calculations once for efficiency
+if LevelValue >= 60
+  GetAttribute var22 40; 0
+  GetAttribute var17 136; 0
+  if var17 > var22
+    STACK_PUSH var17 1
+  else
+    STACK_PUSH var22 1
+  endif
+
+  GetAttribute var22 72; 0
+  STACK_PUSH var22 1
+
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
+  STACK_PUSH var22 1
+  
+  if OFramesHitstun > 0
+    var23 = var7 + OFramesHitstun
+    EstOXCoord var22 var23
+    EstOYCoord var23 var23
+  else
+    var22 = OTopNX
+    var23 = OTopNY
+  endif
+  STACK_PUSH var23 1 // OTopNY
+  STACK_PUSH var22 1 // OTopNX
+  STACK_PUSH TopNY 1
+  STACK_PUSH TopNX 1
+  STACK_PUSH TBoundary 1
+  if var22 > 0
+    STACK_PUSH RBoundary 1
+  else
+    STACK_PUSH LBoundary 1
+  endif
+  Goto approxStageWidth
+  STACK_PUSH var17 1 // stageWidth
 endif
 
 var18 = 80 * ((6 - PlayerCount) * 0.25)
@@ -442,24 +496,33 @@ if !(True)
   endif 
   // GotoByValue var20
   var22 = 19
-STACK_PUSH 10
-STACK_PUSH 9
-STACK_PUSH 8
-STACK_PUSH 7
-STACK_PUSH 4
-STACK_PUSH 3
-STACK_PUSH 6
-STACK_PUSH 5
-STACK_PUSH 1
+STACK_PUSH 6 0
+STACK_PUSH 4 0
+STACK_PUSH 13 0
+STACK_PUSH 10 0
+STACK_PUSH 9 0
+STACK_PUSH 8 0
+STACK_PUSH 7 0
+STACK_PUSH 0 0
+STACK_PUSH 3 0
+STACK_PUSH 0 0
+STACK_PUSH 5 0
+STACK_PUSH 1 0
   XGoto GetChrSpecific
   XReciever
-  Goto check_hub
+
   Goto __ADDITIONAL_FILTERS__
+  if Equal var20 -1 
+    SeekNoCommit __DICE_LOOP__
+  endif
+  if LevelValue >= 75
+    Goto __DI_ANGLE__
+  endif
+
+  Goto check_hub
   var18 -= 1
   if var18 <= 0
     SeekNoCommit __DICE_LOOP_END__
-  elif Equal var20 -1 
-    SeekNoCommit __DICE_LOOP__
   endif
   SeekNoCommit __DICE_LOOP__
   Return
@@ -485,6 +548,33 @@ if Equal var20 13
   Return
 endif
 
+if !(True)
+  label __DI_ANGLE__
+  predictOOption var22 5 LevelValue
+  predictionConfidence var23 5 LevelValue
+  var23 *= 3
+  if Rnd < var23
+    if Equal var22 1
+      if var1 > 90 && var1 < 180
+        var1 += 8
+      elif var1 > 270
+        var1 += 8
+      else
+        var1 -= 8
+      endif
+    elif Equal var22 3
+      if var1 > 90 && var1 < 180
+        var1 -= 8
+      elif var1 > 270
+        var1 -= 8
+      else
+        var1 += 8
+      endif
+    endif
+  endif
+  Return
+endif
+
 DynamicDiceRoll 1 var20 0
 
 Goto __ADDITIONAL_FILTERS__
@@ -492,18 +582,79 @@ Goto __ADDITIONAL_FILTERS__
 DynamicDiceClear 0
 DynamicDiceClear 1
 
+LOGSTR 1128812288 1397050880 541152256 1413563136 1258291200
+if Equal var20 0
+LOGSTR 1247896064 825373440 0 0 0 // Jab123
+elif Equal var20 1
+LOGSTR 1147237120 1749120000 1952539392 1795162112 0 // DashAttack
+elif Equal var20 2
+LOGSTR 1684108032 1751217152 1952539392 1801418496 1700883200 // dashattack_weak
+elif Equal var20 3
+LOGSTR 1179937024 1819541504 0 0 0 // FTilt
+elif Equal var20 4
+LOGSTR 1431595264 1819541504 0 0 0 // UTilt
+elif Equal var20 5
+LOGSTR 1146382592 1819541504 0 0 0 // DTilt
+elif Equal var20 6
+LOGSTR 1179872512 1634953216 0 0 0 // FSmash
+elif Equal var20 7
+LOGSTR 1431530752 1634953216 0 0 0 // USmash
+elif Equal var20 8
+LOGSTR 1970498816 1634953216 1600282880 1667956736 0 // usmash_back
+elif Equal var20 9
+LOGSTR 1146318080 1634953216 0 0 0 // DSmash
+elif Equal var20 10
+LOGSTR 1314091008 1701013760 1634467840 0 0 // NSpecial
+elif Equal var20 11
+LOGSTR 1314091008 1701013760 1634484480 1769078784 0 // NSpecialAir
+elif Equal var20 12
+LOGSTR 1146318848 1701013760 1634467840 0 0 // DSpecial
+elif Equal var20 13
+LOGSTR 1146318848 1701013760 1634484480 1769078784 0 // DSpecialAir
+elif Equal var20 14
+LOGSTR 1198678272 1644167168 0 0 0 // Grab
+elif Equal var20 15
+LOGSTR 1718904832 1919907584 0 0 0 // fthrow
+elif Equal var20 16
+LOGSTR 1685350400 1919907584 0 0 0 // dthrow
+elif Equal var20 17
+LOGSTR 1651795968 1919907584 0 0 0 // bthrow
+elif Equal var20 18
+LOGSTR 1970563072 1919907584 0 0 0 // uthrow
+elif Equal var20 19
+LOGSTR 1312909568 1912602624 0 0 0 // NAir
+elif Equal var20 20
+LOGSTR 1851877632 1918859008 1700883200 0 0 // nair_weak
+elif Equal var20 21
+LOGSTR 1178691840 1912602624 0 0 0 // FAir
+elif Equal var20 22
+LOGSTR 1111582976 1912602624 0 0 0 // BAir
+elif Equal var20 23
+LOGSTR 1650551040 1918859008 1700883200 0 0 // bair_weak
+elif Equal var20 24
+LOGSTR 1430350080 1912602624 0 0 0 // UAir
+elif Equal var20 25
+LOGSTR 1969318144 1918855168 1769222656 0 0 // uair_hit2
+elif Equal var20 26
+LOGSTR 1145137408 1912602624 0 0 0 // DAir
+endif
+PRINTLN
+
 // ///////////////////////////////////////////////////////////////
 // attack post-processing
 // ///////////////////////////////////////////////////////////////
 
 if !(Equal var20 -1)
-  if Equal var7 7
+  if Equal var11 7
     var21 = 16.2
     if CHANCE_MUL_LE PT_AGGRESSION 0.25
       var21 = 16
     endif
-    Return
-  elif Equal var7 13
+if !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
+      var21 = 16
+    endif
+    SeekNoCommit _ENDCALC_
+  elif Equal var11 13
     predictAverage var22 10 LevelValue
     var22 += 15
     if XDistLE var22
@@ -522,33 +673,11 @@ if !(Equal var20 -1)
         CallI JumpScr
       endif
     endif
-  elif Equal var7 12
-    predictAverage var22 10 LevelValue
-    var22 += 10
-    if XDistLE var22
-      var22 = Rnd * 15
-      label frametrap_wait
-        LOGSTR_NL 1179934464 1463896320 1409286144 0 0
-        XGoto PerFrameChecks
-        XReciever
-        XGoto SetAttackGoal
-        XReciever
-        XGoto MoveToGoal
-        XReciever
-        Seek frametrap_wait
-        var22 -= 1
-        if var22 < 0
-          var21 = 16
-          var15 = -2
-          CallI MainHub
-        endif
-      Return
-    endif
   endif
 endif
 
-if Equal var7 8 || Equal var7 7 || Equal var7 9
-  Return
+if Equal var11 8 || Equal var11 7 || Equal var11 9
+  SeekNoCommit _ENDCALC_
 elif Equal CurrAction 73 || Equal var21 13
   if !(Equal var20 -1)
     var15 = -1
@@ -563,7 +692,7 @@ var23 = 0
 if OCurrAction >= 66 && OCurrAction <= 100 && !(Equal OCurrAction 73)
   var23 = 1
 endif
-if Equal var21 16.5
+if var21 >= 16.7
 elif Rnd < var22 && Equal var17 1 && Equal var21 16 && OYDistBackEdge > -20 && OFramesHitstun <= 0 && Equal HitboxConnected 0 && Equal var23 0 
   predictOOption var22 8 LevelValue 
   if Equal var22 2
@@ -571,8 +700,14 @@ elif Rnd < var22 && Equal var17 1 && Equal var21 16 && OYDistBackEdge > -20 && O
   elif Equal var22 3
     var21 = 16.2
   endif
-elif Equal var7 7 && CHANCE_MUL_GE PT_AGGRESSION 0.2
+elif Equal var11 7 && CHANCE_MUL_GE PT_AGGRESSION 0.2
   var21 = 16.2
+endif
+
+if !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
+  if Equal var21 16.2
+    var21 = 16
+  endif
 endif
 
 // var22 *= 2
@@ -593,7 +728,7 @@ endif
   XGoto GetChrSpecific
   XReciever
 if Equal var22 1
-elif Equal var21 16.5
+elif var21 >= 16.7
 elif CHANCE_MUL_LE PT_WALL_CHANCE 1 && Equal var21 16 && SamePlane && OFramesHitstun <= 0
   var22 = TopNX
   var17 = OTopNX
@@ -604,7 +739,10 @@ elif CHANCE_MUL_LE PT_WALL_CHANCE 1 && Equal var21 16 && SamePlane && OFramesHit
   //   var21 = 16.3
   // endif
 endif
+SeekNoCommit _ENDCALC_
+Return
 
+label _ENDCALC_
 XGoto SetAttackGoal
 XReciever
 Return
@@ -618,6 +756,7 @@ label check_hub
   var15 = 0
 
   if YDistFloor < 20 && !(Equal YDistFloor -1) 
+    var22 = 0
 if !(True) || Equal var20 19 || Equal var20 20
       GetAttribute var22 300; 0
 elif !(True) || Equal var20 21
@@ -629,264 +768,98 @@ elif !(True) || Equal var20 22 || Equal var20 23
 elif !(True) || Equal var20 24 || Equal var20 25
       GetAttribute var22 312; 0
     endif
-    if Equal AirGroundState 2
-      var22 *= 0.5
-    else
-      GetAttribute var23 940; 0
-      var7 += var23 + 1
-      var22 *= 0.8
-    endif
+    if !(Equal var22 0) 
+      if Equal AirGroundState 2
+        var22 *= 0.5
+      else
+        GetAttribute var23 940; 0
+        var7 += var23 + 1
+        var22 *= 0.8
+      endif
 
-    if var22 <= var9
-      var9 = var22
+      if var22 <= var9
+        var9 = var22
+      endif
     endif
   endif
 
 //   {FILTER_CHECKS}
 
-  // LOGVAL var10
-  if Equal var7 0
-    Goto kill_check
-  elif Equal var7 1
-    Goto combo_check
-  elif Equal var7 2
-    Goto techchase_check
-  elif Equal var7 3
-    Goto pressure_check
-  elif Equal var7 4
-    Goto breakcc_check
-  elif Equal var7 5
-    Goto escapecorner_check
-  elif Equal var7 6
-    Goto launch_check
-  elif Equal var7 7
-    Goto poke_check
-  elif Equal var7 8
-    Goto camp_check
-  elif Equal var7 9
-    Goto edgeguard_check
-  elif Equal var7 10
-    Goto antiair_check
-  elif Equal var7 11
-    Goto conversion_check
-  elif Equal var7 12
-    Goto frametrap_check
-  elif Equal var7 13
-    Goto crossup_check
-  elif Equal var7 14
+if Equal var20 0
+LOGSTR 1247896064 825373440 0 0 0 // Jab123
+elif Equal var20 1
+LOGSTR 1147237120 1749120000 1952539392 1795162112 0 // DashAttack
+elif Equal var20 2
+LOGSTR 1684108032 1751217152 1952539392 1801418496 1700883200 // dashattack_weak
+elif Equal var20 3
+LOGSTR 1179937024 1819541504 0 0 0 // FTilt
+elif Equal var20 4
+LOGSTR 1431595264 1819541504 0 0 0 // UTilt
+elif Equal var20 5
+LOGSTR 1146382592 1819541504 0 0 0 // DTilt
+elif Equal var20 6
+LOGSTR 1179872512 1634953216 0 0 0 // FSmash
+elif Equal var20 7
+LOGSTR 1431530752 1634953216 0 0 0 // USmash
+elif Equal var20 8
+LOGSTR 1970498816 1634953216 1600282880 1667956736 0 // usmash_back
+elif Equal var20 9
+LOGSTR 1146318080 1634953216 0 0 0 // DSmash
+elif Equal var20 10
+LOGSTR 1314091008 1701013760 1634467840 0 0 // NSpecial
+elif Equal var20 11
+LOGSTR 1314091008 1701013760 1634484480 1769078784 0 // NSpecialAir
+elif Equal var20 12
+LOGSTR 1146318848 1701013760 1634467840 0 0 // DSpecial
+elif Equal var20 13
+LOGSTR 1146318848 1701013760 1634484480 1769078784 0 // DSpecialAir
+elif Equal var20 14
+LOGSTR 1198678272 1644167168 0 0 0 // Grab
+elif Equal var20 15
+LOGSTR 1718904832 1919907584 0 0 0 // fthrow
+elif Equal var20 16
+LOGSTR 1685350400 1919907584 0 0 0 // dthrow
+elif Equal var20 17
+LOGSTR 1651795968 1919907584 0 0 0 // bthrow
+elif Equal var20 18
+LOGSTR 1970563072 1919907584 0 0 0 // uthrow
+elif Equal var20 19
+LOGSTR 1312909568 1912602624 0 0 0 // NAir
+elif Equal var20 20
+LOGSTR 1851877632 1918859008 1700883200 0 0 // nair_weak
+elif Equal var20 21
+LOGSTR 1178691840 1912602624 0 0 0 // FAir
+elif Equal var20 22
+LOGSTR 1111582976 1912602624 0 0 0 // BAir
+elif Equal var20 23
+LOGSTR 1650551040 1918859008 1700883200 0 0 // bair_weak
+elif Equal var20 24
+LOGSTR 1430350080 1912602624 0 0 0 // UAir
+elif Equal var20 25
+LOGSTR 1969318144 1918855168 1769222656 0 0 // uair_hit2
+elif Equal var20 26
+LOGSTR 1145137408 1912602624 0 0 0 // DAir
+endif
+  // PRINTLN
+
+  if Equal var11 14
     Goto jabreset_check
+  else
+    // "lol" said the programmer, "lmao"
+    RESET_LTF_STACK_PTR
+    CalcMoveWeight var15 ODamage OWeight var1 var4 var6 var7 var8 var9 var10 var13 LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ
   endif
 
   Goto dirCheck
-Return
-label kill_check
-  if OFramesHitstun > 0
-    var23 = var7 + OFramesHitstun
-    EstOXCoord var11 var23
-    EstOYCoord var12 var23
-  else
-    var11 = OTopNX
-    var12 = OTopNY
-  endif
-  Goto __KILL__
-  if !(True)
-    label __KILL__
-    // LOGSTR 1262708736 1799643392 1952514048 0 0
-    COS var22 var1
-    var22 *= var10
-    var22 *= OPos
-    var22 *= 0.03
-    var22 *= var10 * 0.4 * 8
-    var17 = RBoundary - (var11)
-    // LOGSTR 1380057088 0 0 0 0
-    // LOGVAL var22
-    // LOGVAL var17
-    if var22 > var17
-      var0 = 1
-      Return
-    endif
-    var17 = LBoundary - (var11)
-    // LOGSTR 1279393792 0 0 0 0
-    // LOGVAL var22
-    // LOGVAL var17
-    if var22 < var17
-      var0 = 1
-      Return
-    endif
-    var17 = TBoundary - (var12)
-    SIN var22 var1
-    var22 *= var10
-    var22 *= 0.03
-    var22 *= var10 * 0.4 * 8
-    // LOGSTR 1413611520 0 0 0 0
-    // LOGVAL var22
-    // LOGVAL var17
-    if var22 > var17
-      var0 = 1
-      Return
-    endif
-    var0 = 0
-    Return
-  endif
-  if Equal var0 1
-    var15 += 2
-  endif
-Return
-label combo_check
-  Goto kill_check
 
-  var17 = var10 * 0.4
-  var22 = 200
-  XGoto GetChrSpecific
-  XReciever
-  if Equal var22 1 && Equal OIsOnStage 1
-    var23 = OTopNY - YDistBackEdge + 15
-    EstOPassTimeY var17 var23
-  endif
-  Goto getEndlag
-  if OYDistFloor < 4 && var10 <= 90 && CHANCE_MUL_GE PT_BRAVECHANCE 0.7
-    var22 += 0 // leeway room (CC)
-  else
-    var22 -= 8 // leeway room
-  endif
-  if var22 < var17 && var10 >= 65
-    Goto combo_check_pt2
-  elif var22 <= 15 && var7 <= 8
-    Goto combo_check_pt2
-  endif
-Return
-label combo_check_pt2
-  var0 = 1
-
-  if !(Equal var0 0) 
-    // var17 = var9 - (var7 + var8)
-    var23 = var22
-    Goto getEndlag
-    var23 -= var22
-    GetAttribute var22 40; 0
-    var22 *= var23 * 1.75
-    GetAttribute var17 136; 0
-    var17 *= var23 * 1.75
-    
-    COS var0 var1
-    var0 *= (var10 * 0.03) * var23
-    if var1 >= 230 && var1 <= 310
-    elif var1 >= 55 && var1 <= 105
-    elif var22 > var0 || var17 > var0
-    else
-      var0 = 0
-    endif
-  endif
-
-  if !(Equal var0 0)
-    var15 += 1
-  endif
-Return
-label techchase_check
-  Goto combo_check
-Return
-label pressure_check
-  Goto getEndlag
-  if var22 < 20 || var7 < 20
-    var15 += 1
-    Goto fastCheck
-  endif
-Return
-label breakcc_check
-  if var10 >= 120
-    var15 += 1
-elif !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
-    var15 += 1.5
-  endif
-Return
-label escapecorner_check
-  Goto fastCheck
-Return
-label launch_check
-  // Goto combo_check_pt2
-
-  var22 = 60
-  if ODamage > 50
-    var22 = 100
-  endif
-  if var10 < var22
-  else
-    var15 += 1
-  endif
-Return
-label poke_check
-  Goto getEndlag
- 
-  var17 = var5 + var3
-  if var22 < 15 && var7 < 30 && var17 > 5
-    Goto fastCheck
-  endif 
-Return
-label camp_check
-  Goto poke_check
-Return
-label edgeguard_check
-if !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
-    var15 += 0.35
-    Return
-  endif
-
-  Goto kill_check
-  var22 = Direction * TopNX
-  var0 = 0
-  if var22 < 0
-    if var1 >= 135 && var1 <= 325
-      var0 = 1
-    endif
-  else
-    if var1 <= 65 || var1 >= 225
-      var0 = 1
-    endif
-  endif
-
-  if Equal var0 1
-    var15 += 2
-  endif 
-Return
-label antiair_check
-  var22 = var4 - var6
-  if var22 > HurtboxSize
-    var22 -= HurtboxSize
-    var22 = 1 + var22 / 3
-    var15 += var22
-  endif
-Return
-label conversion_check
-  Goto fastCheck
-  Goto combo_check
-Return
-label frametrap_check
-  Goto pressure_check
-Return
-label crossup_check
-  Goto combo_check
+  PRINTLN
 Return
 label jabreset_check
   // I know, it's supposed to be moves that deal < 7% but at this
   // point i'm out of variables lmao
-  if var10 < 60
+  if var10 <= 7
     var15 += 1
   endif
-Return
-label fastCheck
-  Goto getEndlag
-
-  // if var10 >= 71
-    if var7 <= 7 && var22 <= 10
-      var15 += 1.5
-    elif var7 <= 14 && var22 <= 10 && var8 >= 10
-      var15 += 1
-    elif var7 <= 11 && var22 <= 16
-      if CHANCE_MUL_LE PT_BRAVECHANCE 1
-        var15 += 1
-      endif
-    endif
-  // endif
 Return
 label dirCheck  
 
@@ -898,8 +871,9 @@ label dirCheck
   XGoto GetChrSpecific
   XReciever
 
-  if TopNY < OTopNY 
-    if Equal var22 1
+  var23 = TopNY + HurtboxSize
+  if var23 < OTopNY && XDistLE 30
+    if var22 > 0 || OFramesHitstun > 20
       var15 *= 1.5
     else
       var15 *= 0.1
@@ -907,176 +881,116 @@ label dirCheck
   endif
 
   // O below
-  var23 = OTopNY
-  if var23 <= TopNY
-    if Equal var22 -1
+  var23 = OTopNY 
+  if var23 <= TopNY && XDistLE 30
+    if var22 < 0 || OFramesHitstun > 20
       var15 *= 1.5
     else
       var15 *= 0.25
     endif
   endif
+  LOGSTR 1497647360 1381171200 0 0 0
+  LOGVAL var15
 
   // O mid
-  var17 = TopNY - OTopNY
-  Abs var17
-  var23 = HurtboxSize + OHurtboxSize
-  var23 *= 0.5
-  if var17 <= var23
-    if Equal var22 0 
-      var15 *= 1.35
-    else
-      var15 *= 0.25
-    endif
-  endif
+  // var17 = TopNY - OTopNY
+  // Abs var17
+  // var23 = HurtboxSize + OHurtboxSize
+  // var23 *= 0.5
+  // if var17 <= var23
+  //   if Equal var22 0 
+  //     var15 *= 1.35
+  //   else
+  //     var15 *= 0.25
+  //   endif
+  // endif
 
    
 
   var22 = 0.001
   XGoto GetChrSpecific
   XReciever
-  var17 = Direction * OPos
-  if Equal var22 var17 
+  if !(XDistLE 30)
     var23 = var3 * 2 + var5
-    if Equal var22 -1
-      var23 = var5 * -1
-    endif
-    if !(XDistLE 20)
-      if Equal var7 7 || Equal var7 11 || Equal var7 3
-        var23 *= 0.25
+    if var23 < 20
+      if Equal var11 7 || Equal var11 11 || Equal var11 3
+        var23 *= 0.1
         var23 += 1
         var15 *= var23
-      elif Equal var7 1 && OFramesHitstun <= 0
-        var23 *= 0.25
+      elif Equal var11 1 && OFramesHitstun <= 0
+        var23 *= 0.1
         var23 += 1
         var15 *= var23
       else
-        var15 *= 1.25
+        var15 *= 1.2
       endif
     else
-      var15 *= 1.25
+      var15 *= 1.2
     endif
-  elif Equal var22 0 && var17 > 0
-    var23 = var3 * 2 + var5
-    if !(XDistLE 20)
-      if Equal var7 7 || Equal var7 11 || Equal var7 3
-        var23 *= 0.25
-        var23 += 1
-        var15 *= var23
-      elif Equal var7 1 && OFramesHitstun <= 0
-        var23 *= 0.25
-        var23 += 1
-        var15 *= var23
-      else
+  elif XDistLE 30 && OFramesHitstun > 0
+if !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
+      if OYSpeed > 0
         var15 *= 1.25
       endif
-    else
+    endif
+    if Equal var22 0
       var15 *= 1.25
+    else
+      var15 *= 0.35
+    endif 
+  elif Equal IsOnStage 1
+    if Equal AirGroundState 1 || YDistFloor < OFramesHitstun
+      if Equal Direction OPos && var22 >= 0 
+        var15 *= 1.25
+      elif !(Equal Direction OPos) && var22 < 0 
+        var15 *= 1.25
+      else
+        var15 *= 0.05
+      endif
+    else
+      var15 *= 0.05
     endif
   else
-    var15 *= 0.2
+    var15 *= 0.05
   endif
+
+  LOGSTR 1480870144 1375731712 0 0 0
+  LOGVAL var15
   Goto addIfFastHit
+  LOGSTR 1179142400 1409286144 0 0 0
+  LOGVAL var15
   Goto getOEndlag
-  if var7 <= var22 && var10 >= 50
+  if var7 <= var22 
     var22 -= var7
-    var22 *= 0.15
+    var22 *= 0.2
     var22 += 1
     var15 += var22
   endif
+  LOGSTR 1329942016 1145831424 0 0 0
+  LOGVAL var15
+  Goto getEndlag
+  if var22 > 30
+    var22 -= 30
+    var22 *= 0.25
+    var22 += 1
+    var15 /= var22
+  endif
+if !(True) || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
+    if Equal var11 3
+      var15 *= 3
+    endif 
+  endif
+
+  LOGSTR 1398752512 1313098752 0 0 0
+  LOGVAL var15
+  var15 *= 20
+  LOGSTR 1179209216 1095499776 0 0 0
+  LOGVAL var15
   DynamicDiceAdd 1 var20 var15
-
-  // var22 = OTopNY - TopNY
-  // if OFramesHitstun <= 0 && var22 < 30 && Equal HitboxConnected 0 && !(Equal var7 priority_panic) && OCurrAction < 65
-  //   var22 = OTopNX - TopNX
-  //   Abs var22
-  //   var22 *= 2
-  //   if OYDistBackEdge > -35
-  //     if !(Equal var7 3)
-  //       if disjointX > 1 && Equal Direction OPos || Equal AirGroundState 1
-  //         var22 = disjointX * 0.4 + 1
-  //         var22 *= var15
-  //         DynamicDiceAdd 1 var20 var22
-  //       elif disjointX < -1 && !(Equal Direction OPos) || Equal AirGroundState 1
-  //         var22 = disjointX * -0.4 + 1
-  //         var22 *= var15
-  //         DynamicDiceAdd 1 var20 var22
-  //       endif
-  //     endif
-  //   endif
-  //   var22 = OTopNY - CenterY
-  //   if var22 >= 20
-  //     if OAttacking
-  //       var22 = 1
-  //     else
-  //       var22 = 0
-  //     endif
-  //     if var1 > 55 && var1 < 105 && var22 >= var22
-  //       DynamicDiceAdd 1 var20 var15
-  //       Goto addIfFastHit
-  //     endif
-  //   elif True
-  //     if var1 > 55 && var1 < 105
-  //       DynamicDiceAdd 1 var20 var15
-  //     endif
-  //     if var1 > 230 && var1 < 310
-  //       DynamicDiceAdd 1 var20 var15
-  //     endif
-  //     Goto addIfFastHit
-
-  //     $ifLastOrigin(grab,0)
-  //       var22 = var15 * 2.5
-  //       DynamicDiceAdd 1 var20 var22
-  //     endif
-  //   endif
-  // else
-  //   var22 = Direction * OPos
-  //   var17 = OTopNY + OHurtboxSize * 0.5
-  //   if Equal var22 0 && Equal var22 0
-  //     var22 = var15 * 2
-  //     DynamicDiceAdd 1 var20 var22
-  //   elif Equal var22 var22
-  //     if var22 <= 0
-  //       var22 = var15 * 2
-  //       DynamicDiceAdd 1 var20 var22
-  //     elif Equal var22 1 && var17 > CenterY
-  //       var22 = var15 * 2
-  //       DynamicDiceAdd 1 var20 var22
-  //     endif
-  //   elif Equal var22 1 && var17 > CenterY
-  //     if Equal var22 0
-  //       var22 = var15 * 2
-  //       DynamicDiceAdd 1 var20 var22
-  //     elif Equal var22 var22
-  //       var22 = var15 * 2
-  //       DynamicDiceAdd 1 var20 var22
-  //     endif
-  //   elif Equal var22 -1 && var17 <= CenterY
-  //     if Equal var22 0
-  //       var22 = var15 * 2
-  //       DynamicDiceAdd 1 var20 var22
-  //     elif Equal var22 var22
-  //       var22 = var15 * 2
-  //       DynamicDiceAdd 1 var20 var22
-  //     endif
-  //   endif
-  //   DynamicDiceAdd 1 var20 var15
-  //   $ifLastOrigin(grab,0)
-  //     var22 = var15 * 2
-  //     DynamicDiceAdd 1 var20 var22
-  //   endif
-  // endif
-
-  // Goto getOEndlag
-  // if var7 <= var22 && var10 >= 50
-  //   var22 -= var7
-  //   var22 *= 0.15
-  //   var22 += 1
-  //   var22 *= var15
-  //   DynamicDiceAdd 1 var20 var22
-  // endif
 Return
 label getEndlag
   var22 = var9 - (var7 + var8)
+  var22 *= -1
 if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26
     if Equal IsOnStage 1
       var22 = var9
@@ -1092,12 +1006,17 @@ label getOEndlag
 Return
 label addIfFastHit
   var22 = var7
-  var22 -= 20
-  if var22 > 0
-    var22 = 20 - var22
-    var22 *= 0.3
-    var22 *= var15
-    var15 += var22
+  var22 -= 15
+if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26
+    if Equal AirGroundState 1
+      var22 += 7
+    endif
+  endif
+  if var22 < 0
+    var22 = 15 - var7
+    var22 *= 0.05
+    var22 += 1
+    var15 *= var22
   endif
 Return
 label approxStageWidth

@@ -4,23 +4,27 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -1
 
-#const cs_shortHopHeight = 16
-#const cs_djumpHeight = 38
+#const cs_shortHopHeight = 12.6
+#const cs_jumpHeight = 53.62
+#const cs_djumpHeight = 43.68
 #const cs_wavedashDist = 30
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 6
+#const cs_recoveryDistX = 70
+#const cs_recoveryDistY = -50
 
-#const pt_aggression = 1.55
-#const pt_bait_dashAwayChance = 0.05
-#const pt_bait_wdashAwayChance = 0.45
+#const pt_aggression = 0.85
+#const pt_bait_dashAwayChance = 0.35
+#const pt_bait_wdashAwayChance = 0.65
 #const pt_baitChance = 0.8
 #const pt_braveChance = 0.8
 #const pt_circleCampChance = 0.85
-#const pt_djumpiness = 0.02
-#const pt_jumpiness = 0.08
-#const pt_platChance = 0.15
-#const pt_wall_chance = 0.4
+#const pt_djumpiness = 0.04
+#const pt_jumpiness = 0.18
+#const pt_platChance = 0.25
+#const pt_wall_chance = 0.6
+
 
 // the following is the data that I give the AI that allows it to determine
 // where it should be before performing an attack.

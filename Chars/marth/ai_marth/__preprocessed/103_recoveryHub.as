@@ -74,7 +74,11 @@ elif Equal CurrAction 277
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -127,20 +131,21 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 21 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 22.23 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
   if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
-    if YDistBackEdge > 19 && Rnd < 0.5
+    if YDistBackEdge > 20.23 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 53 || var17 < 18
+  elif YDistBackEdge > 54.230000000000004 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -190,18 +195,23 @@ label handleSSpecial
 Return
 
 label handleUSpecial
+  ClearStick
   if AnimFrame > 2 && AnimFrame < 5
-    var22 = TopNX
-    if Equal var16 0
-      var22 *= -1
-    endif
-    AbsStick var22
-  else
-    if var0 > TopNX
-      var0 -= 2
-    endif
     var22 = TopNX * -1
     AbsStick var22
+  elif Equal var16 1
+    var17 = var0 * -1
+    AbsStick var17
+  elif var0 > 6 || var0 < -6
+    var17 = var0 * -1
+    AbsStick var17
+    var22 = HurtboxSize - 5
+    if NoOneHanging && YDistBackEdge < var22 && var6 < 0.1
+      AbsStick 0 (-1)
+    endif
+  else
+    var17 = var0 * -1
+    AbsStick var17
   endif
 Return
 
@@ -219,12 +229,16 @@ label handleJumpToStage
   if Equal var16 1
     var17 = var0 * -1
     AbsStick var17
+  elif Equal IsOnStage 1
+    var17 = TopNX * -1
+    AbsStick var17
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17
-  elif YDistBackEdge < 25
-    var17 = var0 * -3
-    AbsStick var17
+  endif
+  var22 = var0 * Direction
+  if var22 < 0
+    Stick -1
   endif
 Return
 

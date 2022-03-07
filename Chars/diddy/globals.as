@@ -1,5 +1,6 @@
-#const shortHopHeight = 15
-#const djumpHeight = 28
+#const cs_shortHopHeight = 17.51
+#const cs_jumpHeight = 40.04
+#const cs_djumpHeight = 28.93
 
 // jab123
 #const jab123_IASA = 25

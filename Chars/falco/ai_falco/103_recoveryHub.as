@@ -1,13 +1,12 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 60
-  #const UpBYDist = 60
+  #const UpBRadius = 64
   #const sideBHeight = 4
   #const sideBRange = 90
   #const tolerence = 6
 
   #const jumpChance = 0.3
   #const highUpBChance = 0.15
-  #const sideBChance = 0.4
+  #const sideBChance = 0.75
   #let hasTriedToUpB = var4
   #let jumpValue = var5
   #let highUpBValue = var6
@@ -27,7 +26,11 @@
   #let nearCliffX = var0
   #let nearCliffY = var1
   #let absNCX = var2
+  #let distFromEdge = var3
+
   NEAREST_CLIFF(nearCliffX, nearCliffY)
+  Norm distFromEdge nearCliffX nearCliffY
+  Abs distFromEdge
   
   // drift towards goal
   globTempVar = nearCliffX * -1
@@ -36,6 +39,9 @@
 
   absNCX = nearCliffX
   Abs absNCX
+  if absNCX > UpBRadius
+    sideBValue = 0
+  endif
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
@@ -44,7 +50,7 @@
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -63,20 +69,20 @@
     Stick 1
     Return
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+  if highUpBValue <= highUpBChance && distFromEdge < UpBRadius && YDistBackEdge < 20 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+  if distFromEdge > calc(UpBRadius - tolerence) && distFromEdge < UpBRadius && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
-  endif 
+  endif
 #endsnippet
 
 #snippet USPECIAL

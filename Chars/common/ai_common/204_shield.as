@@ -15,13 +15,12 @@ timer = 0
 
 willStrike = false
 globTempVar = PT_AGGRESSION
-globTempVar *= 0.65
 if Rnd < globTempVar
   willStrike = true
 endif
 
 patience = Rnd * 35 + 5
-if Equal currGoal cg_bait_shield
+if Equal currGoal cg_bait_shield || XDistLE 30
   immediateTempVar = 60 * Rnd + 20
   patience += immediateTempVar
 endif
@@ -85,23 +84,28 @@ if Equal CurrAction hex(0x1B) && Equal globTempVar 0
 endif
 Return
 label pickOption
-
+OEndLag += 15
 predictAverage immediateTempVar man_OXHitDist LevelValue
 immediateTempVar += 35
 if OEndLag > 7 && CHANCE_MUL_LE PT_AGGRESSION 0.7
+  Seek exec_attack
+  Jump
+elif Rnd < 0.4 && XDistLE immediateTempVar
+  Seek exec_attack
+  Jump
+elif Rnd < 0.6 && Equal willStrike true
+  Seek exec_attack
+  Jump
+endif
+
+if !(True)
+  label exec_attack
   Button X
   currGoal = cg_attack_reversal
   XGoto CalcAttackGoal
   XReciever
-  skipMainInit = mainInitSkip
-  CallI MainHub
-elif Rnd < 0.4 && XDistLE immediateTempVar
-  Button X
-  Call FastAerial
-elif Rnd < 0.6 && Equal willStrike true
-  Button X
-  currGoal = cg_attack_reversal
-  XGoto CalcAttackGoal
+  scriptVariant = sv_none
+  XGoto SetAttackGoal
   XReciever
   skipMainInit = mainInitSkip
   CallI MainHub

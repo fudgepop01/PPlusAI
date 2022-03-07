@@ -4,13 +4,14 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -3
 
-#const cs_shortHopHeight = 14
-#const cs_djumpHeight = 25
+#const cs_shortHopHeight = 14.24
+#const cs_jumpHeight = 33.13
+#const cs_djumpHeight = 8.28
 #const cs_wavedashDist = 25
 
 #const pt_jumpiness = 0.1
 #const pt_djumpiness = 0.07
-#const pt_aggression = 1.5
+#const pt_aggression = 0.8
 #const pt_bait_dashAwayChance = 0.55
 #const pt_bait_wdashAwayChance = 0.2
 #const pt_wall_chance = 0.5

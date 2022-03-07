@@ -74,7 +74,11 @@ elif Equal CurrAction 277
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -118,6 +122,8 @@ endif
   var0 *= -1
   var1 *= -1
   var1 = var1 - (TopNY * -1)
+  Norm var3 var0 var1
+  Abs var3
   
   // drift towards goal
   var17 = var0 * -1
@@ -125,22 +131,26 @@ endif
   AbsStick var17
   var2 = var0
   Abs var2
+  if var2 > 64
+    var7 = 0
+  endif
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 34 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 39.68 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
   if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
-    if YDistBackEdge > 32 && Rnd < 0.5
+    if YDistBackEdge > 37.68 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 78 || var17 < 18
+  elif YDistBackEdge > 87.68 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -153,26 +163,26 @@ endif
       Return
     endif
   endif
-  if var7 <= 0.4 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 90
+  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 90
     Button B
     ClearStick
     Stick 1
     Return
   endif
-  if var6 <= 0.15 && YDistBackEdge > 20 && Equal var4 0
+  if var6 <= 0.15 && var3 < 64 && YDistBackEdge < 20 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 60 && YDistBackEdge > 54 && Equal var4 0
+  if var3 > 58 && var3 < 64 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
-  endif 
+  endif
 
 Return
 
@@ -244,7 +254,7 @@ label handleJumpToStage
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17
-  elif YDistBackEdge < 38
+  elif YDistBackEdge < 43.68
     var17 = var0 * -3
     AbsStick var17
   endif

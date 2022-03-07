@@ -47,7 +47,7 @@
 #endsnippet
 
 #snippet DSPECIAL
-  if Equal CurrSubaction hex(0x1e4)
+  if Equal CurrSubaction hex(0x1e4) && FramesHitlag <= 0 
     Button X
     scriptVariant = sv_wavedash_in
     CallI Wavedash

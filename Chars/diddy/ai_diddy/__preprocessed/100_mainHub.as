@@ -12,8 +12,8 @@ str "0.45"
 str "0.02"
 str "0.05"
 str "0.25"
-str "0"
 str "1"
+str "0.5"
 str "0.4"
 
 XReciever
@@ -32,14 +32,13 @@ label start
 DisableDebugOverlay
 if Equal var21 3
   CallI RecoveryHub
-elif Equal var21 16.5
+elif var21 >= 16.7
   Seek navigateToGoal
   Jump
 endif
 
-// JUMP_HEIGHT_TEST
-
 Goto PFC
+XReciever
 Seek start
 
 GetIsTeammateCloser var3
@@ -167,8 +166,8 @@ if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
   DynamicDiceAdd 0 7 1
 endif
 if CHANCE_MUL_LE PT_BAITCHANCE 1
-  DynamicDiceAdd 0 10 1.75
-  DynamicDiceAdd 0 10.5 3
+  DynamicDiceAdd 0 10 1
+  DynamicDiceAdd 0 10.5 4
 endif
 if CHANCE_MUL_LE PT_AGGRESSION 1
   predictionConfidence var22 9 LevelValue
@@ -270,8 +269,6 @@ Seek selectGoal
     Return
   endif
 
-Goto PFC
-XReciever
 XGoto MoveToGoal
 XReciever
 Seek selectGoal

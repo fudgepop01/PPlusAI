@@ -74,7 +74,11 @@ elif Equal CurrAction 277 || Equal CurrAction 300
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -127,15 +131,16 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 24 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 23.04 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
   if Equal var4 1 || var5 <= 0.8 && NumJumps > 0
-    var22 = 20
+    var22 = 19.04
     if !(NoOneHanging)
       var22 -= 20
     endif
@@ -147,7 +152,7 @@ endif
     endif
   else
   
-    var22 = 53
+    var22 = 52.03999999999999
     if !(NoOneHanging)
       var22 -= 20
     endif
@@ -165,14 +170,14 @@ endif
       endif
     endif
   endif
-  if var7 <= 0.6 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 60 && var2 >= 15
+  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 60 && var2 >= 15
     Button B
     ClearStick
     Stick 0 1
     var7 = -1
     Return
   endif
-  if var6 <= 0.15 && YDistBackEdge > 5 && Equal var4 0
+  if var6 <= 0.4 && YDistBackEdge > 5 && Equal var4 0
     var4 = 1
     Button B
     ClearStick

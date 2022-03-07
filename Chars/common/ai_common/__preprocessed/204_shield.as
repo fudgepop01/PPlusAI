@@ -10,13 +10,12 @@ var2 = 0
 
 var4 = 0
 var17 = PT_AGGRESSION
-var17 *= 0.65
 if Rnd < var17
   var4 = 1
 endif
 
 var3 = Rnd * 35 + 5
-if Equal var21 10.2
+if Equal var21 10.2 || XDistLE 30
   var22 = 60 * Rnd + 20
   var3 += var22
 endif
@@ -83,23 +82,28 @@ if Equal CurrAction 27 && Equal var17 0
 endif
 Return
 label pickOption
-
+var1 += 15
 predictAverage var22 10 LevelValue
 var22 += 35
 if var1 > 7 && CHANCE_MUL_LE PT_AGGRESSION 0.7
+  Seek exec_attack
+  Jump
+elif Rnd < 0.4 && XDistLE var22
+  Seek exec_attack
+  Jump
+elif Rnd < 0.6 && Equal var4 1
+  Seek exec_attack
+  Jump
+endif
+
+if !(True)
+  label exec_attack
   Button X
   var21 = 16.4
   XGoto CalcAttackGoal
   XReciever
-  var15 = -1
-  CallI MainHub
-elif Rnd < 0.4 && XDistLE var22
-  Button X
-  Call FastAerial
-elif Rnd < 0.6 && Equal var4 1
-  Button X
-  var21 = 16.4
-  XGoto CalcAttackGoal
+  var16 = 0
+  XGoto SetAttackGoal
   XReciever
   var15 = -1
   CallI MainHub

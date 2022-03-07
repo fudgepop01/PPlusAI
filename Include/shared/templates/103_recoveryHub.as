@@ -76,7 +76,11 @@ elif DSPECIAL_ACTIONS
   Goto handleDSpecial
   Return
 elif CurrAction >= hex(0xB) && CurrAction <= hex(0xD)
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    currGoal = cg_nothing
+    lastAttack = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif

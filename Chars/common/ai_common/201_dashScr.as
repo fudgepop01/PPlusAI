@@ -29,7 +29,6 @@ if Equal CurrAction hex(0x4) || Equal CurrAction hex(0x5)
   CallI Wavedash
 endif
 
-
 timeLimit = dashForceTurnFrame * 2 - dashDanceMinFrames + Rnd * 20
 timeLimit = Rnd * timeLimit + dashDanceMinFrames 
 startOPos = OPos
@@ -39,7 +38,7 @@ if Equal scriptVariant sv_dash_away
     timeLimit = dashForceTurnFrame
   endif
 elif Equal scriptVariant sv_dash_away_defense
-  timeLimit += 20
+  timeLimit += 5
 endif
 label execution
 XGoto PerFrameChecks
@@ -51,7 +50,10 @@ if !(Equal lastAttack -1) && !(Equal scriptVariant sv_dash_away) && !(Equal scri
   XReciever
 endif
 Seek execution
-
+if Equal CurrAction hex(0x1)
+  ClearStick
+  Return
+endif
 
 if XDistFrontEdge < 15
   Call MainHub
@@ -63,8 +65,8 @@ if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through) || 
   if Equal scriptVariant sv_dash_towards
     AbsStick OPos
   elif Equal scriptVariant sv_dash_away || Equal scriptVariant sv_dash_away_defense
-    if XDistBackEdge > -10
-      scriptVariant = sv_dash_through
+    if XDistBackEdge > -10 || XDistFrontEdge < 4
+      scriptVariant = sv_dash_towards
       AbsStick OPos
       Return
     endif

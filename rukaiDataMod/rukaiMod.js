@@ -544,6 +544,7 @@ var DataCalculator = /** @class */ (function () {
 var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    border: 2px solid #FFF;\n    display: flex;\n    flex-direction: column;\n  }\n  #custom-result {\n    font-family: monospace;\n    background-color: black;\n    color: #DDD;\n    flex-grow: 1;\n  }\n  #custom-selectors {\n    max-height: 100px;\n    overflow-y: scroll;\n  }\n  #custom-selectors > div:first-child > input {\n    display: none;\n  }\n\n  .picker-container {\n    display: flex;\n    flex-direction: column;\n  }\n\n  .bbox-picker {\n    display: flex;\n    flex-direction: row;\n  }\n\n  .bbox-picker > div {\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column;\n  }\n\n  .bbox-picker > div > div {\n    display: flex; \n    flex-direction: row;\n  }\n\n  .bbox-picker button {\n    flex-grow: 1;\n    border: 1px solid black;\n    background-color: #DDD;\n  }\n\n  .bbox-picker button[selected=\"true\"] {\n    background-color: #999;\n  }\n\n  .attackData-picker {\n    display: flex;\n    flex-direction: row;\n  }\n  .attackData-picker button {\n    flex-grow: 1;\n    border: 1pxx solid black;\n    background-color: #FDD;\n  }\n  .attackData-picker button[selected=\"true\"] {\n    background-color: #F99;\n  }\n";
 (function () {
     'use strict';
+    var e_11, _a;
     var style = document.createElement("style");
     style.innerText = styling;
     document.head.appendChild(style);
@@ -608,5 +609,52 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
     }
     else {
         // sActData = window["subaction_data"] as SubactionData;
+    }
+    var heightOfJump = function (initVel, gravity) {
+        var heightOfJump = (Math.pow(initVel, 2)) / (2 * gravity);
+        return heightOfJump;
+    };
+    window["calcJumpHeights"] = function (jumpYInitVel, jumpYInitVelShort, airJumpYMultiplier, gravity) {
+        ;
+        var shortHop = Math.floor(heightOfJump(jumpYInitVelShort, gravity) * 100) / 100;
+        var fullhop = Math.floor(heightOfJump(jumpYInitVel, gravity) * 100) / 100;
+        var djump = Math.floor(heightOfJump(airJumpYMultiplier * jumpYInitVel, gravity) * 100) / 100;
+        console.log("\n#const cs_shortHopHeight = " + shortHop + "\n#const cs_jumpHeight = " + fullhop + "\n#const cs_djumpHeight = " + djump + "\n    ");
+    };
+    var attrs = Array.from(document.getElementsByTagName("td")).map(function (el) { return el.innerText; });
+    var jumpYInitVel = 0;
+    var jumpYInitVelShort = 0;
+    var airJumpYMultiplier = 0;
+    var gravity = 0;
+    try {
+        for (var _b = __values(attrs.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var _d = __read(_c.value, 2), i = _d[0], attr = _d[1];
+            switch (attr) {
+                case "jump y init vel:":
+                    jumpYInitVel = parseFloat(attrs[i + 1]);
+                    break;
+                case "jump y init vel short:":
+                    jumpYInitVelShort = parseFloat(attrs[i + 1]);
+                    break;
+                case "air jump x mult:":
+                    airJumpYMultiplier = parseFloat(attrs[i + 1]);
+                    break;
+                case "gravity:":
+                    gravity = parseFloat(attrs[i + 1]);
+                    break;
+            }
+        }
+    }
+    catch (e_11_1) { e_11 = { error: e_11_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+        }
+        finally { if (e_11) throw e_11.error; }
+    }
+    if (airJumpYMultiplier == 0)
+        airJumpYMultiplier = 1;
+    if (jumpYInitVel != 0) {
+        window["calcJumpHeights"](jumpYInitVel, jumpYInitVelShort, airJumpYMultiplier, gravity);
     }
 })();

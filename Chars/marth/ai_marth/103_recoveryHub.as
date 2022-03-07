@@ -80,20 +80,23 @@
 #endsnippet
 
 #snippet USPECIAL
+  ClearStick
   if AnimFrame > 2 && AnimFrame < 5
-    immediateTempVar = TopNX
-    if Equal isBelowStage 0
-      immediateTempVar *= -1
-    endif
-    AbsStick immediateTempVar
-  else
-    if nearCliffX > TopNX
-      nearCliffX -= 2
-    endif
-
     immediateTempVar = TopNX * -1
-
     AbsStick immediateTempVar
+  elif Equal isBelowStage 1
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
+  elif nearCliffX > 6 || nearCliffX < -6
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
+    immediateTempVar = HurtboxSize - 5
+    if NoOneHanging && YDistBackEdge < immediateTempVar && highUpBValue < highUpBChance
+      AbsStick 0 (-1)
+    endif
+  else
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
   endif
 #endsnippet
 
@@ -110,4 +113,22 @@
 #endsnippet
 
 #snippet NSPECIAL
+#endsnippet
+
+#snippet JUMP_TO_STAGE
+  ClearStick
+  if Equal isBelowStage 1
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
+  elif Equal IsOnStage 1
+    globTempVar = TopNX * -1
+    AbsStick globTempVar
+  elif nearCliffX > 6 || nearCliffX < -6
+    globTempVar = nearCliffX * -1
+    AbsStick globTempVar
+  endif
+  immediateTempVar = nearCliffX * Direction
+  if immediateTempVar < 0
+    Stick -1
+  endif
 #endsnippet

@@ -3,7 +3,7 @@ id 0x8100
 unk 0x0
 
 str "PERSONALITY"
-str "1.5"
+str "0.8"
 str "0.30"
 str "0.65"
 str "0.75"
@@ -12,8 +12,8 @@ str "0.5"
 str "0.03"
 str "0.05"
 str "0.23"
-str "0"
 str "1"
+str "0.5"
 str "0.45"
 
 XReciever
@@ -32,14 +32,13 @@ label start
 DisableDebugOverlay
 if Equal var21 3
   CallI RecoveryHub
-elif Equal var21 16.5
+elif var21 >= 16.7
   Seek navigateToGoal
   Jump
 endif
 
-// JUMP_HEIGHT_TEST
-
 Goto PFC
+XReciever
 Seek start
 
 GetIsTeammateCloser var3
@@ -270,8 +269,6 @@ Seek selectGoal
     Return
   endif
 
-Goto PFC
-XReciever
 XGoto MoveToGoal
 XReciever
 Seek selectGoal

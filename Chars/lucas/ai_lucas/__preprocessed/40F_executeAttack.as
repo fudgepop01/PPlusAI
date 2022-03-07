@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 
 label start
+var16 = 0
 var7 = LevelValue * 0.01
 if var7 < 0.2
   var7 = 0.2
@@ -49,15 +50,37 @@ if !(True) || Equal var20 17|| Equal var20 21|| Equal var20 27|| Equal var20 28|
     endif
     Return
   endif
+elif !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
+  Return
 endif
 
-if Rnd > var7
+if !(True) || Equal var20 2 || Equal var20 3
+  Seek execDA
+  Jump
+elif Rnd > var7
   Return
 endif
 if Equal AirGroundState 1
   Seek
   Return
 endif
+
+  var22 = 19
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 18 0
+  XGoto GetChrSpecific
+  XReciever
+
 label
 Cmd30
 ClearStick
@@ -394,7 +417,7 @@ Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7
   AbsStick OPos
 endif
-  if Equal CurrSubaction 484
+  if Equal CurrSubaction 484 && FramesHitlag <= 0 
     Button X
     var16 = 1
     CallI Wavedash
@@ -407,7 +430,7 @@ Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7
   AbsStick OPos
 endif
-  if Equal CurrSubaction 484
+  if Equal CurrSubaction 484 && FramesHitlag <= 0 
     Button X
     var16 = 1
     CallI Wavedash
@@ -545,60 +568,92 @@ label common_checks
   XGoto PerFrameChecks
   XReciever
 
-  if Equal CanCancelAttack 1 && CurrAction >= 36 && CurrAction <= 52
+  if Equal CanCancelAttack 1 && CurrAction >= 24 && CurrAction <= 52
     Seek finish
     Jump
-  elif CurrAction <= 32
+  elif CurrAction <= 32 && !(Equal CurrAction 24)
     Seek finish
     Jump
   endif
 
-  if Equal OFramesHitlag 1
-    ADJUST_PERSONALITY 0 0.002
-    if var21 >= 7 && var21 < 8
-      ADJUST_PERSONALITY 5 0.015
-      if Equal var21 7.1
-        ADJUST_PERSONALITY 0 0.002
-      endif
-    elif var21 >= 16 && var21 < 17
-      ADJUST_PERSONALITY 3 -0.04
-      ADJUST_PERSONALITY 0 0.002
-      if Equal var21 16.4
-        ADJUST_PERSONALITY 0 0.005
-      elif Equal var21 16.1 || Equal var21 16.2
-        ADJUST_PERSONALITY 3 0.01
-      elif Equal var21 16.3
-        ADJUST_PERSONALITY 3 0.005
-        ADJUST_PERSONALITY 5 0.025
-      endif
-    elif Equal var21 10.1
-      ADJUST_PERSONALITY 3 0.01
-    endif
+  if OFramesHitlag <= 0 && OFramesHitstun > 0
+    var16 += 1
+    if Equal var16 2
+      var22 = LevelValue * 0.25
 
-    if Equal AirGroundState 2
-      ADJUST_PERSONALITY 7 0.003
-      if Rnd < 0.3
-        ADJUST_PERSONALITY 6 0.002
+      ADJUST_PERSONALITY 0 0.002 var22
+      if var21 >= 7 && var21 < 8
+        ADJUST_PERSONALITY 5 0.0015 var22
+        if Equal var21 7.1
+          ADJUST_PERSONALITY 0 0.002 var22
+        endif
+      elif var21 >= 16 && var21 < 17
+        ADJUST_PERSONALITY 3 -0.004 var22
+        ADJUST_PERSONALITY 0 0.002 var22
+        if Equal var21 16.4
+          ADJUST_PERSONALITY 0 0.005 var22
+        elif Equal var21 16.1 || Equal var21 16.2
+          ADJUST_PERSONALITY 3 0.001 var22
+        elif Equal var21 16.3
+          ADJUST_PERSONALITY 3 0.005 var22
+          ADJUST_PERSONALITY 5 0.0025 var22
+        endif
+      elif Equal var21 10.1
+        ADJUST_PERSONALITY 3 0.001 var22
       endif
-    else
-      ADJUST_PERSONALITY 7 -0.002
-      ADJUST_PERSONALITY 6 -0.002
-    endif
 
-    if OKBSpeed > 3
-      if CHANCE_MUL_LE PT_AGGRESSION 0.6
-        var21 = 16
+      // if Equal AirGroundState 2
+      //   ADJUST_PERSONALITY 7 0.003 var22
+      //   if Rnd < 0.3
+      //     ADJUST_PERSONALITY 6 0.002 var22
+      //   endif
+      // else
+      //   ADJUST_PERSONALITY 7 -0.002 var22
+      //   ADJUST_PERSONALITY 6 -0.002 var22
+      // endif
+
+      if OKBSpeed > 3
+        if CHANCE_MUL_LE PT_AGGRESSION 0.6
+          var21 = 16
+        else
+          var21 = 10.5
+        endif
       else
-        var21 = 10.5
+        var21 = 16
+      endif  
+
+      if !(True)
+        label correctMoveAngle
       endif
-    else
-      var21 = 16
+      if var18 > 90
+        var18 -= 90
+        if var18 > 90
+          SeekNoCommit correctMoveAngle
+        endif
+      endif
+
+      var22 = var18 + 3
+      var23 = var18 - 3
+      if OKBAngle > var22
+        trackOAction 5 1
+      elif OKBAngle < var23
+        trackOAction 5 3
+      elif Rnd < 0.5
+        trackOAction 5 2
+      endif
     endif
   endif
 
   // L cancel
-  if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.3 && YDistFloor < 7 && Equal CurrAction 51
-    Button R
+  if Equal CurrAction 51
+    RetrieveFullATKD var22 var17 var17 var17 var17 var17 var17 CurrSubaction 0
+    if Equal var22 0
+      var22 = 999
+    endif 
+    var22 -= 2
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame
+      Button R
+    endif
   endif
 
   // just for those with FSM

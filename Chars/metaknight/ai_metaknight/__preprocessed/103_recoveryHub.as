@@ -7,8 +7,8 @@ XReciever
 label reroll
   var4 = 0
   var5 = Rnd
-  var6 = Rnd
   var7 = Rnd
+  var8 = Rnd
 label begin
 var21 = 3
 SetDebugOverlayColor 255 136 0 221
@@ -74,7 +74,11 @@ elif Equal CurrAction 277 || Equal CurrAction 283 || Equal CurrAction 284
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -118,7 +122,8 @@ endif
   var0 *= -1
   var1 *= -1
   var1 = var1 - (TopNY * -1)
-  
+  Norm var3 var0 var1
+  Abs var3
   // drift towards goal
   var17 = var0 * -1
   ClearStick
@@ -126,24 +131,34 @@ endif
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
+  if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
+    var1 -= 25
+  endif
+  if YDistBackEdge < 4.279999999999999 && var2 <= 15 && NumJumps > 0
+    Button X
+    Goto handleJumpToStage
+    Return
+  endif
   if Equal var4 1 || var5 <= 0.4
-    if YDistBackEdge > 19 && Rnd < 0.5
+    if YDistBackEdge > 2.2799999999999994 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 63 || var17 < 18
-    if NumJumps > 0 && Rnd < 0.5
+  elif YDistBackEdge > 46.28 || var17 < 18
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return
-    else
-      var4 = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
     endif
+  endif
+  if var8 <= 0.6 && var3 < 45
+    var4 = 1
+    Button B
+    ClearStick
+    AbsStick 0 (-0.7)
+    Return
   endif
   if var7 <= 0.75 && YDistBackEdge > -20 && YDistBackEdge < 20 && var2 <= 60
     Button B
@@ -151,20 +166,13 @@ endif
     Stick 1
     Return
   endif
-  if var6 <= 0.25 && YDistBackEdge > 18 && Equal var4 0
+  if var2 <= 10 && YDistBackEdge > 10 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 10 && YDistBackEdge > 33 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 
 Return
 
@@ -213,7 +221,24 @@ label handleUSpecial
 Return
 
 label handleDSpecial
-
+  if Equal CurrAction 284
+    var22 = var0 * -1
+    ClearStick
+    AbsStick var22
+  else
+    Norm var17 var0 var1
+    var0 /= var17
+    var1 /= var17
+    var0 *= -1
+    var1 *= -1
+    if 0.1 < var0 && var0 < 0.25
+      AbsStick 0.3 var1
+    elif -0.25 < var0 && var0 < -0.1
+      AbsStick -0.3 var1
+    else
+      AbsStick var0 var1
+    endif
+  endif
 Return
 
 label handleSFall
@@ -229,7 +254,7 @@ label handleJumpToStage
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17
-  elif YDistBackEdge < 25
+  elif YDistBackEdge < 8.28
     var17 = var0 * -3
     AbsStick var17
   endif

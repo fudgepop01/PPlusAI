@@ -6,7 +6,7 @@
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.03
-#const pt_aggression = 1.5
+#const pt_aggression = 0.8
 #const pt_bait_dashAwayChance = 0.30
 #const pt_bait_wdashAwayChance = 0.65
 #const pt_wall_chance = 0.45
@@ -18,8 +18,9 @@
 #const cs_dashForceTurnFrame = 8
 #const cs_dashDanceMinFrames = 3
 
-#const cs_shortHopHeight = 12.344
-#const cs_djumpHeight = 23.514
+#const cs_shortHopHeight = 12.25
+#const cs_jumpHeight = 49
+#const cs_djumpHeight = 35.4
 #const cs_wavedashDist = 35
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)

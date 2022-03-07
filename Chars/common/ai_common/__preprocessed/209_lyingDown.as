@@ -12,14 +12,14 @@ Seek begin
 var21 = 17
 
 if CurrAction <= 32 || Equal CanCancelAttack 1
-  if ODistLE 60
+  if ODistLE 30
     CallI DefendHub
   endif
   CallI MainHub
 endif
 
 // react to/read the opponent's attack patterns
-var22 = (1 - (LevelValue / 100)) * 30 + 4
+var22 = (1 - (LevelValue / 100)) * 12
 var22 *= PT_REACTION_TIME
 MOD var22 AnimFrame var22
 if Equal var22 0
@@ -27,40 +27,39 @@ if Equal var22 0
   var22 += 35
   if ODistLE var22
     GetCommitPredictChance var17 LevelValue
-    var17 *= 0.9
+    var17 *= 0.5
     var22 = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
     if Rnd < var17
-      if ODistLE 50 && Rnd < 0.25
-        Button A
-      else
-        var22 = Rnd * 2 - 1
-        var17 = Rnd * 1
-        AbsStick var22 var17
-      endif
+      Goto smartRoll
       Return
     elif OAnimFrame >= var22 && OAttacking
-      if ODistLE 35 && Rnd < 0.35
-        Button A
-      else
-        var22 = Rnd * 2 - 1
-        var17 = Rnd * 1
-        AbsStick var22 var17
-      endif
+      Goto smartRoll
       Return
     endif
   endif
 endif
 
 if var0 >= 10 && Rnd <= 0.1 && Equal CurrAction 77
-  if Rnd < 0.2
-    Button A
-  else
-    var22 = Rnd * 2 - 1
-    var17 = Rnd * 1
-    AbsStick var22 var17
-  endif
+  Goto smartRoll
   Return
 endif
 var0 += 1
+Return
+label smartRoll
+if ODistLE 50 && Rnd < 0.25
+  Button A
+else
+  var22 = OPos * -30
+  GetYDistFloorOffset var22 var22 5 0
+  if Equal var22 -1 && Rnd < 0.45
+    var22 = OPos
+  else 
+    var22 = Rnd * 3 - 1
+    if var22 > 1
+      var22 = OPos * -1
+    endif
+  endif 
+  AbsStick var22 var17
+endif
 Return
 Return

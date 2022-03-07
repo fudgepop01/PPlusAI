@@ -61,7 +61,7 @@ endif
   var1 *= -1
   var1 = var1 - (TopNY * -1)
 
-if Equal CurrAction 16
+if Equal CurrAction 16 || Equal CurrSubaction 478
   Goto handleSFall
   Return
 elif Equal CurrAction 276 || Equal CurrAction 279 || Equal CurrAction 280
@@ -77,7 +77,11 @@ elif Equal CurrAction 277 || Equal CurrAction 282
   Goto handleDSpecial
   Return
 elif CurrAction >= 11 && CurrAction <= 13
-  if YSpeed > 0 || AnimFrame < 2
+  if YDistBackEdge < -10
+    var21 = 0
+    var20 = -1
+    Call MainHub 
+  elif YSpeed > 0 || AnimFrame < 2
     Goto handleJumpToStage
     Return
   endif
@@ -121,6 +125,14 @@ endif
   var0 *= -1
   var1 *= -1
   var1 = var1 - (TopNY * -1)
+  Norm var3 var0 var1
+  Abs var3
+  if var6 < 0.7
+    var3 += 15
+  endif
+  if var9 < 0.5
+    var3 += 15
+  endif
   
   // drift towards goal
   var17 = var0 * -1
@@ -130,20 +142,21 @@ endif
   Abs var2
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
+    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 35.514 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 38.39 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
-  if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
-    if YDistBackEdge > 27.514000000000003 && Rnd < 0.5
+  if Equal var4 1 || var5 <= 0.5 && NumJumps > 0
+    if YDistBackEdge > 36.39 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 109.51400000000001 || var17 < 18
+  elif YDistBackEdge > 107.39 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -156,33 +169,26 @@ endif
       Return
     endif
   endif
-  if var7 <= 0.4 && YDistBackEdge > -2 && YDistBackEdge < 2 && var2 <= 100
+  if var7 <= 0.7 && YDistBackEdge > -3 && YDistBackEdge < 3 && var2 <= 100
     Button B
     ClearStick
     Stick 1
     Return
   endif
-  if var6 <= 0.4 && YDistBackEdge > 60 && Equal var4 0
+  if var6 <= 0.7 && var3 < 85 && YDistBackEdge < 20 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var9 <= 0.2 && YDistBackEdge > 0 && Equal var4 0
+  if var3 > 65 && var3 < 85 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 100 && YDistBackEdge > 85 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 
 Return
 
@@ -197,20 +203,14 @@ label handleSSpecial
   else
     Stick 1
   endif
-  if var8 < 0.7
-    Abs var0
-    if Equal CurrSubaction 469 && var0 < 50
-      Button B
-    endif
-  endif
 Return
 
 label handleUSpecial
   if Equal var16 1
     if var0 > TopNX
-      var0 += 2
+      var0 += 3
     else
-      var0 -= 2
+      var0 -= 3
     endif
   endif
   if !(Equal CurrSubaction 479)
@@ -258,7 +258,7 @@ label handleJumpToStage
   elif var0 > 6 || var0 < -6
     var17 = var0 * -1
     AbsStick var17
-  elif YDistBackEdge < 39.514
+  elif YDistBackEdge < 42.39
     var17 = var0 * -3
     AbsStick var17
   endif

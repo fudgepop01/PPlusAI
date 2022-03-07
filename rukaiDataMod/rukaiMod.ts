@@ -841,5 +841,43 @@ const styling = `
   } else {
     // sActData = window["subaction_data"] as SubactionData;
   }
+
+  const heightOfJump = (initVel, gravity) => {
+    const heightOfJump = (initVel ** 2) / (2 * gravity);
+    return heightOfJump;
+  }
+
+  window["calcJumpHeights"] = (jumpYInitVel, jumpYInitVelShort, airJumpYMultiplier, gravity) => {;
+    const shortHop = Math.floor(heightOfJump(jumpYInitVelShort, gravity) * 100) / 100;
+    const fullhop = Math.floor(heightOfJump(jumpYInitVel, gravity) * 100) / 100;
+    const djump = Math.floor(heightOfJump(airJumpYMultiplier * jumpYInitVel, gravity) * 100) / 100;
+    console.log(`
+#const cs_shortHopHeight = ${shortHop}
+#const cs_jumpHeight = ${fullhop}
+#const cs_djumpHeight = ${djump}
+    `);
+  }
+
+  const attrs = Array.from(document.getElementsByTagName("td")).map(el => el.innerText);
+  let jumpYInitVel = 0;
+  let jumpYInitVelShort = 0;
+  let airJumpYMultiplier = 0;
+  let gravity = 0;
+  for (const [i, attr] of attrs.entries()) {
+    switch(attr) {
+      case "jump y init vel:":
+        jumpYInitVel = parseFloat(attrs[i + 1]); break;
+      case "jump y init vel short:":
+        jumpYInitVelShort = parseFloat(attrs[i + 1]); break;
+      case "air jump x mult:":
+        airJumpYMultiplier = parseFloat(attrs[i + 1]); break;
+      case "gravity:":
+        gravity = parseFloat(attrs[i + 1]); break;
+    }
+  }
+  if (airJumpYMultiplier == 0) airJumpYMultiplier = 1;
+  if (jumpYInitVel != 0) {
+    window["calcJumpHeights"](jumpYInitVel, jumpYInitVelShort, airJumpYMultiplier, gravity);
+  }
   
 })();
