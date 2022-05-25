@@ -49,11 +49,12 @@
     LOGSTR_NL str("someone hanging")
     nearCliffY -= 25
   endif
-  if YDistBackEdge < calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
+  if YDistBackEdge > calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
+  nearCliffY -= yRecoveryOffset
 #endsnippet
 
 #snippet DRAW_RADIUS

@@ -37,6 +37,7 @@ label jumpSquat
 label landing
   XGoto PerFrameChecks
   XReciever
+  Goto edgeCheck
   Seek landing
 
   if airTime <= 0 || YSpeed < 0
@@ -53,22 +54,8 @@ label landing
         Stick (-1) (-1)
       endif
     elif Equal scriptVariant sv_wavedash_in
-      if XDistFrontEdge < 3
-        Seek
-        Jump
-      elif XDistBackEdge > -3
-        Seek
-        Jump
-      endif
       AbsStick OPos (-1)
     elif Equal scriptVariant sv_wavedash_out
-      if XDistFrontEdge < 3
-        Seek
-        Jump
-      elif XDistBackEdge > -3
-        Seek
-        Jump
-      endif
       immediateTempVar = OPos * -1
       AbsStick immediateTempVar (-1)
     elif Equal scriptVariant sv_wavedash_goal
@@ -79,8 +66,8 @@ label landing
       globTempVar = immediateTempVar
       Abs globTempVar
       globTempVar = 1 - immediateTempVar
-      if globTempVar > -0.3
-        globTempVar = -0.3
+      if globTempVar > -0.45
+        globTempVar = -0.45
       endif
       AbsStick immediateTempVar globTempVar
     else
@@ -91,5 +78,12 @@ label landing
     Call MainHub
   endif
   airTime -= 1
+Return
+label edgeCheck
+if XDistFrontEdge < 3
+  scriptVariant = sv_wavedash_awayFromLedge
+elif XDistBackEdge > -3
+  scriptVariant = sv_wavedash_awayFromLedge
+endif
 Return
 Return

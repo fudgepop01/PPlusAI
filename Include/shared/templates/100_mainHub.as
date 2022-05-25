@@ -15,6 +15,14 @@ else
   SetDisabledMd -1
 endif
 
+label initHitPredictValues
+getCurrentPredictValue immediateTempVar man_OXHitDist
+if Equal immediateTempVar 0
+  trackOAction man_OXHitDist 25
+  Seek initHitPredictValues
+  Jump
+endif
+
 #let loopCount = var0
 label start
 
@@ -26,7 +34,7 @@ elif currGoal >= cg_edgeguard
   Jump
 endif
 
-Goto PFC
+XGoto PerFrameChecks
 XReciever
 Seek start
 
@@ -39,8 +47,8 @@ endif
 if Equal skipMainInit mainInitSkip
   skipMainInit = -100
   GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-  if Equal immediateTempVar 1
-    currGoal = cg_attack
+  if Equal immediateTempVar 1 
+    currGoal = cg_attack_reversal
   elif Rnd < 0.45 && !(Equal currGoal cg_attack_reversal) && OFramesHitstun <= 0
     currGoal = cg_bait_dashdance
   endif
@@ -48,7 +56,7 @@ if Equal skipMainInit mainInitSkip
   Jump
 elif Equal skipMainInit sm_execAttack
   label empty_0
-  Goto PFC
+  XGoto PerFrameChecks
   XReciever
   Seek empty_0
 
@@ -66,33 +74,36 @@ elif Equal skipMainInit sm_execAttack
   skipMainInit = -100
 
   CallI ExecuteAttack
-elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 1.4 && CHANCE_MUL_GE PT_BRAVECHANCE 0.35 && OCurrAction <= hex(0x15)
+elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
   label empty_1
-  Goto PFC
+  XGoto PerFrameChecks
   XReciever
   Seek empty_1
 
   ACTIONABLE_ON_GROUND
   label setupWallDelay
-  Goto PFC
+  XGoto PerFrameChecks
   XReciever
-  Seek setupWallDelay
 
   if Rnd < 0.1 && CHANCE_MUL_LE PT_WALL_CHANCE 1
     XGoto CalcAttackGoal
     XReciever
   endif
+  Seek setupWallDelay
   
   #let timer = var0
   globTempVar = OTopNX - TopNX 
   immediateTempVar = OTopNY - TopNY
   Norm timer globTempVar immediateTempVar
-  if timer > 55
+  Abs timer
+  LOGSTR_NL str("TIMER")
+  LOGVAL_NL timer
+  if timer > 100
     Return
   endif
   timer *= Rnd * 0.2
   label wallDelay
-  Goto PFC 
+  XGoto PerFrameChecks 
   XReciever
   Seek wallDelay
   if timer <= 0
@@ -102,7 +113,7 @@ elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 1.4 && CHANCE
   Return
 elif Equal currGoal cg_camp_attack && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1.3 && CHANCE_MUL_LE PT_AGGRESSION 1
   label empty_2
-  Goto PFC
+  XGoto PerFrameChecks
   XReciever
   Seek empty_2
 
@@ -114,7 +125,7 @@ elif Equal currGoal cg_bait_wait
   Jump
 endif
 
-Goto PFC
+XGoto PerFrameChecks
 XReciever
 
 scriptVariant = sv_none
@@ -122,27 +133,44 @@ lastAttack = -1
 
 DynamicDiceClear dslot0
 if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
-  DynamicDiceAdd dslot0 cg_circleCamp 1
+  DynamicDiceAdd dslot0 cg_circleCamp 2
 endif
-if CHANCE_MUL_LE PT_BAITCHANCE 1
-  DynamicDiceAdd dslot0 cg_bait 1
-  DynamicDiceAdd dslot0 cg_bait_dashdance 4
-endif
-if CHANCE_MUL_LE PT_AGGRESSION 1
+
+immediateTempVar = PT_BAITCHANCE * 6
+DynamicDiceAdd dslot0 cg_bait immediateTempVar
+immediateTempVar = PT_BAIT_DASHAWAYCHANCE * 10
+DynamicDiceAdd dslot0 cg_bait_dashdance immediateTempVar
+
+if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.3
+  SeekNoCommit attack_roll
+elif CHANCE_MUL_LE PT_AGGRESSION 0.6
+  SeekNoCommit attack_roll
+elif Equal HitboxConnected 1
+  if !(True)
+    label attack_roll
+  endif
   predictionConfidence immediateTempVar man_OBaitOption LevelValue
   if immediateTempVar > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
     DynamicDiceAdd dslot0 cg_attack 2
   endif
+  immediateTempVar = PT_AGGRESSION * 4
+  DynamicDiceAdd dslot0 cg_attack immediateTempVar
+  GetCommitPredictChance immediateTempVar LevelValue
+  immediateTempVar *= 5
+  DynamicDiceAdd dslot0 cg_attack_wall immediateTempVar
+  immediateTempVar = 5 - immediateTempVar
+  DynamicDiceAdd dslot0 cg_attack_reversal immediateTempVar
 endif
+
 DynamicDiceRoll dslot0 currGoal 0
 
 GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
 if Equal teamCloser 1
   currGoal = cg_circleCamp
 elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
-  currGoal = cg_attack
+  currGoal = cg_attack_reversal
 elif Equal immediateTempVar 1
-  currGoal = cg_attack
+  currGoal = cg_attack_reversal
 endif
 goalY = BBoundary
 if Equal currGoal -1
@@ -152,7 +180,7 @@ elif Equal currGoal cg_attack
 endif
 
 label initial
-Goto PFC
+XGoto PerFrameChecks
 XReciever
 Seek initial
 if Equal goalX 0 && Equal goalY 0
@@ -167,7 +195,7 @@ if techSkill < 0
   techSkill = 0.05
 endif
 label tskillWait
-Goto PFC
+XGoto PerFrameChecks
 XReciever
 Seek tskillWait
 if Rnd < techSkill
@@ -177,8 +205,9 @@ endif
 LOGSTR str("waiting")
 Return
 label selectGoal
-Goto PFC
+XGoto PerFrameChecks
 XReciever
+Cmd30
 XGoto UpdateGoal
 XReciever
 
@@ -187,12 +216,20 @@ if Equal currGoal cg_bait_wait
   #let timer = var4
   timer = Rnd * 55 + 5
   label baitWait
-  Goto PFC
+  XGoto PerFrameChecks
   XReciever
   XGoto UpdateGoal
   XReciever
   Seek baitWait
   timer -= 1
+  predictAverage immediateTempVar man_OXHitDist LevelValue
+  immediateTempVar *= 0.5
+  if XDistLE immediateTempVar && Rnd <= 0.02
+    CallI DefendHub
+  endif
+  if LevelValue >= LV8
+    Stick 0 -1
+  endif
   // if Rnd < pt_wall_chance && Rnd < pt_braveChance
   //   Seek setupWallDelay
   //   Jump
@@ -213,7 +250,7 @@ elif Equal currGoal cg_attack && Equal lastAttack -1
   Return
 endif
 label navigateToGoal
-Goto PFC
+XGoto PerFrameChecks
 XReciever
 Seek selectGoal
 ACTIONABLE_ON_GROUND
@@ -221,9 +258,5 @@ ACTIONABLE_ON_GROUND
 XGoto MoveToGoal
 XReciever
 Seek selectGoal
-Return
-label PFC
-XGoto PerFrameChecks
-XReciever
 Return
 Return

@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "PPlusAi",
+			"path": "."
+		},
+		{
+			"name": "PPlusCpp",
+			"path": "..\\..\\..\\..\\Documents\\PPlusCpp"
+		},
+		{
+			"path": "..\\..\\..\\..\\Documents\\RAIExt"
+		},
+		{
+			"path": "..\\..\\..\\..\\Documents\\RukaiData"
+		},
+		{
+			"path": "..\\Wombuild-content\\exported\\Source"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.ksy": "yaml",
+			"vector": "cpp"
+		},
+		"liveServer.settings.multiRootWorkspaceName": "RukaiData"
+	}
+}

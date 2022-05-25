@@ -8,13 +8,13 @@ XReciever
 #let move_yOffset = var11
 #let move_xRange = var10
 #let move_yRange = var9
-#let move_hitFrame = var8
+#let move_hitFrame = var15
 #let move_duration = var7
 #let move_IASA = var6
 #let move_angle = var0
 GET_MOVE_DATA(move_angle, move_xOffset, move_yOffset, move_xRange, move_yRange, move_hitFrame, move_duration, move_IASA, globTempVar, globTempVar, globTempVar, globTempVar)
 
-globTempVar = 23 - move_hitFrame
+globTempVar = 26 - move_hitFrame
 if OAnimFrame < globTempVar
   if OCurrAction >= hex(0x4E) && OCurrAction <= hex(0x52)
     Return
@@ -23,34 +23,37 @@ if OAnimFrame < globTempVar
   endif
 endif
 
+$ifAerialAttack()
+else
+  immediateTempVar = move_yOffset + move_yRange * 2 
+  if immediateTempVar <= HurtboxSize && OYDistFloor > HurtboxSize && OYSpeed > 0
+    lastAttack = -1
+    Return
+  endif
+endif
+
 $ifLastOrigin(grab,false)
   if Equal OCurrAction hex(0x4A) || Equal OCurrAction hex(0x4D) || Equal OCurrAction hex(0x53) || Equal OCurrAction hex(0x54)
     Return
   endif
+  move_duration = 1
 endif
 
 if OCurrAction >= hex(0x44) && OCurrAction <= hex(0x49) || Equal OCurrAction hex(0x42)
-  immediateTempVar = move_yRange - move_yOffset 
+  immediateTempVar = move_yRange - move_yOffset
   if OYDistFloor < immediateTempVar && OYSpeed < 0 && OYDistFloor > 1
     Return
   endif
-endif 
-
-#let move_lastHitFrame = var7
-move_lastHitFrame += move_hitFrame
-
-$ifAerialAttack()
-else
-  move_lastHitFrame = move_hitFrame
 endif
-
-move_lastHitFrame -= 1
-move_hitFrame -= 1
 
 #let tempGoalX = var2
 #let tempGoalY = var3
 #let tempXRange = var4
 #let tempYRange = var5
+#let counter = var8
+
+// move_hitFrame += 2
+counter = move_duration
 
 if !(True)
   label CHECK_HIT_LOOP
@@ -62,18 +65,18 @@ tempXRange = move_xRange
 tempYRange = move_yRange
 
 // adjust to O center
-anotherTempVar = OHurtboxSize
-tempYRange += anotherTempVar
-anotherTempVar = OWidth
-tempXRange += anotherTempVar
+// anotherTempVar = OHurtboxSize * 0.25
+// tempYRange += anotherTempVar
+// anotherTempVar = OWidth
+// tempXRange += anotherTempVar
 
 // anotherTempVar = Width * 0.5
 // tempGoalX -= anotherTempVar
 // anotherTempVar = HurtboxSize * 0.5
 // tempGoalY -= anotherTempVar
 
-anotherTempVar = OTopNX - OCenterX
-tempGoalX -= anotherTempVar
+anotherTempVar = OCenterX - OTopNX
+tempGoalX += anotherTempVar
 
 // tempGoalX -= anotherTempVar
 // if TopNX < OTopNX
@@ -86,7 +89,7 @@ tempGoalX -= anotherTempVar
 // tempGoalY -= anotherTempVar
 
 anotherTempVar = OCenterY - OTopNY
-tempGoalY += anotherTempVar
+tempGoalY -= anotherTempVar
 
 // tempGoalY -= anotherTempVar
 // if TopNY <= OTopNY
@@ -95,38 +98,39 @@ tempGoalY += anotherTempVar
 //   tempGoalY += anotherTempVar
 // endif
 
-  if move_lastHitFrame < move_hitFrame
-    move_lastHitFrame = move_hitFrame
+  if counter < 0
+    counter = 0
     SeekNoCommit CHECK_HIT_LOOP
   endif
 
-  globTempVar = move_lastHitFrame
+  globTempVar = counter + move_hitFrame
 
   {SELF_Y_ADJUST}
-  tempGoalY += TopNY
+
+  DrawDebugRectOutline TopNX tempGoalY 10 10 color(0xFF0000DD)
 
   {SELF_X_ADJUST}
-  tempGoalX += TopNX
 
+  globTempVar = counter
   if OAnimFrame <= 3 && !(Equal OYSpeed 0)
     anotherTempVar = OSCDBottom + OTotalYSpeed * globTempVar - OGravity * globTempVar * globTempVar
   else
     EstOYCoord anotherTempVar globTempVar
   endif
-  anotherTempVar -= OTopNY
+  anotherTempVar -= OSCDBottom
   immediateTempVar = OYDistFloor * -1
-  if anotherTempVar < immediateTempVar && OYDistFloor > 0
+  if anotherTempVar < OYDistBackEdge && OYDistFloor > 0
     anotherTempVar = OTopNY - OYDistFloor
   endif
-  tempGoalY += anotherTempVar
+  tempGoalY -= anotherTempVar
 
-  // if OAnimFrame <= 3
-  //   anotherTempVar = OTopNX + OTotalXSpeed * globTempVar
-  // else
+  if OAnimFrame <= 3
+    anotherTempVar = OTopNX + OTotalXSpeed * globTempVar
+  else
     EstOXCoord anotherTempVar globTempVar
-  // endif
+  endif
   anotherTempVar -= OTopNX
-  tempGoalX += anotherTempVar
+  tempGoalX -= anotherTempVar
 
   immediateTempVar = (100 - LevelValue) * 0.2 - 0
   anotherTempVar = tempXRange + immediateTempVar
@@ -146,7 +150,7 @@ tempGoalY += anotherTempVar
 
   // $ifAerialAttack()
   //   GetAttribute immediateTempVar attr_airMobilityB 0
-  //   immediateTempVar *= move_hitFrame * 0.5
+  //   immediateTempVar *= counter * 0.5
   //   move_xOffset -= immediateTempVar
   //   immediateTempVar *= 0.5
   //   tempXRange += immediateTempVar
@@ -162,9 +166,9 @@ tempGoalY += anotherTempVar
   //   tempYRange += immediateTempVar
   // endif
 
-  if Equal currGoal cg_attack_wall
-    tempXRange += 8
-  endif
+  // if Equal currGoal cg_attack_wall
+  //   tempXRange += 8
+  // endif
   // anotherTempVar = OXSpeed
   // Abs anotherTempVar
   // tempXRange += anotherTempVar
@@ -172,10 +176,12 @@ tempGoalY += anotherTempVar
   #let distX = var0
   #let distY = var1
   distX = tempGoalX
-  distY = tempGoalY
+  immediateTempVar = OHurtboxSize * 0.5
+  distY = tempGoalY //- immediateTempVar
+  tempYRange += immediateTempVar
 
   immediateTempVar = OTopNX + (move_xOffset + tempXRange) * ODirection
-  globTempVar = OTopNY - move_yOffset + tempYRange
+  globTempVar = OTopNY - move_yOffset + tempYRange + OHurtboxSize * 0.5
   DrawDebugRectOutline immediateTempVar globTempVar tempXRange tempYRange color(0xFFFF4444)
 
   immediateTempVar = distX 
@@ -265,12 +271,15 @@ tempGoalY += anotherTempVar
     if !(Equal scriptVariant sv_checkHit)
       $ifAerialAttack()
         if currGoal >= cg_edgeguard || Equal IsOnStage 0
-          EstYCoord immediateTempVar move_IASA
+          {MOVE_IASA_CHECK}
           DrawDebugRectOutline TopNX immediateTempVar 5 5 color(0x00FFFFDD)
           DrawDebugRectOutline TopNX calc(cs_recoveryDistY - cs_djumpHeight) 10 2 color(0xFF8800DD)
           if immediateTempVar >= calc(cs_recoveryDistY - cs_djumpHeight) && Equal AirGroundState 2
             CallI ExecuteAttack
             Finish
+          else
+            lastAttack = -1
+            Return
           endif
         else
           CallI ExecuteAttack
@@ -291,33 +300,29 @@ tempGoalY += anotherTempVar
   //   Return
   // endif
 
-if move_lastHitFrame > move_hitFrame
-  move_lastHitFrame -= 4
+if counter > 0
+  counter -= 4
   SeekNoCommit CHECK_HIT_LOOP
 endif
-
 
 skipMainInit = 0
 
 // MIXES UP AN APPROACH
 GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-if LevelValue >= LV5 && !(Equal currGoal cg_attack_reversal) && !(Equal currGoal cg_attack_undershoot) && Equal immediateTempVar 0 && currGoal < cg_edgeguard
-  tempXRange += 20
-  tempYRange += 20
-  if globTempVar <= tempXRange && immediateTempVar <= tempYRange
-    GET_CHAR_TRAIT(immediateTempVar, chr_calc_certainty)
-    if immediateTempVar > 0.4
-      currGoal = cg_bait_dashdance
-      if CHANCE_MUL_LE PT_BAITCHANCE 0.8
-        currGoal = cg_bait_wait
+predictOOption anotherTempVar man_OBaitDirection LevelValue 
+if LevelValue >= LV6 && !(Equal anotherTempVar op_baitdir_overshoot) && Equal immediateTempVar 0 && currGoal < cg_edgeguard && !(Equal currGoal cg_attack_reversal)
+  if ODistLE 45
+    GetCommitPredictChance anotherTempVar LevelValue
+    if anotherTempVar < 0.1 && Rnd < 0.4 || anotherTempVar > 0.2 && Rnd < anotherTempVar && Rnd < anotherTempVar
+      if CHANCE_MUL_LE PT_BAITCHANCE 0.6
         scriptVariant = sv_wavedash_neutral
         skipMainInit = mainInitSkip
         if Equal AirGroundState 2
           if YDistFloor <= 5
             scriptVariant = sv_wavedash_out
           else
-            // currGoal = cg_attack_reversal
-            scriptVariant = sv_jump_neutral
+            scriptVariant = sv_jump_over
+            lastAttack = -1
             CallI JumpScr
           endif
         elif ODistLE 20
@@ -325,14 +330,18 @@ if LevelValue >= LV5 && !(Equal currGoal cg_attack_reversal) && !(Equal currGoal
         endif
         CallI Wavedash
       endif
+      scriptVariant = sv_dash_away
+      CallI DashScr
       Return
     endif
-    PredictOMov immediateTempVar mov_idle LevelValue
-    PredictOMov anotherTempVar mov_attack LevelValue
-    if immediateTempVar > 0.4 && anotherTempVar > 0.4
+    GetCommitPredictChance anotherTempVar LevelValue
+    if anotherTempVar < 0.1 && Rnd < 0.4 || anotherTempVar > 0.3 && Rnd < anotherTempVar && Rnd < anotherTempVar
       currGoal = cg_bait_shield
-      if CHANCE_MUL_LE PT_AGGRESSION 0.5
-        currGoal = cg_bait_dashdance
+      if CHANCE_MUL_LE PT_AGGRESSION 0.3
+        currGoal = cg_attack_reversal
+        scriptVariant = sv_jump_over //+ svp_jump_fullhop
+        lastAttack = -1
+        CallI JumpScr
       endif
       Return
     endif

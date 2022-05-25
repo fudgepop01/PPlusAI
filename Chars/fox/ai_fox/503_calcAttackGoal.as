@@ -5,14 +5,6 @@
     elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
       $setLastAttack(dspecial)
     endif
-  $elifLastAttack(dthrow)
-    if OYDistFloor < 10 && Rnd < 0.6
-      lastAttack = -1
-    endif
-  $elifLastAttack(uair_weak)
-    if OFramesHitstun <= 0
-      lastAttack = -1
-    endif
   endif
 #endsnippet
 

@@ -2,7 +2,10 @@
   $ifLastAttack(dspecialair)
     if Equal NumJumps 0
       lastAttack = -1
-    endif 
+    endif
+    if YDistFloor < 10
+      $setLastAttack(dspecial)
+    endif
   // $elifLastAttack(nspecialair) && YDistBackEdge > -18 && YSpeed >= -0.1
   //   skipMainInit = sm_execAttack
   //   CallI ExecuteAttack
@@ -22,9 +25,9 @@
 
 #snippet LAUNCH_MOVES
   if Equal AirGroundState 1
-    $addToDice(1, dspecial, 1)
+    $addToDice(1, dspecial, 180)
   else
-    $addToDice(1, dspecialair, 1)
+    $addToDice(1, dspecialair, 140)
   endif
 #endsnippet
 

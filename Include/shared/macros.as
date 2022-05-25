@@ -5,9 +5,8 @@
     elif AnimFrame <= 3
       Return
     endif
-  elif CurrAction >= hex(0x42) && CurrAction <= hex(0x49)
   elif Equal CanCancelAttack 1
-  elif CurrAction >= hex(0x18)
+  elif CurrAction >= hex(0x18) && !(Equal CurrAction hex(0x49))
     Return
   endif
 #endmacro
@@ -55,7 +54,11 @@
 #macro CALC_ENDLAG(targetVar)
   #const imperfection = 5
   {targetVar} = -1
-  if Equal OCurrAction hex(0x33) && OYDistFloor < 25 && OYSpeed < 0.2
+  RetrieveFullATKD immediateTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
+  if Equal immediateTempVar 0
+    immediateTempVar = OEndFrame
+  endif 
+  if Equal OCurrAction hex(0x33) && OYDistFloor < 25
     if Equal OCurrSubaction AttackAirN
       GetAttribute globTempVar attr_nairLandingLag 1
     elif Equal OCurrSubaction AttackAirF
@@ -67,34 +70,33 @@
     elif Equal OCurrSubaction AttackAirLw
       GetAttribute globTempVar attr_dairLandingLag 1
     endif
-    globTempVar += OYDistFloor
-    globTempVar *= 0.7
-    {targetVar} = globTempVar
+    anotherTempVar = OYDistFloor * 0.7
+    {targetVar} = immediateTempVar - OEndFrame
+    {targetVar} *= 1.25
+    {targetVar} += globTempVar + anotherTempVar
     {targetVar} += imperfection
     
   elif Equal OCurrAction hex(0x18)
     {targetVar} = OEndFrame - OAnimFrame
+    {targetVar} *= 0.65
     {targetVar} += imperfection
   elif Equal OCurrAction hex(0x21) && OYDistBackEdge < -15
     {targetVar} = 35
     {targetVar} += imperfection
   elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B) || Equal OCurrAction hex(0x10)
     GetAttribute immediateTempVar attr_jumpSquatFrames 1
-    {targetVar} = 7 + immediateTempVar
+    {targetVar} = 10 + immediateTempVar
     {targetVar} += imperfection
   elif Equal OCurrAction hex(0x1D)
     GetRaBasic globTempVar hex(0x5) 1
     {targetVar} = globTempVar + 15
     {targetVar} += imperfection
   elif OAttacking 
-    RetrieveFullATKD immediateTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
     if Equal immediateTempVar 0
       immediateTempVar = OEndFrame
     endif 
-    // if OAnimFrame >= globTempVar
-      {targetVar} = immediateTempVar - OAnimFrame
-      {targetVar} += imperfection
-    // endif
+    {targetVar} = immediateTempVar - OAnimFrame
+    {targetVar} += imperfection
   elif OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
     {targetVar} = OEndFrame - OAnimFrame
     {targetVar} += imperfection

@@ -4,8 +4,9 @@ unk 0x0
 
 XReciever
 
+LOGSTR_NL 1163412736 1126187776 1095519232 1162084352 0
 label start
-var16 = 0
+var15 = 0
 var7 = LevelValue * 0.01
 if var7 < 0.2
   var7 = 0.2
@@ -15,16 +16,23 @@ XGoto PerFrameChecks
 XReciever
 Seek start
 
+// {SKIP_CHECKS}
+
 if Equal AirGroundState 1
+  if Equal CurrAction 3 && AnimFrame < 2
+    Return
+  endif
+
   var22 = 0.001
   XGoto GetChrSpecific
   XReciever
+  Seek start
 
   if var22 < 0 && Equal Direction OPos
     var22 = OPos * -1
     AbsStick var22
     Return
-  elif var22 > 0 && !(Equal Direction OPos)
+  elif var22 >= 0 && !(Equal Direction OPos)
     var22 = OPos
     AbsStick var22
     Return
@@ -40,9 +48,8 @@ endif
     elif AnimFrame <= 3
       Return
     endif
-  elif CurrAction >= 66 && CurrAction <= 73
   elif Equal CanCancelAttack 1
-  elif CurrAction >= 24
+  elif CurrAction >= 24 && !(Equal CurrAction 73)
     Return
   endif
 
@@ -54,6 +61,10 @@ if !(True) || Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|
     endif
     Return
   endif
+elif !(True) || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
+  if !(Equal AirGroundState 1)
+    Return
+  endif
 elif !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
   Return
 endif
@@ -61,6 +72,11 @@ endif
 if !(True) || Equal var20 2 || Equal var20 3 || Equal var20 4
   Seek execDA
   Jump
+elif !(True) || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
+  if !(Equal CurrSubaction JumpSquat) && !(Equal CurrAction 6)
+    Button X
+    Return
+  endif
 elif Rnd > var7
   Return
 endif
@@ -88,6 +104,7 @@ STACK_PUSH 18 0
 label
 Cmd30
 ClearStick
+LOGSTR_NL 1163412736 1129665536 1229866752 0 0
 // {SKIP_EXEC}
 
 if Equal var20 0
@@ -553,12 +570,12 @@ if !(True) || Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|
     if Equal var21 16.4
       XGoto MoveToGoal
       XReciever
+    elif Equal var21 16.3
+      var22 = XSpeed * -2
+      AbsStick var22
     else
-      GetCommitPredictChance var22 LevelValue
-      if var22 >= 0.4 && XDistBackEdge < -10
-        var22 = OPos * -1
-        AbsStick var22
-      endif
+      XGoto MoveToGoal
+      XReciever
     endif
   endif
 Return
@@ -575,9 +592,9 @@ label common_checks
   endif
 
   if OFramesHitlag <= 0 && OFramesHitstun > 0
-    var16 += 1
-    if Equal var16 2
-      var22 = LevelValue * 0.25
+    var15 += 1
+    if Equal var15 2
+      var22 = (1 - (LevelValue / 50)) * 1.3
 
       ADJUST_PERSONALITY 0 0.002 var22
       if var21 >= 7 && var21 < 8
@@ -586,15 +603,15 @@ label common_checks
           ADJUST_PERSONALITY 0 0.002 var22
         endif
       elif var21 >= 16 && var21 < 17
-        ADJUST_PERSONALITY 3 -0.004 var22
-        ADJUST_PERSONALITY 0 0.002 var22
+        ADJUST_PERSONALITY 3 -0.001 var22
+        ADJUST_PERSONALITY 0 0.001 var22
         if Equal var21 16.4
           ADJUST_PERSONALITY 0 0.005 var22
         elif Equal var21 16.1 || Equal var21 16.2
           ADJUST_PERSONALITY 3 0.001 var22
         elif Equal var21 16.3
-          ADJUST_PERSONALITY 3 0.005 var22
-          ADJUST_PERSONALITY 5 0.0025 var22
+          ADJUST_PERSONALITY 3 0.002 var22
+          ADJUST_PERSONALITY 5 0.002 var22
         endif
       elif Equal var21 10.1
         ADJUST_PERSONALITY 3 0.001 var22
@@ -646,12 +663,12 @@ label common_checks
 
   // just for those with FSM
   var22 = AnimFrame * 0.8
-  if Equal var16 1 && Equal AirGroundState 2 && YSpeed <= 0
+  if Equal var16 1 && Equal AirGroundState 2 && YSpeed < 0 && FramesHitlag <= 0
     AbsStick 0 (-1)
     var16 = 0
   elif Equal IsOnStage 1 && var22 > var6 && LevelValue >= 75 && Equal AirGroundState 2
     var22 = EndFrame - AnimFrame 
-    if YSpeed <= 0 && var22 > 20 && Equal CurrAction 51
+    if YSpeed <= 0 && var22 > 5 && Equal CurrAction 51
       AbsStick 0 (-1)
     endif
   endif
@@ -660,12 +677,18 @@ Return
 label finish
   var20 = -1
   var16 = 0
-  if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || Equal var21 16 || CHANCE_MUL_LE PT_AGGRESSION 0.25
+  var15 = -100
+  var21 = -1
+  if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || CHANCE_MUL_LE PT_AGGRESSION 0.1
     XGoto CalcAttackGoal
     XReciever
-    var15 = -1
-    var21 = 16.4
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.75
+    if XDistLE 40 && OFramesHitstun <= 1
+      var21 = 16.3
+    else
+      var15 = -1
+      var21 = 16.4
+    endif
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2
     var15 = -1
     var21 = 10.5
   endif

@@ -27,14 +27,17 @@ elif Equal chr_trait_select chr_chk_isAerialAttack
   endif
 elif Equal chr_trait_select chr_chk_OInCombo
   getCurrentPredictValue globTempVar man_OFramesPostHitstun
-  anotherTempVar = PT_AGGRESSION * 25
-  if globTempVar <= anotherTempVar
+  anotherTempVar = PT_AGGRESSION * 30 + 25
+  if globTempVar <= anotherTempVar || OFramesHitstun > 0 || OFramesHitlag > 0
     if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59) && !(Equal OCurrAction hex(0x49))
     elif Equal OCurrAction hex(0x49) && OYDistFloor > 15
     elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
-      chr_trait_return = 1
+    else
+      chr_trait_return = 0
       Return
     endif
+    chr_trait_return = 1
+    Return
   endif
   chr_trait_return = 0
 elif Equal chr_trait_select chr_get_moveDir

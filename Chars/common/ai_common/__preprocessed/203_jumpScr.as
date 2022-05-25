@@ -18,9 +18,8 @@ elif True
     elif AnimFrame <= 3
       Return
     endif
-  elif CurrAction >= 66 && CurrAction <= 73
   elif Equal CanCancelAttack 1
-elif CurrAction >= 24
+  elif CurrAction >= 24 && !(Equal CurrAction 73)
     Return
   endif
 endif
@@ -63,7 +62,18 @@ if Equal CurrSubaction JumpSquat
   Button X
 endif
 if Equal var16 1
+  var17 = OPos * 30
+  GetYDistFloorOffset var17 var17 10 1
+  if Equal var17 -1
+    var16 = 3
+    Return
+  endif
+  var15 = -1
+  var21 = 16.4
   if Equal AirGroundState 1
+    if XSpeed > 1.5 || XSpeed < -1.5
+      Stick -1
+    endif
     Return
   endif
   AbsStick var0
@@ -72,7 +82,7 @@ if Equal var16 1
     Jump
   elif var21 >= 16 && var21 < 17
     label
-    if var21 < 16 || var21 > 17
+    if var21 < 16
       var16 = 2
       CallI AerialDrift
     endif
@@ -84,8 +94,8 @@ elif Equal var16 2
   endif
 elif Equal var16 3
   var22 = OPos * -1
-  var17 = var22 * 25
-  GetYDistFloorOffset var17 var17 0 0
+  var17 = var22 * 30
+  GetYDistFloorOffset var17 var17 10 0
   if Equal var17 -1
     if Rnd < 0.35
       var16 = 1

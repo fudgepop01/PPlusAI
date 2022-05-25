@@ -19,7 +19,7 @@ endif
 
 if AnimFrame > 2
   if Equal var21 15.1
-    LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
+    // LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
     var0 = OTopNX - TopNX
     var1 = var0
     Abs var1
@@ -80,7 +80,7 @@ if AnimFrame > 2
     elif Equal var22 3
       Seek exec_wait
       Jump
-    elif Equal var22 4 && ODistLE 35
+    elif Equal var22 4 && ODistLE 60
       Button R
       Call MainHub
     elif Equal var22 2 

@@ -18,6 +18,8 @@ label hitlag
 XGoto PerFrameChecks
 XReciever
 Seek hitlag
+EnableDebugOverlay
+SetDebugOverlayColor color(0xFFFFFFDD)
 
 if FramesHitlag > 2
   // SDI input frequency:
@@ -46,13 +48,13 @@ if FramesHitlag > 2
     AbsStick globTempVar immediateTempVar
   endif
 
-  if FramesSinceShield > 10 && Equal AirGroundState 2
-    if FramesSinceShield > 100
-      Button R
-    elif YDistFloor < 10 && Rnd < 0.7 && KBAngle < 40
-      Button R
-    endif
-  endif
+  // if FramesSinceShield > 10 && Equal AirGroundState 2 && !(Equal CurrAction hex(0x42))
+  //   if FramesSinceShield > 100
+  //     Button R
+  //   elif YDistFloor < 10 && Rnd < 0.7 && KBAngle < 40
+  //     Button R
+  //   endif
+  // endif
   Return
 elif FramesHitlag > 1
   immediateTempVar = 0
@@ -65,9 +67,9 @@ elif FramesHitlag > 1
   globTempVar *= 2
   predictOOption anotherTempVar man_ODefendOption LevelValue 
 
-  if Rnd < 0.75 && Rnd < globTempVar
+  if Rnd < 0.25 && Rnd < globTempVar
     AbsStick immediateTempVar (-1)
-  elif Rnd < globTempVar && Equal anotherTempVar op_defend_attack 
+  elif Rnd < globTempVar && Equal anotherTempVar op_defend_attack && Rnd < 0.25
     AbsStick OPos (-1)
   else
     AbsStick immediateTempVar
@@ -79,6 +81,7 @@ label hitstun
 // XGoto PerFrameChecks
 // XReciever
 // Seek hitstun
+SetDebugOverlayColor color(0xFFFFFF66)
 
 #let stickX = var0
 #let stickY = var1
@@ -106,6 +109,13 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     if KBSpeed > 3
       stickY = 1
     endif
+    if Equal IsOnStage 0 || KBSpeed > 3
+      if Rnd < 0.8
+        // if offstage with high damage, switch to survival DI
+        stickX = OPos
+        stickY = 1
+      endif
+    endif
   else
     stickY = (Rnd * 2) - 1
   endif
@@ -124,14 +134,14 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
   if LevelValue >= LV3
     if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
       Goto _checkTech
-    elif Equal IsOnStage 1 && YDistBackEdge > -12 && TotalYSpeed < 0.02
+    elif Equal IsOnStage 1 && YDistFloor < 25 && TotalYSpeed < -0.3
       Goto _checkTech
     elif Equal CurrAction hex(0x42)
       Goto _checkTech
     endif
   endif
 
-  if !(Equal techDirection -2) && !(Equal CurrAction hex(0x42)) && TotalYSpeed < 0
+  if !(Equal techDirection -2) && TotalYSpeed < 0
     if techDirection < -0.5
       AbsStick -1
     elif 0.5 < techDirection
@@ -151,9 +161,6 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
     endif
     if !(True)
       label exec_DI
-      LOGSTR str("EXEC DI")
-      LOGVAL stickX
-      PRINTLN
       ClearStick
       if Equal stickX 1 || Equal stickX -1.2 || Equal stickX -3
         if Equal stickX 0
@@ -166,9 +173,11 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
         if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
           stickX = TotalXSpeed
           if stickX > -1 && stickX < 1
-            stickX = OPos * -1
-            if Rnd < 0.3
+            stickX = OPos * -0.6
+            if Rnd < 0.4
               stickX *= 0.6
+            elif Rnd < 0.1
+              stickX *= 1.8
             elif Rnd < 0.1
               stickX *= -1
             endif
@@ -185,10 +194,6 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
             AbsStick stickX stickY
           endif
           Return
-        elif Equal IsOnStage 0 || KBSpeed > 3.7
-          // if offstage with high damage, switch to survival DI
-          stickX = TopNX * -1
-          AbsStick stickX 1
         else
           AbsStick stickX stickY
         endif
@@ -305,7 +310,9 @@ label _checkTech
     if CurrAction >= hex(0x42) && CurrAction <= hex(0x4D) && FramesSinceShield > 40
       globTempVar = OEndFrame - 23
       if Equal CurrAction hex(0x42)
-        if OAnimFrame < globTempVar || Rnd < 0.1
+        if !(Equal CurrSubaction ThrownLw)
+          Return
+        elif OAnimFrame < globTempVar
           Return
         endif
       endif

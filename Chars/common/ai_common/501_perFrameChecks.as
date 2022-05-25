@@ -81,8 +81,9 @@ elif OAttackCond && Equal OAnimFrame 0
     globTempVar = immediateTempVar
   endif
   GetAttribute immediateTempVar attr_dashInitVel 1
-  immediateTempVar *= 8
+  immediateTempVar *= 5
   globTempVar += immediateTempVar
+  globTempVar += 10
   trackOAction man_OXHitDist globTempVar
 endif
 // O Tech Option
@@ -124,9 +125,9 @@ elif Rnd < 0.2
 endif
 if !(True)
   label baitDefendOption
-  immediateTempVar = (1 - (LevelValue / 100)) * 10
+  immediateTempVar = (1 - (LevelValue / 100)) * 10 + 5
   MOD immediateTempVar AnimFrame immediateTempVar
-  if Equal immediateTempVar 1
+  if immediateTempVar < 1
     globTempVar = man_OBaitOption
     if Equal currGoal cg_defend
       globTempVar = man_ODefendOption
@@ -137,14 +138,14 @@ if !(True)
     if ODistLE immediateTempVar
       if hex(0x3) <= OCurrAction && OCurrAction <= hex(0x5) && Rnd < 0.65 && !(Equal currGoal cg_defend)
         trackOAction man_OBaitOption op_bait_move
-        if OAnimFrame >= 4 || Equal OCurrAction hex(0x4) || Equal OCurrAction hex(0x5)
+        if OAnimFrame >= 4
           // the target is running in a direction as a result of a bait
           if !(Equal OPos ODirection) 
-            // the target is running away, therefor overshoot
-            trackOAction man_OBaitDirection op_baitdir_overshoot
-          else
             // the target is advancing, therefor undershoot
             trackOAction man_OBaitDirection op_baitdir_undershoot
+          else
+            // the target is running away, therefor overshoot
+            trackOAction man_OBaitDirection op_baitdir_overshoot
           endif
         endif
       elif Rnd < 0.25 && OCurrAction <= hex(0x2) && !(Equal currGoal cg_defend)
@@ -168,22 +169,24 @@ if Equal CurrAction hex(0x7C) || Equal CurrAction hex(0x7D)
   Stick -0.78
 elif Equal CurrAction hex(0x39)
   CallI Unk1120
-elif Equal CurrAction hex(0x4D) && !(Equal currGoal cg_lying) 
-  CallI LyingDown
-elif Equal CurrAction hex(0x89) && !(Equal currGoal cg_lying) 
-  CallI LyingDown
 elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
   CallI OnLedge
+elif !(Equal currGoal cg_lying) 
+  if Equal CurrAction hex(0x4D)
+    CallI LyingDown
+  elif CurrAction >= hex(0x8A) && CurrAction <= hex(0x8D)
+    CallI LyingDown
+  endif
 endif
 
 //--- switch tactic if conditions are met
-if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal currGoal cg_inHitstun) && !(Equal OCurrAction hex(0x49))
+if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal OCurrAction hex(0x49)) && !(CalledFrom AttackedHub)
   immediateTempVar = LevelValue * 0.01 - 0.15
-  if FramesHitstun > 0
+  if FramesHitlag > 0
     Goto OnGotHitAdjustments
     CallI AttackedHub
   elif Equal CurrAction hex(0x42)
-    Goto OnGotHitAdjustments
+    // Goto OnGotHitAdjustments
     CallI AttackedHub
   endif
 endif
@@ -200,53 +203,55 @@ if !(True)
   Return
 endif
 
-if Equal IsOnStage 0 && Equal OCurrAction hex(0xBD) && !(Equal currGoal cg_recover)
-  CallI RecoveryHub
-elif Equal currGoal cg_recover_reversal
-elif currGoal >= cg_edgeguard && Equal OIsOnStage 0 && Equal IsOnStage 0
-  GET_CHAR_TRAIT(globTempVar, chr_cs_recoveryDistX)
-  NEAREST_CLIFF(immediateTempVar, anotherTempVar)
-  Abs immediateTempVar
-  if immediateTempVar > globTempVar
-    GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
-    if YDistBackEdge >= immediateTempVar
-      CallI RecoveryHub
-    endif
-  endif
-  Norm immediateTempVar OXDistBackEdge OYDistBackEdge
-  Norm globTempVar XDistBackEdge YDistBackEdge
-
-  if immediateTempVar < globTempVar && YDistBackEdge > 0
-    CallI RecoveryHub
-  endif
-elif currGoal >= cg_edgeguard && Equal OIsOnStage 0
-elif !(Equal currGoal cg_recover) && !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0  
-  if Equal IsOnStage 0
-    GetYDistFloorOffset immediateTempVar 15 15 0
-    GetYDistFloorOffset globTempVar -15 15 0
-    if Equal immediateTempVar -1 && Equal globTempVar -1
-      CallI RecoveryHub
-    endif
-  elif Equal OIsOnStage 0 && currGoal < cg_edgeguard
-    GetYDistFloorOffset immediateTempVar 15 15 1
-    GetYDistFloorOffset globTempVar -15 15 1
-    if Equal immediateTempVar -1 && Equal globTempVar -1
-      currGoal = cg_edgeguard
-      skipMainInit = mainInitSkip
-      CallI MainHub
-    endif
-  endif
-endif
-
 if Equal CurrAction hex(0xBE)
   Stick 1
+endif
+
+ACTIONABLE_ON_GROUND
+
+if !(CalledFrom RecoveryHub)
+  if Equal IsOnStage 0 && Equal OCurrAction hex(0xBD)
+    CallI RecoveryHub
+  elif Equal currGoal cg_recover_reversal
+  elif currGoal >= cg_edgeguard && Equal OIsOnStage 0 && Equal IsOnStage 0
+    GET_CHAR_TRAIT(globTempVar, chr_cs_recoveryDistX)
+    NEAREST_CLIFF(immediateTempVar, anotherTempVar)
+    Abs immediateTempVar
+    if immediateTempVar > globTempVar
+      GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
+      if YDistBackEdge >= immediateTempVar
+        CallI RecoveryHub
+      endif
+    endif
+    Norm immediateTempVar OXDistBackEdge OYDistBackEdge
+    Norm globTempVar XDistBackEdge YDistBackEdge
+
+    if immediateTempVar < globTempVar && YDistBackEdge > 0
+      CallI RecoveryHub
+    endif
+  elif currGoal >= cg_edgeguard && Equal OIsOnStage 0
+  elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0  
+    if Equal IsOnStage 0
+      GetYDistFloorOffset immediateTempVar 15 15 0
+      GetYDistFloorOffset globTempVar -15 15 0
+      if Equal immediateTempVar -1 && Equal globTempVar -1
+        CallI RecoveryHub
+      endif
+    elif Equal OIsOnStage 0 && currGoal < cg_edgeguard
+      GetYDistFloorOffset immediateTempVar 15 15 1
+      GetYDistFloorOffset globTempVar -15 15 1
+      if Equal immediateTempVar -1 && Equal globTempVar -1
+        currGoal = cg_edgeguard
+        skipMainInit = mainInitSkip
+        CallI MainHub
+      endif
+    endif
+  endif
 endif
 
 if Equal CurrAction hex(0x1D) && !(CalledFrom Shield)
   CallI Shield
 endif
-
-ACTIONABLE_ON_GROUND
 
 CALL_EVENT(evt_checkDefend)
 Return

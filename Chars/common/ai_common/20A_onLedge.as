@@ -19,7 +19,7 @@ endif
 
 if AnimFrame > 2
   if Equal currGoal cg_ledge_edgeguard
-    LOGSTR_NL str("LEDGE_EDGEGD")
+    // LOGSTR_NL str("LEDGE_EDGEGD")
     #let oCloseness = var0
     #let absOCloseness = var1
     oCloseness = OTopNX - TopNX
@@ -88,7 +88,7 @@ if AnimFrame > 2
     elif Equal immediateTempVar wait
       Seek exec_wait
       Jump
-    elif Equal immediateTempVar roll && ODistLE 35
+    elif Equal immediateTempVar roll && ODistLE 60
       Button R
       Call MainHub
     elif Equal immediateTempVar ledgedash 

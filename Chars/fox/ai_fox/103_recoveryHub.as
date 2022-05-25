@@ -27,8 +27,8 @@
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
-  #const NCXOffs = 6
-  #const NCXOffsNear = 4
+  #const NCXOffs = 1
+  #const NCXOffsNear = 1
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
@@ -42,11 +42,13 @@
   Norm distFromEdge nearCliffX nearCliffY
   Abs distFromEdge
 
-  if highUpBValue < highUpBChance
-    distFromEdge += 15
-  endif
-  if highHighUpBValue < highHighUpBChance
-    distFromEdge += 15
+  if Equal isBelowStage 0
+    if highUpBValue < highUpBChance
+      distFromEdge += 15
+    endif
+    if highHighUpBValue < highHighUpBChance
+      distFromEdge += 15
+    endif
   endif
   
   // drift towards goal
@@ -58,25 +60,6 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
-    endif
-  endif
   if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
     Button B
     ClearStick
@@ -96,6 +79,25 @@
     ClearStick
     AbsStick 0 (0.7)
     Return
+  endif
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    endif
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
+    if NumJumps > 0 && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    else
+      hasTriedToUpB = 1
+      Button B
+      ClearStick
+      AbsStick 0 (0.7)
+      Return
+    endif
   endif
 #endsnippet
 

@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 // because some things might rely on these being unset
 label reroll
+var14 = Rnd * 0
   var4 = 0
   var8 = 0
   var5 = Rnd
@@ -104,7 +105,7 @@ endif
     var2 = 0
   endif
 
-if Equal var2 0 || Equal AirGroundState 1
+if YDistFloor > -1 || Equal AirGroundState 1
   var21 = 0
   var20 = -1
   var14 = BBoundary
@@ -135,11 +136,12 @@ endif
     LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 32.48 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge > 32.48 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
+  var1 -= var14
   if Equal var4 1 || var5 <= 0.4 && NumJumps > 0
     if YDistBackEdge > 30.479999999999997 && Rnd < 0.5
       Button X

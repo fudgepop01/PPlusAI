@@ -13,7 +13,7 @@
 #const pt_braveChance = 0.65
 #const pt_baitChance = 0.65
 #const pt_aggression = 0.85
-#const pt_wall_chance = 0.45
+#const pt_wall_chance = 0.65
 #const pt_circleCampChance = 0.45
 
 #const pt_bait_dashAwayChance = 0.85
@@ -318,6 +318,8 @@
 
 #const sv_execute_fastfall = 1
 #const sv_execute_willhit = 2
+
+#const sv_fastAttack = 1
 
 // dice slots
 #const dslot0 = 0

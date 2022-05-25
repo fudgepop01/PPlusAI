@@ -35,29 +35,28 @@ var0 = var3 * 2 - var4 + Rnd * 20
 var0 = Rnd * var0 + var4 
 var2 = OPos
 if Equal var16 2
-  var0 += 3
-  if var0 >= var3
-    var0 = var3
-  endif
+  var0 += 6
 elif Equal var16 3
-  var0 += 5
+  var0 += 18
 endif
 label execution
 XGoto PerFrameChecks
 XReciever
-if !(Equal var20 -1) && !(Equal var16 2) && !(Equal var16 3)
-  XGoto SetAttackGoal
-  XReciever
-  XGoto CheckAttackWillHit
-  XReciever
-endif
+// if !(Equal var20 -1) && !(Equal var16 2) && !(Equal var16 3)
+//   XGoto SetAttackGoal
+//   XReciever
+//   XGoto CheckAttackWillHit
+//   XReciever
+// endif
 Seek execution
 if Equal CurrAction 1
   ClearStick
   Return
 endif
 
-if XDistFrontEdge < 15
+if XDistFrontEdge < 20 && !(Equal var16 1)
+  var16 = 1
+elif XDistFrontEdge < 15
   Call MainHub
 elif XDistBackEdge > -25 && Equal Direction OPos && !(Equal var16 5)
   var16 = 1
@@ -97,6 +96,10 @@ if var1 < var3 && !(Equal var16 5) || Equal var16 3
 elif Equal var16 5
   AbsStick OPos
   if !(Equal var2 OPos)
+    if CHANCE_MUL_LE PT_AGGRESSION 0.75
+      var21 = 16.4
+      var15 = -1
+    endif
     Call MainHub
   endif
   Return

@@ -9,8 +9,7 @@ var0 = 0
 var2 = 0
 
 var4 = 0
-var17 = PT_AGGRESSION
-if Rnd < var17
+if CHANCE_MUL_LE PT_AGGRESSION 0.4
   var4 = 1
 endif
 
@@ -68,8 +67,14 @@ endif
 MOD var17 var2 3
 if Equal CurrAction 27 && Equal var17 0 
   GetShieldRemain var17
-  var22 = var0 * 0.03
-  if var17 < 40 || var1 > 8 || Rnd <= var22 || !(ODistLE 45)
+  var22 = var0 * 0.02
+  GetCommitPredictChance var23 LevelValue
+  if var17 < 40 || var1 > 12 || !(ODistLE 55)
+    Seek pickOption
+    Jump
+  elif var23 > 0.35
+    Return
+  elif Rnd <= var22
     Seek pickOption
     Jump
   elif Equal var4 1 && ODistLE 45 && Rnd < 0.4
@@ -84,52 +89,72 @@ Return
 label pickOption
 var1 += 15
 predictAverage var22 10 LevelValue
-var22 += 35
-if var1 > 7 && CHANCE_MUL_LE PT_AGGRESSION 0.7
-  Seek exec_attack
-  Jump
-elif Rnd < 0.4 && XDistLE var22
-  Seek exec_attack
-  Jump
-elif Rnd < 0.6 && Equal var4 1
-  Seek exec_attack
-  Jump
+var22 += 10
+if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var4 1
+  if var1 > 10 && Rnd < 0.4
+    Seek exec_attack
+    Jump
+  elif Rnd < 0.2 && XDistLE var22
+    Seek exec_attack
+    Jump
+  elif Rnd < 0.6 && Equal var4 1
+    Seek exec_attack
+    Jump
+  endif
+
+  if !(True)
+    label exec_attack
+    Button X
+    GetCommitPredictChance var22 LevelValue
+    var21 = 16.4
+    if ODistLE 10 && var22 > 0.2
+      var21 = 16.3
+    endif
+    XGoto CalcAttackGoal
+    XReciever
+    var16 = 0
+    XGoto SetAttackGoal
+    XReciever
+    var15 = -1
+    CallI MainHub
+  endif
+
+  var22 -= 10
+  if Equal OPos Direction && ODistLE 15
+    if var1 > 5 && Rnd < 0.75 || Equal var4 1
+      Button A
+      Call 0x1120
+    endif
+  endif
 endif
 
-if !(True)
-  label exec_attack
-  Button X
-  var21 = 16.4
-  XGoto CalcAttackGoal
-  XReciever
-  var16 = 0
-  XGoto SetAttackGoal
-  XReciever
-  var15 = -1
-  CallI MainHub
+GetCommitPredictChance var22 LevelValue
+if Rnd < 0.4 && var22 > 0.15
+  if Rnd < 0.2
+    AbsStick OPos
+  elif Rnd < 0.2
+    var22 = OPos * -1
+    AbsStick var22
+  elif Rnd < 0.6
+    AbsStick 0 (-1)
+  endif
 endif
 
-var22 -= 20
-if var1 > 24 && Rnd < 0.7
+if var1 > 15 && Rnd < 0.75
   var16 = 1
   var21 = 16.4
   CallI Wavedash
-elif var1 > 14 && Rnd < 0.7
+elif var1 > 9 && Rnd < 0.7
   var16 = 2
   var21 = 16.4
   CallI Wavedash
-elif Equal OPos Direction && ODistLE var22
-  if var1 > 5 && Rnd < 0.75 || Equal var4 1
-    Button A
-    Call Grab
-  endif
 endif
 
 if Rnd < 0.3
   predictionConfidence var22 7 LevelValue
   predictOOption var17 7 LevelValue 
   if Rnd < var22
-    if Equal var17 1
+    if Equal var17 1 && Rnd < var22
       if Rnd < 1
         var16 = 3
         if XDistBackEdge > -15
@@ -153,23 +178,6 @@ if Rnd < 0.3
       endif
       CallI Wavedash
     endif
-  endif
-endif
-
-if Rnd < 0.2
-  if Rnd < 0.3
-    var16 = 3
-    CallI JumpScr
-  elif Rnd < 0.2
-    var16 = 2
-    CallI Wavedash
-  elif Rnd < 0.2
-    AbsStick OPos
-  elif Rnd < 0.2
-    var22 = OPos * -1
-    AbsStick var22
-  elif Rnd < 0.6
-    AbsStick 0 (-1)
   endif
 endif
 Seek shield

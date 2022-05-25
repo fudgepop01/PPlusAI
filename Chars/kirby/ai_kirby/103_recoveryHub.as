@@ -38,6 +38,27 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
+  if horizUpBValue <= horizUpBChance && YDistBackEdge > -horizUpBHeight && YDistBackEdge < horizUpBHeight && absNCX <= horizUpBRange && absNCX >= UpBXDist
+    Button B
+    ClearStick
+    Stick 0 1
+    horizUpBValue = -1
+    Return
+  endif
+  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif
+  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif 
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
     immediateTempVar = calc(cs_djumpHeight - 8)
     if !(NoOneHanging)
@@ -70,27 +91,6 @@
       endif
     endif
   endif
-  if horizUpBValue <= horizUpBChance && YDistBackEdge > -horizUpBHeight && YDistBackEdge < horizUpBHeight && absNCX <= horizUpBRange && absNCX >= UpBXDist
-    Button B
-    ClearStick
-    Stick 0 1
-    horizUpBValue = -1
-    Return
-  endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 #endsnippet
 
 #snippet USPECIAL

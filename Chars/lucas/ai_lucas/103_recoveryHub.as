@@ -48,25 +48,6 @@
   globTempVar = TopNY - BBoundary
 
   {PRE_CONDITIONS}
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
-    endif
-  endif
   if downBValue <= downBChance && YDistBackEdge > -downBHeight && YDistBackEdge < downBHeight && absNCX <= downBRange
     Button B
     ClearStick
@@ -94,6 +75,25 @@
     AbsStick 0 (0.7)
     Return
   endif 
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    endif
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
+    if NumJumps > 0 && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    else
+      hasTriedToUpB = 1
+      Button B
+      ClearStick
+      AbsStick 0 (0.7)
+      Return
+    endif
+  endif
 #endsnippet
 
 #snippet USPECIAL

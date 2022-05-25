@@ -81,8 +81,9 @@ elif OCurrAction >= 36 && OCurrAction <= 52 && Equal OAnimFrame 0
     var17 = var22
   endif
   GetAttribute var22 40; 1
-  var22 *= 8
+  var22 *= 5
   var17 += var22
+  var17 += 10
   trackOAction 10 var17
 endif
 // O Tech Option
@@ -124,9 +125,9 @@ elif Rnd < 0.2
 endif
 if !(True)
   label baitDefendOption
-  var22 = (1 - (LevelValue / 100)) * 10
+  var22 = (1 - (LevelValue / 100)) * 10 + 5
   MOD var22 AnimFrame var22
-  if Equal var22 1
+  if var22 < 1
     var17 = 9
     if Equal var21 13
       var17 = 7
@@ -137,14 +138,14 @@ if !(True)
     if ODistLE var22
       if 3 <= OCurrAction && OCurrAction <= 5 && Rnd < 0.65 && !(Equal var21 13)
         trackOAction 9 1
-        if OAnimFrame >= 4 || Equal OCurrAction 4 || Equal OCurrAction 5
+        if OAnimFrame >= 4
           // the target is running in a direction as a result of a bait
           if !(Equal OPos ODirection) 
-            // the target is running away, therefor overshoot
-            trackOAction 8 2
-          else
             // the target is advancing, therefor undershoot
             trackOAction 8 3
+          else
+            // the target is running away, therefor overshoot
+            trackOAction 8 2
           endif
         endif
       elif Rnd < 0.25 && OCurrAction <= 2 && !(Equal var21 13)
@@ -168,22 +169,24 @@ if Equal CurrAction 124 || Equal CurrAction 125
   Stick -0.78
 elif Equal CurrAction 57
   CallI Unk1120
-elif Equal CurrAction 77 && !(Equal var21 17) 
-  CallI LyingDown
-elif Equal CurrAction 137 && !(Equal var21 17) 
-  CallI LyingDown
 elif !(Equal var21 15) && !(Equal var21 15.1) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
+elif !(Equal var21 17) 
+  if Equal CurrAction 77
+    CallI LyingDown
+  elif CurrAction >= 138 && CurrAction <= 141
+    CallI LyingDown
+  endif
 endif
 
 //--- switch tactic if conditions are met
-if CurrAction >= 66 && CurrAction <= 69 && !(Equal var21 12) && !(Equal OCurrAction 73)
+if CurrAction >= 66 && CurrAction <= 69 && !(Equal OCurrAction 73) && !(CalledFrom AttackedHub)
   var22 = LevelValue * 0.01 - 0.15
-  if FramesHitstun > 0
+  if FramesHitlag > 0
     Goto OnGotHitAdjustments
     CallI AttackedHub
   elif Equal CurrAction 66
-    Goto OnGotHitAdjustments
+    // Goto OnGotHitAdjustments
     CallI AttackedHub
   endif
 endif
@@ -206,10 +209,26 @@ if !(True)
   Return
 endif
 
-if Equal IsOnStage 0 && Equal OCurrAction 189 && !(Equal var21 3)
-  CallI RecoveryHub
-elif Equal var21 16.9
-elif var21 >= 16.7 && Equal OIsOnStage 0 && Equal IsOnStage 0
+if Equal CurrAction 190
+  Stick 1
+endif
+
+  if Equal CurrAction 22 
+    if Equal PrevAction 33
+      Return
+    elif AnimFrame <= 3
+      Return
+    endif
+  elif Equal CanCancelAttack 1
+  elif CurrAction >= 24 && !(Equal CurrAction 73)
+    Return
+  endif
+
+if !(CalledFrom RecoveryHub)
+  if Equal IsOnStage 0 && Equal OCurrAction 189
+    CallI RecoveryHub
+  elif Equal var21 16.9
+  elif var21 >= 16.7 && Equal OIsOnStage 0 && Equal IsOnStage 0
   var22 = 17
   XGoto GetChrSpecific
   XReciever
@@ -219,59 +238,44 @@ var17 = var22
   var22 *= -1
   var23 *= -1
   var23 = var23 - (TopNY * -1)
-  Abs var22
-  if var22 > var17
+    Abs var22
+    if var22 > var17
   var22 = 18
   XGoto GetChrSpecific
   XReciever
-    if YDistBackEdge >= var22
+      if YDistBackEdge >= var22
+        CallI RecoveryHub
+      endif
+    endif
+    Norm var22 OXDistBackEdge OYDistBackEdge
+    Norm var17 XDistBackEdge YDistBackEdge
+
+    if var22 < var17 && YDistBackEdge > 0
       CallI RecoveryHub
     endif
-  endif
-  Norm var22 OXDistBackEdge OYDistBackEdge
-  Norm var17 XDistBackEdge YDistBackEdge
-
-  if var22 < var17 && YDistBackEdge > 0
-    CallI RecoveryHub
-  endif
-elif var21 >= 16.7 && Equal OIsOnStage 0
-elif !(Equal var21 3) && !(Equal var21 15) && !(Equal var21 15.1) && Equal FramesHitstun 0  
-  if Equal IsOnStage 0
-    GetYDistFloorOffset var22 15 15 0
-    GetYDistFloorOffset var17 -15 15 0
-    if Equal var22 -1 && Equal var17 -1
-      CallI RecoveryHub
-    endif
-  elif Equal OIsOnStage 0 && var21 < 16.7
-    GetYDistFloorOffset var22 15 15 1
-    GetYDistFloorOffset var17 -15 15 1
-    if Equal var22 -1 && Equal var17 -1
-      var21 = 16.7
-      var15 = -1
-      CallI MainHub
+  elif var21 >= 16.7 && Equal OIsOnStage 0
+  elif !(Equal var21 15) && !(Equal var21 15.1) && Equal FramesHitstun 0  
+    if Equal IsOnStage 0
+      GetYDistFloorOffset var22 15 15 0
+      GetYDistFloorOffset var17 -15 15 0
+      if Equal var22 -1 && Equal var17 -1
+        CallI RecoveryHub
+      endif
+    elif Equal OIsOnStage 0 && var21 < 16.7
+      GetYDistFloorOffset var22 15 15 1
+      GetYDistFloorOffset var17 -15 15 1
+      if Equal var22 -1 && Equal var17 -1
+        var21 = 16.7
+        var15 = -1
+        CallI MainHub
+      endif
     endif
   endif
-endif
-
-if Equal CurrAction 190
-  Stick 1
 endif
 
 if Equal CurrAction 29 && !(CalledFrom Shield)
   CallI Shield
 endif
-
-  if Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= 66 && CurrAction <= 73
-  elif Equal CanCancelAttack 1
-elif CurrAction >= 24
-    Return
-  endif
 
   var22 = 40000
   XGoto GetChrSpecific

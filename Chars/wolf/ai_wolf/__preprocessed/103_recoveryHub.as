@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 // because some things might rely on these being unset
 label reroll
+var14 = Rnd * 0
   var4 = 0
   var5 = Rnd
   var6 = Rnd
@@ -35,17 +36,17 @@ var17 = var1 - var0
 var16 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
-    var2 = 2
+    var2 = 0.0001
   else
-    var2 = -2
+    var2 = -0.0001
   endif
 elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
 elif TopNY < var2
   if var17 < 0
-    var2 = 0.001
+    var2 = 0.0001
   else
-    var2 = -0.001
+    var2 = -0.0001
   endif
   var16 = 1
 endif
@@ -106,7 +107,7 @@ endif
     var2 = 0
   endif
 
-if Equal var2 0 || Equal AirGroundState 1
+if YDistFloor > -1 || Equal AirGroundState 1
   var21 = 0
   var20 = -1
   var14 = BBoundary
@@ -137,30 +138,12 @@ endif
     LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 31.28 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge > 31.28 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
-  if Equal var4 1 || var5 <= 0.5 && NumJumps > 0
-    if YDistBackEdge > 23.28
-      Button X
-      Goto handleJumpToStage
-      Return
-    endif
-  elif YDistBackEdge > 100.28 || var17 < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      var4 = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
-    endif
-  endif
+  var1 -= var14
   if YDistBackEdge > -8 && YDistBackEdge < 8 && var2 <= 100
     if var7 <= 0.4 || var10 > 0.25 && var6 > 0.4
       Button B
@@ -190,6 +173,25 @@ endif
     AbsStick 0 (0.7)
     Return
   endif 
+  if Equal var4 1 || var5 <= 0.5 && NumJumps > 0
+    if YDistBackEdge > 23.28
+      Button X
+      Goto handleJumpToStage
+      Return
+    endif
+  elif YDistBackEdge > 100.28 || var17 < 18
+    if NumJumps > 0 && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    else
+      var4 = 1
+      Button B
+      ClearStick
+      AbsStick 0 (0.7)
+      Return
+    endif
+  endif
 
 Return
 
@@ -215,9 +217,9 @@ Return
 label handleUSpecial
   if Equal var16 1
     if var0 > TopNX
-      var0 += 10
+      var0 += 6
     else
-      var0 -= 10
+      var0 -= 6
     endif
   endif
   if !(Equal CurrSubaction 479)

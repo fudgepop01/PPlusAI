@@ -16,21 +16,17 @@ aggression = PT_AGGRESSION
 #let baitChance = var1
 baitChance = PT_BAITCHANCE
 
-immediateTempVar = aggression * 0.2
-PredictOMov globTempVar mov_grab LevelValue
+
+immediateTempVar = aggression * 0.08
 globTempVar *= 1.75
 if !(CalledFrom AttackedHub)
-  if Rnd < immediateTempVar || Rnd < globTempVar
-    immediateTempVar *= 2
-    if !(Equal lastAttack -1) && Rnd < immediateTempVar
-      skipMainInit = mainInitSkip
-      CallI MainHub
-    elif Rnd < immediateTempVar && Rnd < immediateTempVar && Rnd < 0.45
-      XGoto CalcAttackGoal
-      XReciever
-      skipMainInit = mainInitSkip
-      CallI MainHub
-    endif 
+  GetCommitPredictChance anotherTempVar LevelValue
+  if anotherTempVar > 0.45 && Rnd < anotherTempVar && CHANCE_MUL_LE immediateTempVar 1
+    scriptVariant = sv_fastAttack
+    XGoto CalcAttackGoal
+    XReciever
+    skipMainInit = mainInitSkip
+    CallI MainHub
   endif
 endif
 
@@ -38,15 +34,59 @@ if Equal AirGroundState 1
   predictOOption immediateTempVar man_ODefendOption LevelValue
   predictionConfidence globTempVar man_ODefendOption LevelValue
   globTempVar *= 2
-  if CHANCE_MUL_GE PT_AGGRESSION 0.35 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
+  if CHANCE_MUL_GE PT_AGGRESSION 0.65 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
     PredictOMov immediateTempVar mov_grab LevelValue
     immediateTempVar *= 2.5
-    if immediateTempVar < 0.20
+    if immediateTempVar < 0.25
       CallI Shield
     endif
   endif
 
-  immediateTempVar = aggression * 0.2
+  #let OXHitDist = var2
+  predictAverage OXHitDist man_OXHitDist LevelValue
+
+  immediateTempVar = TopNX
+  globTempVar = OTopNX
+  Abs immediateTempVar
+  Abs globTempVar
+  if immediateTempVar > globTempVar && Rnd < 0.2
+    if Rnd < 0.3
+      scriptVariant = sv_roll_through
+      CallI Roll
+    endif
+    GetAttribute immediateTempVar attr_dashInitVel 0
+    immediateTempVar *= 8
+    if Rnd < 0.1 && immediateTempVar > OXHitDist
+      scriptVariant = sv_dash_through
+      CallI DashScr
+    endif
+  elif immediateTempVar < globTempVar && Rnd < 0.2
+    if Rnd < 0.3
+      scriptVariant = sv_roll_away
+      CallI Roll
+    endif
+    scriptVariant = sv_dash_away
+    CallI DashScr
+  elif Rnd < 0.05 && NumJumps > 0
+    #let djumpiness = var3
+    djumpiness = PT_DJUMPINESS
+    if Rnd < 0.05
+      scriptVariant = sv_roll_through
+      CallI Roll
+    elif Rnd < 0.4 && Rnd < djumpiness
+      scriptVariant = sv_jump_over
+      scriptVariant += svp_jump_fullhop
+      CallI JumpScr
+    endif
+    GetAttribute immediateTempVar attr_dashInitVel 0
+    immediateTempVar *= 8
+    if Rnd < 0.2 && immediateTempVar > OXHitDist
+      scriptVariant = sv_dash_through
+      CallI DashScr
+    endif
+  endif
+
+  immediateTempVar = aggression * 0.08
   if Rnd < 0.5
     currGoal = cg_bait
   else
@@ -58,8 +98,6 @@ if Equal AirGroundState 1
     skipMainInit = mainInitSkip
   endif
 
-  #let OXHitDist = var2
-  predictAverage OXHitDist man_OXHitDist LevelValue
   anotherTempVar = OXHitDist + 15
 
   #let dashAwayChance = var3
@@ -69,51 +107,14 @@ if Equal AirGroundState 1
 
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= LV7
     CallI Shield
-  elif immediateTempVar > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.8 && LevelValue >= LV5 && Rnd < 0.85 && ODistLE anotherTempVar
+  elif immediateTempVar > 0.7 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.4 && LevelValue >= LV5 && Rnd < 0.85 && ODistLE anotherTempVar && CHANCE_MUL_LE PT_AGGRESSION 1.5
     scriptVariant = sv_dash_away_defense
     CallI DashScr
   endif
 
-  immediateTempVar = OTopNX * TopNX
-  if immediateTempVar >= 0
-    immediateTempVar = TopNX
-    globTempVar = OTopNX
-    Abs immediateTempVar
-    Abs globTempVar
-    if immediateTempVar < globTempVar && Rnd < 0.1
-      if Rnd < 0.1
-        scriptVariant = sv_roll_through
-        CallI Roll
-      endif
-      GetAttribute immediateTempVar attr_dashInitVel 0
-      immediateTempVar *= 8
-      if Rnd < 0.1 && immediateTempVar > OXHitDist
-        scriptVariant = sv_dash_through
-        CallI DashScr
-      endif
-    elif Rnd < 0.2 && NumJumps > 0
-      #let djumpiness = var0
-      djumpiness = PT_DJUMPINESS
-      if Rnd < 0.2
-        scriptVariant = sv_roll_through
-        CallI Roll
-      elif Rnd < 0.4 && Rnd < djumpiness
-        scriptVariant = sv_jump_over
-        scriptVariant += svp_jump_fullhop
-        CallI JumpScr
-      endif
-      GetAttribute immediateTempVar attr_dashInitVel 0
-      immediateTempVar *= 8
-      if Rnd < 0.2 && immediateTempVar > OXHitDist
-        scriptVariant = sv_dash_through
-        CallI DashScr
-      endif
-    endif
-  endif
-
   #let wdashAwayChance = var0
   wdashAwayChance = PT_BAIT_WDASHAWAYCHANCE
-  wdashAwayChance *= 0.75
+  wdashAwayChance *= 0.3
 
   GetAttribute immediateTempVar attr_jumpSquatFrames 0
   immediateTempVar *= 0.1
@@ -125,7 +126,7 @@ if Equal AirGroundState 1
 
   #let dashAwayChance = var0
   dashAwayChance = PT_BAIT_DASHAWAYCHANCE
-  dashAwayChance *= 0.75
+  dashAwayChance *= 0.35
 
   GetAttribute immediateTempVar attr_dashInitVel 0
   immediateTempVar *= 5
@@ -153,7 +154,7 @@ if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
     scriptVariant = sv_jump_away
     scriptVariant += svp_jump_fullhop
     CallI JumpScr
-  elif CalledFrom AttackedHub && NumJumps > 0 && OTopNY < TopNY
+  elif CalledFrom AttackedHub && NumJumps > 0 && OTopNY < TopNY && CHANCE_MUL_LE PT_AGGRESSION 0.8
     scriptVariant = sv_jump_away
     scriptVariant += svp_jump_fullhop
     skipMainInit = mainInitSkip

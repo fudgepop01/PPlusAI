@@ -5,6 +5,8 @@ unk 0x0
 XReciever
 // because some things might rely on these being unset
 label reroll
+#let yRecoveryOffset = var14
+yRecoveryOffset = Rnd * 0
 {INITIALIZATION}
 label begin
 currGoal = cg_recover
@@ -89,7 +91,7 @@ endif
 #let isGoingOffstage = var2
 GOING_OFFSTAGE(isGoingOffstage, var3, 15)
 
-if Equal isGoingOffstage 0 || Equal AirGroundState 1
+if YDistFloor > -1 || Equal AirGroundState 1
   currGoal = cg_nothing
   lastAttack = -1
   goalY = BBoundary

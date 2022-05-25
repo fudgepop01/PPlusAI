@@ -4,10 +4,11 @@ unk 0x0
 
 XReciever
 
+LOGSTR_NL str("EXEC CALLED")
 label start
 #let techSkill = var7
 #let lastHitFrame = var6
-#let framesAfterHitlag = var16
+#let framesAfterHitlag = var15
 framesAfterHitlag = 0
 #let moveAngle = var18
 techSkill = LevelValue * 0.01
@@ -19,14 +20,21 @@ XGoto PerFrameChecks
 XReciever
 Seek start
 
+{SKIP_CHECKS}
+
 if Equal AirGroundState 1
+  if Equal CurrAction hex(0x3) && AnimFrame < 2
+    Return
+  endif
+
   GET_CHAR_TRAIT(immediateTempVar, chr_get_moveDir)
+  Seek start
 
   if immediateTempVar < 0 && Equal Direction OPos
     immediateTempVar = OPos * -1
     AbsStick immediateTempVar
     Return
-  elif immediateTempVar > 0 && !(Equal Direction OPos)
+  elif immediateTempVar >= 0 && !(Equal Direction OPos)
     immediateTempVar = OPos
     AbsStick immediateTempVar
     Return
@@ -46,6 +54,10 @@ $ifAerialAttack()
     endif
     Return
   endif
+$ifLastOrigin(grab,true)
+  if !(Equal AirGroundState 1)
+    Return
+  endif
 elif !(Equal AirGroundState 1) || Equal CurrSubaction JumpSquat
   Return
 endif
@@ -53,6 +65,11 @@ endif
 $ifLastOrigin(dashattack,false)
   Seek execDA
   Jump
+$ifLastOrigin(grab,true)
+  if !(Equal CurrSubaction JumpSquat) && !(Equal CurrAction hex(0x6))
+    Button X
+    Return
+  endif
 elif Rnd > techSkill
   Return
 endif
@@ -66,6 +83,7 @@ GET_MOVE_DATA(moveAngle, globTempVar, globTempVar, globTempVar, globTempVar, glo
 label
 Cmd30
 ClearStick
+LOGSTR_NL str("EXECUTING")
 {SKIP_EXEC}
 
 $generateMoveSnippets()
@@ -111,12 +129,12 @@ label PFC
     if Equal currGoal cg_attack_reversal
       XGoto MoveToGoal
       XReciever
+    elif Equal currGoal cg_attack_wall
+      immediateTempVar = XSpeed * -2
+      AbsStick immediateTempVar
     else
-      GetCommitPredictChance immediateTempVar LevelValue
-      if immediateTempVar >= 0.4 && XDistBackEdge < -10
-        immediateTempVar = OPos * -1
-        AbsStick immediateTempVar
-      endif
+      XGoto MoveToGoal
+      XReciever
     endif
   endif
 Return
@@ -135,7 +153,7 @@ label common_checks
   if OFramesHitlag <= 0 && OFramesHitstun > 0
     framesAfterHitlag += 1
     if Equal framesAfterHitlag 2
-      immediateTempVar = LevelValue * 0.25
+      immediateTempVar = (1 - (LevelValue / 50)) * 1.3
 
       ADJUST_PERSONALITY idx_aggression 0.002 immediateTempVar
       if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
@@ -144,15 +162,15 @@ label common_checks
           ADJUST_PERSONALITY idx_aggression 0.002 immediateTempVar
         endif
       elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
-        ADJUST_PERSONALITY idx_baitChance -0.004 immediateTempVar
-        ADJUST_PERSONALITY idx_aggression 0.002 immediateTempVar
+        ADJUST_PERSONALITY idx_baitChance -0.001 immediateTempVar
+        ADJUST_PERSONALITY idx_aggression 0.001 immediateTempVar
         if Equal currGoal cg_attack_reversal
           ADJUST_PERSONALITY idx_aggression 0.005 immediateTempVar
         elif Equal currGoal cg_attack_overshoot || Equal currGoal cg_attack_undershoot
           ADJUST_PERSONALITY idx_baitChance 0.001 immediateTempVar
         elif Equal currGoal cg_attack_wall
-          ADJUST_PERSONALITY idx_baitChance 0.005 immediateTempVar
-          ADJUST_PERSONALITY idx_circleCampChance 0.0025 immediateTempVar
+          ADJUST_PERSONALITY idx_baitChance 0.002 immediateTempVar
+          ADJUST_PERSONALITY idx_circleCampChance 0.002 immediateTempVar
         endif
       elif Equal currGoal cg_bait_attack
         ADJUST_PERSONALITY idx_baitChance 0.001 immediateTempVar
@@ -204,12 +222,12 @@ label common_checks
 
   // just for those with FSM
   immediateTempVar = AnimFrame * 0.8
-  if Equal scriptVariant sv_execute_fastfall && Equal AirGroundState 2 && YSpeed <= 0
+  if Equal scriptVariant sv_execute_fastfall && Equal AirGroundState 2 && YSpeed < 0 && FramesHitlag <= 0
     AbsStick 0 (-1)
     scriptVariant = sv_none
   elif Equal IsOnStage 1 && immediateTempVar > lastHitFrame && LevelValue >= LV8 && Equal AirGroundState 2
     immediateTempVar = EndFrame - AnimFrame 
-    if YSpeed <= 0 && immediateTempVar > 20 && Equal CurrAction hex(0x33)
+    if YSpeed <= 0 && immediateTempVar > 5 && Equal CurrAction hex(0x33)
       AbsStick 0 (-1)
     endif
   endif
@@ -218,12 +236,18 @@ Return
 label finish
   lastAttack = -1
   scriptVariant = sv_none
-  if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || Equal currGoal cg_attack || CHANCE_MUL_LE PT_AGGRESSION 0.25
+  skipMainInit = -100
+  currGoal = -1
+  if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || CHANCE_MUL_LE PT_AGGRESSION 0.1
     XGoto CalcAttackGoal
     XReciever
-    skipMainInit = mainInitSkip
-    currGoal = cg_attack_reversal
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.75
+    if XDistLE 40 && OFramesHitstun <= 1
+      currGoal = cg_attack_wall
+    else
+      skipMainInit = mainInitSkip
+      currGoal = cg_attack_reversal
+    endif
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2
     skipMainInit = mainInitSkip
     currGoal = cg_bait_dashdance
   endif

@@ -13,3 +13,11 @@
     {FASTFALL_CHECK_INNER}
   endif
 #endsnippet
+
+#snippet MOVE_IASA_CHECK
+  EstYCoord immediateTempVar move_IASA
+  $ifLastOrigin(sspecial,false)
+  $ifLastOrigin(sspecialair,true)
+    immediateTempVar = 1000
+  endif
+#endsnippet

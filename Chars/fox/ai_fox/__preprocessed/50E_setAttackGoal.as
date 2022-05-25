@@ -5,12 +5,11 @@ unk 0x0
 XReciever
 Cmd30
 
-var0 = var13
-var1 = var14
-
-// var2 = (1 - (LevelValue / 100)) * 30 + 1
-// MOD var2 AnimFrame var2
-var2 = 0
+Goto shouldOffset
+var2 = var23
+// updateOffset = (1 - (LevelValue / 100)) * 30 + 1
+// MOD updateOffset AnimFrame updateOffset
+// updateOffset = 0
 
 
   var22 = 19
@@ -19,8 +18,8 @@ STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
-STACK_PUSH 17 0
 STACK_PUSH 7 0
+STACK_PUSH 0 0
 STACK_PUSH 8 0
 STACK_PUSH 9 0
 STACK_PUSH 10 0
@@ -28,19 +27,28 @@ STACK_PUSH 11 0
 STACK_PUSH 17 0
   XGoto GetChrSpecific
   XReciever
-
-if True
-  var22 = OTopNX - TopNX
-  var17 = OTopNY - TopNY
-  Norm var17 var22 var17
-
-  var17 -= 15
-  if var17 < 0
-    var17 = 0
-  endif
-  var17 *= 0.1
+if !(True) || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16
+  var7 = 1
 endif
-var17 += var7
+var7 += var0
+
+var0 = var13
+var1 = var14
+
+// if True
+//   var22 = OTopNX - TopNX
+//   var17 = OTopNY - TopNY
+//   Norm var17 var22 var17
+//   Abs var17
+
+//   var17 -= 30
+//   if var17 < 0
+//     var17 = 0
+//   endif
+//   var17 *= 0.1
+// endif
+var17 = var7
+
 // if OFramesHitstun > 0 && OFramesHitstun > var7
 //   var17 = OFramesHitstun
 // endif
@@ -54,22 +62,14 @@ endif
 // var17 *= 0.5
 
 var23 = var17
-// if Equal OCurrAction 6 || Equal OCurrAction 7
-//   var23 *= 0.35
-// elif Equal OPrevAction 6 || Equal OPrevAction 7
-//   if Equal OCurrAction 3 && OAnimFrame < 4
-//     var23 *= 0.35
-//   endif
-// endif
-if Equal var16 3
-  var23 -= var2
-  var23 += 1
+var13 = OTopNX + OTotalXSpeed * var23
+DrawDebugRectOutline var13 OTopNY 5 5 255 255 0 136
+if Equal var2 1 
+  predictOOption var23 8 LevelValue
+  if !(Equal var23 1) || Equal var21 16.3
+    var13 = OTopNX
+  endif
 endif
-// if OAnimFrame <= 3
-  var13 = OTopNX + OTotalXSpeed * var23
-  DrawDebugRectOutline var13 OTopNY 5 5 255 255 0 136
-// endif
-// var13 = OTopNX
 
 if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
   var23 = var17
@@ -94,6 +94,20 @@ var13 -= var23
 var23 = var11 + var9
 
 if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
+if !(True) || Equal var20 20 || Equal var20 21
+  var22 = -1
+elif !(True) || Equal var20 11 || Equal var20 17 || Equal var20 18 || Equal var20 22 || Equal var20 23 || Equal var20 24
+  var22 = 0
+elif !(True) || Equal var20 9 || Equal var20 19
+  var22 = 1
+endif
+  if Equal var22 -1
+    var23 = var11
+    if Equal AirGroundState 1
+      var23 *= Direction
+    endif
+  endif
+
 if !(True) || Equal var20 9
     var23 *= OPos
 elif !(True) || Equal var20 11
@@ -105,70 +119,43 @@ elif !(True)
   else
     var23 *= Direction
   endif
-
-if !(True) || Equal var20 20 || Equal var20 21
-  var22 = -1
-elif !(True) || Equal var20 11 || Equal var20 17 || Equal var20 18 || Equal var20 22 || Equal var20 23 || Equal var20 24
-  var22 = 0
-elif !(True) || Equal var20 9 || Equal var20 19
-  var22 = 1
-endif
-
-  if Equal var22 -1
-    var23 *= -1
-  endif
 else
   var23 *= OPos
 endif
 
-var23 *= 0.5
+// var23 *= 0.5
 var13 -= var23
 var13 += TopNX
 
-if Equal var16 3
-  var17 -= var2
-  var17 += 1
-endif
+
 // CalcYChange var14 var17 OTotalYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
 // var14 *= -1
 // var14 += OSCDBottom
-if OAnimFrame <= 3 && !(Equal OYSpeed 0)
-  if OTotalYSpeed > 0
-    var14 = OSCDBottom + OTotalYSpeed * var17 - OGravity * var17 * var17
+if OAnimFrame <= 3 || AnimFrame <= 3
+  if OYSpeed > 0
+    var14 = OYSpeed * var17 - OGravity * var17 * var17
   else
-    var14 = OSCDBottom + OTotalYSpeed * var17
+    var14 = OYSpeed * var17
   endif
+  var14 += OSCDBottom
 else
   EstOYCoord var14 var17
 endif
+
 var22 = OTopNY - var14
+if var22 > OYDistFloor && !(Equal OYDistFloor -1) 
+  var14 = OTopNY - OYDistFloor
+endif
+
 if Equal OCurrAction 84
   var14 = OTopNY
 endif
-if Equal var16 3
-  var17 -= 1
-  var17 += var2
-endif
 
-  if AnimFrame < 2
-    if TotalYSpeed > 0
-      var23 = TopNY + TotalYSpeed * var17 - Gravity * var17 * var17
-    else
-      var23 = TopNY + TotalYSpeed * var17
-    endif
-  else
-    EstYCoord var23 var17
-  endif
-  if Equal CurrAction 33 || Equal AirGroundState 1
-    var23 = TopNY
-  endif
-  LOGSTR 1197015040 0 0 0 0
-  LOGVAL var14
-  LOGSTR 1096046080 1634861056 0 0 0
-  LOGVAL var23
-  PRINTLN
-  var14 -= var23
-var14 += TopNY
+DrawDebugRectOutline var13 var14 3 3 255 255 255 221
+
+
+// {SELF_Y_ADJUST}
+// var14 += TopNY
 
 // if OYDistBackEdge < -30
 //   var14 -= 8.8
@@ -180,13 +167,8 @@ var14 += TopNY
 // endif
 
 var23 = (var10 * -1) + var8
-var23 *= 0.5
+// var23 *= 0.5
 var14 -= var23
-
-var22 = OTopNY - var14
-if var22 > OYDistFloor && !(Equal OYDistFloor -1) 
-  var14 = OTopNY - OYDistFloor
-endif
 
 // var23 = OHurtboxSize * 0.5
 // tempYRange += var23
@@ -206,14 +188,15 @@ endif
 // var23 *= 1
 // tempGoalY += var23
 
+var22 = OHurtboxSize * 0.5
+var14 += var22
+
 if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24
   var22 = (TopNY - YDistFloor) + 11.8
-  if var14 < var22 && Equal AirGroundState 1 && !(Equal CurrAction 10) && SamePlane && OYDistFloor < var8
-    var14 = TopNY + 11.8
-  endif
-
-  if SamePlane && OYDistFloor < var8 && Equal AirGroundState 1 && !(Equal CurrAction 10)
-    var14 = TopNY + 11.8
+  if !(Equal OYDistFloor -1) && SamePlane && OYDistFloor < var8 && Equal AirGroundState 1 && !(Equal CurrAction 10)
+    if var14 < var22
+      var14 = TopNY + 11.8
+    endif
   endif
 
   var17 = OTopNY + OHurtboxSize
@@ -222,49 +205,67 @@ if !(True) || Equal var20 9|| Equal var20 11|| Equal var20 17|| Equal var20 18||
       var14 = OTopNY - OYDistFloor
     endif
   endif
-
-  // if Equal AirGroundState 1
-  //   var14 = TopNY + 11.8 * 4
-  // endif
 endif
-  var22 = 200
-  XGoto GetChrSpecific
-  XReciever
-var17 = OTopNY - TopNY
-if Equal var22 1
-elif var17 > 30 || OYDistBackEdge < -35
-elif !(Equal var21 16.4) && var21 < 16.7 && OYDistFloor < 30
-  predictAverage var22 10 LevelValue
-  if var22 < 7
-    var22 = 7
-  endif
+if Equal var2 1
+  GetAttribute var22 40; 1
+  var22 *= 0.3 * var7
   predictOOption var23 8 LevelValue 
   if Equal var21 16.3
-    var22 *= OPos * 3
-    var13 -= var22
-  elif Equal var23 2
-    if OXDistBackEdge > -20 && OXDistFrontEdge < 20
-      var17 = OXSpeed * OPos
-      if OCurrAction >= 2 && OCurrAction <= 25 && var17 > 0
-      else
-        var22 *= OPos * 2
-        var13 -= var22
-      endif
+    // LOGSTR_NL 1463897088 1275068416 0 0 0
+    var23 = var11 + var9
+    if var23 > 7
+      var22 *= OPos * 1.35
+      var13 -= var22
     endif
   elif Equal var23 3
-    var22 *= OPos * 2
+    // LOGSTR_NL 1431192576 1163023104 1213157120 1409286144 0
+    if OXDistBackEdge < -10 && OXDistFrontEdge > 10
+      var17 = OXSpeed
+      var22 *= OPos
+      if OCurrAction >= 2 && OCurrAction <= 25 && var17 >= 0
+      else
+        var22 *= 1.2
+      endif
+      var13 -= var22
+    endif
+    var22 = TopNX - var0
+    Abs var22
+    if var22 <= 20
+      var13 = var0
+    endif
+  elif Equal var23 2
+    // LOGSTR_NL 1331053824 1381189632 1330598912 0 0
+    var22 *= OPos
     var13 += var22
+  // else
+  //   LOGSTR_NL 1313166592 1414676736 1275068416 0 0
   endif
 endif
 
-GetYDistFloorOffset var22 50 10 1
-if Equal var22 -1 && Equal OPos -1
-  var13 -= 20 
-endif
-GetYDistFloorOffset var22 -50 10 1
-if Equal var22 -1 && Equal OPos 1
-  var13 += 20 
-endif
+var22 = var9 * 0.5 * OPos
+var13 += var22
+
+// var22 = var0 - TopNX
+// var23 = var13 - TopNX
+
+// var22 -= var23
+// Abs var22
+// if var22 > 10
+//   var23 = var13 + var0
+//   var23 *= 0.5
+//   var13 = var23
+// endif
+
+// if Equal OIsOnStage 1
+//   GetYDistFloorOffset var22 20 10 1
+//   if Equal var22 -1 && Equal OPos -1
+//     var13 -= 2 
+//   endif
+//   GetYDistFloorOffset var22 -20 10 1
+//   if Equal var22 -1 && Equal OPos 1
+//     var13 += 2
+//   endif
+// endif
 
 // LOGSTR 1196376320 1280846848 542703616 0 0
 // LOGVAL var13
@@ -281,6 +282,27 @@ endif
 //   endif
 // endif
 
+DrawDebugRectOutline var13 var14 8 8 255 255 255 221
+
 Cmd30
+Return
+label shouldOffset
+  var22 = 200
+  XGoto GetChrSpecific
+  XReciever
+  var23 = 0
+  if Equal var22 1
+  elif OYDistBackEdge < -10
+  elif !(Equal var21 16.4) && var21 < 16.7
+    var22 = OTopNY - TopNY
+    if var22 <= 30
+      var23 = 1
+    endif
+  endif
+  if OCurrAction >= 78 && OCurrAction <= 82
+    var23 = 0
+  elif OCurrAction >= 96 && OCurrAction <= 97
+    var23 = 0
+  endif
 Return
 Return

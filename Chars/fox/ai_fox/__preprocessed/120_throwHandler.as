@@ -52,17 +52,21 @@ endif
 if CurrAction < 52 || CurrAction > 60
   XGoto CalcAttackGoal
   XReciever
-  var15 = -1
-  var21 = 16.4
+  if OFramesHitstun <= 1
+    var21 = 16.3
+  else
+    var15 = -1
+    var21 = 16.4
+  endif
   CallI MainHub
 elif Equal CurrAction 57 && AnimFrame > 8
   if Rnd < 0.7
-    GetYDistFloorOffset var22 20 0 0
+    GetYDistFloorOffset var22 20 10 0
     if Equal var22 -1
       AbsStick 1 0
       Return
     endif
-    GetYDistFloorOffset var22 -20 0 0
+    GetYDistFloorOffset var22 -20 10 0
     if Equal var22 -1
       AbsStick -1 0
       Return

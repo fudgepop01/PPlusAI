@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 // because some things might rely on these being unset
 label reroll
+var14 = Rnd * 0
   var4 = 0
   var5 = Rnd
   var6 = Rnd
@@ -103,7 +104,7 @@ endif
     var2 = 0
   endif
 
-if Equal var2 0 || Equal AirGroundState 1
+if YDistFloor > -1 || Equal AirGroundState 1
   var21 = 0
   var20 = -1
   var14 = BBoundary
@@ -133,15 +134,37 @@ endif
   Abs var2
   if var2 > 64
     var7 = 0
+    var5 = 0
   endif
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
     LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 39.68 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge > 39.68 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
+    Return
+  endif
+  var1 -= var14
+  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 90
+    Button B
+    ClearStick
+    Stick 1
+    Return
+  endif
+  if var6 <= 0.15 && var3 < 64 && YDistBackEdge < 20 && Equal var4 0
+    var4 = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif
+  if var3 > 58 && var3 < 64 && Equal var4 0
+    var4 = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
     Return
   endif
   if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
@@ -162,26 +185,6 @@ endif
       AbsStick 0 (0.7)
       Return
     endif
-  endif
-  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 90
-    Button B
-    ClearStick
-    Stick 1
-    Return
-  endif
-  if var6 <= 0.15 && var3 < 64 && YDistBackEdge < 20 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif
-  if var3 > 58 && var3 < 64 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
   endif
 
 Return

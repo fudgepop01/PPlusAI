@@ -11,7 +11,7 @@
 
 #const pt_jumpiness = 0.15
 #const pt_djumpiness = 0.15
-#const pt_aggression = 0.8
+#const pt_aggression = 1.25
 #const pt_bait_dashAwayChance = 0.2
 #const pt_bait_wdashAwayChance = 0.3
 #const pt_wall_chance = 0.6
@@ -192,7 +192,7 @@
 #const dspecial_weak_xRange = 8.89
 #const dspecial_weak_yRange = 4.05
 #const dspecial_weak_hitFrame = 15
-#const dspecial_weak_lastHitFame = 28
+#const dspecial_weak_lasthitFrame = 28
 #const dspecial_weak_damage_info = DSpecial|6|25|100|90
 
 #const dspecialair_IASA = 71

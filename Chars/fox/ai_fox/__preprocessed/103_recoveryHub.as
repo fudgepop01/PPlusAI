@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 // because some things might rely on these being unset
 label reroll
+var14 = Rnd * 0
   var4 = 0
   var5 = Rnd
   var6 = Rnd
@@ -35,17 +36,17 @@ var17 = var1 - var0
 var16 = 0
 if var17 < 10 && var17 > -10
   if var17 < 0
-    var2 = 4
+    var2 = 1
   else
-    var2 = -4
+    var2 = -1
   endif
 elif var1 < TopNX && TopNX < var0
 elif var0 < TopNX && TopNX < var1  
 elif TopNY < var2
   if var17 < 0
-    var2 = 6
+    var2 = 1
   else
-    var2 = -6
+    var2 = -1
   endif
   var16 = 1
 endif
@@ -106,7 +107,7 @@ endif
     var2 = 0
   endif
 
-if Equal var2 0 || Equal AirGroundState 1
+if YDistFloor > -1 || Equal AirGroundState 1
   var21 = 0
   var20 = -1
   var14 = BBoundary
@@ -127,11 +128,13 @@ endif
   var1 = var1 - (TopNY * -1)
   Norm var3 var0 var1
   Abs var3
-  if var6 < 0.7
-    var3 += 15
-  endif
-  if var9 < 0.5
-    var3 += 15
+  if Equal var16 0
+    if var6 < 0.7
+      var3 += 15
+    endif
+    if var9 < 0.5
+      var3 += 15
+    endif
   endif
   
   // drift towards goal
@@ -145,9 +148,30 @@ endif
     LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
     var1 -= 25
   endif
-  if YDistBackEdge < 38.39 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge > 38.39 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
+    Return
+  endif
+  var1 -= var14
+  if var7 <= 0.7 && YDistBackEdge > -3 && YDistBackEdge < 3 && var2 <= 100
+    Button B
+    ClearStick
+    Stick 1
+    Return
+  endif
+  if var6 <= 0.7 && var3 < 85 && YDistBackEdge < 20 && Equal var4 0
+    var4 = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif
+  if var3 > 65 && var3 < 85 && Equal var4 0
+    var4 = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
     Return
   endif
   if Equal var4 1 || var5 <= 0.5 && NumJumps > 0
@@ -168,26 +192,6 @@ endif
       AbsStick 0 (0.7)
       Return
     endif
-  endif
-  if var7 <= 0.7 && YDistBackEdge > -3 && YDistBackEdge < 3 && var2 <= 100
-    Button B
-    ClearStick
-    Stick 1
-    Return
-  endif
-  if var6 <= 0.7 && var3 < 85 && YDistBackEdge < 20 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif
-  if var3 > 65 && var3 < 85 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
   endif
 
 Return

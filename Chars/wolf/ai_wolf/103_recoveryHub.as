@@ -28,8 +28,8 @@
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
-  #const NCXOffs = 0.001
-  #const NCXOffsNear = 2
+  #const NCXOffs = 0.0001
+  #const NCXOffsNear = 0.0001
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
@@ -48,25 +48,6 @@
   globTempVar = TopNY - BBoundary
 
   {PRE_CONDITIONS}
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 12)
-      Button X
-      Goto handleJumpToStage
-      Return
-    endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
-    endif
-  endif
   if YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
     if sideBValue <= sideBChance || trickAngleValue > trickAngleChance && highUpBValue > highUpBChance
       Button B
@@ -96,14 +77,33 @@
     AbsStick 0 (0.7)
     Return
   endif 
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 12)
+      Button X
+      Goto handleJumpToStage
+      Return
+    endif
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
+    if NumJumps > 0 && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    else
+      hasTriedToUpB = 1
+      Button B
+      ClearStick
+      AbsStick 0 (0.7)
+      Return
+    endif
+  endif
 #endsnippet
 
 #snippet USPECIAL
   if Equal isBelowStage 1
     if nearCliffX > TopNX
-      nearCliffX += 10
+      nearCliffX += 6
     else
-      nearCliffX -= 10
+      nearCliffX -= 6
     endif
   endif
 

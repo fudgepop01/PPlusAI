@@ -659,14 +659,17 @@ if !(True) || Equal var20 15|| Equal var20 16|| Equal var20 27|| Equal var20 28|
   endif
 elif Equal var22 200
   getCurrentPredictValue var17 4
-  var23 = PT_AGGRESSION * 25
-  if var17 <= var23
+  var23 = PT_AGGRESSION * 30 + 25
+  if var17 <= var23 || OFramesHitstun > 0 || OFramesHitlag > 0
     if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
     elif Equal OCurrAction 73 && OYDistFloor > 15
     elif Equal HitboxConnected 1 || Equal PrevAction 60
-      var22 = 1
+    else
+      var22 = 0
       Return
     endif
+    var22 = 1
+    Return
   endif
   var22 = 0
 elif Equal var22 0.001
@@ -686,37 +689,39 @@ elif !(True) || Equal var20 5 || Equal var20 6 || Equal var20 10 || Equal var20 
   var22 = 1
 endif
 elif Equal var22 30000
-  var22 = LevelValue * 0.3
-  if PT_AGGRESSION <= 0.2 && Rnd <= 0.2
-    var22 = Rnd * 3
+  var22 = (1 - (LevelValue / 50)) * 0.6
+  if PT_AGGRESSION >= 1.8 && Rnd <= 0.35
+    var22 = Rnd * -1
     ADJUST_PERSONALITY 0 var22 Rnd
   endif 
-  if CHANCE_MUL_LE PT_BAITCHANCE 0.2
-    ADJUST_PERSONALITY 3 -0.006 var22
+  if CHANCE_MUL_LE PT_BAITCHANCE 0.3
+    ADJUST_PERSONALITY 3 -0.004 var22
+  elif CHANCE_MUL_GE PT_BAITCHANCE 0.8
+    ADJUST_PERSONALITY 3 0.008 var22
   endif
-  if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.1
+  if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.2
     ADJUST_PERSONALITY 1 -0.002 var22
-  elif CHANCE_MUL_GE PT_BAIT_DASHAWAYCHANCE 0.1
+  elif CHANCE_MUL_GE PT_BAIT_DASHAWAYCHANCE 0.6
     ADJUST_PERSONALITY 1 0.003 var22
   endif
-  if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.1
+  if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.2
     ADJUST_PERSONALITY 2 -0.002 var22
-  elif CHANCE_MUL_GE PT_BAIT_WDASHAWAYCHANCE 0.1
+  elif CHANCE_MUL_GE PT_BAIT_WDASHAWAYCHANCE 0.6
     ADJUST_PERSONALITY 2 0.003 var22
   endif
-  if CHANCE_MUL_LE PT_WALL_CHANCE 0.4 || Equal var21 16.3
-    ADJUST_PERSONALITY 10 -0.004 var22
-  elif CHANCE_MUL_GE PT_WALL_CHANCE 0.4
-    ADJUST_PERSONALITY 10 0.002 var22
+  if CHANCE_MUL_LE PT_WALL_CHANCE 0.3 || Equal var21 16.3
+    ADJUST_PERSONALITY 10 -0.002 var22
+  elif CHANCE_MUL_GE PT_WALL_CHANCE 0.3
+    ADJUST_PERSONALITY 10 0.003 var22
   endif
   if CHANCE_MUL_LE PT_BRAVECHANCE 0.4
     ADJUST_PERSONALITY 4 -0.004 var22
-  elif CHANCE_MUL_GE PT_BRAVECHANCE 0.4
+  elif CHANCE_MUL_GE PT_BRAVECHANCE 0.7
     ADJUST_PERSONALITY 4 0.003 var22
   endif
   if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.3 || Equal var21 7
     ADJUST_PERSONALITY 5 -0.008 var22
-  elif CHANCE_MUL_GE PT_CIRCLECAMPCHANCE 0.3
+  elif CHANCE_MUL_GE PT_CIRCLECAMPCHANCE 0.6
     ADJUST_PERSONALITY 5 0.002 var22
   endif
   if CHANCE_MUL_LE PT_JUMPINESS 0.9
@@ -735,18 +740,18 @@ elif Equal var22 30000
     ADJUST_PERSONALITY 8 0.002 var22
   endif
   
-  var22 = LevelValue * 0.6
+  var22 = (1 - (LevelValue / 50))
   if CalledFrom BoardPlatform
     ADJUST_PERSONALITY 8 -0.04 var22
   elif CalledFrom ExecuteAttack
-    if PT_AGGRESSION < 0.2 && LevelValue >= 60
-      ADJUST_PERSONALITY 0 1.5 1
-      ADJUST_PERSONALITY 3 -0.75 1
-    endif
-    ADJUST_PERSONALITY 0 -0.002 var22
+    // if PT_AGGRESSION < 0.2 && LevelValue >= 60
+    //   ADJUST_PERSONALITY 0 1.5 1
+    //   ADJUST_PERSONALITY 3 -0.75 1
+    // endif
+    ADJUST_PERSONALITY 0 0.002 var22
     ADJUST_PERSONALITY 3 0.002 var22
   elif CalledFrom Shield 
-    ADJUST_PERSONALITY 0 0.002 var22
+    ADJUST_PERSONALITY 0 -0.002 var22
     ADJUST_PERSONALITY 4 0.002 var22
   elif CalledFrom Wavedash
     if Rnd < 0.5
@@ -781,7 +786,7 @@ elif Equal var22 20000
   XGoto GetChrSpecific
   XReciever
     if Equal var22 0
-      var22 = LevelValue * 0.4
+      var22 = (1 - (LevelValue / 50)) * 0.6
       ADJUST_PERSONALITY 3 0.004 var22
       ADJUST_PERSONALITY 1 0.002 var22
       ADJUST_PERSONALITY 2 0.002 var22
@@ -792,25 +797,63 @@ elif Equal var22 20000
 elif Equal var22 10000
   ADJUST_PERSONALITY 5 0.025 1
 elif Equal var22 40000
-  // GET_CHAR_TRAIT(var22, 0.003)
-  // if var22 > 10
-  //   Return
-  // endif
+  var22 = (1 - (LevelValue / 100)) * 60 + 10
+  var22 *= PT_REACTION_TIME
+  GetCommitPredictChance var23 LevelValue
+  var23 = 1.1 - var23
+  var23 *= 0.5
+  var22 *= var23
+  var23 = AnimFrame
+  MOD var22 var23 var22
+  if var22 <= 1 || Equal var21 10.4
+  var22 = 0.004
+  XGoto GetChrSpecific
+  XReciever
+var23 = var22
+    if Equal var21 16.4 || Equal var21 10.2
+    elif var23 >= 12
+      var22 = var23 * 2
+      if OCurrAction >= 74 && OCurrAction <= 101
+      elif XDistLE var22 && OAttacking
+        var21 = 10.6
+        if CHANCE_MUL_LE PT_AGGRESSION 0.6
+          var21 = 10.2
+        endif
+      endif
+      predictAverage var22 10 LevelValue
+      var22 *= 1
+      var22 += var23 + 20
+      if XDistLE var22
+        RetrieveFullATKD var22 var23 var17 var23 var23 var23 var23 OCurrSubaction 1
+        if Equal var22 0
+          var22 = OEndFrame
+        endif 
+        if OAnimFrame >= var17 || Equal OHitboxConnected 1
+          var23 = var22 - OAnimFrame
+        else
+          var23 = -1
+        endif
+        if var23 > 0
+          var21 =  16.4
+        endif
+      endif
+    endif
+  endif
   var22 = 200
   XGoto GetChrSpecific
   XReciever
   if Equal var22 0
     // react to/read the opponent's attack patterns
-    var22 = (1 - (LevelValue / 100)) * 30 + 1
+    var22 = (1 - (LevelValue / 100)) * 30 + 4
     var22 *= PT_REACTION_TIME
-    var23 = AnimFrame - 1
+    var23 = AnimFrame + 10
     MOD var17 var23 var22
-    var23 = OAnimFrame - 8
+    var23 = OAnimFrame + 10
     MOD var23 var23 var22
     if var17 > 1 && var23 > 1
     elif Equal OCurrAction 77 && OAnimFrame > 25
     elif var21 >= 16 && var21 < 17 && ODistLE 30
-    elif Equal var21 16.4 || Equal var21 10.2
+    elif Equal var21 16.4 || Equal var21 10.2 || Equal var21 10.6
     elif var21 >= 16.7
     elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
       if OCurrAction < 66 || OCurrAction >= 72
@@ -821,33 +864,18 @@ elif Equal var22 40000
         endif
         if ODistLE var22
           GetCommitPredictChance var17 LevelValue
-          PredictOMov var23 15 LevelValue
-          if var23 > var17
-            var17 = var23
-          endif
-          var17 *= 2
-          var22 = 2 - PT_AGGRESSION
-          if var22 > 0.75
-            var17 *= var22
-          endif
           if Equal var21 12 || Equal CurrAction 73
-            var22 = Damage * 0.1
+            var22 = Damage * 0.2
             var17 += var22
           endif
           // var22 = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 8
           // var22 *= PT_REACTION_TIME
-          if Rnd < var17 && CHANCE_MUL_LE var17 2
+          if Rnd < var17 && Rnd < var17
             if Rnd < 0.7
               CallI DefendHub
             elif Equal var21 12 || Equal CurrAction 73
               CallI DefendHub
             endif
-          // elif OAnimFrame >= var22 && OCurrAction >= 36 && OCurrAction <= 52
-          //   if Rnd < 0.1
-          //     CallI DefendHub
-          //   elif Rnd < 0.3 || Equal var21 12 || Equal CurrAction 73
-          //     CallI DefendHub
-          //   endif
           endif
         endif
       endif
@@ -856,7 +884,11 @@ elif Equal var22 40000
 elif Equal var22 0.003 || Equal var22 0.004
   STACK_PUSH var22 0
   var22 = -1
-  if Equal OCurrAction 51 && OYDistFloor < 25 && OYSpeed < 0.2
+  RetrieveFullATKD var22 var17 var23 var23 var23 var23 var23 OCurrSubaction 1
+  if Equal var22 0
+    var22 = OEndFrame
+  endif 
+  if Equal OCurrAction 51 && OYDistFloor < 25
     if Equal OCurrSubaction AttackAirN
       GetAttribute var17 300; 1
     elif Equal OCurrSubaction AttackAirF
@@ -868,34 +900,33 @@ elif Equal var22 0.003 || Equal var22 0.004
     elif Equal OCurrSubaction AttackAirLw
       GetAttribute var17 316; 1
     endif
-    var17 += OYDistFloor
-    var17 *= 0.7
-    var22 = var17
+    var23 = OYDistFloor * 0.7
+    var22 = var22 - OEndFrame
+    var22 *= 1.25
+    var22 += var17 + var23
     var22 += 5
     
   elif Equal OCurrAction 24
     var22 = OEndFrame - OAnimFrame
+    var22 *= 0.65
     var22 += 5
   elif Equal OCurrAction 33 && OYDistBackEdge < -15
     var22 = 35
     var22 += 5
   elif Equal OCurrAction 26 || Equal OCurrAction 27 || Equal OCurrAction 16
     GetAttribute var22 940; 1
-    var22 = 7 + var22
+    var22 = 10 + var22
     var22 += 5
   elif Equal OCurrAction 29
     GetRaBasic var17 5 1
     var22 = var17 + 15
     var22 += 5
   elif OAttacking 
-    RetrieveFullATKD var22 var17 var23 var23 var23 var23 var23 OCurrSubaction 1
     if Equal var22 0
       var22 = OEndFrame
     endif 
-    // if OAnimFrame >= var17
-      var22 = var22 - OAnimFrame
-      var22 += 5
-    // endif
+    var22 = var22 - OAnimFrame
+    var22 += 5
   elif OCurrAction >= 74 && OCurrAction <= 101
     var22 = OEndFrame - OAnimFrame
     var22 += 5

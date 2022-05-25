@@ -38,6 +38,20 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
+  if highUpBValue <= highUpBChance && YDistBackEdge < calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif
+  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif 
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
@@ -65,20 +79,6 @@
       Return
     endif
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge < calc(UpBYDist - 40) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 #endsnippet
 
 #snippet SSPECIAL

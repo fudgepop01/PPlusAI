@@ -25,9 +25,8 @@ label setup
     elif AnimFrame <= 3
       Return
     endif
-  elif CurrAction >= 66 && CurrAction <= 73
   elif Equal CanCancelAttack 1
-elif CurrAction >= 24
+  elif CurrAction >= 24 && !(Equal CurrAction 73)
     Return
   endif
   endif  
@@ -46,6 +45,7 @@ label jumpSquat
 label landing
   XGoto PerFrameChecks
   XReciever
+  Goto edgeCheck
   Seek landing
 
   if var0 <= 0 || YSpeed < 0
@@ -62,22 +62,8 @@ label landing
         Stick (-1) (-1)
       endif
     elif Equal var16 1
-      if XDistFrontEdge < 3
-        Seek
-        Jump
-      elif XDistBackEdge > -3
-        Seek
-        Jump
-      endif
       AbsStick OPos (-1)
     elif Equal var16 2
-      if XDistFrontEdge < 3
-        Seek
-        Jump
-      elif XDistBackEdge > -3
-        Seek
-        Jump
-      endif
       var22 = OPos * -1
       AbsStick var22 (-1)
     elif Equal var16 5
@@ -91,8 +77,8 @@ var17 = var22
       var17 = var22
       Abs var17
       var17 = 1 - var22
-      if var17 > -0.3
-        var17 = -0.3
+      if var17 > -0.45
+        var17 = -0.45
       endif
       AbsStick var22 var17
     else
@@ -103,5 +89,12 @@ var17 = var22
     Call MainHub
   endif
   var0 -= 1
+Return
+label edgeCheck
+if XDistFrontEdge < 3
+  var16 = 4
+elif XDistBackEdge > -3
+  var16 = 4
+endif
 Return
 Return

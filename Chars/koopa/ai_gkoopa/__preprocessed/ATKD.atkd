@@ -18,7 +18,7 @@ AttackAirF unk=35,start=11,end=15,xmin=-0.34,xmax=41.15,ymin=-2.35,ymax=39.52
 AttackAirB unk=0,start=9,end=25,xmin=-29.82,xmax=2.68,ymin=0.43,ymax=32.50
 AttackAirHi unk=0,start=22,end=26,xmin=-32.33,xmax=25.24,ymin=16.95,ymax=58.59
 AttackAirLw unk=0,start=14,end=45,xmin=-16.19,xmax=16.20,ymin=-7.80,ymax=24.00
-LandingAirLw unk=0,start=0,end=2,xmin=-40.00,xmax=40.00,ymin=-8.00,ymax=30.00
+LandingAirLw unk=40,start=1,end=3,xmin=-24.00,xmax=24.00,ymin=-6.00,ymax=18.00
 Catch unk=0,start=11,end=11,xmin=2.10,xmax=33.00,ymin=-4.80,ymax=13.20
 CatchDash unk=0,start=9,end=12,xmin=22.00,xmax=65.00,ymin=-4.00,ymax=18.00
 CatchTurn unk=0,start=8,end=10,xmin=-6.00,xmax=39.00,ymin=-4.00,ymax=18.00

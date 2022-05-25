@@ -1,341 +1,341 @@
-#const shortHopHeight = 24
-#const djumpHeight = 25
+#const DIRY_ABOVE = 15
+#const DIRY_BELOW_AIR = 2
+#const DIRY_BELOW_GROUND = -1
+#const DIRX_FRONT = 4
+#const DIRX_BACK = 0
 
-// defining attributes here as constants (just in case)
-#const walkInitVel = 0.3
-#const walkAcc = 0.1
-#const walkMaxVel = 1.3
-#const groundFric = 0.095
-#const dashInitVel = 2.05
-#const dashRunTermVel = 1.85
-#const groundedMaxXVel = 3
-#const dashCancelFrameWindow = 1
-#const guardOnMaxMomentum = 0.75
-#const jumpSquatFrames = 3
-#const jumpXInitVel = 1.1
-#const jumpYInitVel = 3.1
-#const jumpYInitVelShort = 1.95
-#const jumpXGroundMult = 1
-#const fastFallSpeed = 2.5
-#const gravity = 0.125
-#const weight = 94
-#const shieldSize = 8.6
+#const pt_jumpiness = 0.1
+#const pt_djumpiness = 0.04
+#const pt_aggression = 1.25
+#const pt_bait_dashAwayChance = 0.6
+#const pt_bait_wdashAwayChance = 0.15
+#const pt_wall_chance = 0.4
+#const pt_platChance = 0.1
+#const pt_baitchance = 0.9
+#const pt_braveChance = 0.85
+#const pt_circleCampChance = 0.55
 
-#const recoveryHeight = -50
-#const maxYEdgeDistWithJump = 85
-#const maxYEdgeDist = 70
-#const maxYEdgeDistJumpNoUpB = 20
-#const maxXEdgeDist = 50
+#const cs_dashForceTurnFrame = 10
+#const cs_dashDanceMinFrames = 3
 
-#const oWalkingDist = 10
-#const shortEdgeRange = 10
-#const edgeRange = 25
-#const calloutSpeed = 0.3
+#const cs_shortHopHeight = 15.21
+#const cs_jumpHeight = 38.44
+#const cs_djumpHeight = 34.69
+#const cs_wavedashDist = 24
+#const cs_recoveryDistX = 75
+#const cs_recoveryDistY = -75
 
-#const jumpIfOWithin = 60
-#const SHIfOBeyond = 7
-#const FHIfOBeyond = 25
-#const DJIfOWithin = 35
-#const DJIfOBeyond = 23
+#const recovery_moves = uspecial
 
-#const techChaseCloseDist = 10
-#const techChaseFarDist = 25
+#const uspecial_subaction_check = !(True)
+#const uspecial_recovery_info = common|0
 
-#const dashCountMax = 45
-#const dashForceTurnFrame = 10
-#const dashDanceMinFrames = 3
-#const DDWaveDash = 0.2
-#const DDMaxRange = 150
-
-#const minBaseReactionTime = 0
-#const maxBaseReactionTime = 21
-
-#const killComboThreshold = 70
-// #const hitboxSizeMultiplier = 0.8
-
-// AI "mode" values
-#const md_attack = 1
-#const md_defend = 2
-
-// AI taunt values
-#const utaunt = 1
-#const staunt = 2
-#const dtaunt = 3
-
-// controls the approach the AI uses. It's okay because MOVES shouldn't care
-// about what script was called previously - only what move they are.
-#let approachType = var16
-#const at_attack = 1 // default
-#const at_defend = 2
-#const at_edgeguard = 3
-#const at_undershoot = 4
-#const at_ledgeRefresh = 5
-
-// the following is the data that I give the AI that allows it to determine
-// where it should be before performing an attack.
-// it will attempt to a point with these parameters in
-// 1.as, and if it does, it'll perform the action provided
-
-// this works because it's used exclusively in 1.as and aerial attacks
-// where it's used IMMEDIATELY before being modified
-#let shouldFastFall = var2
-
-// just used in combo hub, should be alright
-#let isImmediateCombo = var16
-#const immediate = 255
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrAction hex(0x11c)
+#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) || Equal CurrAction hex(0x119)
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrSubaction hex(0x66)
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x11b)
+#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
 
 // jab123
-#const mv_gentlemen = 0
-#const mv_jabReset = 1
-
-#const jab123_IASA = 19
-#const jab123_xOffset = 0
-#const jab123_yOffset = -4
-#const jab123_xRange = 7.4
-#const jab123_yRange = 3.85
+#const jab123_IASA = 18
+#const jab123_xOffset = 0.43
+#const jab123_yOffset = -3.6
+#const jab123_xRange = 7.37
+#const jab123_yRange = 4.13
 #const jab123_hitFrame = 6
 #const jab123_lastHitFrame = 7
-#const jab123_damage_info = Jab123|5|30|120|55
+#const jab123_damage_info = Jab123|3|w30|100|60
+
+#const mv_jab1232 = 1
+#const jab1232_IASA = 22
+#const jab1232_xOffset = 3.13
+#const jab1232_yOffset = -3.59
+#const jab1232_xRange = 7.72
+#const jab1232_yRange = 4.14
+#const jab1232_hitFrame = 8
+#const jab1232_lastHitFrame = 9
+#const jab1232_damage_info = Jab123|2|w36|100|50
+
+#const mv_jab1233 = 2
+#const jab1233_IASA = 40
+#const jab1233_xOffset = 2.3
+#const jab1233_yOffset = -6.9
+#const jab1233_xRange = 8.18
+#const jab1233_yRange = 5.57
+#const jab1233_hitFrame = 8
+#const jab1233_lastHitFrame = 11
+#const jab1233_damage_info = Jab123|5|30|120|55
 
 // dashattack
-#const dashattack_IASA = 38
-#const dashattack_xOffset = -1
-#const dashattack_yOffset = -4
-#const dashattack_xRange = 8.4
-#const dashattack_yRange = 3.85
+#const dashattack_IASA = 37
+#const dashattack_xOffset = 3.04
+#const dashattack_yOffset = -4.04
+#const dashattack_xRange = 8.49
+#const dashattack_yRange = 4.25
 #const dashattack_hitFrame = 6
-#const dashattack_lastHitFrame = 15
+#const dashattack_lastHitFrame = 6
 #const dashattack_damage_info = DashAttack|10|45|55|55
 
+#const mv_dashattack_late = 1
+#const dashattack_late_xOffset = 4.67
+#const dashattack_late_yOffset = -3.68
+#const dashattack_late_xRange = 13.45
+#const dashattack_late_yRange = 4.34
+#const dashattack_late_hitFrame = 7
+#const dashattack_late_lastHitFrame = 15
+#const dashattack_late_damage_info = DashAttack|7|30|55|75
+
 // ftilt
-#const ftilt_IASA = 27
-#const ftilt_xOffset = 1
-#const ftilt_yOffset = -5.650
-#const ftilt_xRange = 8.4
-#const ftilt_yRange = 3.850
+#const ftilt_IASA = 26
+#const ftilt_xOffset = 8.48
+#const ftilt_yOffset = -5.4
+#const ftilt_xRange = 7.76
+#const ftilt_yRange = 4.33
 #const ftilt_hitFrame = 10
-#const ftilt_damage_info = FTilt|10|40|35|40
+#const ftilt_lastHitFrame = 14
+#const ftilt_damage_info = FTilt|10|40|35|37
 
 // utilt
-#const utilt_IASA = 28
-#const utilt_xOffset = -12
-#const utilt_yOffset = 1
-#const utilt_xRange = 12.4
-#const utilt_yRange = 12.85
+#const utilt_IASA = 27
+#const utilt_xOffset = -14.81
+#const utilt_yOffset = 2.18
+#const utilt_xRange = 14.81
+#const utilt_yRange = 14.6
 #const utilt_hitFrame = 5
 #const utilt_lastHitFrame = 14
-#const utilt_damage_info = UTilt|8|35|90|85
+#const utilt_damage_info = UTilt|7|35|90|85
 
 // dtilt
-#const dtilt_IASA = 26
-#const dtilt_xOffset = 1
-#const dtilt_yOffset = 1
-#const dtilt_xRange = 8.55
-#const dtilt_yRange = 3.85
+#const dtilt_IASA = 25
+#const dtilt_xOffset = 1.25
+#const dtilt_yOffset = 1.81
+#const dtilt_xRange = 8.61
+#const dtilt_yRange = 4.6
 #const dtilt_hitFrame = 5
 #const dtilt_lastHitFrame = 8
 #const dtilt_damage_info = DTilt|6|35|100|80
 
 // fsmash
-#const fsmash_IASA = 51
+#const fsmash_IASA = 50
 #const fsmash_xOffset = 6
-#const fsmash_yOffset = -2
-#const fsmash_xRange = 10.55
-#const fsmash_yRange = 6
+#const fsmash_yOffset = -1.5
+#const fsmash_xRange = 10.75
+#const fsmash_yRange = 6.5
 #const fsmash_hitFrame = 20
 #const fsmash_lastHitFrame = 24
 #const fsmash_damage_info = FSmash|14|20|100|361
 
 // usmash
-#const mv_usmash_cancel = 1
-
 #const usmash_IASA = 26
-#const usmash_xOffset = 1
-#const usmash_yOffset = 0
-#const usmash_xRange = 4.55
-#const usmash_yRange = 19.6
+#const usmash_xOffset = -1.87
+#const usmash_yOffset = 0.3
+#const usmash_xRange = 7.98
+#const usmash_yRange = 19.82
 #const usmash_hitFrame = 11
 #const usmash_lastHitFrame = 24
 #const usmash_damage_info = USmash|6|45|175|83
 
-#const usmash_cancel_damage_info = USmash|4|48|100|90
+#const mv_usmashStart = 1
+#const usmashStart_xOffset = -0.9
+#const usmashStart_yOffset = 0.3
+#const usmashStart_xRange = 7.49
+#const usmashStart_yRange = 8.65
+#const usmashStart_hitFrame = 11
+#const usmashStart_lastHitFrame = 12
+#const usmashStart_damage_info = USmash|6|w40|100|112
 
 // dsmash
-#const dsmash_IASA = 52
-#const dsmash_xOffset = -17
+#const dsmash_IASA = 51
+#const dsmash_xOffset = -18
 #const dsmash_yOffset = -1
-#const dsmash_xRange = 16
-#const dsmash_yRange = 4.6
+#const dsmash_xRange = 17
+#const dsmash_yRange = 5
 #const dsmash_hitFrame = 13
 #const dsmash_lastHitFrame = 18
 #const dsmash_damage_info = DSmash|14|25|100|361
 
 // noochB
-#const mv_ASC = 1
-
-#const nspecial_IASA = 26
-#const nspecial_xOffset = 8
-#const nspecial_yOffset = -3
-#const nspecial_xRange = 69 // nice
-#const nspecial_yRange = 5
-#const nspecial_hitFrame = 8
-#const nspecial_lastHitFrame = 8
+#const nspecial_IASA = 48
+#const nspecial_xOffset = 0
+#const nspecial_yOffset = 5
+#const nspecial_xRange = 100
+#const nspecial_yRange = 10
+#const nspecial_hitFrame = 18
+#const nspecial_lastHitFrame = 40
 #const nspecial_damage_info = NSpecial|0|0|0|0
 
-#const nspecial_start_xRange = 90
-#const nspecial_start_yRange = 10
-#const nspecial_start_yOffset = 5
-#const nspecial_start_damage_info = NSpecial|0|0|0|0
+#const mv_asc = 1
+#const asc_damage_info = NSpecial|0|0|0|0
 
-#const mv_aurabomb = 2
-#const nspecial_aurabomb_xOffset = 0
-#const nspecial_aurabomb_yOffset = 4
-#const nspecial_aurabomb_yRange = 10
-#const nspecial_aurabomb_damage_info = NSpecial|0|0|0|0
+#const nspecialair_IASA = 48
+#const nspecialair_xOffset = 0
+#const nspecialair_yOffset = 5
+#const nspecialair_xRange = 100
+#const nspecialair_yRange = 10
+#const nspecialair_hitFrame = 18
+#const nspecialair_lastHitFrame = 40
+#const nspecialair_damage_info = NSpecialAir|0|0|0|0
+
+// upB
+// #const uspecial_IASA = 81
+// #const _xOffset = -19.42
+// #const uspecial_yOffset = -2.02
+// #const uspecial_xRange = 21.41
+// #const uspecial_yRange = 7.04
+// #const uspecial_hitFrame = 8
+// #const uspecial_lastHitFrame = 14
+// #const uspecial_damage_info = USpecial|15|32|95|361
+
+// #const mv_uspecial_late = 1
+// #const uspecial_late_xOffset = -20.78
+// #const uspecial_late_yOffset = -2.02
+// #const uspecial_late_xRange = 22.09
+// #const uspecial_late_yRange = 7.04
+// #const uspecial_late_hitFrame = 8
+// #const uspecial_late_lastHitFrame = 47
+// #const uspecial_late_damage_info = USpecial|5|60|100|-360
+
+// #const uspecialair_IASA = 140
+// #const uspecialair_xOffset = -17.92
+// #const uspecialair_yOffset = -3.84
+// #const uspecialair_xRange = 19.02
+// #const uspecialair_yRange = 24.51
+// #const uspecialair_hitFrame = 8
+// #const uspecialair_lastHitFrame = 51
+// #const uspecialair_damage_info = USpecialAir|6|40|123|45
+
+// downB
+#const dspecial_IASA = 9999
+#const dspecial_xOffset = 1
+#const dspecial_yOffset = 1
+#const dspecial_xRange = 1
+#const dspecial_yRange = 1
+#const dspecial_hitFrame = 999
+#const dspecial_lastHitFrame = 999
+#const dspecial_damage_info = DSpecial|0|0|0|0
+
+// #const dspecialair_IASA = 75
+// #const dspecialair_xOffset = 20
+// #const dspecialair_yOffset = 50
+// #const dspecialair_xRange = 50
+// #const dspecialair_yRange = 50
+// #const dspecialair_hitFrame = 49
+// #const dspecialair_lastHitFrame = 60
+// #const dspecialair_damage_info = DSpecialAir|11|0|0|0
 
 // sideB
-#const mv_sspecial_power = 1
-#const mv_sspecial_spike = 2
-
-#const sspecial_IASA = 58
-#const sspecial_xOffset = 0.5
-#const sspecial_yOffset = -5
-#const sspecial_xRange = 7.5
-#const sspecial_yRange = 3.6
+#const sspecial_IASA = 37
+#const sspecial_xOffset = 3.13
+#const sspecial_yOffset = -4.47
+#const sspecial_xRange = 6.17
+#const sspecial_yRange = 4.18
 #const sspecial_hitFrame = 12
 #const sspecial_lastHitFrame = 14
 #const sspecial_damage_info = SSpecial|3|40|212|65
-#const sspecial_power_damage_info = SSpecial|5|65|219|65
-// smashThrowAirLw_1
-#const sspecial_spike_damage_info = SSpecial|3|10|212|280
 
-// upB
-#const uspecial_IASA = 50
-#const uspecial_xOffset = -5
-#const uspecial_yOffset = -5
-#const uspecial_xRange = 5
-#const uspecial_yRange = 5
-#const uspecial_hitFrame = 1
-#const uspecial_lastHitFrame = 1
-
-// downB
-#const mv_dspecial_cancel = 1
-
-#const dspecial_IASA = 30
-#const dspecial_xOffset = 0
-#const dspecial_yOffset = 0
-#const dspecial_xRange = 25
-#const dspecial_yRange = 10
-#const dspecial_hitFrame = 10
-#const dspecial_lastHitFrame = 10
-#const dspecial_damage_info = DSpecial|0|0|0|0
-#const dspecial_cancel_damage_info = DSpecial|0|0|0|0
+// #const sspecialair_IASA = 58
+// #const sspecial_xOffset = 3.13
+// #const sspecial_yOffset = -4.47
+// #const sspecial_xRange = 6.17
+// #const sspecial_yRange = 4.18
+// #const sspecialair_hitFrame = 25
+// #const sspecialair_lastHitFrame = 51 // just a dummy
+// #const sspecialair_damage_info = SSpecialAir|8|10|100|90
 
 // grab
-// "mv" stands for "move variant" - it's just a naming convention
-// these are the variations of "grab" so I know exactly what throw
-// was used
-#const mv_fthrow = 1
-#const mv_dthrow = 2
-#const mv_bthrow = 3
-#const mv_uthrow = 4
-
 // when I want to techchase using grab, i'll set move_variant to this value
 #const mv_techChase = 1
 
-#const grab_IASA = 31
-#const grab_xOffset = 1
-#const grab_yOffset = -3
-#const grab_xRange = 6
-#const grab_yRange = 3
+#const grab_IASA = 30
+#const grab_xOffset = 0.37
+#const grab_yOffset = -4.34
+#const grab_xRange = 5.52
+#const grab_yRange = 3.91
 #const grab_hitFrame = 7
-#const grab_lastHitFrame = 8
-
+#const grab_lastHitFrame = 7
 #const grab_damage_info = Grab|0|0|0|0
+
+#const fthrow_IASA = 29
+#const fthrow_throwFrame = 11
 #const fthrow_damage_info = Grab|10|20|90|45
+
+#const dthrow_IASA = 54
+#const dthrow_throwFrame = 20
 #const dthrow_damage_info = Grab|7|80|44|70
-#const bthrow_damage_info = Grab|10|35|75|45
-#const uthrow_damage_info = Grab|5|60|105|75
+
+#const bthrow_IASA = 35
+#const bthrow_throwFrame = 13
+#const bthrow_damage_info = Grab|10|35|75|-45
+
+#const uthrow_IASA = 34
+#const uthrow_throwFrame = 16
+#const uthrow_damage_info = Grab|5|60|105|-75
+
 
 // NAir
-#const nair_IASA = 54
-#const nair_xOffset = -10
-#const nair_yOffset = -1.5
-#const nair_xRange = 9.5
-#const nair_yRange = 4.6
+#const nair_IASA = 53
+#const nair_xOffset = -11.23
+#const nair_yOffset = -1.35
+#const nair_xRange = 11.45
+#const nair_yRange = 4.57
 #const nair_hitFrame = 9
 #const nair_lastHitFrame = 15
 #const nair_damage_info = NAir|15|20|100|361
 
-#const mv_nair_mid = 1
-#const nair_mid_hitFrame = 16
-#const nair_mid_lastHitFrame = 28
-#const nair_mid_damage_info = NAir|12|15|100|50
+#const mv_nair_late = 1
+#const nair_late_xOffset = -11.23
+#const nair_late_yOffset = -0.5
+#const nair_late_xRange = 10.89
+#const nair_late_yRange = 4.57
+#const nair_late_hitFrame = 16
+#const nair_late_lastHitFrame = 28
+#const nair_late_damage_info = NAir|12|15|100|50
 
-#const mv_nair_weak = 2
-#const nair_weak_hitFrame = 29
-#const nair_weak_lastHitFrame = 41
-#const nair_weak_damage_info = NAir|9|10|100|60
+#const mv_nair_superlate = 2
+#const nair_superlate_xOffset = -10.24
+#const nair_superlate_yOffset = -0.74
+#const nair_superlate_xRange = 10.2
+#const nair_superlate_yRange = 4.23
+#const nair_superlate_hitFrame = 29
+#const nair_superlate_lastHitFrame = 41
+#const nair_superlate_damage_info = NAir|9|10|100|60
 
 // FAir
-#const fair_IASA = 31
-#const fair_xOffset = 0
-#const fair_yOffset = 1
-#const fair_xRange = 7.5
-#const fair_yRange = 4.6
-#const fair_hitFrame = 6
+#const fair_IASA = 30
+#const fair_xOffset = -0.47
+#const fair_yOffset = 4.91
+#const fair_xRange = 8.2
+#const fair_yRange = 8.89
+#const fair_hitFrame = 4
 #const fair_lastHitFrame = 12
-#const fair_damage_info = FAir|11|30|70|361
-
-#const mv_fair_scoop = 1
-#const fair_scoop_xOffset = 0
-#const fair_scoop_yOffset = 3
-#const fair_scoop_xRange = 3.5
-#const fair_scoop_yRange = 7.6
-#const fair_scoop_hitFrame = 4
-#const fair_scoop_lastHitFrame = 5
-#const fair_scoop_damage_info = FAir|11|30|70|361
+#const fair_damage_info = FAir|12|40|70|60
 
 // BAir
-#const bair_IASA = 33
-#const bair_xOffset = -16
-#const bair_yOffset = 0
-#const bair_xRange = 7
-#const bair_yRange = 5
+#const bair_IASA = 32
+#const bair_xOffset = -15.73
+#const bair_yOffset = 0.26
+#const bair_xRange = 6.93
+#const bair_yRange = 5.29
 #const bair_hitFrame = 10
 #const bair_lastHitFrame = 13
-#const bair_damage_info = BAir|14|20|100|361
+#const bair_damage_info = BAir|15|30|100|-361
 
 // UAir
-#const mv_uair_strong = 1
-
-#const uair_IASA = 29
-#const uair_xOffset = -4
-#const uair_yOffset = -6
-#const uair_xRange = 4
-#const uair_yRange = 7
+#const uair_IASA = 28
+#const uair_xOffset = -3.6
+#const uair_yOffset = -5.08
+#const uair_xRange = 7
+#const uair_yRange = 7.38
 #const uair_hitFrame = 7
 #const uair_lastHitFrame = 10
-#const uair_damage_info = UAir|11|30|80|80
-
-#const uair_yOffset = -12
-#const uair_yRange = 3
-#const uair_strong_damage_info = UAir|12|40|100|90
+#const uair_damage_info = UAir|12|40|100|90
 
 // DAir
-#const mv_dair_weak = 1
-
-#const dair_IASA = 29
-#const dair_xOffset = -4
-#const dair_yOffset = 10
-#const dair_xRange = 4
-#const dair_yRange = 7
+#const dair_IASA = 28
+#const dair_xOffset = -4.5
+#const dair_yOffset = 8.3
+#const dair_xRange = 5.25
+#const dair_yRange = 8.35
 #const dair_hitFrame = 4
 #const dair_lastHitFrame = 12
 #const dair_damage_info = DAir|8|50|110|361
-
-#const dair_weak_lastHitFrame = 5
-#const dair_weak_damage_info = DAir|8|20|30|85
-
-
-

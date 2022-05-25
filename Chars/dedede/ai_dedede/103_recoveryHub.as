@@ -42,6 +42,20 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
+  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 70) && Equal hasTriedToUpB 0
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif
+  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0 && Equal isBelowStage 0
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    AbsStick 0 (0.7)
+    Return
+  endif 
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
     immediateTempVar = calc(cs_djumpHeight - 6)
     if !(NoOneHanging)
@@ -72,21 +86,6 @@
   //   Seek execWaddleDash
   //   Jump
   // endif
-
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 70) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0 && Equal isBelowStage 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 
   // if !(True)
   //   label execWaddleDash

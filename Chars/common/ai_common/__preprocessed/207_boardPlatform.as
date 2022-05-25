@@ -72,9 +72,8 @@ if Equal AirGroundState 1
     elif AnimFrame <= 3
       Return
     endif
-  elif CurrAction >= 66 && CurrAction <= 73
   elif Equal CanCancelAttack 1
-elif CurrAction >= 24
+  elif CurrAction >= 24 && !(Equal CurrAction 73)
     Return
   endif
   Button X

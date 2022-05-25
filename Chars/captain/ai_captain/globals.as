@@ -14,12 +14,12 @@
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.02
-#const pt_aggression = 0.8
+#const pt_aggression = 1.25
 #const pt_bait_dashAwayChance = 0.55
 #const pt_bait_wdashAwayChance = 0.08
-#const pt_wall_chance = 0.35
+#const pt_wall_chance = 0.95
 #const pt_platChance = 0.1
-#const pt_baitChance = 0.85
+#const pt_baitchance = 0.9
 #const pt_braveChance = 0.7
 #const pt_circleCampChance = 0.4
 
@@ -31,7 +31,7 @@
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117)
 #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x119) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
 #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x11b)
 
 
@@ -166,7 +166,7 @@
 // #const dspecialair_damage_info = DSpecialAir|15|40|70|361
 
 // sideB
-#const sspecial_IASA = 26
+#const sspecial_IASA = 60
 #const sspecial_xOffset = -1.56
 #const sspecial_yOffset = -1.41
 #const sspecial_xRange = 11.08
@@ -216,7 +216,7 @@
 
 #const mv_nair_hit2 = 1
 #const nair_hit2_yRange = 8.49
-#const nair_hitFrame = 20
+#const nair_hitFrame = 7
 #const nair_hit2_lastHitFrame = 29
 #const nair_hit2_damage_info = NAir|7|40|100|361
 
@@ -227,7 +227,7 @@
 #const fair_xRange = 5.95
 #const fair_yRange = 5.77
 #const fair_hitFrame = 14
-#const fair_lastHitFame = 16
+#const fair_lastHitFrame = 16
 #const fair_damage_info = FAir|18|24|100|32
 
 #const mv_fair_weak = 1

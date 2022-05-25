@@ -41,28 +41,10 @@
   Abs absNCX
   if absNCX > UpBRadius
     sideBValue = 0
+    jumpValue = 0
   endif
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
-    endif
-  endif
   if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
     Button B
     ClearStick
@@ -82,6 +64,25 @@
     ClearStick
     AbsStick 0 (0.7)
     Return
+  endif
+  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    endif
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
+    if NumJumps > 0 && Rnd < 0.5
+      Button X
+      Goto handleJumpToStage
+      Return
+    else
+      hasTriedToUpB = 1
+      Button B
+      ClearStick
+      AbsStick 0 (0.7)
+      Return
+    endif
   endif
 #endsnippet
 

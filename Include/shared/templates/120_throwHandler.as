@@ -40,17 +40,21 @@ endif
 if CurrAction < hex(0x34) || CurrAction > hex(0x3C)
   XGoto CalcAttackGoal
   XReciever
-  skipMainInit = mainInitSkip
-  currGoal = cg_attack_reversal
+  if OFramesHitstun <= 1
+    currGoal = cg_attack_wall
+  else
+    skipMainInit = mainInitSkip
+    currGoal = cg_attack_reversal
+  endif
   CallI MainHub
 elif Equal CurrAction hex(0x39) && AnimFrame > 8
   if Rnd < 0.7
-    GetYDistFloorOffset immediateTempVar 20 0 0
+    GetYDistFloorOffset immediateTempVar 20 10 0
     if Equal immediateTempVar -1
       AbsStick 1 0
       Return
     endif
-    GetYDistFloorOffset immediateTempVar -20 0 0
+    GetYDistFloorOffset immediateTempVar -20 10 0
     if Equal immediateTempVar -1
       AbsStick -1 0
       Return

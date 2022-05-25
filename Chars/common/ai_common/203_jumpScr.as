@@ -55,7 +55,18 @@ if Equal CurrSubaction JumpSquat
   Button X
 endif
 if Equal scriptVariant sv_jump_over
+  globTempVar = OPos * 30
+  GetYDistFloorOffset globTempVar globTempVar 10 1
+  if Equal globTempVar -1
+    scriptVariant = sv_jump_away
+    Return
+  endif
+  skipMainInit = mainInitSkip
+  currGoal = cg_attack_reversal
   if Equal AirGroundState 1
+    if XSpeed > 1.5 || XSpeed < -1.5
+      Stick -1
+    endif
     Return
   endif
   AbsStick savedOPos
@@ -64,7 +75,7 @@ if Equal scriptVariant sv_jump_over
     Jump
   elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
     label
-    if currGoal < cg_attack || currGoal > calc(cg_attack + 1)
+    if currGoal < cg_attack
       scriptVariant = sv_aerialdrift_away
       CallI AerialDrift
     endif
@@ -76,8 +87,8 @@ elif Equal scriptVariant sv_jump_neutral
   endif
 elif Equal scriptVariant sv_jump_away
   immediateTempVar = OPos * -1
-  globTempVar = immediateTempVar * 25
-  GetYDistFloorOffset globTempVar globTempVar 0 0
+  globTempVar = immediateTempVar * 30
+  GetYDistFloorOffset globTempVar globTempVar 10 0
   if Equal globTempVar -1
     if Rnd < 0.35
       scriptVariant = sv_jump_over

@@ -14,12 +14,12 @@
 #const cs_recoveryDistX = 70
 #const cs_recoveryDistY = -50
 
-#const pt_aggression = 0.85
+#const pt_aggression = 1.25
 #const pt_bait_dashAwayChance = 0.35
 #const pt_bait_wdashAwayChance = 0.65
-#const pt_baitChance = 0.8
+#const pt_baitChance = 1.35
 #const pt_braveChance = 0.8
-#const pt_circleCampChance = 0.85
+#const pt_circleCampChance = 0.7
 #const pt_djumpiness = 0.04
 #const pt_jumpiness = 0.18
 #const pt_platChance = 0.25
@@ -144,7 +144,7 @@
 #const dsmash_damage_info = DSmash|16|20|70|25
 
 // noochB
-#const nspecial_IASA = 80
+#const nspecial_IASA = 40
 #const nspecial_xOffset = 5
 #const nspecial_yOffset = 5
 #const nspecial_xRange = 10
@@ -153,7 +153,7 @@
 #const nspecial_lastHitFrame = 30
 #const nspecial_damage_info = NSpecial|3|0|0|0
 
-#const nspecialair_IASA = 80
+#const nspecialair_IASA = 40
 #const nspecialair_xOffset = 5
 #const nspecialair_yOffset = 5
 #const nspecialair_xRange = 80
@@ -161,6 +161,7 @@
 #const nspecialair_hitFrame = 13
 #const nspecialair_lastHitFrame = 30
 #const nspecialair_damage_info = NSpecialAir|3|0|0|0
+
 
 // upB
 #const uspecial_IASA = 9999.9999

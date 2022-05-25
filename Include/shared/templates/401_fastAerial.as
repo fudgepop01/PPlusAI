@@ -10,6 +10,7 @@ Seek begin
 
 ACTIONABLE_ON_GROUND
 
+scriptVariant = sv_fastAttack
 XGoto CalcAttackGoal
 XReciever
 

@@ -6,6 +6,18 @@ id 0x0000
 // dotnet run --compile --path c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed --out C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac --include c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include
 str "PADDING_FILE"
 
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+
 currGoal = cg_nothing
 Call MainHub
 Return
