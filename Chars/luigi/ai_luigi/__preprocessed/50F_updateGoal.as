@@ -3,7 +3,12 @@ id 0x850F
 unk 0x0
 
 XReciever
+NoRepeat
 var16 = 0
+
+// LOGSTR 1667718912 1986096128 1969553408 0 0
+// LOGVAL var21
+// PRINTLN
 
 // #let OCommitAttack = var0
 // GetCommitPredictChance OCommitAttack LevelValue
@@ -63,18 +68,6 @@ if Equal var3 1
   var21 = 7
 endif
 
-var0 = -1
-var22 = (1 - (LevelValue / 100)) * 60 + 10
-var22 *= PT_REACTION_TIME
-GetCommitPredictChance var23 LevelValue
-var23 = 1.1 - var23
-var23 *= 0.3
-var22 *= var23
-var23 = AnimFrame
-MOD var22 var23 var22
-if var22 <= 1 || Equal var21 10.4
-  Goto EndlagCheck
-endif
 if var21 >= 7 && var21 < 8
   var20 = -1
   // Norm var22 TopNX TopNY
@@ -161,8 +154,6 @@ var17 = var22
     MOD var22 AnimFrame var22
     // $LV9Check(var22 = 1)
     if var22 <= 1
-      // Goto EndlagCheck
-
       if Equal AirGroundState 1 && CHANCE_MUL_LE PT_JUMPINESS 1
         var14 += 12.63 
         if CHANCE_MUL_LE PT_JUMPINESS 1 && CHANCE_MUL_LE PT_JUMPINESS 1
@@ -181,6 +172,7 @@ var17 = var22
   endif
 elif var21 >= 10 && var21 < 11
   var20 = -1
+  var21 = 10.5
   var22 = 200
   XGoto GetChrSpecific
   XReciever
@@ -229,19 +221,21 @@ var17 = var22
         var21 = 16
         Return
       endif
-    elif CHANCE_MUL_LE PT_AGGRESSION 0.2
-      var21 = 16
-      Return
     endif
     
     if Equal var21 10.4
+      Return
+    elif Equal var21 10.5 && CHANCE_MUL_LE PT_BAITCHANCE 0.7
       Return
     else
       GetCommitPredictChance var22 LevelValue
       predictAverage var23 10 LevelValue
       var23 += 15
-      if var22 > 0.65 && !(XDistLE var23)
+      if var22 > 0.65 && !(XDistLE var23) && Rnd < 0.5
         var21 = 10.4
+        if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.3
+          var21 = 10.5
+        endif
         var16 = 3
         CallI Wavedash
         Return
@@ -304,12 +298,16 @@ var17 = var22
     endif
   endif
 
+  if Equal var21 10.4
+    Return
+  endif
+
   var1 = 1
   predictAverage var23 10 LevelValue
   if var23 < 8
     var23 = 8
   endif
-  var23 += 45
+  var23 += 10
   var23 *= OPos
   
   Norm var22 TopNX TopNY
@@ -321,24 +319,21 @@ var17 = var22
   if Equal var23 -1 || Equal var3 1 || var22 < var17
     var1 = 0
     predictAverage var23 10 LevelValue
-    var23 += 10
-    var23 *= OPos
-    var13 -= var23
   endif
 
   Goto getDist
-  if var22 >= 60 && !(Equal var1 0)
+  if var22 >= 55
     var1 = 1
   elif CHANCE_MUL_LE PT_BAITCHANCE 0.15
     var1 = -1
   endif 
 
   predictAverage var17 10 LevelValue
-  if var17 < 5
-    var17 = 5
+  if var17 < 8
+    var17 = 8
   endif
   var22 = 15 * Rnd
-  var17 += var22
+  var17 -= var22
   if !(Equal var1 1)
     var17 = var17 + 15 * Rnd
   elif True
@@ -350,15 +345,36 @@ var17 = var22
   var22 = var17
 
   if ODistLE var17 && Equal AirGroundState 1 && Equal var21 10.5
-    if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.75 || CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.75
-      var15 = -1
-      if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.45
-        var16 = 2
-        Call Wavedash
-      endif
+    // if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.75 || CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.75
+    var15 = -1
+    if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.45
       var16 = 2
-      Call DashScr
+      Call Wavedash
     endif
+    var16 = 2
+    if CurrAction > 3
+      label wdback
+      if XDistBackEdge > -15 || XDistFrontEdge < 15
+        Call DefendHub
+      endif
+      XGoto PerFrameChecks
+      XReciever
+      Seek wdback
+      if Equal AirGroundState 2
+        var22 = OPos * -1
+        AbsStick var22 (-1)
+        Button R
+      elif CurrAction <= 3
+        Seek exec_dash
+        Jump
+      elif !(Equal CurrSubaction JumpSquat)
+        Button X
+      endif
+      Return
+    endif
+    label exec_dash
+    CallI DashScr
+    // endif
   endif
 
 
@@ -367,7 +383,7 @@ var17 = var22
   endif
 
   predictAverage var22 10 LevelValue
-  var22 += 13
+  var22 += 5
   if ODistLE var22 && Equal var1 1
     if Equal var21 10.2 && Equal AirGroundState 1
       label startup
@@ -395,7 +411,7 @@ var17 = var22
       Call DashScr
     endif
   endif
-  var22 += 27
+  var22 += 10
 
   if XDistLE var22 && !(Equal var1 -1)
 
@@ -405,13 +421,12 @@ var17 = var22
       predictAverage var23 10 LevelValue
       var23 += 10
       var23 *= OPos
-      GetYDistFloorOffset var23 var23 5 0
+      GetYDistFloorOffset var23 var23 5 1
 
       DynamicDiceAdd 0 1 PT_BAIT_DASHAWAYCHANCE
-      var22 = PT_JUMPINESS * 0.5
-      DynamicDiceAdd 0 2 var22
+      DynamicDiceAdd 0 2 PT_JUMPINESS
       DynamicDiceAdd 0 3 PT_BAIT_WDASHAWAYCHANCE
-      var22 = 3 - PT_AGGRESSION
+      var22 = 4 - PT_AGGRESSION
       DynamicDiceAdd 0 4 var22
       var22 = PT_BAITCHANCE * 3
       Abs var22
@@ -419,8 +434,9 @@ var17 = var22
       if Equal var23 -1
       elif Equal var1 1 && CHANCE_MUL_LE PT_AGGRESSION 0.3
         GetCommitPredictChance var22 LevelValue
-        if var22 < 0.3
-          DynamicDiceAdd 0 6 0.65
+        GetAttribute var23 40; 0
+        if var22 < 0.6 && var23 > 1.5
+          DynamicDiceAdd 0 6 1.25
         endif
         // if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.35 || CHANCE_MUL_LE PT_BRAVECHANCE 0.3
         //   if ODistLE 15
@@ -444,17 +460,20 @@ var17 = var22
       DynamicDiceRoll 0 var22 0
       if CHANCE_MUL_GE PT_AGGRESSION 0.8
         var21 = 10.4
+        if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.35
+          var21 = 10.5
+        endif
       endif
-      if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.25
+      if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
         var16 = 2
         Call DashScr
-      elif CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.25
+      elif CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.05
         var16 = 2
         Call Wavedash
       endif
       if Equal var22 1
         var16 = 2
-        if CHANCE_MUL_LE PT_AGGRESSION 0.2
+        if CHANCE_MUL_LE PT_AGGRESSION 0.
           var16 = 1
         endif
         Call DashScr
@@ -463,7 +482,7 @@ var17 = var22
         Call DashScr
       elif Equal var22 2
         var16 = 2
-        if CHANCE_MUL_GE PT_AGGRESSION 0.65
+        if CHANCE_MUL_GE PT_AGGRESSION 0.25
           var16 = 3
         endif
         Goto getDist
@@ -480,7 +499,7 @@ var17 = var22
       elif Equal var22 7
         var21 = 10.4
       endif
-    GetYDistFloorOffset var17 0 50 0
+      GetYDistFloorOffset var17 0 50 0
       if var17 < 40 && CHANCE_MUL_LE PT_PLATCHANCE 1
         Call BoardPlatform
       endif
@@ -518,8 +537,6 @@ var17 = var22
     var16 = 4
     Call DashScr
   endif
-
-  // Goto EndlagCheck
 elif var21 >= 16 && var21 < 17
   if CalledFrom ExecuteAttack
     XGoto SetAttackGoal
@@ -534,6 +551,14 @@ elif var21 >= 16 && var21 < 17
   //   var21 = 16
   // endif 
 
+  var22 = OXSpeed * 12
+  GetYDistFloorOffset var22 var22 15 1
+  if Equal OAirGroundState 3
+    var21 = 16.7
+  elif Equal var22 -1 && OFramesHitstun > 0 
+    var21 = 16.7
+  endif
+
   if var21 < 16.7
     SetDebugOverlayColor 255 0 0 136
   else
@@ -542,15 +567,13 @@ elif var21 >= 16 && var21 < 17
     if OYDistBackEdge > 15 && !(Equal OAirGroundState 3) && OXDistBackEdge > 30
       SetDebugOverlayColor 0 255 255 255
       var21 = 16.8
+    elif Equal OAirGroundState 1
+      var21 = 16.4
     else
       var21 = 16.7
     endif
   endif
   EnableDebugOverlay
-
-  if Equal OAirGroundState 3
-    var21 = 16.7
-  endif
 
   if Equal var20 -1
     Goto OPosGoal
@@ -558,22 +581,36 @@ elif var21 >= 16 && var21 < 17
     Return
   endif
 
+  // $ifLastOrigin(grab,0)
+  //   if CHANCE_MUL_LE PT_AGGRESSION 0.65
+  //     if Equal var21 16.3
+  //       Goto changeGoal
+  //       Return
+  //     elif Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
+  //       Goto changeGoal
+  //       Return
+  //     elif OCurrAction >= 68 && OCurrAction <= 73 || Equal OCurrAction 66
+  //       if OYDistBackEdge > -12 && OYSpeed < 0
+  //         Goto changeGoal
+  //         Return
+  //       endif
+  //     endif 
+  //   endif
+  // endif
+
 if !(True) || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22
-    if CHANCE_MUL_LE PT_AGGRESSION 0.65
-      if Equal var21 16.3
-        Goto changeGoal
-        Return
-      elif Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
-        Goto changeGoal
-        Return
-      elif OCurrAction >= 68 && OCurrAction <= 73 || Equal OCurrAction 66
-        if OYDistBackEdge > -12 && OYSpeed < 0
-          Goto changeGoal
-          Return
-        endif
-      endif 
+  elif Equal var21 16.3
+    predictAverage var22 10 LevelValue
+    if var22 < 8
+      var22 = 8
+    endif
+    var22 += 60
+    var23 = var22 - 70
+    if XDistLE var22 && !(XDistLE var23) && CHANCE_MUL_LE PT_AGGRESSION 0.05
+      Call ExecuteAttack
     endif
   endif
+
   EstOYCoord var22 20
   var22 -= TopNY - YDistFloor
 if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
@@ -613,13 +650,12 @@ if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|
   //   endif
   // endif
 
-
-
   predictAverage var23 10 LevelValue
   var23 += 30
   if ODistLE var23 && var21 < 16.4
     if !(Equal var21 16.3)
       GetCommitPredictChance var22 LevelValue
+      var22 *= 0.1
       if Rnd < var22 
         if CHANCE_MUL_LE PT_WALL_CHANCE 0.75 || CHANCE_MUL_LE PT_BAITCHANCE 1
           if CHANCE_MUL_LE PT_BAITCHANCE 0.8
@@ -801,8 +837,6 @@ if !(True) || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 
 else
   var21 = 10
 endif
-Return
-label EndlagCheck
 Return
 label OPosGoal
 if OAnimFrame < 2

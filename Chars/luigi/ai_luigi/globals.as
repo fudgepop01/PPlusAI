@@ -11,7 +11,7 @@
 #const pt_bait_wdashAwayChance = 0.65
 #const pt_wall_chance = 0.45
 #const pt_platChance = 0.23
-#const pt_baitchance = 0.9
+#const pt_baitChance = 0.9
 #const pt_braveChance = 0.65
 #const pt_circleCampChance = 0.5
 
@@ -32,7 +32,7 @@
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
+#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) || Equal CurrAction hex(0x119)
 #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114)
 #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
 

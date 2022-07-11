@@ -7,13 +7,16 @@
 
   #const jumpChance = 0.3
   #const highUpBChance = 0.1
-  #const sideBChance = 0.4
+  #const sideBChance = 0.8
   #let hasTriedToUpB = var4
   #let jumpValue = var5
   #let highUpBValue = var6
   #let sideBValue = var7
   hasTriedToUpB = 0
   jumpValue = Rnd
+  if nearCliffY > UpBYDist
+    jumpValue = 0
+  endif
   highUpBValue = Rnd
   sideBValue = Rnd
 #endsnippet
@@ -45,7 +48,7 @@
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return

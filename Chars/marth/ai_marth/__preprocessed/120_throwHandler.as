@@ -73,13 +73,13 @@ elif Equal CurrAction 57 && AnimFrame > 8
     endif
   endif
 
-if Equal var20 23
+if Equal var20 24
     Stick 1 0
-elif Equal var20 24
-    Stick 0 (-1)
 elif Equal var20 25
-    Stick -1 0
+    Stick 0 (-1)
 elif Equal var20 26
+    Stick -1 0
+elif Equal var20 27
     Stick 0 1
   elif True
     if Rnd < 0.5

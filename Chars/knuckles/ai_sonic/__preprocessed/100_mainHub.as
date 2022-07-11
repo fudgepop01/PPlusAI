@@ -7,7 +7,6 @@ str "1.25"
 str "0.6"
 str "0.15"
 str "0.9"
-str "0.65"
 str "0.85"
 str "0.55"
 str "0.04"
@@ -42,6 +41,7 @@ DisableDebugOverlay
 if Equal var21 3
   CallI RecoveryHub
 elif var21 >= 16.7
+  var20 = -1
   Seek navigateToGoal
   Jump
 endif
@@ -60,10 +60,12 @@ if Equal var15 -1
   var22 = 200
   XGoto GetChrSpecific
   XReciever
-  if Equal var22 1 
+  if Equal var22 1
     var21 = 16.4
-  elif Rnd < 0.45 && !(Equal var21 16.4) && OFramesHitstun <= 0
+  elif CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.8 && !(Equal var21 16.4) && OFramesHitstun <= 0 && Equal AirGroundState 1
     var21 = 10.5
+  elif Equal var21 13
+    var21 = 16
   endif
   Seek initial
   Jump
@@ -188,6 +190,8 @@ elif Equal HitboxConnected 1
   if !(True)
     label attack_roll
   endif
+  var22 = PT_BAIT_DASHAWAYCHANCE * 2
+  DynamicDiceAdd 0 10.5 var22
   predictionConfidence var22 9 LevelValue
   if var22 > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
     DynamicDiceAdd 0 16 2
@@ -274,8 +278,9 @@ if Equal var21 10.4
   //   Jump
   // endif
   if var4 <= 0 || !(Equal var21 10.4)
-    var21 = 16
-    Seek selectGoal
+    var21 = 0
+    var15 = -100
+    Call MainHub
   endif
   Return
 elif Equal var14 BBoundary

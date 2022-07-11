@@ -397,7 +397,7 @@ export const generateFetchMoveData = () => {
     out(`SetVarByNum STACK_POP ${kbg}`);
     out(`STACK_PUSH immediateTempVar 0`);
     out(`immediateTempVar = ${angle}`);
-    out(`CalcKnockback anotherTempVar ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent}`);
+    // out(`CalcKnockback anotherTempVar ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent}`);
     out(`Return`)
   }
   out(`endif`);
@@ -604,7 +604,8 @@ export const generateInitialAttackDiceRolls = () => {
   }
 
   out(`DynamicDiceClear dslot0`)
-  for (const [idx, {origin}] of moves.entries()) {
+  for (const [idx, {origin, moveName}] of moves.entries()) {
+    if (moveName.toLowerCase() === "grab") continue;
     out(`DynamicDiceAdd dslot0 ${idx} ${1 / moveRoots[origin].length}`);
   }
 
@@ -819,7 +820,7 @@ const updateTrackedMoves = (moves) => {
 }
 
 const commonRecoveryBase = (AIHubConditions) => `
-  if ${AIHubConditions}
+  if CurrAction <= hex(0x20) 
     currGoal = cg_nothing
     Call MainHub
   endif
@@ -827,7 +828,7 @@ const commonRecoveryBase = (AIHubConditions) => `
 `;
 
 const customRecoveryBase = (AIHubConditions) => `
-  if ${AIHubConditions}
+  if CurrAction <= hex(0x20) 
     currGoal = cg_nothing
     Call MainHub
   endif

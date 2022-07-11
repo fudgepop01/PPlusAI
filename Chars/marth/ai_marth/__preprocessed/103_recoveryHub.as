@@ -6,8 +6,17 @@ XReciever
 // because some things might rely on these being unset
 label reroll
 var14 = Rnd * 0
+  GetNearestCliff var0
+  var0 = TopNX - var0
+  var0 *= -1
+  var1 *= -1
+  var1 = var1 - (TopNY * -1)
+Abs var0
   var4 = 0
   var5 = Rnd
+  if var1 > 48
+    var5 = 0
+  endif
   var6 = Rnd
   var7 = Rnd
 label begin
@@ -19,6 +28,9 @@ if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
 elif CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
+elif Equal CurrAction 189 || Equal CurrAction 190
+  var21 = 0
+  CallI MainHub
 endif
 
 
@@ -148,7 +160,7 @@ endif
       Return
     endif
   elif YDistBackEdge > 54.230000000000004 || var17 < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return
@@ -160,7 +172,7 @@ endif
       Return
     endif
   endif
-  if var7 <= 0.4 && YDistBackEdge > -80 && YDistBackEdge < 80 && var2 <= 50 && AnimFrame >= 30
+  if var7 <= 0.8 && YDistBackEdge > -80 && YDistBackEdge < 80 && var2 <= 50 && AnimFrame >= 30
     Button B
     ClearStick
     Stick 1

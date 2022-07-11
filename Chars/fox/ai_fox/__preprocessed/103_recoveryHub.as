@@ -6,13 +6,28 @@ XReciever
 // because some things might rely on these being unset
 label reroll
 var14 = Rnd * 0
+  GetNearestCliff var0
+  var0 = TopNX - var0
+  var0 *= -1
+  var1 *= -1
+  var1 = var1 - (TopNY * -1)
+Abs var0
   var4 = 0
   var5 = Rnd
+  if var1 > 85 || var0 > 90
+    var5 = 0
+  endif
   var6 = Rnd
   var9 = Rnd
   var7 = Rnd
+  if var0 > 90
+    var7 = 0
+  endif
   var8 = Rnd
   var10 = Rnd
+  if var0 > 42.5
+    var10 = 1
+  endif
 label begin
 var21 = 3
 SetDebugOverlayColor 255 136 0 221
@@ -22,6 +37,9 @@ if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
 elif CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
+elif Equal CurrAction 189 || Equal CurrAction 190
+  var21 = 0
+  CallI MainHub
 endif
 
 
@@ -154,7 +172,7 @@ endif
     Return
   endif
   var1 -= var14
-  if var7 <= 0.7 && YDistBackEdge > -3 && YDistBackEdge < 3 && var2 <= 100
+  if var7 <= 0.7 && YDistBackEdge > -3 && YDistBackEdge < 3 && var2 <= 90
     Button B
     ClearStick
     Stick 1
@@ -181,7 +199,7 @@ endif
       Return
     endif
   elif YDistBackEdge > 107.39 || var17 < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return

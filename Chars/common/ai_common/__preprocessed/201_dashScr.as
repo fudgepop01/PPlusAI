@@ -31,13 +31,11 @@ if Equal CurrAction 4 || Equal CurrAction 5
   CallI Wavedash
 endif
 
-var0 = var3 * 2 - var4 + Rnd * 20
+var0 = var3 - var4
 var0 = Rnd * var0 + var4 
 var2 = OPos
-if Equal var16 2
-  var0 += 6
-elif Equal var16 3
-  var0 += 18
+if Equal var16 3
+  var0 += 8
 endif
 label execution
 XGoto PerFrameChecks

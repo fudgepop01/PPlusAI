@@ -12,20 +12,23 @@ XReciever
 
 var0 = PT_AGGRESSION
 
-var1 = PT_BAITCHANCE
+var1 = 0.65
 
+// var22 = var0 * 0.08
+// var17 *= 1.75
+// if !(CalledFrom AttackedHub)
+//   GetCommitPredictChance var23 LevelValue
+//   if var23 > 0.45 && Rnd < var23 && CHANCE_MUL_LE var22 1
+//     var16 = 1
+//     XGoto CalcAttackGoal
+//     XReciever
+//     var15 = -1
+//     CallI MainHub
+//   endif
+// endif
 
-var22 = var0 * 0.08
-var17 *= 1.75
-if !(CalledFrom AttackedHub)
-  GetCommitPredictChance var23 LevelValue
-  if var23 > 0.45 && Rnd < var23 && CHANCE_MUL_LE var22 1
-    var16 = 1
-    XGoto CalcAttackGoal
-    XReciever
-    var15 = -1
-    CallI MainHub
-  endif
+if CHANCE_MUL_LE PT_AGGRESSION 0.65
+  var21 = 16.4
 endif
 
 if Equal AirGroundState 1
@@ -138,7 +141,14 @@ predictAverage var0 10 LevelValue
 var0 += 25
 PredictOMov var22 14 LevelValue
 if ODistLE var0 && CHANCE_MUL_LE var22 4
-  if NumJumps > 0 && Rnd < 0.4
+  if CalledFrom AttackedHub && CHANCE_MUL_LE PT_AGGRESSION 0.75
+    var16 = 1
+    XGoto CalcAttackGoal
+    XReciever
+    var15 = -1
+    CallI MainHub
+  endif 
+  if NumJumps > 0 && Rnd < 0.2
     var16 = 1
     var16 += 0.1
     CallI JumpScr

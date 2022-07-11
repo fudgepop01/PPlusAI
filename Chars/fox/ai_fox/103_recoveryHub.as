@@ -1,7 +1,7 @@
 #snippet INITIALIZATION
   #const UpBRadius = 85
   #const sideBHeight = 3
-  #const sideBRange = 100
+  #const sideBRange = 90
   #const tolerence = 20
 
   #const jumpChance = 0.5
@@ -19,11 +19,20 @@
   #let trickAngleValue = var10
   hasTriedToUpB = 0
   jumpValue = Rnd
+  if nearCliffY > UpBRadius || nearCliffX > sideBRange
+    jumpValue = 0
+  endif
   highUpBValue = Rnd
   highHighUpBValue = Rnd
   sideBValue = Rnd
+  if nearCliffX > sideBRange
+    sideBValue = 0
+  endif
   sideBLedgeValue = Rnd
   trickAngleValue = Rnd
+  if nearCliffX > calc(UpBRadius * 0.5)
+    trickAngleValue = 1
+  endif
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -87,7 +96,7 @@
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return

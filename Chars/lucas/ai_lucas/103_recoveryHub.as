@@ -202,7 +202,7 @@
     globTempVar *= -1
     AbsStick immediateTempVar globTempVar
   endif
-  if Equal CurrAction hex(0x10)
+  if CurrAction <= hex(0x100)
     Call RecoveryHub
   endif
 #endsnippet

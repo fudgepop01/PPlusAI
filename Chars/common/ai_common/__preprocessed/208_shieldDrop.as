@@ -18,7 +18,7 @@ if var0 >= 2
   var22 = var0 - 1
   MOD var22 var22 8
   var22 *= -0.125
-  LOGVAL var22
+  // LOGVAL var22
   Stick 0 var22
 endif
 var0 += 1

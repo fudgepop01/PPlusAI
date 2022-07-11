@@ -21,7 +21,7 @@ endif
 //--- prevent auto-attack
 Cmd30
 // keeps the AI from targeting itself because that can happen for some reason
-if Equal PlayerNum OPlayerNum
+if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
   SwitchTarget
 endif
 //--- track target stuff 
@@ -225,10 +225,6 @@ if !(CalledFrom RecoveryHub)
     endif
     Norm immediateTempVar OXDistBackEdge OYDistBackEdge
     Norm globTempVar XDistBackEdge YDistBackEdge
-
-    if immediateTempVar < globTempVar && YDistBackEdge > 0
-      CallI RecoveryHub
-    endif
   elif currGoal >= cg_edgeguard && Equal OIsOnStage 0
   elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0  
     if Equal IsOnStage 0
@@ -240,7 +236,7 @@ if !(CalledFrom RecoveryHub)
     elif Equal OIsOnStage 0 && currGoal < cg_edgeguard
       GetYDistFloorOffset immediateTempVar 15 15 1
       GetYDistFloorOffset globTempVar -15 15 1
-      if Equal immediateTempVar -1 && Equal globTempVar -1
+      if Equal immediateTempVar -1 || Equal globTempVar -1
         currGoal = cg_edgeguard
         skipMainInit = mainInitSkip
         CallI MainHub

@@ -68,7 +68,8 @@ DrawDebugRectOutline midGoal TopNY 5 5 color(0xFF880055)
 Return
 label execute
 DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880099)
-if Equal AirGroundState 1
+MOD immediateTempVar AnimFrame 3
+if Equal AirGroundState 1 && immediateTempVar <= 1
   ACTIONABLE_ON_GROUND
   Button X
   ClearStick

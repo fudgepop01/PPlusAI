@@ -38,9 +38,6 @@ if Equal AirGroundState 1
     Return
   endif
 endif
-if var21 < 16.7 && Equal IsOnStage 0
-  CallI RecoveryHub
-endif
 
   if Equal CurrAction 22 
     if Equal PrevAction 33
@@ -335,6 +332,9 @@ Seek jab123
 Return
 label jab123_2
 Goto PFC
+  if AnimFrame >= 3 && Equal CurrSubaction 72
+    Button A
+  endif
 Goto common_checks
 Seek jab123_2
 Return
@@ -390,9 +390,6 @@ Seek usmash_strong
 Return
 label dsmash
 Goto PFC
-  if AnimFrame >= 8 && Equal CurrSubaction 96
-    Button A
-  endif
 Goto common_checks
 Seek dsmash
 Return
@@ -403,6 +400,9 @@ Seek dsmash_strong
 Return
 label dsmash2
 Goto PFC
+  if AnimFrame >= 8 && Equal CurrSubaction 96
+    Button A
+  endif
 Goto common_checks
 Seek dsmash2
 Return
@@ -579,17 +579,22 @@ label PFC
   XGoto PerFrameChecks
   XReciever
 if !(True) || Equal var20 17|| Equal var20 21|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32
-    XGoto SetAttackGoal
-    XReciever
-    if Equal var21 16.4
-      XGoto MoveToGoal
-      XReciever
-    elif Equal var21 16.3
-      var22 = XSpeed * -2
+    if Equal IsOnStage 0 && NumJumps < 1
+      var22 = TopNX * -1
       AbsStick var22
     else
-      XGoto MoveToGoal
+      XGoto SetAttackGoal
       XReciever
+      if Equal var21 16.4
+        XGoto MoveToGoal
+        XReciever
+      elif Equal var21 16.3
+        var22 = XSpeed * -2
+        AbsStick var22
+      else
+        XGoto MoveToGoal
+        XReciever
+      endif
     endif
   endif
 Return
@@ -597,7 +602,7 @@ label common_checks
   XGoto PerFrameChecks
   XReciever
 
-  if Equal CanCancelAttack 1 && CurrAction >= 24 && CurrAction <= 52
+  if Equal CanCancelAttack 1
     Seek finish
     Jump
   elif CurrAction <= 32 && !(Equal CurrAction 24)
@@ -670,7 +675,7 @@ label common_checks
       var22 = 999
     endif 
     var22 -= 2
-    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame && !(ODistLE 8)
       Button R
     endif
   endif

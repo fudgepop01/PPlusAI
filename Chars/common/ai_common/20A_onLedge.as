@@ -17,6 +17,11 @@ if Equal CurrAction hex(0x73) || Equal CurrAction hex(0x74)
   Return
 endif
 
+if CurrAction <= hex(0x21)
+  currGoal = cg_nothing
+  CallI MainHub
+endif
+
 if AnimFrame > 2
   if Equal currGoal cg_ledge_edgeguard
     // LOGSTR_NL str("LEDGE_EDGEGD")
@@ -115,10 +120,6 @@ if AnimFrame > 2
       endif
     endif
   endif
-endif
-
-if CurrAction <= hex(0x21)
-  CallI MainHub
 endif
 Return
 label exec_wait

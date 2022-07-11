@@ -55,6 +55,7 @@ ItemScrew_1 unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-4.00,ymax=12.00
 ItemHammerWait unk=0,start=0,end=16,xmin=-16.00,xmax=20.00,ymin=0.00,ymax=30.00
 ItemHammerMove unk=0,start=0,end=16,xmin=-16.00,xmax=20.00,ymin=0.00,ymax=30.00
 ItemHammerAir unk=0,start=0,end=16,xmin=-16.00,xmax=20.00,ymin=0.00,ymax=30.00
+subaction0x1D6 unk=0,start=12,end=13,xmin=3.13,xmax=15.47,ymin=4.47,ymax=12.84
 subaction462 unk=0,start=52,end=57,xmin=2.00,xmax=16.00,ymin=3.00,ymax=8.00
 subaction464 unk=0,start=52,end=57,xmin=-16.00,xmax=-3.00,ymin=4.00,ymax=8.00
 subaction463 unk=0,start=52,end=57,xmin=2.00,xmax=16.00,ymin=3.00,ymax=8.00

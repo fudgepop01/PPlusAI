@@ -127,6 +127,14 @@ endif
 var13 -= var23
 var13 += TopNX
 
+var22 = var13 - OTopNX
+var22 *= OPos
+var22 -= var11
+var22 += var9 + -30
+if var22 > 0 && !(XDistLE 20)
+  var20 = -1
+  Return
+endif
 
 // CalcYChange var14 var17 OTotalYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
 // var14 *= -1
@@ -188,7 +196,7 @@ var14 -= var23
 // var23 *= 1
 // tempGoalY += var23
 
-var22 = OHurtboxSize * 0.5
+var22 = OHurtboxSize
 var14 += var22
 
 if !(True) || Equal var20 13|| Equal var20 14|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30
@@ -204,6 +212,11 @@ if !(True) || Equal var20 13|| Equal var20 14|| Equal var20 24|| Equal var20 25|
     if OCurrAction >= 10 && OCurrAction <= 11 && OAnimFrame < 10
       var14 = OTopNY - OYDistFloor
     endif
+  endif
+
+  if Equal OYDistFloor -1 && OYDistBackEdge > 5
+    var22 = OPos * OWidth
+    var13 += var22
   endif
 endif
 if Equal var2 1
@@ -242,8 +255,8 @@ if Equal var2 1
   endif
 endif
 
-var22 = var9 * 0.5 * OPos
-var13 += var22
+// var22 = var9 * 0.5 * OPos
+// var13 += var22
 
 // var22 = var0 - TopNX
 // var23 = var13 - TopNX

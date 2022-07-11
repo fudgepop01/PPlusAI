@@ -28,15 +28,18 @@ if FramesHitlag > 2
   #let sdiChance = var0
   sdiChance = PT_SDICHANCE
   
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10
+  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 8
   if PT_REACTION_TIME > 0.5
     immediateTempVar *= PT_REACTION_TIME
   else
     immediateTempVar *= 0.5
   endif
+  // LOGSTR_NL str("thingy")
+  // LOGVAL_NL immediateTempVar
   MOD immediateTempVar FramesHitlag immediateTempVar
+  // LOGVAL_NL immediateTempVar
 
-  if Equal immediateTempVar 6 && Rnd <= sdiChance
+  if Equal immediateTempVar 1 && Rnd <= sdiChance
     globTempVar = OPos * -1
     if XDistBackEdge > -shortEdgeRange
       globTempVar = OPos
@@ -59,8 +62,10 @@ if FramesHitlag > 2
 elif FramesHitlag > 1
   immediateTempVar = 0
   globTempVar = LevelValue * 0.01
-  if LevelValue >= LV6 && Rnd < globTempVar
+  if LevelValue >= LV6 && Rnd < globTempVar && Equal YDistFloor -1
     immediateTempVar = TopNX * -1
+  elif LevelValue >= LV6 && CHANCE_MUL_LE PT_SDICHANCE 0.35
+    immediateTempVar = OPos * -1
   endif
 
   predictionConfidence globTempVar man_ODefendOption LevelValue
@@ -91,7 +96,7 @@ SetDebugOverlayColor color(0xFFFFFF66)
 #let techDirection = var5
 if FramesHitstun > 0 || Equal CurrAction hex(0x42) 
   if LevelValue >= LV6
-    stickX = Rnd * 4 * OPos * -1
+    stickX = Rnd * 8 * OPos * -1
     if KBAngle > 90 && KBAngle < 170
       stickX *= -1
     endif  
@@ -173,11 +178,11 @@ if FramesHitstun > 0 || Equal CurrAction hex(0x42)
         if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
           stickX = TotalXSpeed
           if stickX > -1 && stickX < 1
-            stickX = OPos * -0.6
+            stickX = OPos * -0.8
             if Rnd < 0.4
-              stickX *= 0.6
-            elif Rnd < 0.1
-              stickX *= 1.8
+              stickX *= 0.75
+            elif Rnd < 0.2
+              stickX *= 2
             elif Rnd < 0.1
               stickX *= -1
             endif
@@ -300,7 +305,7 @@ label _hitstunEnd
 
     skipMainInit = mainInitSkip
     CallI MainHub
-  elif ODistLE 70
+  elif ODistLE 140
     CallI DefendHub
   endif 
 Return

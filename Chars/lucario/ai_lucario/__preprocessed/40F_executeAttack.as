@@ -47,9 +47,6 @@ if Equal AirGroundState 1
     Return
   endif
 endif
-if var21 < 16.7 && Equal IsOnStage 0
-  CallI RecoveryHub
-endif
 
   if Equal CurrAction 22 
     if Equal PrevAction 33
@@ -62,7 +59,7 @@ endif
     Return
   endif
 
-if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28
+if !(True) || Equal var20 14|| Equal var20 18|| Equal var20 19|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
   if Equal AirGroundState 1
     MOD var22 AnimFrame 3
     if !(Equal CurrSubaction JumpSquat) && var22 <= 1
@@ -70,7 +67,7 @@ if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|
     endif
     Return
   endif
-elif !(True) || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+elif !(True) || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24
   if !(Equal AirGroundState 1)
     Return
   endif
@@ -81,7 +78,7 @@ endif
 if !(True) || Equal var20 3 || Equal var20 4
   Seek execDA
   Jump
-elif !(True) || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+elif !(True) || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24
   if !(Equal CurrSubaction JumpSquat) && !(Equal CurrAction 6)
     Button X
     Return
@@ -213,65 +210,83 @@ AbsStick OPos
 Seek sspecial
 Return
 elif Equal var20 17
-var6 = 7
-Button R|A
-Seek grab
+var6 = 14
+Button B
+AbsStick OPos
+Seek sspecial_aura
 Return
 elif Equal var20 18
-var6 = 7
-Button R|A
-Seek fthrow
+var6 = 14
+Button B
+AbsStick OPos
+Seek sspecialair
 Return
 elif Equal var20 19
-var6 = 7
-Button R|A
-Seek dthrow
+var6 = 14
+Button B
+AbsStick OPos
+Seek sspecialair_aura
 Return
 elif Equal var20 20
 var6 = 7
 Button R|A
-Seek bthrow
+Seek grab
 Return
 elif Equal var20 21
 var6 = 7
 Button R|A
-Seek uthrow
+Seek fthrow
 Return
 elif Equal var20 22
+var6 = 7
+Button R|A
+Seek dthrow
+Return
+elif Equal var20 23
+var6 = 7
+Button R|A
+Seek bthrow
+Return
+elif Equal var20 24
+var6 = 7
+Button R|A
+Seek uthrow
+Return
+elif Equal var20 25
 var6 = 15
 Button A
 Seek nair
 Return
-elif Equal var20 23
+elif Equal var20 26
 var6 = 28
 Button A
 Seek nair_late
 Return
-elif Equal var20 24
+elif Equal var20 27
 var6 = 41
 Button A
 Seek nair_superlate
 Return
-elif Equal var20 25
+elif Equal var20 28
 var6 = 12
 Button A
 Goto getHeight
 Stick 1
 Seek fair
 Return
-elif Equal var20 26
+elif Equal var20 29
 var6 = 13
 Button A
 Stick (-1) 0
 Seek bair
 Return
-elif Equal var20 27
+elif Equal var20 30
 var6 = 10
 Button A
 Stick 0 1
 Seek uair
 Return
-elif Equal var20 28
+elif Equal var20 31
 var6 = 12
 Button A
 Stick 0 (-0.6)
@@ -287,11 +302,23 @@ Seek jab123
 Return
 label jab1232
 Goto PFC
+  if Equal CurrSubaction 72 && AnimFrame >= 8 && Rnd <= 0.8
+    Button A
+  elif Equal CurrSubaction 73 
+    Goto cancelCheck
+  endif
 Goto common_checks
 Seek jab1232
 Return
 label jab1233
 Goto PFC
+  if Equal CurrSubaction 72 && AnimFrame >= 8 && Rnd <= 0.8
+    Button A
+  elif Equal CurrSubaction 73 && AnimFrame >= 10 && Rnd <= 0.8
+    Button A
+  elif Equal CurrSubaction 74
+    Goto cancelCheck
+  endif
 Goto common_checks
 Seek jab1233
 Return
@@ -353,9 +380,15 @@ Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7
   AbsStick OPos
 endif
-  Button R
   label asc_end
+  Button R
+  Goto common_checks
+  if Equal CurrSubaction 27 || Equal CurrSubaction 29
+    Seek finish
+    Jump
+  endif
   Seek asc_end
+  Return
 Goto common_checks
 Seek asc
 Return
@@ -382,6 +415,30 @@ if AnimFrame >= 2 && AnimFrame <= 7
 endif
 Goto common_checks
 Seek sspecial
+Return
+label sspecial_aura
+Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
+Goto common_checks
+Seek sspecial_aura
+Return
+label sspecialair
+Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
+Goto common_checks
+Seek sspecialair
+Return
+label sspecialair_aura
+Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7
+  AbsStick OPos
+endif
+Goto common_checks
+Seek sspecialair_aura
 Return
 label grab
 Goto PFC
@@ -480,18 +537,23 @@ label getHeight
 label PFC
   XGoto PerFrameChecks
   XReciever
-if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28
-    XGoto SetAttackGoal
-    XReciever
-    if Equal var21 16.4
-      XGoto MoveToGoal
-      XReciever
-    elif Equal var21 16.3
-      var22 = XSpeed * -2
+if !(True) || Equal var20 14|| Equal var20 18|| Equal var20 19|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
+    if Equal IsOnStage 0 && NumJumps < 1
+      var22 = TopNX * -1
       AbsStick var22
     else
-      XGoto MoveToGoal
+      XGoto SetAttackGoal
       XReciever
+      if Equal var21 16.4
+        XGoto MoveToGoal
+        XReciever
+      elif Equal var21 16.3
+        var22 = XSpeed * -2
+        AbsStick var22
+      else
+        XGoto MoveToGoal
+        XReciever
+      endif
     endif
   endif
 Return
@@ -499,7 +561,7 @@ label common_checks
   XGoto PerFrameChecks
   XReciever
 
-  if Equal CanCancelAttack 1 && CurrAction >= 24 && CurrAction <= 52
+  if Equal CanCancelAttack 1
     Seek finish
     Jump
   elif CurrAction <= 32 && !(Equal CurrAction 24)
@@ -572,7 +634,7 @@ label common_checks
       var22 = 999
     endif 
     var22 -= 2
-    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame && !(ODistLE 8)
       Button R
     endif
   endif
@@ -590,25 +652,37 @@ label common_checks
   endif
   if !(True)
     label cancelCheck
-    if Equal FramesHitlag 0 && Equal HitboxConnected 1
+  GetRaBit var22 32 0
+  if var22 < 1
+    GetRaBit var22 33 0
+    if var22 < 1
+      GetRaBit var22 34 0
+      if var22 < 1
+        GetRaBit var22 35 0
+      endif
+    endif
+  endif
+    if Equal var22 1
       XGoto CalcAttackGoal
       XReciever
-      Call ExecuteAttack
+      if var20 > -1
+        CallI ExecuteAttack
+      endif
     endif
     Return
   endif
 if Equal var20 1
 elif Equal var20 2
-elif !(True) || Equal var20 16
+elif !(True) || Equal var20 16 || Equal var20 17
 elif !(True) || Equal var20 15
 elif !(True) || Equal var20 12 || Equal var20 13
-elif !(True) || Equal var20 28
+elif !(True) || Equal var20 31
     if AnimFrame > 12
       Goto cancelCheck
     endif
   else
     Goto cancelCheck
-  endif  
+  endif
 Return
 label finish
   var20 = -1

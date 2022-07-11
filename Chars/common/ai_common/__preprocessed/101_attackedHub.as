@@ -27,15 +27,18 @@ if FramesHitlag > 2
   // level 1: once per 50 frames
   var0 = PT_SDICHANCE
   
-  var22 = (1 - (LevelValue / 100)) * 30 + 10
+  var22 = (1 - (LevelValue / 100)) * 30 + 8
   if PT_REACTION_TIME > 0.5
     var22 *= PT_REACTION_TIME
   else
     var22 *= 0.5
   endif
+  // LOGSTR_NL 1952999680 1852274944 0 0 0
+  // LOGVAL_NL var22
   MOD var22 FramesHitlag var22
+  // LOGVAL_NL var22
 
-  if Equal var22 6 && Rnd <= var0
+  if Equal var22 1 && Rnd <= var0
     var17 = OPos * -1
     if XDistBackEdge > -15
       var17 = OPos
@@ -58,8 +61,10 @@ if FramesHitlag > 2
 elif FramesHitlag > 1
   var22 = 0
   var17 = LevelValue * 0.01
-  if LevelValue >= 48 && Rnd < var17
+  if LevelValue >= 48 && Rnd < var17 && Equal YDistFloor -1
     var22 = TopNX * -1
+  elif LevelValue >= 48 && CHANCE_MUL_LE PT_SDICHANCE 0.35
+    var22 = OPos * -1
   endif
 
   predictionConfidence var17 7 LevelValue
@@ -84,7 +89,7 @@ SetDebugOverlayColor 255 255 255 102
 
 if FramesHitstun > 0 || Equal CurrAction 66 
   if LevelValue >= 48
-    var0 = Rnd * 4 * OPos * -1
+    var0 = Rnd * 8 * OPos * -1
     if KBAngle > 90 && KBAngle < 170
       var0 *= -1
     endif  
@@ -166,11 +171,11 @@ if FramesHitstun > 0 || Equal CurrAction 66
         if KBAngle >= 80 && KBAngle <= 100 && FramesHitlag >= 0
           var0 = TotalXSpeed
           if var0 > -1 && var0 < 1
-            var0 = OPos * -0.6
+            var0 = OPos * -0.8
             if Rnd < 0.4
-              var0 *= 0.6
-            elif Rnd < 0.1
-              var0 *= 1.8
+              var0 *= 0.75
+            elif Rnd < 0.2
+              var0 *= 2
             elif Rnd < 0.1
               var0 *= -1
             endif
@@ -309,7 +314,7 @@ label _hitstunEnd
 
     var15 = -1
     CallI MainHub
-  elif ODistLE 70
+  elif ODistLE 140
     CallI DefendHub
   endif 
 Return

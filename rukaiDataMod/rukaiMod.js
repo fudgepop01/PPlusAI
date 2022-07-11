@@ -46,17 +46,34 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var roundToDec = function (num, decimals) {
     var multiplier = Math.pow(10, decimals);
     return Math.round(num * multiplier) / multiplier;
 };
 var getSubactionName = function () {
-    return location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
+    var loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
+    if (!loc.startsWith("Special"))
+        return loc;
+    var idxTablePos = 10;
+    var subActPiece = "";
+    while (idxTablePos > 0) {
+        var component = document.querySelector("body > div > div > div > table > tbody > tr:nth-child(".concat(idxTablePos, ") > td:nth-child(2)"));
+        if (component != undefined) {
+            subActPiece = component.innerHTML.toString().substring(2).toUpperCase();
+            break;
+        }
+        idxTablePos -= 1;
+    }
+    return "subaction0x" + subActPiece;
 };
 var getNameFromPage = function () {
     var loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
@@ -130,7 +147,7 @@ var HitboxSelector = /** @class */ (function () {
                 for (var _e = __values(_this.bboxGroups[groupIdx]), _f = _e.next(); !_f.done; _f = _e.next()) {
                     var idx = _f.value;
                     _this.selectedBBoxes[idx] = shouldSelectAll;
-                    _this.bboxIdButtons[idx].setAttribute("selected", "" + shouldSelectAll);
+                    _this.bboxIdButtons[idx].setAttribute("selected", "".concat(shouldSelectAll));
                 }
             }
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -140,11 +157,11 @@ var HitboxSelector = /** @class */ (function () {
                 }
                 finally { if (e_3) throw e_3.error; }
             }
-            _this.bboxGroupButtons[groupIdx].setAttribute("selected", "" + shouldSelectAll);
+            _this.bboxGroupButtons[groupIdx].setAttribute("selected", "".concat(shouldSelectAll));
             _this.parent.output();
         };
         this.changeBBoxStatus = function (bbox) {
-            _this.bboxIdButtons[bbox].setAttribute("selected", "" + !_this.selectedBBoxes[bbox]);
+            _this.bboxIdButtons[bbox].setAttribute("selected", "".concat(!_this.selectedBBoxes[bbox]));
             _this.selectedBBoxes[bbox] = !_this.selectedBBoxes[bbox];
             if (!_this.selectedBBoxes[bbox])
                 _this.bboxIdButtons[bbox].parent.setAttribute("selected", "false");
@@ -165,30 +182,30 @@ var HitboxSelector = /** @class */ (function () {
             if (selected.length === 0)
                 selected = _this.allBBoxes;
             return {
-                minX: Math.min.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.minX; })))),
-                maxX: Math.max.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.maxX; })))),
-                minY: Math.min.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.minY; })))),
-                maxY: Math.max.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.maxY; }))))
+                minX: Math.min.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.minX; })), false)),
+                maxX: Math.max.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.maxX; })), false)),
+                minY: Math.min.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.minY; })), false)),
+                maxY: Math.max.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.maxY; })), false))
             };
         };
         this.getStartFrame = function () {
             var selected = _this.allBBoxes.filter(function (_, idx) { return _this.selectedBBoxes[idx]; });
             if (selected.length === 0)
                 selected = _this.allBBoxes;
-            return Math.min.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.startFrame; }))));
+            return Math.min.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.startFrame; })), false));
         };
         this.getEndFrame = function () {
             var selected = _this.allBBoxes.filter(function (_, idx) { return _this.selectedBBoxes[idx]; });
             if (selected.length === 0)
                 selected = _this.allBBoxes;
-            var result = Math.max.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.endFrame; }))));
+            var result = Math.max.apply(Math, __spreadArray([], __read(selected.map(function (b) { return b.endFrame; })), false));
             return (result !== -1) ? result : _this.parent.data.frames.length;
         };
         this.getAttackData = function () {
             var atkdIdx = _this.selectedAttackData;
             if (atkdIdx != undefined) {
                 var _a = _this.attackData[atkdIdx], damage = _a.damage, angle = _a.angle, bkb = _a.bkb, kbg = _a.kbg, wdsk = _a.wdsk;
-                return damage + "|" + (wdsk ? "w" + wdsk : bkb) + "|" + kbg + "|" + angle;
+                return "".concat(damage, "|").concat(wdsk ? "w".concat(wdsk) : bkb, "|").concat(kbg, "|").concat(angle);
             }
             else {
                 return "0|0|0|0";
@@ -208,14 +225,14 @@ var HitboxSelector = /** @class */ (function () {
             var e_4, _e, e_5, _f;
             var currPicker = document.createElement("div");
             var groupBtn = document.createElement("button");
-            groupBtn.innerText = "group " + idx;
+            groupBtn.innerText = "group ".concat(idx);
             this_1.bboxGroups.push([]);
             var idPicker = document.createElement("div");
             var _loop_2 = function (bbox) {
                 var id = this_1.allBBoxes.length;
                 this_1.bboxGroups[idx].push(id);
                 var idSelect = document.createElement("button");
-                idSelect.innerText = "" + id;
+                idSelect.innerText = "".concat(id);
                 idSelect.onclick = function () { return _this.changeBBoxStatus(id); };
                 idSelect.parent = groupBtn;
                 this_1.bboxIdButtons.push(idSelect);
@@ -246,7 +263,7 @@ var HitboxSelector = /** @class */ (function () {
             var _loop_3 = function (atkd) {
                 var hb = this_1.attackData.length;
                 var hbSelect = document.createElement("button");
-                hbSelect.innerText = "" + hb;
+                hbSelect.innerText = "".concat(hb);
                 hbSelect.onclick = function () { return _this.selectAttackData(hb); };
                 this_1.attackData.push(atkd);
                 this_1.attackDataButtons.push(hbSelect);
@@ -449,13 +466,13 @@ var DataCalculator = /** @class */ (function () {
         this.output = function () {
             var e_10, _a;
             var out = "";
-            var append = function (s) { out += s + "\n"; };
+            var append = function (s) { out += "".concat(s, "\n"); };
             var round = function (num) { return roundToDec(num, 2); };
             var rootName = (_this.rootName.value.length > 0) ? _this.rootName.value : getNameFromPage();
             if (['uthrow', 'bthrow', 'dthrow', 'fthrow'].includes(getNameFromPage()) && _this.throwData) {
-                append("#const " + rootName + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
-                append("#const " + rootName + "_throwFrame = " + _this.throwData.frame);
-                append("#const " + rootName + "_damage_info = Grab|" + _this.throwData.damage + "|" + _this.throwData.bkb + "|" + _this.throwData.kbg + "|" + _this.throwData.angle);
+                append("#const ".concat(rootName, "_IASA = ").concat(_this.data.iasa || (_this.data.frames.length + 1)));
+                append("#const ".concat(rootName, "_throwFrame = ").concat(_this.throwData.frame));
+                append("#const ".concat(rootName, "_damage_info = Grab|").concat(_this.throwData.damage, "|").concat(_this.throwData.bkb, "|").concat(_this.throwData.kbg, "|").concat(_this.throwData.angle));
             }
             else {
                 try {
@@ -464,22 +481,22 @@ var DataCalculator = /** @class */ (function () {
                         var name_1 = selector.getName();
                         var bbox = selector.getSelectedBBox();
                         if (idx === 0) {
-                            append(getSubactionName() + " unk=" + (_this.data.iasa || 0) + ",start=" + selector.getStartFrame() + ",end=" + selector.getEndFrame() + ",xmin=" + round(bbox.minX).toFixed(2) + ",xmax=" + round(bbox.maxX).toFixed(2) + ",ymin=" + round(bbox.minY).toFixed(2) + ",ymax=" + round(bbox.maxY).toFixed(2));
+                            append("".concat(getSubactionName(), " unk=").concat(_this.data.iasa || 0, ",start=").concat(selector.getStartFrame(), ",end=").concat(selector.getEndFrame(), ",xmin=").concat(round(bbox.minX).toFixed(2), ",xmax=").concat(round(bbox.maxX).toFixed(2), ",ymin=").concat(round(bbox.minY).toFixed(2), ",ymax=").concat(round(bbox.maxY).toFixed(2)));
                             append("==========================");
                             name_1 = rootName.toLowerCase();
-                            append("#const " + name_1 + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
+                            append("#const ".concat(name_1, "_IASA = ").concat(_this.data.iasa || (_this.data.frames.length + 1)));
                             customBBox = bbox;
                         }
                         else {
-                            append("#const mv_" + name_1 + " = " + idx);
+                            append("#const mv_".concat(name_1, " = ").concat(idx));
                         }
-                        append("#const " + name_1 + "_xOffset = " + round(bbox.minX));
-                        append("#const " + name_1 + "_yOffset = " + round(bbox.minY) * -1);
-                        append("#const " + name_1 + "_xRange = " + round((bbox.maxX - bbox.minX) / 2));
-                        append("#const " + name_1 + "_yRange = " + round((bbox.maxY - bbox.minY) / 2));
-                        append("#const " + name_1 + "_hitFrame = " + selector.getStartFrame());
-                        append("#const " + name_1 + "_lastHitFrame = " + selector.getEndFrame());
-                        append("#const " + name_1 + "_damage_info = " + rootName + "|" + selector.getAttackData());
+                        append("#const ".concat(name_1, "_xOffset = ").concat(round(bbox.minX)));
+                        append("#const ".concat(name_1, "_yOffset = ").concat(round(bbox.minY) * -1));
+                        append("#const ".concat(name_1, "_xRange = ").concat(round((bbox.maxX - bbox.minX) / 2)));
+                        append("#const ".concat(name_1, "_yRange = ").concat(round((bbox.maxY - bbox.minY) / 2)));
+                        append("#const ".concat(name_1, "_hitFrame = ").concat(selector.getStartFrame()));
+                        append("#const ".concat(name_1, "_lastHitFrame = ").concat(selector.getEndFrame()));
+                        append("#const ".concat(name_1, "_damage_info = ").concat(rootName, "|").concat(selector.getAttackData()));
                         append("---------------------------");
                     }
                 }
@@ -545,6 +562,20 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
 (function () {
     'use strict';
     var e_11, _a;
+    if (location.pathname.includes("/subactions/")) {
+        var subactionList = document.querySelector("body > div > div > nav.d-none.d-md-block.col-2.sidebar.sidebar-right");
+        var specialsIDX = 0;
+        var currItem = void 0;
+        while ((currItem = subactionList.children.item(specialsIDX)) != null && currItem.innerHTML != "Specials") {
+            specialsIDX++;
+        }
+        var grabsIDX = 0;
+        while ((currItem = subactionList.children.item(grabsIDX)) != null && currItem.innerHTML != "Grabs") {
+            grabsIDX++;
+        }
+        subactionList.insertBefore(subactionList.children.item(specialsIDX), subactionList.children.item(grabsIDX + 2));
+        subactionList.insertBefore(subactionList.children.item(specialsIDX + 1), subactionList.children.item(grabsIDX + 3));
+    }
     var style = document.createElement("style");
     style.innerText = styling;
     document.head.appendChild(style);
@@ -619,7 +650,7 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
         var shortHop = Math.floor(heightOfJump(jumpYInitVelShort, gravity) * 100) / 100;
         var fullhop = Math.floor(heightOfJump(jumpYInitVel, gravity) * 100) / 100;
         var djump = Math.floor(heightOfJump(airJumpYMultiplier * jumpYInitVel, gravity) * 100) / 100;
-        console.log("\n#const cs_shortHopHeight = " + shortHop + "\n#const cs_jumpHeight = " + fullhop + "\n#const cs_djumpHeight = " + djump + "\n    ");
+        console.log("\n#const cs_shortHopHeight = ".concat(shortHop, "\n#const cs_jumpHeight = ").concat(fullhop, "\n#const cs_djumpHeight = ").concat(djump, "\n    "));
     };
     var attrs = Array.from(document.getElementsByTagName("td")).map(function (el) { return el.innerText; });
     var jumpYInitVel = 0;

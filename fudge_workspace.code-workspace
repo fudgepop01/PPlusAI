@@ -16,6 +16,15 @@
 		},
 		{
 			"path": "..\\Wombuild-content\\exported\\Source"
+		},
+		{
+			"path": "..\\..\\..\\..\\Downloads\\reltools-v1.1.5-alpha"
+		},
+		{
+			"path": "..\\..\\..\\..\\Documents\\aiscriptpad-editor"
+		},
+		{
+			"path": "..\\..\\..\\..\\Documents\\PinkTromboneApp"
 		}
 	],
 	"settings": {

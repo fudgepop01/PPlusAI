@@ -72,7 +72,9 @@ if Equal CurrAction 27 && Equal var17 0
   if var17 < 40 || var1 > 12 || !(ODistLE 55)
     Seek pickOption
     Jump
-  elif var23 > 0.35
+  elif var23 > 0.35 
+    Return
+  elif OAttacking && var1 < 1
     Return
   elif Rnd <= var22
     Seek pickOption

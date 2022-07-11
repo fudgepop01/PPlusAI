@@ -12,7 +12,7 @@
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 6
 #const cs_recoveryDistX = 70
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistY = -60
 
 #const pt_aggression = 1.25
 #const pt_bait_dashAwayChance = 0.35
@@ -146,21 +146,21 @@
 // noochB
 #const nspecial_IASA = 40
 #const nspecial_xOffset = 5
-#const nspecial_yOffset = 5
-#const nspecial_xRange = 10
-#const nspecial_yRange = 1
+#const nspecial_yOffset = -2
+#const nspecial_xRange = 200
+#const nspecial_yRange = 2
 #const nspecial_hitFrame = 20
 #const nspecial_lastHitFrame = 30
-#const nspecial_damage_info = NSpecial|3|0|0|0
+#const nspecial_damage_info = NSpecial|0|0|0|0
 
-#const nspecialair_IASA = 40
+#const nspecialair_IASA = 8
 #const nspecialair_xOffset = 5
-#const nspecialair_yOffset = 5
-#const nspecialair_xRange = 80
-#const nspecialair_yRange = 10
+#const nspecialair_yOffset = -2
+#const nspecialair_xRange = 200
+#const nspecialair_yRange = 2
 #const nspecialair_hitFrame = 13
 #const nspecialair_lastHitFrame = 30
-#const nspecialair_damage_info = NSpecialAir|3|0|0|0
+#const nspecialair_damage_info = NSpecialAir|0|0|0|0
 
 
 // upB

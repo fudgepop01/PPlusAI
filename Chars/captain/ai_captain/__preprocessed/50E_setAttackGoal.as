@@ -127,6 +127,14 @@ endif
 var13 -= var23
 var13 += TopNX
 
+var22 = var13 - OTopNX
+var22 *= OPos
+var22 -= var11
+var22 += var9 + -30
+if var22 > 0 && !(XDistLE 20)
+  var20 = -1
+  Return
+endif
 
 // CalcYChange var14 var17 OTotalYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
 // var14 *= -1
@@ -205,6 +213,11 @@ if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|
       var14 = OTopNY - OYDistFloor
     endif
   endif
+
+  if Equal OYDistFloor -1 && OYDistBackEdge > 5
+    var22 = OPos * OWidth
+    var13 += var22
+  endif
 endif
 if Equal var2 1
   GetAttribute var22 40; 1
@@ -242,8 +255,8 @@ if Equal var2 1
   endif
 endif
 
-var22 = var9 * 0.5 * OPos
-var13 += var22
+// var22 = var9 * 0.5 * OPos
+// var13 += var22
 
 // var22 = var0 - TopNX
 // var23 = var13 - TopNX

@@ -6,10 +6,22 @@ XReciever
 // because some things might rely on these being unset
 label reroll
 var14 = Rnd * 0
+  GetNearestCliff var0
+  var0 = TopNX - var0
+  var0 *= -1
+  var1 *= -1
+  var1 = var1 - (TopNY * -1)
+Abs var0
   var4 = 0
   var5 = Rnd
+  if var1 > 60 || var0 > 80
+    var5 = 0
+  endif
   var6 = Rnd
   var7 = Rnd
+  if var0 > 80
+    var7 = 0
+  endif
 label begin
 var21 = 3
 SetDebugOverlayColor 255 136 0 221
@@ -19,6 +31,9 @@ if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
 elif CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
+elif Equal CurrAction 189 || Equal CurrAction 190
+  var21 = 0
+  CallI MainHub
 endif
 
 
@@ -132,10 +147,6 @@ endif
   AbsStick var17
   var2 = var0
   Abs var2
-  if var2 > 64
-    var7 = 0
-    var5 = 0
-  endif
   var17 = TopNY - BBoundary
   if !(NoOneHanging) && !(Equal var16 1)
     LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
@@ -147,20 +158,20 @@ endif
     Return
   endif
   var1 -= var14
-  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 90
+  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 80
     Button B
     ClearStick
     Stick 1
     Return
   endif
-  if var6 <= 0.15 && var3 < 64 && YDistBackEdge < 20 && Equal var4 0
+  if var6 <= 0.15 && var3 < 60 && YDistBackEdge < 20 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var3 > 58 && var3 < 64 && Equal var4 0
+  if var3 > 54 && var3 < 66 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
@@ -173,7 +184,7 @@ endif
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 87.68 || var17 < 18
+  elif YDistBackEdge > 83.68 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage

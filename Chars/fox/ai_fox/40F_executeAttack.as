@@ -8,6 +8,10 @@
   endif
 #endsnippet
 
+// #snippet POST_CHOICE_FILTER
+//   $setLastAttack(dsmash)
+// #endsnippet
+
 #snippet DSPECIALAIR
   if AnimFrame >= 6
     Button X

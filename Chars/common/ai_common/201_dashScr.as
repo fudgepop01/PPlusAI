@@ -29,13 +29,11 @@ if Equal CurrAction hex(0x4) || Equal CurrAction hex(0x5)
   CallI Wavedash
 endif
 
-timeLimit = dashForceTurnFrame * 2 - dashDanceMinFrames + Rnd * 20
+timeLimit = dashForceTurnFrame - dashDanceMinFrames
 timeLimit = Rnd * timeLimit + dashDanceMinFrames 
 startOPos = OPos
-if Equal scriptVariant sv_dash_away
-  timeLimit += 6
-elif Equal scriptVariant sv_dash_away_defense
-  timeLimit += 18
+if Equal scriptVariant sv_dash_away_defense
+  timeLimit += 8
 endif
 label execution
 XGoto PerFrameChecks

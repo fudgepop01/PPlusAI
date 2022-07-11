@@ -66,6 +66,6 @@ subaction477 unk=0,start=5,end=8,xmin=-1.00,xmax=20.00,ymin=-1.00,ymax=16.00
 subaction478 unk=0,start=5,end=8,xmin=-1.00,xmax=20.00,ymin=-1.00,ymax=16.00
 subaction479 unk=0,start=5,end=8,xmin=-1.00,xmax=20.00,ymin=-1.00,ymax=16.00
 // uspecial
-subaction482 unk=0,start=8,end=12,xmin=-27.00,xmax=20.16,ymin=-5.59,ymax=54.37
+subaction0x1E2 unk=0,start=8,end=12,xmin=-27.00,xmax=20.16,ymin=-5.59,ymax=54.37
 
 GlideAttack unk=0,start=4,end=7,xmin=1.00,xmax=25.00,ymin=-3.00,ymax=18.00

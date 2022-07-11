@@ -6,6 +6,12 @@ XReciever
 // because some things might rely on these being unset
 label reroll
 var14 = Rnd * 0
+  GetNearestCliff var0
+  var0 = TopNX - var0
+  var0 *= -1
+  var1 *= -1
+  var1 = var1 - (TopNY * -1)
+Abs var0
   var4 = 0
   var5 = Rnd
   var7 = Rnd
@@ -70,7 +76,7 @@ elif Equal CurrAction 276
 elif Equal CurrAction 274
   Goto handleNSpecial
   Return
-elif Equal CurrAction 275
+elif Equal CurrAction 275 || Equal CurrAction 279 || Equal CurrAction 280 || Equal CurrAction 281
   Goto handleSSpecial
   Return
 elif Equal CurrAction 277

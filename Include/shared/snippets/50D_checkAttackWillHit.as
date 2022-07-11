@@ -73,5 +73,7 @@
 #endsnippet
 
 #snippet MOVE_IASA_CHECK
-  EstYCoord immediateTempVar move_IASA
+  CalcYChange immediateTempVar move_IASA YSpeed Gravity MaxFallSpeed FastFallSpeed 0
+  immediateTempVar -= TopNY 
+  immediateTempVar *= -1
 #endsnippet

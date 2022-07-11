@@ -6,6 +6,12 @@ XReciever
 // because some things might rely on these being unset
 label reroll
 var14 = Rnd * 0
+  GetNearestCliff var0
+  var0 = TopNX - var0
+  var0 *= -1
+  var1 *= -1
+  var1 = var1 - (TopNY * -1)
+Abs var0
   var4 = 0
   var5 = Rnd
   var7 = Rnd
@@ -19,6 +25,9 @@ if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
   CallI AttackedHub
 elif CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
+elif Equal CurrAction 189 || Equal CurrAction 190
+  var21 = 0
+  CallI MainHub
 endif
 
 

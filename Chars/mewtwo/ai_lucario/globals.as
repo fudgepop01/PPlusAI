@@ -19,7 +19,7 @@
 #const pt_bait_wdashAwayChance = 0.45
 #const pt_wall_chance = 0.4
 #const pt_platChance = 0.1
-#const pt_baitchance = 0.9
+#const pt_baitChance = 0.9
 #const pt_braveChance = 0.65
 #const pt_circlecampChancce = 0.15
 

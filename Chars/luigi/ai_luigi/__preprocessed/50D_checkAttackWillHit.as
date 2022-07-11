@@ -29,10 +29,19 @@ if OAnimFrame < var17
   endif
 endif
 
+if Equal OCurrAction 77
+  var9 += 3
+  var11 += 3
+endif
+
 if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
 else
-  var22 = var11 + var9 * 2 
+  var22 = var9 * 2 - var11
   if var22 <= HurtboxSize && OYDistFloor > HurtboxSize && OYSpeed > 0
+    var20 = -1
+    Return
+  endif
+  if ODistLE var12
     var20 = -1
     Return
   endif
@@ -79,6 +88,19 @@ var5 = var9
 var23 = OCenterX - OTopNX
 var2 += var23
 
+var23 = var8 + 1 + var15
+var22 = 0.3 / var23
+var22 += 0.7
+var4 *= var22
+var5 *= var22
+
+if Equal OYDistFloor -1 && Equal AirGroundState 1
+  if OYDistBackEdge > -10
+    var3 -= OHurtboxSize
+  elif OYDistBackEdge < -45
+    var3 += OHurtboxSize
+  endif
+endif
 // var2 -= var23
 // if TopNX < OTopNX
 //   var2 += var23
@@ -321,30 +343,40 @@ if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|
   Abs var22
 
   if var17 <= var4 && var22 <= var5
-    if !(Equal var16 1)
+    var23 = var8 + 1
+    var22 = 6 / var23
+    if Rnd < var22
+      if !(Equal var16 1)
 if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
-        if var21 >= 16.7 || Equal IsOnStage 0
-  EstYCoord var22 var6
-          DrawDebugRectOutline TopNX var22 5 5 0 255 255 221
-          DrawDebugRectOutline TopNX -73.8 10 2 255 136 0 221
-          if var22 >= -73.8 && Equal AirGroundState 2
+          if var21 >= 16.7 || Equal IsOnStage 0
+  CalcYChange var22 var6 YSpeed Gravity MaxFallSpeed FastFallSpeed 0
+  var22 -= TopNY 
+  var22 *= -1
+            DrawDebugRectOutline TopNX var22 5 5 0 255 255 221
+            var23 = -40
+            if NumJumps > 0
+              var23 -= 33.8
+            endif
+            DrawDebugRectOutline TopNX var23 10 2 255 136 0 221
+            if var22 >= var23 && Equal AirGroundState 2
+              CallI ExecuteAttack
+              Finish
+            else
+              var20 = -1
+              Return
+            endif
+          else
             CallI ExecuteAttack
             Finish
-          else
-            var20 = -1
-            Return
           endif
-        else
+        elif Equal AirGroundState 1
           CallI ExecuteAttack
           Finish
         endif
-      elif Equal AirGroundState 1
-        CallI ExecuteAttack
-        Finish
+      else
+        var16 = 2
+        Return
       endif
-    else
-      var16 = 2
-      Return
     endif
   endif
 
@@ -361,44 +393,75 @@ endif
 var15 = 0
 
 // MIXES UP AN APPROACH
+if var21 < 16.7 && Rnd < 0.05
+  PredictOMov var22 10 LevelValue
+  if var22 < 0.4
+if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
+      if var15 <= 5
+        Return
+      endif
+    elif var15 <= 13
+      Return
+    endif
+  endif
+
   var22 = 200
   XGoto GetChrSpecific
   XReciever
-predictOOption var23 8 LevelValue 
-if LevelValue >= 48 && !(Equal var23 2) && Equal var22 0 && var21 < 16.7 && !(Equal var21 16.4)
-  if ODistLE 45
-    GetCommitPredictChance var23 LevelValue
-    if var23 < 0.1 && Rnd < 0.4 || var23 > 0.2 && Rnd < var23 && Rnd < var23
-      if CHANCE_MUL_LE PT_BAITCHANCE 0.6
-        var16 = 3
-        var15 = -1
-        if Equal AirGroundState 2
-          if YDistFloor <= 5
-            var16 = 2
-          else
-            var16 = 1
-            var20 = -1
-            CallI JumpScr
-          endif
-        elif ODistLE 20
-          var16 = 2
-        endif
-        CallI Wavedash
-      endif
-      var16 = 2
-      CallI DashScr
-      Return
+  if LevelValue >= 48 && Equal var22 0 && var21 < 16.7 && !(Equal var21 16.4)
+    predictAverage var22 10 LevelValue
+    if var22 < 15
+      var22 = 15
     endif
-    GetCommitPredictChance var23 LevelValue
-    if var23 < 0.1 && Rnd < 0.4 || var23 > 0.3 && Rnd < var23 && Rnd < var23
-      var21 = 10.2
-      if CHANCE_MUL_LE PT_AGGRESSION 0.3
-        var21 = 16.4
-        var16 = 1 //+ 0.1
-        var20 = -1
-        CallI JumpScr
+    var22 *= 2
+    if ODistLE var22
+      var15 = -1
+      GetCommitPredictChance var23 LevelValue
+      if var23 < 0.1 && Rnd < 0.4 || var23 > 0.2 && Rnd < var23 && Rnd < var23
+        if CHANCE_MUL_LE PT_BAITCHANCE 0.6
+          var16 = 3
+          if Equal AirGroundState 2
+            if YDistFloor <= 5
+              var16 = 2
+            elif True
+              var16 = 1
+              var20 = -1
+              CallI JumpScr
+            endif
+          elif ODistLE 20
+            var16 = 2
+          endif
+          CallI Wavedash
+        endif
+        var16 = 2
+        CallI DashScr
+        Return
       endif
-      Return
+
+      GetCommitPredictChance var23 LevelValue
+      if Equal AirGroundState 1 && CHANCE_MUL_LE PT_BAITCHANCE 1.2
+        PredictOMov var22 10 LevelValue
+        if var23 >= 0.25 || var22 >= 0.25
+          var21 = 10.4
+          if ODistLE 35
+            var16 = 2
+            CallI DashScr
+          else
+            var16 = 2
+            CallI Wavedash
+          endif
+        endif
+      endif
+      if var23 < 0.1 && Rnd < 0.4 || var23 > 0.3 && Rnd < var23 && Rnd < var23
+        var21 = 10.2
+        if CHANCE_MUL_LE PT_AGGRESSION 0.3
+          var21 = 16.4
+          var16 = 1 //+ 0.1
+          var20 = -1
+          CallI JumpScr
+        endif
+        Return
+      endif
     endif
   endif
 endif

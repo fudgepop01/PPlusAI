@@ -212,7 +212,7 @@ interface SubactionData {
         | "None"
         | "GroundedOnly"
         | "AerialOnly"
-        | "AerialAndGrounded";
+        | "AerialAndGrounded"; 
       i_frames: number;
       weight_dependent_speed: boolean;
     };
@@ -303,7 +303,20 @@ const roundToDec = (num: number, decimals: number) => {
 }
 
 const getSubactionName = () => {
-  return location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
+  const loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
+  if (!loc.startsWith("Special")) return loc;
+  let idxTablePos = 10;
+  let subActPiece = "";
+  while (idxTablePos > 0) {
+    let component = document.querySelector(`body > div > div > div > table > tbody > tr:nth-child(${idxTablePos}) > td:nth-child(2)`);
+    if (component != undefined) {
+      subActPiece = component.innerHTML.toString().substring(2).toUpperCase();
+      break;
+    }
+    idxTablePos -= 1;
+  }
+  
+  return "subaction0x" + subActPiece;
 }
 const getNameFromPage = () => {
   const loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
@@ -768,6 +781,22 @@ const styling = `
 
 (function() {
   'use strict';
+  if (location.pathname.includes("/subactions/")) {
+    const subactionList = document.querySelector("body > div > div > nav.d-none.d-md-block.col-2.sidebar.sidebar-right");
+    let specialsIDX = 0; 
+    let currItem: Element;
+    while ((currItem = subactionList.children.item(specialsIDX)) != null && currItem.innerHTML != "Specials") {
+      specialsIDX ++;
+    }
+    let grabsIDX = 0;
+    while ((currItem = subactionList.children.item(grabsIDX)) != null && currItem.innerHTML != "Grabs") {
+      grabsIDX ++;
+    }
+    
+    subactionList.insertBefore(subactionList.children.item(specialsIDX), subactionList.children.item(grabsIDX + 2))
+    subactionList.insertBefore(subactionList.children.item(specialsIDX + 1), subactionList.children.item(grabsIDX + 3))
+  }
+
   const style = document.createElement("style");
   style.innerText = styling;
   document.head.appendChild(style);

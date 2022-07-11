@@ -17,6 +17,11 @@ if Equal CurrAction 115 || Equal CurrAction 116
   Return
 endif
 
+if CurrAction <= 33
+  var21 = 0
+  CallI MainHub
+endif
+
 if AnimFrame > 2
   if Equal var21 15.1
     // LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
@@ -107,10 +112,6 @@ if AnimFrame > 2
       endif
     endif
   endif
-endif
-
-if CurrAction <= 33
-  CallI MainHub
 endif
 Return
 label exec_wait

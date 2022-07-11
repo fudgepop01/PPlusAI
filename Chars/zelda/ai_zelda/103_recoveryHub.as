@@ -25,7 +25,7 @@
   #let nearCliffX = var0
   #let nearCliffY = var1
   #let absNCX = var2
-  NEAREST_CLIFF(nearCliffX, nearCliffY)
+  TIMED_NEAREST_CLIFF(nearCliffX, nearCliffY, 33)
   
   // drift towards goal
   globTempVar = nearCliffX * -1

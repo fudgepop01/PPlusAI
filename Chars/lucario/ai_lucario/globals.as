@@ -11,7 +11,7 @@
 #const pt_bait_wdashAwayChance = 0.15
 #const pt_wall_chance = 0.4
 #const pt_platChance = 0.1
-#const pt_baitchance = 0.9
+#const pt_baitChance = 0.9
 #const pt_braveChance = 0.85
 #const pt_circleCampChance = 0.55
 
@@ -57,7 +57,7 @@
 #const jab1232_damage_info = Jab123|2|w36|100|50
 
 #const mv_jab1233 = 2
-#const jab1233_IASA = 40
+#const jab1233_IASA = 31
 #const jab1233_xOffset = 2.3
 #const jab1233_yOffset = -6.9
 #const jab1233_xRange = 8.18
@@ -67,7 +67,7 @@
 #const jab1233_damage_info = Jab123|5|30|120|55
 
 // dashattack
-#const dashattack_IASA = 37
+#const dashattack_IASA = 27
 #const dashattack_xOffset = 3.04
 #const dashattack_yOffset = -4.04
 #const dashattack_xRange = 8.49
@@ -96,7 +96,7 @@
 #const ftilt_damage_info = FTilt|10|40|35|37
 
 // utilt
-#const utilt_IASA = 27
+#const utilt_IASA = 26
 #const utilt_xOffset = -14.81
 #const utilt_yOffset = 2.18
 #const utilt_xRange = 14.81
@@ -116,7 +116,7 @@
 #const dtilt_damage_info = DTilt|6|35|100|80
 
 // fsmash
-#const fsmash_IASA = 50
+#const fsmash_IASA = 41
 #const fsmash_xOffset = 6
 #const fsmash_yOffset = -1.5
 #const fsmash_xRange = 10.75
@@ -145,7 +145,7 @@
 #const usmashStart_damage_info = USmash|6|w40|100|112
 
 // dsmash
-#const dsmash_IASA = 51
+#const dsmash_IASA = 34
 #const dsmash_xOffset = -18
 #const dsmash_yOffset = -1
 #const dsmash_xRange = 17
@@ -162,7 +162,7 @@
 #const nspecial_yRange = 10
 #const nspecial_hitFrame = 18
 #const nspecial_lastHitFrame = 40
-#const nspecial_damage_info = NSpecial|0|0|0|0
+#const nspecial_damage_info = NSpecial|0|-1|0|0
 
 #const mv_asc = 1
 #const asc_damage_info = NSpecial|0|0|0|0
@@ -174,7 +174,7 @@
 #const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 18
 #const nspecialair_lastHitFrame = 40
-#const nspecialair_damage_info = NSpecialAir|0|0|0|0
+#const nspecialair_damage_info = NSpecialAir|0|-1|0|0
 
 // upB
 // #const uspecial_IASA = 81
@@ -212,7 +212,7 @@
 #const dspecial_yRange = 1
 #const dspecial_hitFrame = 999
 #const dspecial_lastHitFrame = 999
-#const dspecial_damage_info = DSpecial|0|0|0|0
+#const dspecial_damage_info = DSpecial|0|-1|0|0
 
 // #const dspecialair_IASA = 75
 // #const dspecialair_xOffset = 20
@@ -224,7 +224,7 @@
 // #const dspecialair_damage_info = DSpecialAir|11|0|0|0
 
 // sideB
-#const sspecial_IASA = 37
+#const sspecial_IASA = 58
 #const sspecial_xOffset = 3.13
 #const sspecial_yOffset = -4.47
 #const sspecial_xRange = 6.17
@@ -233,14 +233,20 @@
 #const sspecial_lastHitFrame = 14
 #const sspecial_damage_info = SSpecial|3|40|212|65
 
-// #const sspecialair_IASA = 58
-// #const sspecial_xOffset = 3.13
-// #const sspecial_yOffset = -4.47
-// #const sspecial_xRange = 6.17
-// #const sspecial_yRange = 4.18
-// #const sspecialair_hitFrame = 25
-// #const sspecialair_lastHitFrame = 51 // just a dummy
-// #const sspecialair_damage_info = SSpecialAir|8|10|100|90
+#const mv_sspecial_aura = 1
+#const sspecial_aura_damage_info = SSpecial|5|65|219|65
+
+#const sspecialair_IASA = 58
+#const sspecialair_xOffset = 3.13
+#const sspecialair_yOffset = -4.47
+#const sspecialair_xRange = 6.17
+#const sspecialair_yRange = 4.18
+#const sspecialair_hitFrame = 12
+#const sspecialair_lastHitFrame = 14
+#const sspecialair_damage_info = SSpecialAir|3|10|212|280
+
+#const mv_sspecialair_aura = 1
+#const sspecialair_aura_damage_info = SSpecialAir|5|10|183|300
 
 // grab
 // when I want to techchase using grab, i'll set move_variant to this value
@@ -273,7 +279,7 @@
 
 
 // NAir
-#const nair_IASA = 53
+#const nair_IASA = 30
 #const nair_xOffset = -11.23
 #const nair_yOffset = -1.35
 #const nair_xRange = 11.45
@@ -301,7 +307,7 @@
 #const nair_superlate_damage_info = NAir|9|10|100|60
 
 // FAir
-#const fair_IASA = 30
+#const fair_IASA = 25
 #const fair_xOffset = -0.47
 #const fair_yOffset = 4.91
 #const fair_xRange = 8.2
@@ -311,7 +317,7 @@
 #const fair_damage_info = FAir|12|40|70|60
 
 // BAir
-#const bair_IASA = 32
+#const bair_IASA = 31
 #const bair_xOffset = -15.73
 #const bair_yOffset = 0.26
 #const bair_xRange = 6.93

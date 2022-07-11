@@ -19,7 +19,7 @@ if timer >= 2
   immediateTempVar = timer - 1
   MOD immediateTempVar immediateTempVar 8
   immediateTempVar *= -0.125
-  LOGVAL immediateTempVar
+  // LOGVAL immediateTempVar
   Stick 0 immediateTempVar
 endif
 timer += 1

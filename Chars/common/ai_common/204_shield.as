@@ -74,7 +74,9 @@ if Equal CurrAction hex(0x1B) && Equal globTempVar 0
   if globTempVar < 40 || OEndLag > 12 || !(ODistLE 55)
     Seek pickOption
     Jump
-  elif anotherTempVar > 0.35
+  elif anotherTempVar > 0.35 
+    Return
+  elif OAttacking && OEndLag < 1
     Return
   elif Rnd <= immediateTempVar
     Seek pickOption

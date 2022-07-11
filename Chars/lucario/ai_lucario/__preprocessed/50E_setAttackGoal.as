@@ -27,7 +27,7 @@ STACK_PUSH 11 0
 STACK_PUSH 17 0
   XGoto GetChrSpecific
   XReciever
-if !(True) || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+if !(True) || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24
   var7 = 1
 endif
 var7 += var0
@@ -53,7 +53,7 @@ var17 = var7
 //   var17 = OFramesHitstun
 // endif
 
-if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28
+if !(True) || Equal var20 14|| Equal var20 18|| Equal var20 19|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
   if Equal AirGroundState 1
     GetAttribute var23 940; 0
     var17 += var23
@@ -71,7 +71,7 @@ if Equal var2 1
   endif
 endif
 
-if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28
+if !(True) || Equal var20 14|| Equal var20 18|| Equal var20 19|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
   var23 = var17
   // if Equal CurrAction 6 || Equal CurrAction 7
   //   var23 *= 0.35
@@ -93,12 +93,12 @@ endif
 var13 -= var23
 var23 = var11 + var9
 
-if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28
-if !(True) || Equal var20 23 || Equal var20 24 || Equal var20 26
+if !(True) || Equal var20 14|| Equal var20 18|| Equal var20 19|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
+if !(True) || Equal var20 26 || Equal var20 27 || Equal var20 29
   var22 = -1
-elif !(True) || Equal var20 22 || Equal var20 27 || Equal var20 28
+elif !(True) || Equal var20 25 || Equal var20 30 || Equal var20 31
   var22 = 0
-elif !(True) || Equal var20 14 || Equal var20 25
+elif !(True) || Equal var20 14 || Equal var20 18 || Equal var20 19 || Equal var20 28
   var22 = 1
 endif
   if Equal var22 -1
@@ -114,7 +114,7 @@ elif !(True)
     var23 *= OPos
 elif !(True)
     var23 *= OPos
-elif !(True)
+elif !(True) || Equal var20 18 || Equal var20 19
     var23 *= OPos
   else
     var23 *= Direction
@@ -127,6 +127,14 @@ endif
 var13 -= var23
 var13 += TopNX
 
+var22 = var13 - OTopNX
+var22 *= OPos
+var22 -= var11
+var22 += var9 + -30
+if var22 > 0 && !(XDistLE 20)
+  var20 = -1
+  Return
+endif
 
 // CalcYChange var14 var17 OTotalYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
 // var14 *= -1
@@ -191,7 +199,7 @@ var14 -= var23
 var22 = OHurtboxSize
 var14 += var22
 
-if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28
+if !(True) || Equal var20 14|| Equal var20 18|| Equal var20 19|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
   var22 = (TopNY - YDistFloor) + 15.21
   if !(Equal OYDistFloor -1) && SamePlane && OYDistFloor < var8 && Equal AirGroundState 1 && !(Equal CurrAction 10)
     if var14 < var22
@@ -204,6 +212,11 @@ if !(True) || Equal var20 14|| Equal var20 22|| Equal var20 23|| Equal var20 24|
     if OCurrAction >= 10 && OCurrAction <= 11 && OAnimFrame < 10
       var14 = OTopNY - OYDistFloor
     endif
+  endif
+
+  if Equal OYDistFloor -1 && OYDistBackEdge > 5
+    var22 = OPos * OWidth
+    var13 += var22
   endif
 endif
 if Equal var2 1
@@ -242,8 +255,8 @@ if Equal var2 1
   endif
 endif
 
-var22 = var9 * 0.5 * OPos
-var13 += var22
+// var22 = var9 * 0.5 * OPos
+// var13 += var22
 
 // var22 = var0 - TopNX
 // var23 = var13 - TopNX

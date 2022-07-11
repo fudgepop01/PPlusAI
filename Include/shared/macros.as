@@ -1361,6 +1361,16 @@
   {yVar} = {yVar} - (TopNY * -1)
 #endmacro
 
+#macro TIMED_NEAREST_CLIFF(xVar, yVar, time)
+  GetNearestCliff {xVar}
+  EstXCoord immediateTempVar {time}
+  {xVar} = immediateTempVar - {xVar}
+  {xVar} *= -1
+  EstYCoord immediateTempVar {time}
+  {yVar} *= -1
+  {yVar} = {yVar} - (immediateTempVar * -1)
+#endmacro
+
 #macro FORCED_SWITCH_CONDITIONS()
   if OAttacking && Equal AirGroundState 1
     if Rnd < 0.3

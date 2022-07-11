@@ -17,7 +17,7 @@ else
   currGoal = cg_nothing
   XGoto RandomizeGoal
   XReciever
-  if CHANCE_MUL_LE PT_BAITCHANCE 1
+  if CHANCE_MUL_LE pt_baitChance 1
     currGoal = cg_bait
   endif
 endif

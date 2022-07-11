@@ -11,7 +11,7 @@
 #const pt_bait_wdashAwayChance = 0.15
 #const pt_wall_chance = 0.4
 #const pt_platChance = 0.1
-#const pt_baitchance = 0.9
+#const pt_baitChance = 0.9
 #const pt_braveChance = 0.85
 #const pt_circleCampChance = 0.55
 
@@ -23,7 +23,7 @@
 #const cs_djumpHeight = 42.39
 #const cs_wavedashDist = 32
 #const cs_recoveryDistX = 90
-#const cs_recoveryDistY = -90
+#const cs_recoveryDistY = -75
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrSubaction hex(0x1de)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
@@ -117,30 +117,18 @@
 #const nspecial_yOffset = -2
 #const nspecial_xRange = 200
 #const nspecial_yRange = 2
-#const nspecial_hitFrame = 20
+#const nspecial_hitFrame = 10
 #const nspecial_lastHitFrame = 30
-#const nspecial_damage_info = NSpecial|3|0|0|0
+#const nspecial_damage_info = NSpecial|0|-1|0|0
 
-#const nspecialair_IASA = 40
+#const nspecialair_IASA = 8
 #const nspecialair_xOffset = 0
 #const nspecialair_yOffset = 5
 #const nspecialair_xRange = 200
 #const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 10
 #const nspecialair_lastHitFrame = 30
-#const nspecialair_damage_info = NSpecialAir|3|0|0|0
-
-#const mv_nspecial_air1 = 1
-#const nspecialair_xOffset = 40
-#const nspecialair_hitFrame = 30
-
-#const mv_nspecial_air2 = 2
-#const nspecialair_xOffset = 60
-#const nspecialair_hitFrame = 40
-
-#const mv_nspecial_air4 = 3
-#const nspecialair_xOffset = 80
-#const nspecialair_hitFrame = 50
+#const nspecialair_damage_info = NSpecialAir|0|0|0|0
 
 // upB
 #const uspecial_IASA = 74
@@ -153,7 +141,7 @@
 // #const uspecial_damage_info = USpecial|14|60|60|80
 
 // downB
-#const dspecial_IASA = 8
+#const dspecial_IASA = 5
 #const dspecial_xOffset = -8
 #const dspecial_yOffset = 1.5
 #const dspecial_xRange = 8
@@ -162,7 +150,7 @@
 #const dspecial_lastHitFrame = 1
 #const dspecial_damage_info = DSpecial|5|w80|100|1
 
-#const dspecialair_IASA = 8
+#const dspecialair_IASA = 5
 #const dspecialair_xOffset = -8
 #const dspecialair_yOffset = 1.5
 #const dspecialair_xRange = 8

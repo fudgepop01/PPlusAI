@@ -23,7 +23,7 @@ STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
-STACK_PUSH 17 0
+STACK_PUSH 23 0
 STACK_PUSH 3 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
@@ -32,6 +32,8 @@ STACK_PUSH 17 0
 STACK_PUSH 17 0
   XGoto GetChrSpecific
   XReciever
+  var23 *= 0.5
+  var3 += var23
 else
   var3 = 9
 endif
@@ -56,10 +58,10 @@ GetYDistFloorOffset var22 var22 3 0
 if var17 > 0
   var22 = TopNY + 3 - var22
   var17 = TopNY + 100 - var17
-  if var21 <= 16 && var21 <= 17
+  if var21 <= 16 && var21 <= 17 && OFramesHitstun <= 1
   elif var22 < var17
     var0 = PT_PLATCHANCE
-    if Rnd < var0 && Rnd < var0
+    if Rnd < var0
       label empty_0
       Goto PFC
       Seek empty_0
@@ -67,7 +69,7 @@ if var17 > 0
         CallI BoardPlatform
       endif
       Return
-    elif var17 < var14 && Rnd < var0 && Rnd < var0
+    elif var17 < var14 && Rnd < var0
       label empty_1
       Goto PFC
       Seek empty_1
@@ -108,31 +110,32 @@ GetAttribute var17 76; 0
 var22 = XSpeed * var3 * var17 + TopNX
 var22 -= var13
 Abs var22
-if var22 <= 25 || Equal CurrSubaction JumpSquat && TopNY < var14
-  var22 = var14 - TopNY
-  if Equal AirGroundState 1
-  var22 = 14
-  XGoto GetChrSpecific
-  XReciever
-var1 = var22
-    var22 = var14
-    var17 = var1 + TopNY + OHurtboxSize
-    if Equal CurrSubaction JumpSquat && var22 > var17
-      Goto jumpPreCheck
-    elif TopNY < var22 && !(Equal CurrSubaction JumpSquat) 
-      Goto jumpPreCheck
-    endif
-  else
-    // EstYCoord var17 var3
-    // var23 = var14 + OHurtboxSize
+if var22 <= 10 || Equal CurrSubaction JumpSquat && TopNY < var14
   var22 = 15
   XGoto GetChrSpecific
   XReciever
 var2 = var22
-    var22 = var14 - TopNY
-    var1 = var2 * NumJumps * 1.45
-    if var22 < var1 && !(Equal YSpeed 0)
-      EstYCoord var23 var3
+  var22 = var14 - TopNY
+  var1 = var2 * NumJumps * 1.2
+  if var22 < var1
+    if Equal AirGroundState 1 
+  var22 = 14
+  XGoto GetChrSpecific
+  XReciever
+var1 = var22
+      var22 = var14
+      var17 = var1 + TopNY
+      if Equal CurrSubaction JumpSquat && var14 > var17
+        Goto jumpPreCheck
+      elif TopNY < var14 && !(Equal CurrSubaction JumpSquat)
+        Goto jumpPreCheck
+      endif
+    elif AnimFrame > 3
+      var23 = TopNY + var2 - 5
+      if YSpeed > 0
+        var22 = YSpeed / Gravity
+        EstYCoord var23 var22
+      endif
       if var23 < var14
   var22 = 100
   XGoto GetChrSpecific
@@ -199,7 +202,7 @@ if var21 < 16.7
   else
     var1 = 0
   endif
-    if !(Equal var1 0) && !(Equal var21 16.7)
+    if !(Equal var1 0)
       AbsStick var1
       AbsStick var1
       Return
@@ -224,7 +227,9 @@ label stickMovement
     AbsStick 1
   endif
 
-  var23 = TopNX + XSpeed * 9 + 10 * Direction
+  var23 = TopNX + XSpeed * 9
+  var17 = 10 * Direction
+  var23 += var17
   GetColDistPosAbs var23 var17 CenterX CenterY var23 CenterY 0
   if !(Equal var23 -1)
     ClearStick
@@ -248,9 +253,9 @@ label stickMovement
   
   if Equal AirGroundState 1
     if Equal var21 16.7
-      var23 = Direction * 35
-      GetYDistFloorOffset var23 var23 20 0
-      var17 = XSpeed * Direction
+      var23 = OPos * 15
+      GetYDistFloorOffset var23 var23 15 0
+      var17 = XSpeed * OPos
       if Equal var23 -1
         if Equal var22 0
           if var17 > 0.1
@@ -269,15 +274,19 @@ label stickMovement
 var2 = var22
           var22 = OTopNY - TopNY + OHurtboxSize
           if var22 > var2
-            Button X
-            Goto jumpDirHandler
+            if !(Equal CurrSubaction JumpSquat)
+              Goto jumpPreCheck
+            else
+              Button X
+              Goto jumpDirHandler
+            endif
           elif var22 > -15 && !(Equal CurrSubaction JumpSquat)
             Goto jumpPreCheck
           endif
         endif
       endif
-    elif Equal IsOnStage 1
-      var22 = Direction * 20
+    elif True
+      var22 = Direction * 15
       GetYDistFloorOffset var22 var22 5 0
       var17 = XSpeed * Direction
       if Equal var22 -1 && var17 > 0.05

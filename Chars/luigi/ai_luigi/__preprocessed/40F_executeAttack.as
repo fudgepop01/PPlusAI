@@ -38,9 +38,6 @@ if Equal AirGroundState 1
     Return
   endif
 endif
-if var21 < 16.7 && Equal IsOnStage 0
-  CallI RecoveryHub
-endif
 
   if Equal CurrAction 22 
     if Equal PrevAction 33
@@ -383,7 +380,7 @@ endif
   if OYDistFloor > 5 && var22 <= 1
     Button B
   endif
-  if AnimFrame > 60
+  if AnimFrame > 50
     Seek finish
     Jump
   endif 
@@ -395,6 +392,16 @@ Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7
   AbsStick OPos
 endif
+  ClearStick
+  AbsStick OPos
+  MOD var22 AnimFrame 3
+  if OYDistFloor > 5 && var22 <= 1
+    Button B
+  endif
+  if AnimFrame > 50
+    Seek finish
+    Jump
+  endif 
 Goto common_checks
 Seek dspecialhit
 Return
@@ -504,17 +511,22 @@ label PFC
   XGoto PerFrameChecks
   XReciever
 if !(True) || Equal var20 11|| Equal var20 14|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29
-    XGoto SetAttackGoal
-    XReciever
-    if Equal var21 16.4
-      XGoto MoveToGoal
-      XReciever
-    elif Equal var21 16.3
-      var22 = XSpeed * -2
+    if Equal IsOnStage 0 && NumJumps < 1
+      var22 = TopNX * -1
       AbsStick var22
     else
-      XGoto MoveToGoal
+      XGoto SetAttackGoal
       XReciever
+      if Equal var21 16.4
+        XGoto MoveToGoal
+        XReciever
+      elif Equal var21 16.3
+        var22 = XSpeed * -2
+        AbsStick var22
+      else
+        XGoto MoveToGoal
+        XReciever
+      endif
     endif
   endif
 Return
@@ -522,7 +534,7 @@ label common_checks
   XGoto PerFrameChecks
   XReciever
 
-  if Equal CanCancelAttack 1 && CurrAction >= 24 && CurrAction <= 52
+  if Equal CanCancelAttack 1
     Seek finish
     Jump
   elif CurrAction <= 32 && !(Equal CurrAction 24)
@@ -595,7 +607,7 @@ label common_checks
       var22 = 999
     endif 
     var22 -= 2
-    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame && !(ODistLE 8)
       Button R
     endif
   endif

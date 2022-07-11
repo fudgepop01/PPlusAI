@@ -14,20 +14,23 @@ XReciever
 aggression = PT_AGGRESSION
 
 #let baitChance = var1
-baitChance = PT_BAITCHANCE
+baitChance = pt_baitChance
 
+// immediateTempVar = aggression * 0.08
+// globTempVar *= 1.75
+// if !(CalledFrom AttackedHub)
+//   GetCommitPredictChance anotherTempVar LevelValue
+//   if anotherTempVar > 0.45 && Rnd < anotherTempVar && CHANCE_MUL_LE immediateTempVar 1
+//     scriptVariant = sv_fastAttack
+//     XGoto CalcAttackGoal
+//     XReciever
+//     skipMainInit = mainInitSkip
+//     CallI MainHub
+//   endif
+// endif
 
-immediateTempVar = aggression * 0.08
-globTempVar *= 1.75
-if !(CalledFrom AttackedHub)
-  GetCommitPredictChance anotherTempVar LevelValue
-  if anotherTempVar > 0.45 && Rnd < anotherTempVar && CHANCE_MUL_LE immediateTempVar 1
-    scriptVariant = sv_fastAttack
-    XGoto CalcAttackGoal
-    XReciever
-    skipMainInit = mainInitSkip
-    CallI MainHub
-  endif
+if CHANCE_MUL_LE PT_AGGRESSION 0.65
+  currGoal = cg_attack_reversal
 endif
 
 if Equal AirGroundState 1
@@ -146,7 +149,14 @@ predictAverage OXHitDist man_OXHitDist LevelValue
 OXHitDist += 25
 PredictOMov immediateTempVar mov_attack LevelValue
 if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
-  if NumJumps > 0 && Rnd < 0.4
+  if CalledFrom AttackedHub && CHANCE_MUL_LE PT_AGGRESSION 0.75
+    scriptVariant = sv_fastAttack
+    XGoto CalcAttackGoal
+    XReciever
+    skipMainInit = mainInitSkip
+    CallI MainHub
+  endif 
+  if NumJumps > 0 && Rnd < 0.2
     scriptVariant = sv_jump_over
     scriptVariant += svp_jump_fullhop
     CallI JumpScr

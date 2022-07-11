@@ -16,7 +16,7 @@
 #const pt_bait_wdashAwayChance = 0.2
 #const pt_wall_chance = 0.5
 #const pt_platChance = 0.08
-#const pt_baitchance = 0.9
+#const pt_baitChance = 0.9
 #const pt_braveChance = 0.8
 #const pt_circleCampChance = 0.12
 
@@ -166,23 +166,23 @@
 // #const nspecial_damage_info = nspecial|7|30|100|361
 
 // upB
-// #const uspecial_IASA = 33
-// #const uspecial_xOffset = 8.12
-// #const uspecial_yOffset = 5.59
-// #const uspecial_xRange = 5.88
-// #const uspecial_yRange = 16.99
-// #const uspecial_hitFrame = 8
-// #const uspecial_lastHitFrame = 9
-// #const uspecial_damage_info = USpecial|9|85|90|75
+#const uspecial_IASA = 133
+#const uspecial_xOffset = 8.12
+#const uspecial_yOffset = 5.59
+#const uspecial_xRange = 5.88
+#const uspecial_yRange = 16.99
+#const uspecial_hitFrame = 8
+#const uspecial_lastHitFrame = 9
+#const uspecial_damage_info = USpecial|9|85|90|75
 
-// #const uspecialair_IASA = 33
-// #const uspecialair_xOffset = 8.12
-// #const uspecialair_yOffset = 5.59
-// #const uspecialair_xRange = 5.88
-// #const uspecialair_yRange = 16.99
-// #const uspecialair_hitFrame = 8
-// #const uspecialair_lastHitFrame = 9
-// #const uspecialair_damage_info = USpecialAir|9|85|90|75
+#const uspecialair_IASA = 133
+#const uspecialair_xOffset = 8.12
+#const uspecialair_yOffset = 5.59
+#const uspecialair_xRange = 5.88
+#const uspecialair_yRange = 16.99
+#const uspecialair_hitFrame = 8
+#const uspecialair_lastHitFrame = 9
+#const uspecialair_damage_info = USpecialAir|9|85|90|75
 
 // downB
 #const dspecial_IASA = 77
@@ -229,12 +229,15 @@
 #const fthrow_IASA = 29
 #const fthrow_throwFrame = 4
 #const fthrow_damage_info = Grab|3|50|140|65
+
 #const dthrow_IASA = 71
 #const dthrow_throwFrame = 49
 #const dthrow_damage_info = Grab|1|20|220|52
+
 #const bthrow_IASA = 36
 #const bthrow_throwFrame = 16
 #const bthrow_damage_info = Grab|3|60|140|45
+
 #const uthrow_IASA = 72
 #const uthrow_throwFrame = 43
 #const uthrow_damage_info = Grab|10|69|70|90

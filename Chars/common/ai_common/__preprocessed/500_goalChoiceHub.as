@@ -17,7 +17,7 @@ else
   var21 = 0
   XGoto RandomizeGoal
   XReciever
-  if CHANCE_MUL_LE PT_BAITCHANCE 1
+  if CHANCE_MUL_LE 0.65 1
     var21 = 10
   endif
 endif

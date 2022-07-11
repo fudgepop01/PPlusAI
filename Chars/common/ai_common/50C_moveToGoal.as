@@ -18,7 +18,9 @@ endif
 
 #let hitFrame = var3
 if !(Equal lastAttack -1)
-  GET_MOVE_DATA(globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, hitFrame, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
+  GET_MOVE_DATA(globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, hitFrame, anotherTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
+  anotherTempVar *= 0.5
+  hitFrame += anotherTempVar
 else
   hitFrame = 9
 endif
@@ -45,10 +47,10 @@ if globTempVar > 0
   immediateTempVar = TopNY + 3 - immediateTempVar
   globTempVar = TopNY + 100 - globTempVar
   if currGoal <= cg_attack && currGoal <= calc(cg_attack + 1)
-  elif immediateTempVar < globTempVar
+  elif immediateTempVar < globTempVar && !(CalledFrom BoardPlatform)
     #let platChance = var0
     platChance = PT_PLATCHANCE
-    if Rnd < platChance && Rnd < platChance
+    if Rnd < platChance
       label empty_0
       Goto PFC
       Seek empty_0
@@ -56,7 +58,7 @@ if globTempVar > 0
         CallI BoardPlatform
       endif
       Return
-    elif globTempVar < goalY && Rnd < platChance && Rnd < platChance
+    elif globTempVar < goalY && Rnd < platChance
       label empty_1
       Goto PFC
       Seek empty_1
@@ -97,28 +99,29 @@ GetAttribute globTempVar attr_jumpXVelGroundMult 0
 immediateTempVar = XSpeed * hitFrame * globTempVar + TopNX
 immediateTempVar -= goalX
 Abs immediateTempVar
-if immediateTempVar <= 25 || Equal CurrSubaction JumpSquat && TopNY < goalY
+if immediateTempVar <= 10 || Equal CurrSubaction JumpSquat && TopNY < goalY
+  #let totalJumpHeight = var1
+  #let djumpHeight = var2
+  GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
   immediateTempVar = goalY - TopNY
-  if Equal AirGroundState 1
-    #let shortHopHeight = var1
-    GET_CHAR_TRAIT(shortHopHeight, chr_cs_shortHopHeight)
-    immediateTempVar = goalY
-    globTempVar = shortHopHeight + TopNY + OHurtboxSize
-    if Equal CurrSubaction JumpSquat && immediateTempVar > globTempVar
-      Goto jumpPreCheck
-    elif TopNY < immediateTempVar && !(Equal CurrSubaction JumpSquat) 
-      Goto jumpPreCheck
-    endif
-  else
-    // EstYCoord globTempVar hitFrame
-    // anotherTempVar = goalY + OHurtboxSize
-    #let totalJumpHeight = var1
-    #let djumpHeight = var2
-    GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
-    immediateTempVar = goalY - TopNY
-    totalJumpHeight = djumpHeight * NumJumps * 1.45
-    if immediateTempVar < totalJumpHeight && !(Equal YSpeed 0)
-      EstYCoord anotherTempVar hitFrame
+  totalJumpHeight = djumpHeight * NumJumps * 1.2
+  if immediateTempVar < totalJumpHeight
+    if Equal AirGroundState 1 
+      #let shortHopHeight = var1
+      GET_CHAR_TRAIT(shortHopHeight, chr_cs_shortHopHeight)
+      immediateTempVar = goalY
+      globTempVar = shortHopHeight + TopNY
+      if Equal CurrSubaction JumpSquat && goalY > globTempVar
+        Goto jumpPreCheck
+      elif TopNY < goalY && !(Equal CurrSubaction JumpSquat)
+        Goto jumpPreCheck
+      endif
+    elif AnimFrame > 3
+      anotherTempVar = TopNY + djumpHeight - 5
+      if YSpeed > 0
+        immediateTempVar = YSpeed / Gravity
+        EstYCoord anotherTempVar immediateTempVar
+      endif
       if anotherTempVar < goalY
         #let isAerialAttack = var0
         GET_CHAR_TRAIT(isAerialAttack, chr_chk_isAerialAttack)
@@ -170,7 +173,7 @@ if currGoal < cg_edgeguard
     #let isGoingOffstage = var1
     #let throwaway = var2
     GOING_OFFSTAGE(isGoingOffstage, throwaway, 15)
-    if !(Equal isGoingOffstage 0) && !(Equal currGoal cg_edgeguard)
+    if !(Equal isGoingOffstage 0)
       AbsStick isGoingOffstage
       AbsStick isGoingOffstage
       Return
@@ -193,7 +196,9 @@ label stickMovement
     AbsStick 1
   endif
 
-  anotherTempVar = TopNX + XSpeed * 9 + 10 * Direction
+  anotherTempVar = TopNX + XSpeed * 9
+  globTempVar = 10 * Direction
+  anotherTempVar += globTempVar
   GetColDistPosAbs anotherTempVar globTempVar CenterX CenterY anotherTempVar CenterY 0
   if !(Equal anotherTempVar -1)
     ClearStick
@@ -217,9 +222,9 @@ label stickMovement
   
   if Equal AirGroundState 1
     if Equal currGoal cg_edgeguard
-      anotherTempVar = Direction * 35
-      GetYDistFloorOffset anotherTempVar anotherTempVar 20 0
-      globTempVar = XSpeed * Direction
+      anotherTempVar = OPos * 15
+      GetYDistFloorOffset anotherTempVar anotherTempVar 15 0
+      globTempVar = XSpeed * OPos
       if Equal anotherTempVar -1
         if Equal immediateTempVar 0
           if globTempVar > 0.1
@@ -236,15 +241,19 @@ label stickMovement
           GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
           immediateTempVar = OTopNY - TopNY + OHurtboxSize
           if immediateTempVar > djumpHeight
-            Button X
-            Goto jumpDirHandler
+            if !(Equal CurrSubaction JumpSquat)
+              Goto jumpPreCheck
+            else
+              Button X
+              Goto jumpDirHandler
+            endif
           elif immediateTempVar > -15 && !(Equal CurrSubaction JumpSquat)
             Goto jumpPreCheck
           endif
         endif
       endif
-    elif Equal IsOnStage 1
-      immediateTempVar = Direction * 20
+    elif True
+      immediateTempVar = Direction * 15
       GetYDistFloorOffset immediateTempVar immediateTempVar 5 0
       globTempVar = XSpeed * Direction
       if Equal immediateTempVar -1 && globTempVar > 0.05

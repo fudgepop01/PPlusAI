@@ -21,7 +21,7 @@ endif
 //--- prevent auto-attack
 Cmd30
 // keeps the AI from targeting itself because that can happen for some reason
-if Equal PlayerNum OPlayerNum
+if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
   SwitchTarget
 endif
 //--- track target stuff 
@@ -249,10 +249,6 @@ var17 = var22
     endif
     Norm var22 OXDistBackEdge OYDistBackEdge
     Norm var17 XDistBackEdge YDistBackEdge
-
-    if var22 < var17 && YDistBackEdge > 0
-      CallI RecoveryHub
-    endif
   elif var21 >= 16.7 && Equal OIsOnStage 0
   elif !(Equal var21 15) && !(Equal var21 15.1) && Equal FramesHitstun 0  
     if Equal IsOnStage 0
@@ -264,7 +260,7 @@ var17 = var22
     elif Equal OIsOnStage 0 && var21 < 16.7
       GetYDistFloorOffset var22 15 15 1
       GetYDistFloorOffset var17 -15 15 1
-      if Equal var22 -1 && Equal var17 -1
+      if Equal var22 -1 || Equal var17 -1
         var21 = 16.7
         var15 = -1
         CallI MainHub

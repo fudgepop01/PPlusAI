@@ -1,7 +1,7 @@
 #snippet INITIALIZATION
-  #const UpBRadius = 64
+  #const UpBRadius = 60
   #const sideBHeight = 4
-  #const sideBRange = 90
+  #const sideBRange = 80
   #const tolerence = 6
 
   #const jumpChance = 0.3
@@ -13,8 +13,14 @@
   #let sideBValue = var7
   hasTriedToUpB = 0
   jumpValue = Rnd
+  if nearCliffY > UpBRadius || nearCliffX > sideBRange
+    jumpValue = 0
+  endif
   highUpBValue = Rnd
   sideBValue = Rnd
+  if nearCliffX > sideBRange
+    sideBValue = 0
+  endif
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -39,10 +45,6 @@
 
   absNCX = nearCliffX
   Abs absNCX
-  if absNCX > UpBRadius
-    sideBValue = 0
-    jumpValue = 0
-  endif
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
   if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
@@ -58,7 +60,7 @@
     AbsStick 0 (0.7)
     Return
   endif
-  if distFromEdge > calc(UpBRadius - tolerence) && distFromEdge < UpBRadius && Equal hasTriedToUpB 0
+  if distFromEdge > calc(UpBRadius - tolerence) && distFromEdge < calc(UpBRadius + tolerence) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick

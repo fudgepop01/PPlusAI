@@ -14,10 +14,13 @@
 #snippet COMMON_EXTENSION
   if !(True)
     label cancelCheck
-    if Equal FramesHitlag 0 && Equal HitboxConnected 1
+    LUC_CANCEL_CHECK(lucCanCancel, immediateTempVar)
+    if Equal lucCanCancel 1
       XGoto CalcAttackGoal
       XReciever
-      Call ExecuteAttack
+      if lastAttack > -1
+        CallI ExecuteAttack
+      endif
     endif
     Return
   endif
@@ -33,7 +36,7 @@
     endif
   else
     Goto cancelCheck
-  endif  
+  endif
 #endsnippet
 
 #snippet JAB1232
@@ -55,7 +58,13 @@
 #endsnippet
 
 #snippet ASC
-  Button R
   label asc_end
+  Button R
+  Goto common_checks
+  if Equal CurrSubaction hex(0x1b) || Equal CurrSubaction hex(0x1d)
+    Seek finish
+    Jump
+  endif
   Seek asc_end
+  Return
 #endsnippet

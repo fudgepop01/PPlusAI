@@ -40,7 +40,6 @@ SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 70
-CalcKnockback var23 ODamage 4 0 100 OWeight 0
 Return
 // dashattack
 label dashattack
@@ -58,7 +57,6 @@ SetVarByNum STACK_POP 35
 SetVarByNum STACK_POP 90
 STACK_PUSH var22 0
 var22 = 72
-CalcKnockback var23 ODamage 9 35 90 OWeight 0
 Return
 // dashattack_weak
 label dashattack_weak
@@ -76,7 +74,6 @@ SetVarByNum STACK_POP 20
 SetVarByNum STACK_POP 90
 STACK_PUSH var22 0
 var22 = 72
-CalcKnockback var23 ODamage 6 20 90 OWeight 0
 Return
 // ftilt
 label ftilt
@@ -94,7 +91,6 @@ SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 9 0 100 OWeight 0
 Return
 // utilt
 label utilt
@@ -112,7 +108,6 @@ SetVarByNum STACK_POP 30
 SetVarByNum STACK_POP 120
 STACK_PUSH var22 0
 var22 = 90
-CalcKnockback var23 ODamage 9 30 120 OWeight 0
 Return
 // dtilt
 label dtilt
@@ -130,7 +125,6 @@ SetVarByNum STACK_POP 25
 SetVarByNum STACK_POP 125
 STACK_PUSH var22 0
 var22 = 75
-CalcKnockback var23 ODamage 13 25 125 OWeight 0
 Return
 // fsmash
 label fsmash
@@ -148,7 +142,6 @@ SetVarByNum STACK_POP 40
 SetVarByNum STACK_POP 90
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 17 40 90 OWeight 0
 Return
 // usmash
 label usmash
@@ -166,7 +159,6 @@ SetVarByNum STACK_POP 25
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 95
-CalcKnockback var23 ODamage 14 25 100 OWeight 0
 Return
 // usmash_back
 label usmash_back
@@ -184,7 +176,6 @@ SetVarByNum STACK_POP 10
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = -361
-CalcKnockback var23 ODamage 12 10 100 OWeight 0
 Return
 // dsmash
 label dsmash
@@ -202,43 +193,40 @@ SetVarByNum STACK_POP 20
 SetVarByNum STACK_POP 70
 STACK_PUSH var22 0
 var22 = 25
-CalcKnockback var23 ODamage 16 20 70 OWeight 0
 Return
 // nspecial
 label nspecial
 var22 = STACK_POP
 SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 1
+SetVarByNum STACK_POP -2
+SetVarByNum STACK_POP 200
+SetVarByNum STACK_POP 2
 SetVarByNum STACK_POP 20
 SetVarByNum STACK_POP 10
 SetVarByNum STACK_POP 40
-SetVarByNum STACK_POP 3
+SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 STACK_PUSH var22 0
 var22 = 0
-CalcKnockback var23 ODamage 3 0 0 OWeight 0
 Return
 // nspecialair
 label nspecialair
 var22 = STACK_POP
 SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 80
-SetVarByNum STACK_POP 10
+SetVarByNum STACK_POP -2
+SetVarByNum STACK_POP 200
+SetVarByNum STACK_POP 2
 SetVarByNum STACK_POP 13
 SetVarByNum STACK_POP 17
-SetVarByNum STACK_POP 40
-SetVarByNum STACK_POP 3
+SetVarByNum STACK_POP 8
+SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 STACK_PUSH var22 0
 var22 = 0
-CalcKnockback var23 ODamage 3 0 0 OWeight 0
 Return
 // dspecial
 label dspecial
@@ -256,7 +244,6 @@ SetVarByNum STACK_POP 110
 SetVarByNum STACK_POP 50
 STACK_PUSH var22 0
 var22 = 84
-CalcKnockback var23 ODamage 8 110 50 OWeight 0
 Return
 // dspecialair
 label dspecialair
@@ -274,7 +261,6 @@ SetVarByNum STACK_POP 110
 SetVarByNum STACK_POP 50
 STACK_PUSH var22 0
 var22 = 84
-CalcKnockback var23 ODamage 8 110 50 OWeight 0
 Return
 // grab
 label grab
@@ -292,7 +278,6 @@ SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 0
 STACK_PUSH var22 0
 var22 = 0
-CalcKnockback var23 ODamage 0 0 0 OWeight 0
 Return
 // fthrow
 label fthrow
@@ -310,7 +295,6 @@ SetVarByNum STACK_POP 35
 SetVarByNum STACK_POP 135
 STACK_PUSH var22 0
 var22 = 45
-CalcKnockback var23 ODamage 3 35 135 OWeight 0
 Return
 // dthrow
 label dthrow
@@ -328,7 +312,6 @@ SetVarByNum STACK_POP 150
 SetVarByNum STACK_POP 40
 STACK_PUSH var22 0
 var22 = 270
-CalcKnockback var23 ODamage 1 150 40 OWeight 0
 Return
 // bthrow
 label bthrow
@@ -346,7 +329,6 @@ SetVarByNum STACK_POP 80
 SetVarByNum STACK_POP 85
 STACK_PUSH var22 0
 var22 = 56
-CalcKnockback var23 ODamage 2 80 85 OWeight 0
 Return
 // uthrow
 label uthrow
@@ -364,7 +346,6 @@ SetVarByNum STACK_POP 75
 SetVarByNum STACK_POP 110
 STACK_PUSH var22 0
 var22 = 90
-CalcKnockback var23 ODamage 2 75 110 OWeight 0
 Return
 // nair
 label nair
@@ -382,7 +363,6 @@ SetVarByNum STACK_POP 10
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 12 10 100 OWeight 0
 Return
 // nair_weak
 label nair_weak
@@ -400,7 +380,6 @@ SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 9 0 100 OWeight 0
 Return
 // fair
 label fair
@@ -418,7 +397,6 @@ SetVarByNum STACK_POP 10
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 9 10 100 OWeight 0
 Return
 // bair
 label bair
@@ -436,7 +414,6 @@ SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 9 0 100 OWeight 0
 Return
 // bair_weak
 label bair_weak
@@ -454,7 +431,6 @@ SetVarByNum STACK_POP 0
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 361
-CalcKnockback var23 ODamage 9 0 100 OWeight 0
 Return
 // uair
 label uair
@@ -472,7 +448,6 @@ SetVarByNum STACK_POP 30
 SetVarByNum STACK_POP 22
 STACK_PUSH var22 0
 var22 = 90
-CalcKnockback var23 ODamage 5 30 22 OWeight 0
 Return
 // uair_hit2
 label uair_hit2
@@ -490,7 +465,6 @@ SetVarByNum STACK_POP 22
 SetVarByNum STACK_POP 120
 STACK_PUSH var22 0
 var22 = 70
-CalcKnockback var23 ODamage 10 22 120 OWeight 0
 Return
 // dair
 label dair
@@ -508,7 +482,6 @@ SetVarByNum STACK_POP 10
 SetVarByNum STACK_POP 100
 STACK_PUSH var22 0
 var22 = 290
-CalcKnockback var23 ODamage 12 10 100 OWeight 0
 Return
 endif
 Return
@@ -525,7 +498,7 @@ elif Equal var22 16
 elif Equal var22 17
   var22 = 70
 elif Equal var22 18
-  var22 = -50
+  var22 = 60
 elif Equal var22 100
   var22 = 0
 if !(True) || Equal var20 11|| Equal var20 13|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26
@@ -555,94 +528,59 @@ elif !(True) || Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3
   var22 = 1
 endif
 elif Equal var22 0.002
-if !(True) || Equal var20 10
+if !(True)
   var22 = -1
-elif !(True) || Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 6 || Equal var20 7 || Equal var20 9 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
+elif !(True) || Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 6 || Equal var20 7 || Equal var20 9 || Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
   var22 = 0
 elif !(True) || Equal var20 8
   var22 = 1
 endif
 elif Equal var22 30000
-  var22 = LevelValue * 0.0015
+  var22 = LevelValue * 0.003
   if Rnd < var22
-    ADJUST_PERSONALITY 0 -3 1
-    ADJUST_PERSONALITY 0 1.35 1
-    ADJUST_PERSONALITY 3 -3 1
-    ADJUST_PERSONALITY 10 -3 1
-    ADJUST_PERSONALITY 4 -3 1
-    ADJUST_PERSONALITY 5 -3 1
-    ADJUST_PERSONALITY 0 3 Rnd
-    ADJUST_PERSONALITY 3 3 Rnd
+    ADJUST_PERSONALITY 0 -11 1
+    ADJUST_PERSONALITY 0 1.1 1
+    var22 = LevelValue * 0.01
+    ADJUST_PERSONALITY 0 var22 Rnd
+    ADJUST_PERSONALITY 3 -11 1
+    ADJUST_PERSONALITY 3 1.1 1
+    ADJUST_PERSONALITY 10 -11 1
+    ADJUST_PERSONALITY 4 -11 1
+    ADJUST_PERSONALITY 5 -11 1
+    ADJUST_PERSONALITY 0 2 Rnd
+    ADJUST_PERSONALITY 3 2 Rnd
     ADJUST_PERSONALITY 10 3 Rnd
     ADJUST_PERSONALITY 4 3 Rnd
     ADJUST_PERSONALITY 5 3 Rnd
-  else
-    var22 = (1 - (LevelValue / 50)) * 0.6
-    if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.2
-      ADJUST_PERSONALITY 1 -0.002 var22
-    elif CHANCE_MUL_GE PT_BAIT_DASHAWAYCHANCE 0.6
-      ADJUST_PERSONALITY 1 0.003 var22
+    if Rnd < 0.25
+      ADJUST_PERSONALITY 1 -3 1
+      var22 = 0.35 * 3
+      ADJUST_PERSONALITY 1 1 1
+      ADJUST_PERSONALITY 1 var22 Rnd
     endif
-    if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.2
-      ADJUST_PERSONALITY 2 -0.002 var22
-    elif CHANCE_MUL_GE PT_BAIT_WDASHAWAYCHANCE 0.6
-      ADJUST_PERSONALITY 2 0.003 var22
+    if Rnd < 0.25
+      ADJUST_PERSONALITY 2 -3 1
+      var22 = 0.65 * 3
+      ADJUST_PERSONALITY 2 1 1
+      ADJUST_PERSONALITY 2 var22 Rnd
     endif
-    if CHANCE_MUL_LE PT_JUMPINESS 0.8200000000000001
-      ADJUST_PERSONALITY 7 -0.003 var22
-    elif CHANCE_MUL_GE PT_JUMPINESS 0.8200000000000001
-      ADJUST_PERSONALITY 7 0.004 var22
+    if Rnd < 0.25
+      ADJUST_PERSONALITY 7 -3 1
+      var22 = 0.18 * 4
+      ADJUST_PERSONALITY 7 1 1
+      ADJUST_PERSONALITY 7 var22 Rnd
     endif
-    if CHANCE_MUL_LE PT_DJUMPINESS 0.96
-      ADJUST_PERSONALITY 6 -0.003 var22
-    elif CHANCE_MUL_GE PT_DJUMPINESS 0.96
-      ADJUST_PERSONALITY 6 0.004 var22
+    if Rnd < 0.25
+      ADJUST_PERSONALITY 6 -3 1
+      var22 = 0.04 * 4
+      ADJUST_PERSONALITY 6 1 1
+      ADJUST_PERSONALITY 6 var22 Rnd
     endif
-    if CHANCE_MUL_LE PT_PLATCHANCE 0.7
-      ADJUST_PERSONALITY 8 -0.003 var22
-    elif CHANCE_MUL_GE PT_PLATCHANCE 0.7
-      ADJUST_PERSONALITY 8 0.002 var22
-    endif
-    
-    var22 = (1 - (LevelValue / 50))
-    if CalledFrom BoardPlatform
-      ADJUST_PERSONALITY 8 -0.04 var22
-    elif CalledFrom ExecuteAttack
-      // if PT_AGGRESSION < 0.2 && LevelValue >= 60
-      //   ADJUST_PERSONALITY 0 1.5 1
-      //   ADJUST_PERSONALITY 3 -0.75 1
-      // endif
-      ADJUST_PERSONALITY 0 0.002 var22
-      ADJUST_PERSONALITY 3 0.002 var22
-    elif CalledFrom Shield 
-      ADJUST_PERSONALITY 0 -0.002 var22
-      ADJUST_PERSONALITY 4 0.002 var22
-    elif CalledFrom Wavedash
-      if Rnd < 0.5
-        ADJUST_PERSONALITY 2 -0.02 var22
-      endif
-      if Rnd < 0.5
-        ADJUST_PERSONALITY 1 0.02 var22
-      endif
-      if Equal var16 1 || Equal var16 5
-        ADJUST_PERSONALITY 0 -0.004 var22
-      elif Equal var16 2
-        ADJUST_PERSONALITY 0 0.002 var22
-      endif
-    elif CalledFrom DashScr
-      if Rnd < 0.5
-        ADJUST_PERSONALITY 1 -0.002 var22
-      endif
-      if Rnd < 0.5
-        ADJUST_PERSONALITY 2 0.002 var22
-      endif
-      if Equal var16 1
-        ADJUST_PERSONALITY 0 -0.0025 var22
-        ADJUST_PERSONALITY 4 -0.002 var22
-      elif Equal var16 2
-        ADJUST_PERSONALITY 0 0.0025 var22
-        ADJUST_PERSONALITY 4 0.002 var22
-      endif
+    if Rnd < 0.25
+      ADJUST_PERSONALITY 8 -3 1
+      var22 = 0.25 * 4
+      ADJUST_PERSONALITY 8 1 1
+      ADJUST_PERSONALITY 8 var22 Rnd
     endif
   endif
 elif Equal var22 20000
@@ -651,16 +589,23 @@ elif Equal var22 20000
   XGoto GetChrSpecific
   XReciever
     if Equal var22 0
-      var22 = (1 - (LevelValue / 50)) * 0.6
+      var22 = (LevelValue / 35) * 0.2
       ADJUST_PERSONALITY 3 0.004 var22
       ADJUST_PERSONALITY 1 0.002 var22
       ADJUST_PERSONALITY 2 0.002 var22
       ADJUST_PERSONALITY 10 0.001 var22
       ADJUST_PERSONALITY 5 0.002 var22
     endif
+  elif CHANCE_MUL_LE PT_AGGRESSION 0.0001 && LevelValue >= 60
+    ADJUST_PERSONALITY 0 -11 1
+    ADJUST_PERSONALITY 3 0.5 1
+  elif Rnd < 0.2 && Rnd <= 0.2
+    var22 = (LevelValue / 35) * 0.4
+    ADJUST_PERSONALITY 0 0.015 var22
+    ADJUST_PERSONALITY 10 0.005 var22
   endif
 elif Equal var22 10000
-  ADJUST_PERSONALITY 5 0.025 1
+  ADJUST_PERSONALITY 5 0.2 Rnd
 elif Equal var22 40000
   var22 = (1 - (LevelValue / 100)) * 60 + 10
   var22 *= PT_REACTION_TIME
@@ -675,16 +620,16 @@ elif Equal var22 40000
   XGoto GetChrSpecific
   XReciever
 var23 = var22
-    if Equal var21 16.4 || Equal var21 10.2
+    if !(Equal var20 -1) || Equal var21 10.2
     elif var23 >= 12
       var22 = var23 * 2
-      if OCurrAction >= 74 && OCurrAction <= 101
-      elif XDistLE var22 && OAttacking
-        var21 = 10.6
-        if CHANCE_MUL_LE PT_AGGRESSION 0.6
-          var21 = 10.2
-        endif
-      endif
+      // if OCurrAction >= 74 && OCurrAction <= 101
+      // elif XDistLE var22 && OAttacking
+      //   var21 = 10.6
+      //   if CHANCE_MUL_LE PT_AGGRESSION 0.6
+      //     var21 = 10.2
+      //   endif
+      // endif
       predictAverage var22 10 LevelValue
       var22 *= 1
       var22 += var23 + 20
@@ -729,13 +674,17 @@ var23 = var22
         endif
         if ODistLE var22
           GetCommitPredictChance var17 LevelValue
+          // var22 = (2 - Weight * 0.01) * (Damage - LevelValue * 0.65) * 0.1
+          // if var22 < 0
+          //   var17 += var22
+          // endif
           if Equal var21 12 || Equal CurrAction 73
             var22 = Damage * 0.2
             var17 += var22
           endif
           // var22 = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 8
           // var22 *= PT_REACTION_TIME
-          if Rnd < var17 && Rnd < var17
+          if Rnd < var17
             if Rnd < 0.7
               CallI DefendHub
             elif Equal var21 12 || Equal CurrAction 73
