@@ -17,6 +17,7 @@
     endif
   elif Equal CurrSubaction hex(0x1d8)
     immediateTempVar = OTopNX - TopNX
+    Abs immediateTempVar
     if !(Equal Direction OPos)
       if immediateTempVar <= 25
         scriptVariant = sv_wavedash_goal

@@ -10,7 +10,7 @@ var14 = Rnd * 0
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 Abs var0
   var4 = 0
   var5 = Rnd
@@ -21,14 +21,9 @@ var21 = 3
 SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
-if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
-  CallI AttackedHub
-elif CurrAction >= 115 && CurrAction <= 117
-  CallI OnLedge
-elif Equal CurrAction 189 || Equal CurrAction 190
-  var21 = 0
-  CallI MainHub
-endif
+XGoto PerFrameChecks
+XReciever
+Seek begin
 
 
 // detects if below stage
@@ -66,7 +61,7 @@ endif
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 
 if Equal CurrAction 16
   Goto handleSFall
@@ -121,12 +116,6 @@ if YDistFloor > -1 || Equal AirGroundState 1
   Call MainHub
 endif
 
-if YDistBackEdge < 0
-  XGoto PerFrameChecks
-  XReciever
-  Seek begin
-endif
-
   GetNearestCliff var0
   DrawDebugRectOutline var0 var1 10 10 0 255 0 221
   
@@ -134,7 +123,7 @@ endif
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
   
   // drift towards goal
   var17 = var0 * -1
@@ -153,14 +142,14 @@ endif
     Return
   endif
   var1 -= var14
-  if var6 <= 0.45 && YDistBackEdge > 50 && Equal var4 0
+  if var6 <= 0.45 && YDistBackEdge > 45 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 50 && YDistBackEdge > 110 && Equal var4 0 && Equal var16 0
+  if var2 <= 50 && YDistBackEdge > 105 && Equal var4 0 && Equal var16 0
     var4 = 1
     Button B
     ClearStick
@@ -178,7 +167,7 @@ endif
       var5 *= 1.25
       Return
     endif
-  elif YDistBackEdge > 112.80000000000001 || var17 < 18
+  elif YDistBackEdge > 107.8 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage

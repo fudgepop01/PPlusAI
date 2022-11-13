@@ -5,6 +5,10 @@ unk 0x0
 $genPersonalityStrings()
 
 XReciever
+
+XGoto PerFrameChecks
+XReciever
+
 SetAutoDefend 0
 SetDisabledSwitch 1
 SetDebugMode TEMP_DEBUG_TOGGLE
@@ -18,7 +22,7 @@ endif
 label initHitPredictValues
 getCurrentPredictValue immediateTempVar man_OXHitDist
 if Equal immediateTempVar 0
-  trackOAction man_OXHitDist 25
+  trackOAction man_OXHitDist 40
   Seek initHitPredictValues
   Jump
 endif
@@ -27,7 +31,7 @@ endif
 label start
 
 DisableDebugOverlay
-if Equal currGoal cg_recover
+if Equal currGoal cg_recover && Equal YDistFloor -1
   CallI RecoveryHub
 elif currGoal >= cg_edgeguard
   lastAttack = -1
@@ -50,10 +54,15 @@ if Equal skipMainInit mainInitSkip
   GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
   if Equal immediateTempVar 1
     currGoal = cg_attack_reversal
-  elif CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.8 && !(Equal currGoal cg_attack_reversal) && OFramesHitstun <= 0 && Equal AirGroundState 1
-    currGoal = cg_bait_dashdance
-  elif Equal currGoal cg_defend
-    currGoal = cg_attack
+  endif
+  if !(Equal lastAttack -1)
+    XGoto SetAttackGoal
+    XReciever
+    $ifAerialAttack()
+    elif Equal CurrSubaction JumpSquat
+      scriptVariant = sv_wavedash_in
+      Call Wavedash      
+    endif
   endif
   Seek initial
   Jump
@@ -73,7 +82,10 @@ elif Equal skipMainInit sm_execAttack
       CallI Wavedash 
     endif
   endif
-  ACTIONABLE_ON_GROUND
+  Goto isActionable
+  if Equal immediateTempVar 0
+    Return
+  endif
   skipMainInit = -100
 
   CallI ExecuteAttack
@@ -83,7 +95,10 @@ elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDi
   XReciever
   Seek empty_1
 
-  ACTIONABLE_ON_GROUND
+  Goto isActionable
+  if Equal immediateTempVar 0
+    Return
+  endif
   label setupWallDelay
   XGoto PerFrameChecks
   XReciever
@@ -101,10 +116,12 @@ elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDi
   Abs timer
   LOGSTR_NL str("TIMER")
   LOGVAL_NL timer
-  if timer > 100
+  if timer > 120
+    currGoal = cg_nothing
+    Call MainHub
     Return
   endif
-  timer *= Rnd * 0.2
+  timer *= 0.35
   label wallDelay
   XGoto PerFrameChecks 
   XReciever
@@ -120,7 +137,10 @@ elif Equal currGoal cg_camp_attack && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1.3 && C
   XReciever
   Seek empty_2
 
-  ACTIONABLE_ON_GROUND
+  Goto isActionable
+  if Equal immediateTempVar 0
+    Return
+  endif
   Seek initial
   Jump
 elif Equal currGoal cg_bait_wait
@@ -135,18 +155,25 @@ scriptVariant = sv_none
 lastAttack = -1
 
 DynamicDiceClear dslot0
-if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
-  DynamicDiceAdd dslot0 cg_circleCamp 2
-endif
+anotherTempVar = TopNX - OTopNX
+Abs anotherTempVar
+immediateTempVar = PT_CIRCLECAMPCHANCE * anotherTempVar
+DynamicDiceAdd dslot0 cg_bait_attack immediateTempVar
+immediateTempVar *= 2
+DynamicDiceAdd dslot0 pt_circleCampChance immediateTempVar
 
-immediateTempVar = PT_BAITCHANCE * 6
+// Functions = things that give a value
+// Requirements = stuff that go in an if condition
+// Commands = controls logic flow and interacts with game itself
+
+immediateTempVar = PT_BAITCHANCE * 12
 DynamicDiceAdd dslot0 cg_bait immediateTempVar
 immediateTempVar = PT_BAIT_DASHAWAYCHANCE * 10
 DynamicDiceAdd dslot0 cg_bait_dashdance immediateTempVar
 
-if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.3
+if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.1
   SeekNoCommit attack_roll
-elif CHANCE_MUL_LE PT_AGGRESSION 0.6
+elif CHANCE_MUL_LE PT_AGGRESSION 0.2
   SeekNoCommit attack_roll
 elif Equal HitboxConnected 1
   if !(True)
@@ -161,7 +188,7 @@ elif Equal HitboxConnected 1
   immediateTempVar = PT_AGGRESSION * 4
   DynamicDiceAdd dslot0 cg_attack immediateTempVar
   GetCommitPredictChance immediateTempVar LevelValue
-  immediateTempVar *= 5
+  immediateTempVar *= 90 * PT_WALL_CHANCE
   DynamicDiceAdd dslot0 cg_attack_wall immediateTempVar
   immediateTempVar = 5 - immediateTempVar
   DynamicDiceAdd dslot0 cg_attack_reversal immediateTempVar
@@ -188,11 +215,11 @@ label initial
 XGoto PerFrameChecks
 XReciever
 Seek initial
-if Equal goalX 0 && Equal goalY 0
-  XGoto GoalChoiceHub
-  XReciever
-  Seek initial
-endif
+// if Equal goalX 0 && Equal goalY 0
+//   XGoto GoalChoiceHub
+//   XReciever
+//   Seek initial
+// endif
 
 #let techSkill = var0
 techSkill = LevelValue * 0.01
@@ -207,7 +234,6 @@ if Rnd < techSkill
   Seek selectGoal
   Return
 endif
-LOGSTR str("waiting")
 Return
 label selectGoal
 XGoto PerFrameChecks
@@ -221,6 +247,7 @@ if Equal currGoal cg_bait_wait
   #let timer = var4
   timer = Rnd * 55 + 5
   label baitWait
+  LOGSTR_NL str("BAIT_WAIT")
   XGoto PerFrameChecks
   XReciever
   XGoto UpdateGoal
@@ -231,6 +258,12 @@ if Equal currGoal cg_bait_wait
   immediateTempVar *= 0.5
   if XDistLE immediateTempVar && Rnd <= 0.02
     CallI DefendHub
+  endif
+  immediateTempVar *= 3
+  if XDistLE immediateTempVar && CHANCE_MUL_LE PT_AGGRESSION 0.05
+    currGoal = cg_attack_wall
+    Seek selectGoal
+    Jump
   endif
   if LevelValue >= LV8
     Stick 0 -1
@@ -247,9 +280,6 @@ if Equal currGoal cg_bait_wait
   Return
 elif Equal goalY BBoundary
   Seek selectGoal
-  if Rnd < 0.1
-    currGoal = cg_bait_dashdance
-  endif
   Return
 elif Equal currGoal cg_attack && Equal lastAttack -1
   Seek selectGoal
@@ -259,10 +289,18 @@ label navigateToGoal
 XGoto PerFrameChecks
 XReciever
 Seek selectGoal
-ACTIONABLE_ON_GROUND
+Goto isActionable
+if Equal immediateTempVar 0
+  Return
+endif
 
 XGoto MoveToGoal
 XReciever
 Seek selectGoal
+Return
+label isActionable
+immediateTempVar = 0
+ACTIONABLE_ON_GROUND
+immediateTempVar = 1
 Return
 Return

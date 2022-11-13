@@ -39,18 +39,34 @@ if Equal AirGroundState 1
   endif
 endif
 
-  if Equal CurrAction 22 
+if Equal CurrAction 52 || Equal CurrAction 53
+  Seek common_checks
+  Jump
+endif
+
+if Equal CurrSubaction JumpSquat
+if !(True) || Equal var20 10 || Equal var20 11
+    Seek
+    Jump
+elif !(True) || Equal var20 13
+    Seek
+    Jump
+  endif
+endif
+
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
 
-if !(True) || Equal var20 15|| Equal var20 16|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32|| Equal var20 33
+if !(True) || Equal var20 15|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32
   if Equal AirGroundState 1
     MOD var22 AnimFrame 3
     if !(Equal CurrSubaction JumpSquat) && var22 <= 1
@@ -58,7 +74,7 @@ if !(True) || Equal var20 15|| Equal var20 16|| Equal var20 27|| Equal var20 28|
     endif
     Return
   endif
-elif !(True) || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
+elif !(True) || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25
   if !(Equal AirGroundState 1)
     Return
   endif
@@ -69,7 +85,7 @@ endif
 if !(True) || Equal var20 2
   Seek execDA
   Jump
-elif !(True) || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
+elif !(True) || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25
   if !(Equal CurrSubaction JumpSquat) && !(Equal CurrAction 6)
     Button X
     Return
@@ -201,103 +217,97 @@ Stick 0 (-0.7)
 Seek dspecialair
 Return
 elif Equal var20 16
-var6 = 4
-Button B
-Stick 0 (-0.7)
-Seek dspecialair_landing
-Return
-elif Equal var20 17
 var6 = 16
 Button B
 AbsStick OPos
 Seek sspecial
 Return
-elif Equal var20 18
+elif Equal var20 17
 var6 = 18
 Button B
 AbsStick OPos
 Seek sspecial_hit
 Return
-elif Equal var20 19
+elif Equal var20 18
 var6 = 16
 Button B
 AbsStick OPos
 Seek sspecial_throwb
 Return
-elif Equal var20 20
+elif Equal var20 19
 var6 = 16
 Button B
 AbsStick OPos
 Seek sspecial_throwf
 Return
-elif Equal var20 21
+elif Equal var20 20
 var6 = 16
 Button B
 AbsStick OPos
 Seek sspecial_throwlw
 Return
-elif Equal var20 22
+elif Equal var20 21
 var6 = 7
 Button R|A
 Seek grab
 Return
-elif Equal var20 23
+elif Equal var20 22
 var6 = 7
 Button R|A
 Seek fthrow
 Return
-elif Equal var20 24
+elif Equal var20 23
 var6 = 7
 Button R|A
 Seek dthrow
 Return
-elif Equal var20 25
+elif Equal var20 24
 var6 = 7
 Button R|A
 Seek bthrow
 Return
-elif Equal var20 26
+elif Equal var20 25
 var6 = 7
 Button R|A
 Seek uthrow
 Return
-elif Equal var20 27
+elif Equal var20 26
 var6 = 28
 Button A
 Seek nair
 Return
-elif Equal var20 28
+elif Equal var20 27
 var6 = 11
 Button A
 Goto getHeight
 Stick 1
 Seek fair
 Return
-elif Equal var20 29
+elif Equal var20 28
 var6 = 30
 Button A
 Stick (-1) 0
 Seek bair
 Return
-elif Equal var20 30
+elif Equal var20 29
 var6 = 30
 Button A
 Stick (-1) 0
 Seek bair_weak
 Return
-elif Equal var20 31
+elif Equal var20 30
 var6 = 23
 Button A
 Stick 0 1
 Seek uair
 Return
-elif Equal var20 32
+elif Equal var20 31
 var6 = 42
 Button A
 Stick 0 (-0.6)
 Seek dair
 Return
-elif Equal var20 33
+elif Equal var20 32
 var6 = 3
 Button A
 Stick 0 (-0.6)
@@ -395,14 +405,6 @@ endif
 Goto common_checks
 Seek dspecialair
 Return
-label dspecialair_landing
-Goto PFC
-if AnimFrame >= 2 && AnimFrame <= 7
-  AbsStick OPos
-endif
-Goto common_checks
-Seek dspecialair_landing
-Return
 label sspecial
 Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7
@@ -413,7 +415,7 @@ Seek sspecial
 Return
 label sspecial_hit
 Goto PFC
-if AnimFrame >= 2 && AnimFrame <= 7
+if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
 Goto common_checks
@@ -421,7 +423,7 @@ Seek sspecial_hit
 Return
 label sspecial_throwb
 Goto PFC
-if AnimFrame >= 2 && AnimFrame <= 7
+if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
   if Equal CurrSubaction 478
@@ -432,7 +434,7 @@ Seek sspecial_throwb
 Return
 label sspecial_throwf
 Goto PFC
-if AnimFrame >= 2 && AnimFrame <= 7
+if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
   if Equal CurrSubaction 478
@@ -443,7 +445,7 @@ Seek sspecial_throwf
 Return
 label sspecial_throwlw
 Goto PFC
-if AnimFrame >= 2 && AnimFrame <= 7
+if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
   if Equal CurrSubaction 478
@@ -549,7 +551,7 @@ label getHeight
 label PFC
   XGoto PerFrameChecks
   XReciever
-if !(True) || Equal var20 15|| Equal var20 16|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32|| Equal var20 33
+if !(True) || Equal var20 15|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32
     if Equal IsOnStage 0 && NumJumps < 1
       var22 = TopNX * -1
       AbsStick var22
@@ -574,6 +576,9 @@ label common_checks
   XReciever
 
   if Equal CanCancelAttack 1
+    Seek finish
+    Jump
+  elif Equal HitboxConnected 1 && HasCurry
     Seek finish
     Jump
   elif CurrAction <= 32 && !(Equal CurrAction 24)
@@ -607,15 +612,15 @@ label common_checks
         ADJUST_PERSONALITY 3 0.001 var22
       endif
 
-      if OKBSpeed > 3
-        if CHANCE_MUL_LE PT_AGGRESSION 0.6
-          var21 = 16
-        else
-          var21 = 10.5
-        endif
-      else
-        var21 = 16
-      endif  
+      // if OKBSpeed > 3
+      //   if CHANCE_MUL_LE PT_AGGRESSION 0.6
+      //     var21 = 16
+      //   else
+      //     var21 = 10.5
+      //   endif
+      // else
+      //   var21 = 16
+      // endif  
 
       if !(True)
         label correctMoveAngle
@@ -646,8 +651,21 @@ label common_checks
       var22 = 999
     endif 
     var22 -= 2
-    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame && !(ODistLE 8)
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame
       Button R
+    endif
+  endif
+
+  // grabs
+  if Equal CurrAction 57
+if Equal var20 22
+      Stick 1 0
+elif Equal var20 23
+      Stick 0 (-1)
+elif Equal var20 24
+      Stick -1 0
+elif Equal var20 25
+      Stick 0 1
     endif
   endif
 
@@ -670,17 +688,21 @@ label finish
   var15 = -100
   var21 = -1
   if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || CHANCE_MUL_LE PT_AGGRESSION 0.1
-    XGoto CalcAttackGoal
-    XReciever
     if XDistLE 40 && OFramesHitstun <= 1
       var21 = 16.3
     else
       var15 = -1
       var21 = 16.4
     endif
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2
+    XGoto CalcAttackGoal
+    XReciever
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2 && !(XDistLE 35)
     var15 = -1
     var21 = 10.5
+  endif
+  if !(XDistLE 65) && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.15
+    var15 = -1
+    var21 = 7
   endif
   CallI MainHub
 Return

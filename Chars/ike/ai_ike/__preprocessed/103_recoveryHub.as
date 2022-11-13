@@ -10,12 +10,19 @@ var14 = Rnd * 0
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 Abs var0
+  var11 = 20
   var4 = 0
   var5 = Rnd
+  if var1 > 40 || var0 > 80
+    var5 = 0
+  endif
   var6 = Rnd
   var7 = Rnd
+  if var0 > 80
+    var7 = 0
+  endif
   var8 = Rnd
   var9 = Rnd
   var10 = Rnd
@@ -24,14 +31,9 @@ var21 = 3
 SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
-if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
-  CallI AttackedHub
-elif CurrAction >= 115 && CurrAction <= 117
-  CallI OnLedge
-elif Equal CurrAction 189 || Equal CurrAction 190
-  var21 = 0
-  CallI MainHub
-endif
+XGoto PerFrameChecks
+XReciever
+Seek begin
 
 
 // detects if below stage
@@ -69,7 +71,7 @@ endif
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 
 if Equal CurrAction 16 || Equal CurrAction 285
   Goto handleSFall
@@ -124,12 +126,6 @@ if YDistFloor > -1 || Equal AirGroundState 1
   Call MainHub
 endif
 
-if YDistBackEdge < 0
-  XGoto PerFrameChecks
-  XReciever
-  Seek begin
-endif
-
   GetNearestCliff var0
   DrawDebugRectOutline var0 var1 10 10 0 255 0 221
   
@@ -137,11 +133,16 @@ endif
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
   // drift towards goal
   var17 = var0 * -1
   ClearStick
   AbsStick var17
+  if Equal var16 0
+    if var6 < 0.45
+      var11 += 15
+    endif
+  endif
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
@@ -157,14 +158,15 @@ endif
   var1 -= var14
   var22 = Direction * -1 * 5
   GetYDistFloorOffset var22 var22 80 0
-  if var6 <= 0.45 && YDistBackEdge > -20 && Equal var4 0 && Equal var22 -1 
+  if var6 <= 0.45 && YDistBackEdge > -30 && Equal var4 0 && Equal var22 -1 
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 30 && YDistBackEdge > 40 && Equal var4 0 && Equal var16 0 && Equal var22 -1 
+  var17 = 40 - var11
+  if var2 <= 30 && YDistBackEdge > var17 && Equal var4 0 && Equal var16 0 && Equal var22 -1 
     var4 = 1
     Button B
     ClearStick
@@ -184,6 +186,7 @@ endif
     Stick 1 0
     Return
   endif
+  var22 = Direction * -55
   GetColDistPosRel var22 var22 0 TopNY 0 0 1
   if !(Equal var22 -1) && var8 < 0.5 
     Button B
@@ -191,6 +194,7 @@ endif
     Stick 1 0
     Return
   endif
+  var17 = TopNY - BBoundary
   if Equal var4 1 || var5 <= 0.6 && NumJumps > 0
     var22 = 20.39
     if !(NoOneHanging)
@@ -202,8 +206,8 @@ endif
       var5 *= 1.25
       Return
     endif
-  elif YDistBackEdge > 56.39 || var17 < 18
-    if NumJumps > 0 && Rnd < 0.5
+  elif YDistBackEdge > 46.39 || var17 < 18
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return
@@ -231,7 +235,7 @@ label handleSSpecial
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
     // drift towards goal
     var17 = var0 * -1
     ClearStick

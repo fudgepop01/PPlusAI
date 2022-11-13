@@ -32,7 +32,7 @@ if Equal CurrAction 4 || Equal CurrAction 5
 endif
 
 var0 = var3 - var4
-var0 = Rnd * var0 + var4 
+var0 = Rnd * var0 + var4 + 5
 var2 = OPos
 if Equal var16 3
   var0 += 8
@@ -47,17 +47,21 @@ XReciever
 //   XReciever
 // endif
 Seek execution
-if Equal CurrAction 1
+if Equal CurrAction 1 || Equal CurrAction 7 || Equal CurrAction 6
   ClearStick
   Return
 endif
 
-if XDistFrontEdge < 20 && !(Equal var16 1)
-  var16 = 1
-elif XDistFrontEdge < 15
-  Call MainHub
+if XDistFrontEdge < 5 || XDistFrontEdge > -5
+  var16 = 4
 elif XDistBackEdge > -25 && Equal Direction OPos && !(Equal var16 5)
   var16 = 1
+endif
+
+var17 = OPos * 15
+GetYDistFloorOffset var17 var17 10 1
+if var17 < 0 && !(Equal var16 4)
+  Call MainHub
 endif
 
 if var1 < var3 && !(Equal var16 5) || Equal var16 3
@@ -94,7 +98,7 @@ if var1 < var3 && !(Equal var16 5) || Equal var16 3
 elif Equal var16 5
   AbsStick OPos
   if !(Equal var2 OPos)
-    if CHANCE_MUL_LE PT_AGGRESSION 0.75
+    if CHANCE_MUL_LE PT_AGGRESSION 0.7
       var21 = 16.4
       var15 = -1
     endif

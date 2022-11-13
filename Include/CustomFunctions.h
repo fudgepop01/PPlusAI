@@ -255,6 +255,9 @@ func LTF_STACK_READ : 0x5F
 /// 0xFFFF = default
 func TrainingScript : 0x60
 
+func ActionTimer : 0x70
+func OActionTimer : 0x170
+
 /// FETCH PERSONALITY TRAIT VALUES WITH THESE
 func PT_AGGRESSION : 0x80
 func PT_BAIT_DASHAWAYCHANCE : 0x81

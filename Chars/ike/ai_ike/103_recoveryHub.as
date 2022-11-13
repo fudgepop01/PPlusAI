@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
   #const UpBXDist = 30
-  #const UpBYDist = 50
+  #const UpBYDist = 40
   #const sideBHeight = 4
   #const sideBRange = 80
   #const tolerence = 10
@@ -18,10 +18,19 @@
   #let sideBWJValue = var8
   #let highSideBValue = var9
   #let earlySideBValue = var10
+  #let tolerence = var11
+  tolerence = 20
+
   hasTriedToUpB = 0
   jumpValue = Rnd
+  if nearCliffY > UpBYDist || nearCliffX > sideBRange
+    jumpValue = 0
+  endif
   highUpBValue = Rnd
   sideBValue = Rnd
+  if nearCliffX > sideBRange
+    sideBValue = 0
+  endif
   sideBWJValue = Rnd
   highSideBValue = Rnd
   earlySideBValue = Rnd
@@ -47,6 +56,12 @@
   ClearStick
   AbsStick globTempVar
 
+  if Equal isBelowStage 0
+    if highUpBValue < highUpBChance
+      tolerence += 15
+    endif
+  endif
+
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
@@ -60,7 +75,8 @@
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
+  globTempVar = UpBYDist - tolerence
+  if absNCX <= UpBXDist && YDistBackEdge > globTempVar && Equal hasTriedToUpB 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
     hasTriedToUpB = 1
     Button B
     ClearStick
@@ -81,6 +97,7 @@
     Return
   endif
 
+  immediateTempVar = Direction * -55
   GetColDistPosRel immediateTempVar immediateTempVar 0 TopNY 0 0 1
   if !(Equal immediateTempVar -1) && sideBWJValue < sideBWJChance 
     Button B
@@ -88,6 +105,7 @@
     Stick 1 0
     Return
   endif
+  globTempVar = TopNY - BBoundary
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
     immediateTempVar = calc(cs_djumpHeight - 6)
     if !(NoOneHanging)
@@ -101,7 +119,7 @@
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
       Return

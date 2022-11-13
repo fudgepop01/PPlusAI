@@ -11,7 +11,7 @@ if CalledAs ExecuteAttack
   Return
 endif
 
-if Equal var21 16.8
+if Equal var21 16.72
   Goto WDBackGrabLedge
   Return
 endif
@@ -26,7 +26,7 @@ STACK_PUSH 17 0
 STACK_PUSH 23 0
 STACK_PUSH 3 0
 STACK_PUSH 17 0
-STACK_PUSH 17 0
+STACK_PUSH 4 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
@@ -34,8 +34,11 @@ STACK_PUSH 17 0
   XReciever
   var23 *= 0.5
   var3 += var23
+  var23 = OWidth * 0.5
+  var4 += var23
 else
   var3 = 9
+  var4 = 10
 endif
 
 var18 = LevelValue * 0.01
@@ -58,8 +61,8 @@ GetYDistFloorOffset var22 var22 3 0
 if var17 > 0
   var22 = TopNY + 3 - var22
   var17 = TopNY + 100 - var17
-  if var21 <= 16 && var21 <= 17 && OFramesHitstun <= 1
-  elif var22 < var17
+  if var21 <= 16 && var21 <= 17
+  elif var22 < var17 && !(CalledFrom BoardPlatform)
     var0 = PT_PLATCHANCE
     if Rnd < var0
       label empty_0
@@ -110,7 +113,7 @@ GetAttribute var17 76; 0
 var22 = XSpeed * var3 * var17 + TopNX
 var22 -= var13
 Abs var22
-if var22 <= 10 || Equal CurrSubaction JumpSquat && TopNY < var14
+if var22 <= var4 || Equal CurrSubaction JumpSquat && TopNY < var14
   var22 = 15
   XGoto GetChrSpecific
   XReciever
@@ -221,16 +224,26 @@ label stickMovement
   if var21 < 16 || Equal var22 0
     var23 = TopNX
   endif
+  
   if var23 > var13
     AbsStick -1
   else
     AbsStick 1
   endif
+  if Equal AirGroundState 1 && Equal var22 0
+    var23 -= var13
+    Abs var23
+    if Equal CurrAction 3 && var23 < 20
+      ClearStick
+    elif var23 < 10
+      ClearStick
+    endif
+  endif
 
-  var23 = TopNX + XSpeed * 9
-  var17 = 10 * Direction
+  var17 = TopNX + Width * Direction * 0.5
+  var23 = XSpeed * 2 + 3 * Direction
   var23 += var17
-  GetColDistPosAbs var23 var17 CenterX CenterY var23 CenterY 0
+  GetColDistPosAbs var23 var17 var17 CenterY var23 CenterY 0
   if !(Equal var23 -1)
     ClearStick
     Button X
@@ -238,9 +251,11 @@ label stickMovement
   endif 
   var23 = TopNX - var13
   Abs var23
-  if var23 <= 8 && Equal AirGroundState 1 && !(Equal CurrAction 10)
-    if CurrAction < 3 || Equal CurrAction 22 || Equal CurrAction 23 || Equal CurrAction 24 
+  if var23 < 20 && Equal AirGroundState 1 && !(Equal CurrAction 10)
+    if Equal CurrAction 3 || Equal CurrAction 22 || Equal CurrAction 23 || Equal CurrAction 24 
       ClearStick
+    endif
+    if !(Equal var21 16.3)
       if TopNX > var13
         AbsStick -0.65
       else
@@ -260,7 +275,7 @@ label stickMovement
         if Equal var22 0
           if var17 > 0.1
             var16 = 3
-            if XDistFrontEdge < 10
+            if XDistFrontEdge < 5
               var16 = 4
             endif
             CallI Wavedash
@@ -268,20 +283,28 @@ label stickMovement
             ClearStick
           endif
         elif True
+          GetYDistFloorAbsPos var23 var13 TopNY
+          if var23 < 0
+            ClearStick
+          endif
+          var17 = TopNX - var13
+          Abs var17
+          if var17 <= 80
   var22 = 15
   XGoto GetChrSpecific
   XReciever
 var2 = var22
-          var22 = OTopNY - TopNY + OHurtboxSize
-          if var22 > var2
-            if !(Equal CurrSubaction JumpSquat)
+            var22 = OTopNY - TopNY + OHurtboxSize
+            if var22 > var2 || var17 > 60
+              if !(Equal CurrSubaction JumpSquat)
+                Goto jumpPreCheck
+              else
+                Button X
+                Goto jumpDirHandler
+              endif
+            elif var22 > -15 && !(Equal CurrSubaction JumpSquat) && var17 > 30
               Goto jumpPreCheck
-            else
-              Button X
-              Goto jumpDirHandler
             endif
-          elif var22 > -15 && !(Equal CurrSubaction JumpSquat)
-            Goto jumpPreCheck
           endif
         endif
       endif
@@ -362,14 +385,12 @@ endif
 Return
 label handleWaveland
 var17 = 1
-if XDistFrontEdge < 30 && XDistBackEdge > -30
-  var17 = 0.6
-endif
-if XDistFrontEdge < 10 || XDistBackEdge > -10
-  var17 = 0.3
-endif
 if XDistFrontEdge < 3 || XDistBackEdge > -3
-  var17 = -0.5
+  var17 = -0.3
+elif XDistFrontEdge < 10 || XDistBackEdge > -10
+  var17 = 0.3
+elif XDistFrontEdge < 30 && XDistBackEdge > -30
+  var17 = 0.6
 endif
 if TopNX < var13
   AbsStick var17 (-1)
@@ -397,7 +418,6 @@ label WDBackGrabLedge
 if !(Equal AirGroundState 3)
   GetNearestCliff var0  
   var0 = TopNX - var0
-  var0 *= -1
   if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
     // wavedash back to ledge?
     var22 = XSpeed
@@ -407,21 +427,22 @@ if !(Equal AirGroundState 3)
     Abs var17
     if var17 < var22
       var17 = var0 * Direction
-      if var17 < -10
+      LOGVAL_NL var17
+      if var17 < 20 && var17 > 0
         Stick -1
         Return
-      elif var17 < 5
+      elif var17 > -5 && var17 < 0
         Stick 1
         Return
-      elif YDistBackEdge > -1 && InAir && var17 > 5 && Equal IsOnStage 1
+      elif YDistBackEdge > -1 && InAir && var17 < -5 && Equal IsOnStage 1
         Button R
         GetAttribute var22 36; 0
-        var17 *= var22 * -1
+        var17 *= var22
         if var17 > -0.3
           var17 = -0.3
         endif
         Stick var17 (-0.75)
-      elif var17 > 0 && !(Equal CurrAction 10) && Equal IsOnStage 1
+      elif var17 < 0 && !(Equal CurrAction 10) && Equal IsOnStage 1
         if CurrAction >= 22 && CurrAction <= 25
         else
           Button X

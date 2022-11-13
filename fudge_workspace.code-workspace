@@ -24,14 +24,47 @@
 			"path": "..\\..\\..\\..\\Documents\\aiscriptpad-editor"
 		},
 		{
-			"path": "..\\..\\..\\..\\Documents\\PinkTromboneApp"
+			"path": "../Wombuild-content"
+		},
+		{
+			"path": "../../../../Documents/PanTruthConverter"
+		},
+		{
+			"path": "../../../../Documents/PPlusSpark"
 		}
 	],
 	"settings": {
 		"files.associations": {
 			"*.ksy": "yaml",
-			"vector": "cpp"
+			"vector": "cpp",
+			"algorithm": "cpp",
+			"chrono": "cpp",
+			"xstring": "cpp",
+			"xutility": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"functional": "cpp",
+			"xlocale": "cpp",
+			"optional": "cpp",
+			"system_error": "cpp",
+			"type_traits": "cpp",
+			"xlocmon": "cpp",
+			"xlocnum": "cpp",
+			"xtr1common": "cpp",
+			"istream": "cpp",
+			"ostream": "cpp",
+			"ratio": "cpp",
+			"array": "cpp",
+			"tuple": "cpp",
+			"utility": "cpp",
+			"variant": "cpp",
+			"*.inc": "c",
+			"TEMP.C": "cpp",
+			"locale": "cpp",
+			"thread": "cpp",
+			"xlocmes": "cpp",
+			"xloctime": "cpp"
 		},
-		"liveServer.settings.multiRootWorkspaceName": "RukaiData"
+		"liveServer.settings.multiRootWorkspaceName": "Project-Plus-Stream-Tool-main"
 	}
 }

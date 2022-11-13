@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
   #const UpBXDist = 50
-  #const UpBYDist = 120
+  #const UpBYDist = 115
   #const tolerence = 10
 
   #const jumpChance = 0.35

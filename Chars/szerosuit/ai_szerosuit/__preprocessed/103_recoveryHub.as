@@ -10,7 +10,7 @@ var14 = Rnd * 0
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 Abs var0
   var4 = 0
   var5 = 0
@@ -29,14 +29,9 @@ var21 = 3
 SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
-if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
-  CallI AttackedHub
-elif CurrAction >= 115 && CurrAction <= 117
-  CallI OnLedge
-elif Equal CurrAction 189 || Equal CurrAction 190
-  var21 = 0
-  CallI MainHub
-endif
+XGoto PerFrameChecks
+XReciever
+Seek begin
 
 
 // detects if below stage
@@ -74,7 +69,7 @@ endif
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 
 if Equal CurrAction 16
   Goto handleSFall
@@ -127,12 +122,6 @@ if YDistFloor > -1 || Equal AirGroundState 1
   var14 = BBoundary
   var13 = 0
   Call MainHub
-endif
-
-if YDistBackEdge < 0
-  XGoto PerFrameChecks
-  XReciever
-  Seek begin
 endif
 
   GetNearestCliff var0

@@ -5,7 +5,9 @@ unk 0x0
 XReciever
 EnableDebugOverlay 
 SetDebugOverlayColor color(0xDDDD0088)
-currGoal = cg_defend
+if !(Equal currGoal cg_attack_inCombo)
+  currGoal = cg_defend
+endif
 label begin
 XGoto PerFrameChecks
 XReciever
@@ -29,10 +31,6 @@ baitChance = pt_baitChance
 //   endif
 // endif
 
-if CHANCE_MUL_LE PT_AGGRESSION 0.65
-  currGoal = cg_attack_reversal
-endif
-
 if Equal AirGroundState 1
   predictOOption immediateTempVar man_ODefendOption LevelValue
   predictionConfidence globTempVar man_ODefendOption LevelValue
@@ -40,9 +38,15 @@ if Equal AirGroundState 1
   if CHANCE_MUL_GE PT_AGGRESSION 0.65 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
     PredictOMov immediateTempVar mov_grab LevelValue
     immediateTempVar *= 2.5
-    if immediateTempVar < 0.25
+    if immediateTempVar < 0.25      
       CallI Shield
     endif
+  endif
+
+  immediateTempVar = 25 * PT_AGGRESSION
+  if CHANCE_MUL_LE PT_AGGRESSION 1 && Damage < immediateTempVar && CurrAction <= hex(0x20)
+    currGoal = cg_defend_crouchCancel
+    CallI Shield
   endif
 
   #let OXHitDist = var2
@@ -77,8 +81,7 @@ if Equal AirGroundState 1
       scriptVariant = sv_roll_through
       CallI Roll
     elif Rnd < 0.4 && Rnd < djumpiness
-      scriptVariant = sv_jump_over
-      scriptVariant += svp_jump_fullhop
+      scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
       CallI JumpScr
     endif
     GetAttribute immediateTempVar attr_dashInitVel 0
@@ -143,32 +146,30 @@ if Equal AirGroundState 1
   endif
 endif
 
-// maybe make driftAway based on air mobility?
-#let OXHitDist = var0
-predictAverage OXHitDist man_OXHitDist LevelValue
-OXHitDist += 25
-PredictOMov immediateTempVar mov_attack LevelValue
-if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
-  if CalledFrom AttackedHub && CHANCE_MUL_LE PT_AGGRESSION 0.75
-    scriptVariant = sv_fastAttack
+if Equal currGoal cg_attack_inCombo
+  if CHANCE_MUL_LE PT_AGGRESSION 0.65
     XGoto CalcAttackGoal
     XReciever
     skipMainInit = mainInitSkip
     CallI MainHub
-  endif 
+  endif
+endif 
+
+// maybe make driftAway based on air mobility?
+#let OXHitDist = var0
+predictAverage OXHitDist man_OXHitDist LevelValue
+OXHitDist += 20
+PredictOMov immediateTempVar mov_attack LevelValue
+if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
   if NumJumps > 0 && Rnd < 0.2
-    scriptVariant = sv_jump_over
-    scriptVariant += svp_jump_fullhop
+    scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
     CallI JumpScr
   elif NumJumps > 0 && Rnd < 0.1
-    scriptVariant = sv_jump_away
-    scriptVariant += svp_jump_fullhop
+    scriptVariant = calc(sv_jump_away + svp_jump_fullhop)
     CallI JumpScr
-  elif CalledFrom AttackedHub && NumJumps > 0 && OTopNY < TopNY && CHANCE_MUL_LE PT_AGGRESSION 0.8
-    scriptVariant = sv_jump_away
-    scriptVariant += svp_jump_fullhop
+  elif Equal currGoal cg_attack_inCombo && NumJumps > 0 && OTopNY < TopNY && CHANCE_MUL_LE PT_AGGRESSION 0.65
+    scriptVariant = calc(sv_jump_away + svp_jump_fullhop)
     skipMainInit = mainInitSkip
-    currGoal = cg_attack_reversal
     CallI JumpScr
   elif Rnd < 0.4 && YDistFloor > 25
     scriptVariant = sv_aerialdrift_away
@@ -181,6 +182,7 @@ immediateTempVar *= 2
 if immediateTempVar < 0.30 && Rnd > immediateTempVar && Equal AirGroundState 1
   CallI Shield
 endif
+currGoal = cg_attack_reversal
 if !(Equal lastAttack -1)
   skipMainInit = mainInitSkip
   CallI MainHub

@@ -39,14 +39,30 @@ if Equal AirGroundState 1
   endif
 endif
 
-  if Equal CurrAction 22 
+if Equal CurrAction 52 || Equal CurrAction 53
+  Seek common_checks
+  Jump
+endif
+
+if Equal CurrSubaction JumpSquat
+if !(True) || Equal var20 9
+    Seek
+    Jump
+elif !(True) || Equal var20 11
+    Seek
+    Jump
+  endif
+endif
+
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
 
@@ -469,6 +485,9 @@ label common_checks
   if Equal CanCancelAttack 1
     Seek finish
     Jump
+  elif Equal HitboxConnected 1 && HasCurry
+    Seek finish
+    Jump
   elif CurrAction <= 32 && !(Equal CurrAction 24)
     Seek finish
     Jump
@@ -500,15 +519,15 @@ label common_checks
         ADJUST_PERSONALITY 3 0.001 var22
       endif
 
-      if OKBSpeed > 3
-        if CHANCE_MUL_LE PT_AGGRESSION 0.6
-          var21 = 16
-        else
-          var21 = 10.5
-        endif
-      else
-        var21 = 16
-      endif  
+      // if OKBSpeed > 3
+      //   if CHANCE_MUL_LE PT_AGGRESSION 0.6
+      //     var21 = 16
+      //   else
+      //     var21 = 10.5
+      //   endif
+      // else
+      //   var21 = 16
+      // endif  
 
       if !(True)
         label correctMoveAngle
@@ -539,8 +558,21 @@ label common_checks
       var22 = 999
     endif 
     var22 -= 2
-    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame && !(ODistLE 8)
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && var22 > AnimFrame
       Button R
+    endif
+  endif
+
+  // grabs
+  if Equal CurrAction 57
+if Equal var20 13
+      Stick 1 0
+elif Equal var20 14
+      Stick 0 (-1)
+elif Equal var20 15
+      Stick -1 0
+elif Equal var20 16
+      Stick 0 1
     endif
   endif
 
@@ -563,17 +595,21 @@ label finish
   var15 = -100
   var21 = -1
   if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || CHANCE_MUL_LE PT_AGGRESSION 0.1
-    XGoto CalcAttackGoal
-    XReciever
     if XDistLE 40 && OFramesHitstun <= 1
       var21 = 16.3
     else
       var15 = -1
       var21 = 16.4
     endif
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2
+    XGoto CalcAttackGoal
+    XReciever
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2 && !(XDistLE 35)
     var15 = -1
     var21 = 10.5
+  endif
+  if !(XDistLE 65) && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.15
+    var15 = -1
+    var21 = 7
   endif
   CallI MainHub
 Return

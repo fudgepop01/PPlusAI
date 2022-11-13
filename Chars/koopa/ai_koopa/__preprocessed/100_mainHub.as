@@ -17,6 +17,10 @@ str "0.5"
 str "0.8"
 
 XReciever
+
+XGoto PerFrameChecks
+XReciever
+
 SetAutoDefend 0
 SetDisabledSwitch 1
 SetDebugMode TEMP_DEBUG_TOGGLE
@@ -30,7 +34,7 @@ endif
 label initHitPredictValues
 getCurrentPredictValue var22 10
 if Equal var22 0
-  trackOAction 10 25
+  trackOAction 10 40
   Seek initHitPredictValues
   Jump
 endif
@@ -38,7 +42,7 @@ endif
 label start
 
 DisableDebugOverlay
-if Equal var21 3
+if Equal var21 3 && Equal YDistFloor -1
   CallI RecoveryHub
 elif var21 >= 16.7
   var20 = -1
@@ -62,10 +66,15 @@ if Equal var15 -1
   XReciever
   if Equal var22 1
     var21 = 16.4
-  elif CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.8 && !(Equal var21 16.4) && OFramesHitstun <= 0 && Equal AirGroundState 1
-    var21 = 10.5
-  elif Equal var21 13
-    var21 = 16
+  endif
+  if !(Equal var20 -1)
+    XGoto SetAttackGoal
+    XReciever
+if !(True) || Equal var20 15|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32
+    elif Equal CurrSubaction JumpSquat
+      var16 = 1
+      Call Wavedash      
+    endif
   endif
   Seek initial
   Jump
@@ -85,14 +94,8 @@ if !(True) || Equal var20 2
       CallI Wavedash 
     endif
   endif
-  if Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  Goto isActionable
+  if Equal var22 0
     Return
   endif
   var15 = -100
@@ -104,14 +107,8 @@ elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
   XReciever
   Seek empty_1
 
-  if Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  Goto isActionable
+  if Equal var22 0
     Return
   endif
   label setupWallDelay
@@ -130,10 +127,12 @@ elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
   Abs var0
   LOGSTR_NL 1414089984 1163001856 0 0 0
   LOGVAL_NL var0
-  if var0 > 100
+  if var0 > 120
+    var21 = 0
+    Call MainHub
     Return
   endif
-  var0 *= Rnd * 0.2
+  var0 *= 0.35
   label wallDelay
   XGoto PerFrameChecks 
   XReciever
@@ -149,14 +148,8 @@ elif Equal var21 7.1 && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1.3 && CHANCE_MUL_LE P
   XReciever
   Seek empty_2
 
-  if Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  Goto isActionable
+  if Equal var22 0
     Return
   endif
   Seek initial
@@ -173,11 +166,18 @@ var16 = 0
 var20 = -1
 
 DynamicDiceClear 0
-if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1
-  DynamicDiceAdd 0 7 2
-endif
+var23 = TopNX - OTopNX
+Abs var23
+var22 = PT_CIRCLECAMPCHANCE * var23
+DynamicDiceAdd 0 10.1 var22
+var22 *= 2
+DynamicDiceAdd 0 0.55 var22
 
-var22 = PT_BAITCHANCE * 6
+// Functions = things that give a value
+// Requirements = stuff that go in an if condition
+// Commands = controls logic flow and interacts with game itself
+
+var22 = PT_BAITCHANCE * 12
 DynamicDiceAdd 0 10 var22
 var22 = PT_BAIT_DASHAWAYCHANCE * 10
 DynamicDiceAdd 0 10.5 var22
@@ -199,7 +199,7 @@ elif Equal HitboxConnected 1
   var22 = PT_AGGRESSION * 4
   DynamicDiceAdd 0 16 var22
   GetCommitPredictChance var22 LevelValue
-  var22 *= 5
+  var22 *= 90 * PT_WALL_CHANCE
   DynamicDiceAdd 0 16.3 var22
   var22 = 5 - var22
   DynamicDiceAdd 0 16.4 var22
@@ -228,11 +228,11 @@ label initial
 XGoto PerFrameChecks
 XReciever
 Seek initial
-if Equal var13 0 && Equal var14 0
-  XGoto GoalChoiceHub
-  XReciever
-  Seek initial
-endif
+// if Equal var13 0 && Equal var14 0
+//   XGoto GoalChoiceHub
+//   XReciever
+//   Seek initial
+// endif
 
 var0 = LevelValue * 0.01
 if var0 < 0
@@ -246,7 +246,6 @@ if Rnd < var0
   Seek selectGoal
   Return
 endif
-LOGSTR 2002872576 1953066496 1728053248 0 0
 Return
 label selectGoal
 XGoto PerFrameChecks
@@ -259,6 +258,7 @@ if Equal var21 10.4
   label waitSetup
   var4 = Rnd * 55 + 5
   label baitWait
+  LOGSTR_NL 1111574784 1415534336 1095324672 0 0
   XGoto PerFrameChecks
   XReciever
   XGoto UpdateGoal
@@ -269,6 +269,12 @@ if Equal var21 10.4
   var22 *= 0.5
   if XDistLE var22 && Rnd <= 0.02
     CallI DefendHub
+  endif
+  var22 *= 3
+  if XDistLE var22 && CHANCE_MUL_LE PT_AGGRESSION 0.05
+    var21 = 16.3
+    Seek selectGoal
+    Jump
   endif
   if LevelValue >= 75
     Stick 0 -1
@@ -285,9 +291,6 @@ if Equal var21 10.4
   Return
 elif Equal var14 BBoundary
   Seek selectGoal
-  if Rnd < 0.1
-    var21 = 10.5
-  endif
   Return
 elif Equal var21 16 && Equal var20 -1
   Seek selectGoal
@@ -297,19 +300,28 @@ label navigateToGoal
 XGoto PerFrameChecks
 XReciever
 Seek selectGoal
-  if Equal CurrAction 22 
+Goto isActionable
+if Equal var22 0
+  Return
+endif
+
+XGoto MoveToGoal
+XReciever
+Seek selectGoal
+Return
+label isActionable
+var22 = 0
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
-
-XGoto MoveToGoal
-XReciever
-Seek selectGoal
+var22 = 1
 Return
 Return

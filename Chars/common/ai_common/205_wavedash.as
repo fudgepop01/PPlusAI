@@ -74,7 +74,7 @@ label landing
       label
       ClearStick
       AbsStick 0 (-1)
-    endif 
+    endif
     Call MainHub
   endif
   airTime -= 1

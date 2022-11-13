@@ -19,14 +19,15 @@ label setup
   endif
   if CurrAction >= 26 && CurrAction <= 29
   elif True
-  if Equal CurrAction 22 
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
   endif  
@@ -85,7 +86,7 @@ var17 = var22
       label
       ClearStick
       AbsStick 0 (-1)
-    endif 
+    endif
     Call MainHub
   endif
   var0 -= 1

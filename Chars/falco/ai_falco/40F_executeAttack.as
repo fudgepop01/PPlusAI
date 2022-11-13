@@ -2,7 +2,7 @@
   if AnimFrame >= 6
     Button X
     Seek finish
-    Return
+    Jump
   endif
 #endsnippet
 

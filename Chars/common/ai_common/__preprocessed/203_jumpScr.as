@@ -4,7 +4,6 @@ unk 0x0
 
 XReciever
 
-
 label setup
 XGoto PerFrameChecks
 XReciever
@@ -12,14 +11,15 @@ Seek setup
 
 if CurrAction >= 26 && CurrAction <= 29
 elif True
-  if Equal CurrAction 22 
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
 endif
@@ -35,11 +35,10 @@ if !(Equal var1 0)
 else
   var1 = 0
 endif
-PRINTLN
 label jumpCommand
-Button X
-if CurrAction >= 26 && CurrAction <= 29
-  Return
+MOD var17 AnimFrame 4
+if Equal AirGroundState 2 || var17 <= 2 || Equal CurrSubaction JumpSquat
+  Button X
 endif
 label locomotion
 XGoto PerFrameChecks
@@ -51,16 +50,13 @@ if !(Equal var20 -1)
   XGoto CheckAttackWillHit
   XReciever
 endif
-if Equal var1 1 && Equal AirGroundState 1
-  Seek jumpCommand
-else
-  Seek locomotion
-endif
-
-
-if Equal CurrSubaction JumpSquat
+Seek locomotion
+if Equal var1 1 && Equal CurrSubaction JumpSquat
   Button X
+elif Equal YSpeed 0
+  Seek jumpCommand
 endif
+
 if Equal var16 1
   var17 = OPos * 30
   GetYDistFloorOffset var17 var17 10 1
@@ -68,8 +64,6 @@ if Equal var16 1
     var16 = 3
     Return
   endif
-  var15 = -1
-  var21 = 16.4
   if Equal AirGroundState 1
     if XSpeed > 1.5 || XSpeed < -1.5
       Stick -1

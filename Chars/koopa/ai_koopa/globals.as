@@ -184,7 +184,7 @@
 #const uspecial_damage_info = USpecial|13|70|80|80
 
 // downB
-#const dspecial_IASA = 110
+#const dspecial_IASA = 172
 #const dspecial_xOffset = 12.63
 #const dspecial_yOffset = -26.93
 #const dspecial_xRange = 7.83
@@ -193,7 +193,7 @@
 #const dspecial_lastHitFrame = 40
 #const dspecial_damage_info = DSpecial|25|60|81|80
 
-#const dspecialair_IASA = 80
+#const dspecialair_IASA = 142
 #const dspecialair_xOffset = -8.2
 #const dspecialair_yOffset = 3
 #const dspecialair_xRange = 8.2
@@ -202,15 +202,15 @@
 #const dspecialair_lastHitFrame = 32
 #const dspecialair_damage_info = DSpecialAir|25|0|100|80
 
-#const mv_dspecialair_landing = 1
-#const dspecialair_landing_IASA = 62
-#const dspecialair_landing_xOffset = -27.9
-#const dspecialair_landing_yOffset = 2.72
-#const dspecialair_landing_xRange = 27.9
-#const dspecialair_landing_yRange = 11.72
-#const dspecialair_landing_hitFrame = 1
-#const dspecialair_landing_lastHitFrame = 4
-#const dspecialair_landing_damage_info = DSpecialAir|10|120|65|270
+// #const mv_dspecialair_landing = 1
+// #const dspecialair_landing_IASA = 62
+// #const dspecialair_landing_xOffset = -27.9
+// #const dspecialair_landing_yOffset = 2.72
+// #const dspecialair_landing_xRange = 27.9
+// #const dspecialair_landing_yRange = 11.72
+// #const dspecialair_landing_hitFrame = 1
+// #const dspecialair_landing_lastHitFrame = 4
+// #const dspecialair_landing_damage_info = DSpecialAir|10|120|65|270
 
 // sideB
 #const sspecial_IASA = 49

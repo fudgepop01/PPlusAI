@@ -8,14 +8,19 @@
       #let fastfallDist = var18
       CALC_FASTFALL_DIST(fastfallDist, move_hitFrame + move_duration - counter + 1)
 
-      
-
-      immediateTempVar = fastfallDist - HurtboxSize * 0.5
-      immediateTempVar -= YDistFloor
+      anotherTempVar = HurtboxSize * 0.5
+      immediateTempVar = fastfallDist + YDistFloor + anotherTempVar
+      anotherTempVar = move_hitFrame + move_duration - counter + 1
+      // LOGSTR str("FFSTUFF")
+      // LOGVAL fastfallDist
+      // LOGVAL YDistFloor
+      // LOGVAL anotherTempVar
+      // PRINTLN
       if immediateTempVar > 0
-        globTempVar = distX - TopNX
-        immediateTempVar = TopNY - fastfallDist
-        immediateTempVar = distY - immediateTempVar
+        globTempVar = targetX - TopNX
+        immediateTempVar = TopNY + fastfallDist
+        // DrawDebugRectOutline TopNX immediateTempVar 10 2 color(0x00FFFFDD)
+        immediateTempVar = targetY - immediateTempVar
         
         Abs globTempVar
         Abs immediateTempVar
@@ -67,13 +72,13 @@
 #snippet SELF_X_ADJUST_INNER
   anotherTempVar = TotalXSpeed * 3
   $ifAerialAttack()
-    anotherTempVar = TotalXSpeed * globTempVar
+    EstXCoord anotherTempVar globTempVar
+    anotherTempVar -= XCoord
   endif
   tempGoalX -= anotherTempVar
 #endsnippet
 
 #snippet MOVE_IASA_CHECK
   CalcYChange immediateTempVar move_IASA YSpeed Gravity MaxFallSpeed FastFallSpeed 0
-  immediateTempVar -= TopNY 
-  immediateTempVar *= -1
+  immediateTempVar += TopNY
 #endsnippet

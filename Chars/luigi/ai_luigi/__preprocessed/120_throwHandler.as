@@ -4,6 +4,12 @@ unk 0x0
 
 XReciever
 
+if Equal var20 -1 && CurrAction >= 52 && CurrAction <= 53 
+  XGoto CalcAttackGoal
+  XReciever
+  Call ExecuteAttack
+endif
+
 var0 = 0
 
   var22 = 19
@@ -73,15 +79,7 @@ elif Equal CurrAction 57 && AnimFrame > 8
     endif
   endif
 
-if Equal var20 19
-    Stick 1 0
-elif Equal var20 20
-    Stick 0 (-1)
-elif Equal var20 21
-    Stick -1 0
-elif Equal var20 22
-    Stick 0 1
-  elif True
+  if True
     if Rnd < 0.5
       AbsStick 0 1
     else 

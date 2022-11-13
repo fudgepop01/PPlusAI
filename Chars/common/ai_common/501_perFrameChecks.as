@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 //--- keep this script from being called more than once per frame
 NoRepeat
+SetTimeout 999
 
 //--- visualize stuffs
 if Equal PlayerNum 0
@@ -21,9 +22,9 @@ endif
 //--- prevent auto-attack
 Cmd30
 // keeps the AI from targeting itself because that can happen for some reason
-if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
-  SwitchTarget
-endif
+// if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
+//   SwitchTarget
+// endif
 //--- track target stuff 
 // out of tumble action
 if Equal OPrevAction hex(0x44) || Equal OPrevAction hex(0x45) || Equal OPrevAction hex(0x49)
@@ -167,11 +168,11 @@ endif
 //--- special state switches
 if Equal CurrAction hex(0x7C) || Equal CurrAction hex(0x7D)
   Stick -0.78
-elif Equal CurrAction hex(0x39)
+elif Equal CurrAction hex(0x39) && !(CalledFrom ExecuteAttack)
   CallI Unk1120
-elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
+elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
   CallI OnLedge
-elif !(Equal currGoal cg_lying) 
+elif !(CalledFrom LyingDown)
   if Equal CurrAction hex(0x4D)
     CallI LyingDown
   elif CurrAction >= hex(0x8A) && CurrAction <= hex(0x8D)
@@ -210,36 +211,41 @@ endif
 ACTIONABLE_ON_GROUND
 
 if !(CalledFrom RecoveryHub)
-  if Equal IsOnStage 0 && Equal OCurrAction hex(0xBD)
+  if Equal IsOnStage 0 && Equal PlayerNum OPlayerNum
     CallI RecoveryHub
-  elif Equal currGoal cg_recover_reversal
-  elif currGoal >= cg_edgeguard && Equal OIsOnStage 0 && Equal IsOnStage 0
-    GET_CHAR_TRAIT(globTempVar, chr_cs_recoveryDistX)
-    NEAREST_CLIFF(immediateTempVar, anotherTempVar)
-    Abs immediateTempVar
-    if immediateTempVar > globTempVar
-      GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
-      if YDistBackEdge >= immediateTempVar
-        CallI RecoveryHub
-      endif
-    endif
-    Norm immediateTempVar OXDistBackEdge OYDistBackEdge
-    Norm globTempVar XDistBackEdge YDistBackEdge
-  elif currGoal >= cg_edgeguard && Equal OIsOnStage 0
-  elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0  
-    if Equal IsOnStage 0
-      GetYDistFloorOffset immediateTempVar 15 15 0
-      GetYDistFloorOffset globTempVar -15 15 0
-      if Equal immediateTempVar -1 && Equal globTempVar -1
-        CallI RecoveryHub
-      endif
-    elif Equal OIsOnStage 0 && currGoal < cg_edgeguard
-      GetYDistFloorOffset immediateTempVar 15 15 1
-      GetYDistFloorOffset globTempVar -15 15 1
-      if Equal immediateTempVar -1 || Equal globTempVar -1
-        currGoal = cg_edgeguard
-        skipMainInit = mainInitSkip
-        CallI MainHub
+  endif
+  GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
+  GET_CHAR_TRAIT(globTempVar, chr_cs_recoveryDistX)
+  anotherTempVar = globTempVar / immediateTempVar
+  globTempVar = anotherTempVar
+
+  NEAREST_CLIFF(immediateTempVar, anotherTempVar)
+
+  Abs immediateTempVar
+  globTempVar *= immediateTempVar
+  GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
+  globTempVar -= immediateTempVar
+  if anotherTempVar < globTempVar && TotalYSpeed < -0.2 && AnimFrame > 2 && Equal IsOnStage 0
+    CallI RecoveryHub
+  endif
+  DrawDebugRectOutline TopNX globTempVar 3 3 color(0xFF0000DD)
+  if !(CalledFrom ExecuteAttack)
+    if currGoal >= cg_edgeguard && Equal OIsOnStage 0
+    elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0  
+      if Equal IsOnStage 0
+        GetYDistFloorOffset immediateTempVar 100 15 0
+        GetYDistFloorOffset globTempVar -100 15 0
+        if Equal immediateTempVar -1 && Equal globTempVar -1
+          CallI RecoveryHub
+        endif
+      elif Equal OIsOnStage 0 && currGoal < cg_edgeguard
+        GetYDistFloorOffset immediateTempVar 10 15 1
+        GetYDistFloorOffset globTempVar -10 15 1
+        if Equal immediateTempVar -1 && Equal globTempVar -1
+          currGoal = cg_edgeguard
+          skipMainInit = mainInitSkip
+          CallI MainHub
+        endif
       endif
     endif
   endif
@@ -249,6 +255,8 @@ if Equal CurrAction hex(0x1D) && !(CalledFrom Shield)
   CallI Shield
 endif
 
-CALL_EVENT(evt_checkDefend)
+if !(CalledFrom ExecuteAttack)
+  CALL_EVENT(evt_checkDefend)
+endif
 Return
 Return

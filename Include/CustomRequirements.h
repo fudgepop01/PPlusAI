@@ -11,3 +11,5 @@ req CHANCE_MUL_GE : 0x1023 trait multiplier
 
 /// if the script listed was called anywhere in the stack
 req CalledFrom : 0x1024 AIID
+
+req HasCurry : 0x1025

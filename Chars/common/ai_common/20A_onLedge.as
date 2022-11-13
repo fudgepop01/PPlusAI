@@ -3,12 +3,12 @@ id 0x820A
 unk 0x0
 
 XReciever
-if currGoal >= cg_edgeguard
-  currGoal = cg_ledge_edgeguard
-else
-  currGoal = cg_ledge
-endif
 label begin
+if Equal OIsOnStage 1
+  currGoal = cg_ledge
+else
+  currGoal = cg_ledge_edgeguard
+endif
 XGoto PerFrameChecks
 XReciever
 Seek begin
@@ -31,16 +31,19 @@ if AnimFrame > 2
     absOCloseness = oCloseness
     Abs absOCloseness
 
-    if ODistLE 30
-      if OCurrAction >= hex(0x110)
+    if XDistLE 40
+      if OCurrAction >= hex(0x110) && CHANCE_MUL_GE PT_AGGRESSION 0.25
         Button R
         Call MainHub
-      elif Invincible && AnimFrame < 15
-        Stick -1
+      elif OYDistBackEdge > -40 && AnimFrame < 15
+        if OYDistBackEdge < -15
+          Button X
+        else
+          Stick -1
+        endif
         XGoto CalcAttackGoal
         XReciever
         skipMainInit = mainInitSkip
-        currGoal = cg_edgeguard
         Call MainHub
         Return
       endif
@@ -57,7 +60,7 @@ if AnimFrame > 2
       skipMainInit = mainInitSkip
       currGoal = cg_edgeguard
       Call MainHub
-    elif ODistLE 70
+    elif XDistLE 70
       if Rnd < 0.2
         Seek exec_wait
         Jump
@@ -75,7 +78,7 @@ if AnimFrame > 2
     DynamicDiceClear dslot0
     DynamicDiceAdd dslot0 t_winner 0.8
     if LevelValue >= LV7
-      DynamicDiceAdd dslot0 ledgedash 2.5
+      DynamicDiceAdd dslot0 ledgedash 1.6
     endif
     DynamicDiceAdd dslot0 wait 1.6
     DynamicDiceAdd dslot0 roll 0.8
@@ -93,23 +96,24 @@ if AnimFrame > 2
     elif Equal immediateTempVar wait
       Seek exec_wait
       Jump
-    elif Equal immediateTempVar roll && ODistLE 60
+    elif Equal immediateTempVar roll && XDistLE 60
       Button R
       Call MainHub
     elif Equal immediateTempVar ledgedash 
       Call LedgeDash
-    elif Equal immediateTempVar getupAttack && ODistLE 40
+    elif Equal immediateTempVar getupAttack && XDistLE 40
       Button A
-    elif Equal immediateTempVar jumpAttack && ODistLE 30
+    elif Equal immediateTempVar jumpAttack && XDistLE 30
       XGoto CalcAttackGoal
       XReciever
       Stick -1
       Seek
       Return
-      label
+      label _jAttack
       XGoto PerFrameChecks
       XReciever
-      
+      Seek _jAttack
+
       if YDistBackEdge <= 0
         skipMainInit = sm_execAttack
         currGoal = cg_attack

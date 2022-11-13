@@ -13,8 +13,8 @@
       immediateTempVar = fastfallDist + (CenterY - TopNY)
       immediateTempVar -= YDistFloor
       if immediateTempVar > 0
-        globTempVar = distX - TopNX
-        immediateTempVar = distY - TopNY + fastfallDist
+        globTempVar = targetX - TopNX
+        immediateTempVar = targetY - TopNY + fastfallDist
 
         Abs globTempVar
         Abs immediateTempVar
@@ -41,8 +41,8 @@
           immediateTempVar -= YDistFloor
 
           if immediateTempVar > 0
-            globTempVar = distX - TopNX
-            immediateTempVar = distY - TopNY + hardFallDist
+            globTempVar = targetX - TopNX
+            immediateTempVar = targetY - TopNY + hardFallDist
 
             Abs globTempVar
             Abs immediateTempVar
@@ -70,8 +70,8 @@
           immediateTempVar -= YDistFloor
 
           if immediateTempVar > 0
-            globTempVar = distX - TopNX
-            immediateTempVar = distY - TopNY + risingDist
+            globTempVar = targetX - TopNX
+            immediateTempVar = targetY - TopNY + risingDist
 
             Abs globTempVar
             Abs immediateTempVar

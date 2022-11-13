@@ -41,6 +41,21 @@ if Equal AirGroundState 1
   endif
 endif
 
+if Equal CurrAction hex(0x34) || Equal CurrAction hex(0x35)
+  Seek common_checks
+  Jump
+endif
+
+if Equal CurrSubaction JumpSquat
+  $ifLastOrigin(usmash,false)
+    Seek
+    Jump
+  $ifLastOrigin(uspecial,true)
+    Seek
+    Jump
+  endif
+endif
+
 ACTIONABLE_ON_GROUND
 
 $ifAerialAttack()
@@ -147,6 +162,9 @@ label common_checks
   if Equal CanCancelAttack 1
     Seek finish
     Jump
+  elif Equal HitboxConnected 1 && HasCurry
+    Seek finish
+    Jump
   elif CurrAction <= hex(0x20) && !(Equal CurrAction hex(0x18))
     Seek finish
     Jump
@@ -178,15 +196,15 @@ label common_checks
         ADJUST_PERSONALITY idx_baitChance 0.001 immediateTempVar
       endif
 
-      if OKBSpeed > 3
-        if CHANCE_MUL_LE PT_AGGRESSION 0.6
-          currGoal = cg_attack
-        else
-          currGoal = cg_bait_dashdance
-        endif
-      else
-        currGoal = cg_attack
-      endif  
+      // if OKBSpeed > 3
+      //   if CHANCE_MUL_LE PT_AGGRESSION 0.6
+      //     currGoal = cg_attack
+      //   else
+      //     currGoal = cg_bait_dashdance
+      //   endif
+      // else
+      //   currGoal = cg_attack
+      // endif  
 
       if !(True)
         label correctMoveAngle
@@ -217,8 +235,21 @@ label common_checks
       immediateTempVar = 999
     endif 
     immediateTempVar -= 2
-    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && immediateTempVar > AnimFrame && !(ODistLE 8)
+    if !(Equal CanCancelAttack 1) && Equal AirGroundState 2 && YSpeed < -0.2 && YDistFloor < 10 && immediateTempVar > AnimFrame
       Button R
+    endif
+  endif
+
+  // grabs
+  if Equal CurrAction hex(0x39)
+    $ifLastAttack(fthrow)
+      Stick 1 0
+    $elifLastAttack(dthrow)
+      Stick 0 (-1)
+    $elifLastAttack(bthrow)
+      Stick -1 0
+    $elifLastAttack(uthrow)
+      Stick 0 1
     endif
   endif
 
@@ -241,17 +272,21 @@ label finish
   skipMainInit = -100
   currGoal = -1
   if Equal HitboxConnected 1 || OFramesHitlag > 0 || OFramesHitstun > 0 || CHANCE_MUL_LE PT_AGGRESSION 0.1
-    XGoto CalcAttackGoal
-    XReciever
     if XDistLE 40 && OFramesHitstun <= 1
       currGoal = cg_attack_wall
     else
       skipMainInit = mainInitSkip
       currGoal = cg_attack_reversal
     endif
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2
+    XGoto CalcAttackGoal
+    XReciever
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.2 && !(XDistLE 35)
     skipMainInit = mainInitSkip
     currGoal = cg_bait_dashdance
+  endif
+  if !(XDistLE 65) && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.15
+    skipMainInit = mainInitSkip
+    currGoal = cg_circleCamp
   endif
   CallI MainHub
 Return

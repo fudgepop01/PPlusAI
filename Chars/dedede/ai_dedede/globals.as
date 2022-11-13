@@ -9,7 +9,7 @@
 #const cs_djumpHeight = 12.8
 #const cs_wavedashDist = 15
 #const cs_recoveryDistX = 70
-#const cs_recoveryDistY = -90
+#const cs_recoveryDistY = -85
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.04

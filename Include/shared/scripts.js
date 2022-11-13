@@ -352,9 +352,28 @@ export const tempVar = (name, source) => {
 export const generateFetchMoveData = () => {
   clearOut();
   const moves = Object.values(getMoveData());
+  out(`if Equal chr_trait_select chr_cs_moveName`);
+    out(`if lastAttack >= 0 && lastAttack < ${moves.length}`);
+      out(`GotoByValue lastAttack`);
+      out(`Return`);
+      out(`if !(True)`);
+      for (const [idx, {moveName}] of moves.entries()) {
+        const mn = moveName.toLowerCase();
+        out("");
+        out(`label _${mn}Str`)
+        out(`LOGSTR str("${mn}")`)
+        out(`Return`)
+      }
+      out(`endif`);
+    out(`else`);
+    out(`LOGSTR str("NO MOVE")`);
+    out(`Return`);
+  out(`endif`);
+  out(`endif`);
 
   out(`if lastAttack >= 0 && lastAttack < ${moves.length}`)
-  out(`GotoByValue lastAttack`)
+  out(`chr_trait_select = lastAttack + ${moves.length}`)
+  out(`GotoByValue chr_trait_select`)
   out(`Goto __ANGLE_FIX__`)
   out(`else`)
   out(`SetVarByNum STACK_POP -1`)
@@ -513,7 +532,7 @@ export const generateMoveSnippets = () => {
       out(`label ${moveName.toLowerCase()}`);
       out('Goto PFC')
       if (origin.toLowerCase().includes("special")) {
-        out("if AnimFrame >= 2 && AnimFrame <= 7")
+        out("if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)")
         out("  AbsStick OPos")
         out("endif")
       }

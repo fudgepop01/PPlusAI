@@ -5,6 +5,7 @@ unk 0x0
 XReciever
 //--- keep this script from being called more than once per frame
 NoRepeat
+SetTimeout 999
 
 //--- visualize stuffs
 if Equal PlayerNum 0
@@ -21,9 +22,9 @@ endif
 //--- prevent auto-attack
 Cmd30
 // keeps the AI from targeting itself because that can happen for some reason
-if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
-  SwitchTarget
-endif
+// if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
+//   SwitchTarget
+// endif
 //--- track target stuff 
 // out of tumble action
 if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
@@ -167,11 +168,11 @@ endif
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
   Stick -0.78
-elif Equal CurrAction 57
+elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
   CallI Unk1120
-elif !(Equal var21 15) && !(Equal var21 15.1) && CurrAction >= 115 && CurrAction <= 117
+elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
-elif !(Equal var21 17) 
+elif !(CalledFrom LyingDown)
   if Equal CurrAction 77
     CallI LyingDown
   elif CurrAction >= 138 && CurrAction <= 141
@@ -213,57 +214,65 @@ if Equal CurrAction 190
   Stick 1
 endif
 
-  if Equal CurrAction 22 
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
 
 if !(CalledFrom RecoveryHub)
-  if Equal IsOnStage 0 && Equal OCurrAction 189
+  if Equal IsOnStage 0 && Equal PlayerNum OPlayerNum
     CallI RecoveryHub
-  elif Equal var21 16.9
-  elif var21 >= 16.7 && Equal OIsOnStage 0 && Equal IsOnStage 0
+  endif
+  var22 = 18
+  XGoto GetChrSpecific
+  XReciever
   var22 = 17
   XGoto GetChrSpecific
   XReciever
 var17 = var22
+  var23 = var17 / var22
+  var17 = var23
+
   GetNearestCliff var22
   var22 = TopNX - var22
   var22 *= -1
   var23 *= -1
-  var23 = var23 - (TopNY * -1)
-    Abs var22
-    if var22 > var17
+  var23 += TopNY
+
+  Abs var22
+  var17 *= var22
   var22 = 18
   XGoto GetChrSpecific
   XReciever
-      if YDistBackEdge >= var22
-        CallI RecoveryHub
-      endif
-    endif
-    Norm var22 OXDistBackEdge OYDistBackEdge
-    Norm var17 XDistBackEdge YDistBackEdge
-  elif var21 >= 16.7 && Equal OIsOnStage 0
-  elif !(Equal var21 15) && !(Equal var21 15.1) && Equal FramesHitstun 0  
-    if Equal IsOnStage 0
-      GetYDistFloorOffset var22 15 15 0
-      GetYDistFloorOffset var17 -15 15 0
-      if Equal var22 -1 && Equal var17 -1
-        CallI RecoveryHub
-      endif
-    elif Equal OIsOnStage 0 && var21 < 16.7
-      GetYDistFloorOffset var22 15 15 1
-      GetYDistFloorOffset var17 -15 15 1
-      if Equal var22 -1 || Equal var17 -1
-        var21 = 16.7
-        var15 = -1
-        CallI MainHub
+  var17 -= var22
+  if var23 < var17 && TotalYSpeed < -0.2 && AnimFrame > 2 && Equal IsOnStage 0
+    CallI RecoveryHub
+  endif
+  DrawDebugRectOutline TopNX var17 3 3 255 0 0 221
+  if !(CalledFrom ExecuteAttack)
+    if var21 >= 16.7 && Equal OIsOnStage 0
+    elif !(Equal var21 15) && !(Equal var21 16.71) && Equal FramesHitstun 0  
+      if Equal IsOnStage 0
+        GetYDistFloorOffset var22 100 15 0
+        GetYDistFloorOffset var17 -100 15 0
+        if Equal var22 -1 && Equal var17 -1
+          CallI RecoveryHub
+        endif
+      elif Equal OIsOnStage 0 && var21 < 16.7
+        GetYDistFloorOffset var22 10 15 1
+        GetYDistFloorOffset var17 -10 15 1
+        if Equal var22 -1 && Equal var17 -1
+          var21 = 16.7
+          var15 = -1
+          CallI MainHub
+        endif
       endif
     endif
   endif
@@ -273,8 +282,10 @@ if Equal CurrAction 29 && !(CalledFrom Shield)
   CallI Shield
 endif
 
+if !(CalledFrom ExecuteAttack)
   var22 = 40000
   XGoto GetChrSpecific
   XReciever
+endif
 Return
 Return

@@ -4,6 +4,12 @@ unk 0x0
 
 XReciever
 
+if Equal lastAttack -1 && CurrAction >= hex(0x34) && CurrAction <= hex(0x35) 
+  XGoto CalcAttackGoal
+  XReciever
+  Call ExecuteAttack
+endif
+
 #let framesAfterHitlag = var0
 framesAfterHitlag = 0
 
@@ -61,15 +67,7 @@ elif Equal CurrAction hex(0x39) && AnimFrame > 8
     endif
   endif
 
-  $ifLastAttack(fthrow)
-    Stick 1 0
-  $elifLastAttack(dthrow)
-    Stick 0 (-1)
-  $elifLastAttack(bthrow)
-    Stick -1 0
-  $elifLastAttack(uthrow)
-    Stick 0 1
-  elif True
+  if True
     if Rnd < 0.5
       AbsStick 0 1
     else 

@@ -2,11 +2,10 @@
   #const UpBRadius = 85
   #const sideBHeight = 3
   #const sideBRange = 90
-  #const tolerence = 20
 
   #const jumpChance = 0.5
-  #const highUpBChance = 0.7
-  #const highHighUpBChance = 0.5
+  #const highUpBChance = 0.85
+  #const highHighUpBChance = 0.7
   #const sideBChance = 0.7
   #const sideBLedgeChance = 0.7
   #const trickAngleChance = 0.6
@@ -17,6 +16,8 @@
   #let sideBLedgeValue = var8
   #let highHighUpBValue = var9
   #let trickAngleValue = var10
+  #let tolerence = var11
+  tolerence = 20
   hasTriedToUpB = 0
   jumpValue = Rnd
   if nearCliffY > UpBRadius || nearCliffX > sideBRange
@@ -53,10 +54,16 @@
 
   if Equal isBelowStage 0
     if highUpBValue < highUpBChance
-      distFromEdge += 15
+      immediateTempVar = highHighUpBChance - highHighUpBValue
+      immediateTempVar /= 0.7
+      immediateTempVar *= 25
+      tolerence += immediateTempVar
     endif
     if highHighUpBValue < highHighUpBChance
-      distFromEdge += 15
+      immediateTempVar = highHighUpBChance - highHighUpBValue
+      immediateTempVar /= 0.7
+      immediateTempVar *= 50
+      tolerence += immediateTempVar
     endif
   endif
   
@@ -69,7 +76,7 @@
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
-  if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
+  if sideBValue <= sideBChance && YDistBackEdge > calc(sideBHeight - 15) && YDistBackEdge < sideBHeight && absNCX <= sideBRange
     Button B
     ClearStick
     Stick 1
@@ -82,7 +89,8 @@
     AbsStick 0 (0.7)
     Return
   endif
-  if distFromEdge > calc(UpBRadius - tolerence) && distFromEdge < UpBRadius && Equal hasTriedToUpB 0
+  immediateTempVar = UpBRadius - tolerence
+  if distFromEdge > immediateTempVar && distFromEdge < UpBRadius && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick

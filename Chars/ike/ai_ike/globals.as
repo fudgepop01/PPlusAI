@@ -2,7 +2,7 @@
 #const DIRY_BELOW_AIR = 3
 #const DIRY_BELOW_GROUND = -1
 #const DIRX_FRONT = 4
-#const DIRX_BACK = 0
+#const DIRX_BACK = -0.25
 
 #const pt_jumpiness = 0.1
 #const pt_djumpiness = 0.04
@@ -23,7 +23,7 @@
 #const cs_djumpHeight = 26.39
 #const cs_wavedashDist = 32
 #const cs_recoveryDistX = 80
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistY = -40
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrAction hex(0x11d)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -177,7 +177,7 @@
 #const sspecial_yRange = 4.1
 #const sspecial_hitFrame = 11
 #const sspecial_lastHitFrame = 12
-#const sspecial_damage_info = SSpecial|7|40|130|70
+#const sspecial_damage_info = SSpecial|0|40|130|70
 
 // #const sspecialair_IASA = 43
 // #const sspecialair_xOffset = 0.9

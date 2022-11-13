@@ -4,9 +4,114 @@ unk 0x0
 
 XReciever
 
-if Equal var22 19
+if Equal var22 19 || Equal var22 19.1
+if Equal var22 19.1
 if var20 >= 0 && var20 < 31
 GotoByValue var20
+Return
+if !(True)
+label _jab123Str
+LOGSTR 1784766976 825373440 0 0 0
+Return
+label _jab123_2Str
+LOGSTR 1784766976 825373440 1597112320 0 0
+Return
+label _jab123_3Str
+LOGSTR 1784766976 825373440 1597177856 0 0
+Return
+label _dashattackStr
+LOGSTR 1684108032 1751217152 1952539392 1795162112 0
+Return
+label _ftiltStr
+LOGSTR 1718905088 1819541504 0 0 0
+Return
+label _utiltStr
+LOGSTR 1970563328 1819541504 0 0 0
+Return
+label _dtiltStr
+LOGSTR 1685350656 1819541504 0 0 0
+Return
+label _fsmashStr
+LOGSTR 1718840576 1634953216 0 0 0
+Return
+label _fsmash_strongStr
+LOGSTR 1718840576 1634953216 1601401856 1919905280 1728053248
+Return
+label _usmashStr
+LOGSTR 1970498816 1634953216 0 0 0
+Return
+label _dsmashStr
+LOGSTR 1685286144 1634953216 0 0 0
+Return
+label _nspecialStr
+LOGSTR 1853059072 1701013760 1634467840 0 0
+Return
+label _nspecialairStr
+LOGSTR 1853059072 1701013760 1634492672 1769078784 0
+Return
+label _uspecialStr
+LOGSTR 1970499584 1701013760 1634467840 0 0
+Return
+label _uspecialairStr
+LOGSTR 1970499584 1701013760 1634492672 1769078784 0
+Return
+label _uspecial_pkt2Str
+LOGSTR 1970499584 1701013760 1634492160 1886090240 838860800
+Return
+label _uspecialair_pkt2Str
+LOGSTR 1970499584 1701013760 1634492672 1769103104 1886090240
+Return
+label _dspecialStr
+LOGSTR 1685286912 1701013760 1634467840 0 0
+Return
+label _dspecialairStr
+LOGSTR 1685286912 1701013760 1634492672 1769078784 0
+Return
+label _sspecialStr
+LOGSTR 1936945152 1701013760 1634467840 0 0
+Return
+label _sspecialairStr
+LOGSTR 1936945152 1701013760 1634492672 1769078784 0
+Return
+label _grabStr
+LOGSTR 1735549184 1644167168 0 0 0
+Return
+label _fthrowStr
+LOGSTR 1718904832 1919907584 0 0 0
+Return
+label _dthrowStr
+LOGSTR 1685350400 1919907584 0 0 0
+Return
+label _bthrowStr
+LOGSTR 1651795968 1919907584 0 0 0
+Return
+label _uthrowStr
+LOGSTR 1970563072 1919907584 0 0 0
+Return
+label _nairStr
+LOGSTR 1851877632 1912602624 0 0 0
+Return
+label _fairStr
+LOGSTR 1717659904 1912602624 0 0 0
+Return
+label _bairStr
+LOGSTR 1650551040 1912602624 0 0 0
+Return
+label _uairStr
+LOGSTR 1969318144 1912602624 0 0 0
+Return
+label _dairStr
+LOGSTR 1684105472 1912602624 0 0 0
+Return
+endif
+else
+LOGSTR 1313808384 1297044992 1157627904 0 0
+Return
+endif
+endif
+if var20 >= 0 && var20 < 31
+var22 = var20 + 31
+GotoByValue var22
 Goto __ANGLE_FIX__
 else
 SetVarByNum STACK_POP -1
@@ -566,23 +671,33 @@ elif Equal var22 16
 elif Equal var22 17
   var22 = 50
 elif Equal var22 18
-  var22 = 40
+  var22 = 10
+  if NumJumps > 0
+    var22 += 25.08
+  endif
 elif Equal var22 100
   var22 = 0
 if !(True) || Equal var20 12|| Equal var20 14|| Equal var20 16|| Equal var20 18|| Equal var20 20|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30
     var22 = 1
   endif
 elif Equal var22 200
-  getCurrentPredictValue var17 4
-  var23 = PT_AGGRESSION * 30 + 25
-  if var17 <= var23 || OFramesHitstun > 0 || OFramesHitlag > 0
+  if XDistLE 70
+    getCurrentPredictValue var17 4
+    var23 = PT_AGGRESSION * 15 + 10
+    if var17 <= var23 || OFramesHitstun > 0 || OFramesHitlag > 0
+      var22 = 1
+      // LOGSTR_NL 1230184448 1129270528 1112481792 674310400 0
+      Return
+    endif
     if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
     elif Equal OCurrAction 73 && OYDistFloor > 15
     elif Equal HitboxConnected 1 || Equal PrevAction 60
     else
+      // LOGSTR_NL 1313821696 541282048 1296191232 1229866752 0
       var22 = 0
       Return
     endif
+    // LOGSTR_NL 1230184448 1129270528 1112481792 674375936 0
     var22 = 1
     Return
   endif
@@ -604,52 +719,59 @@ elif !(True) || Equal var20 5 || Equal var20 11 || Equal var20 12 || Equal var20
   var22 = 1
 endif
 elif Equal var22 30000
-  var22 = LevelValue * 0.003
-  if Rnd < var22
-    ADJUST_PERSONALITY 0 -11 1
-    ADJUST_PERSONALITY 0 1.1 1
-    var22 = LevelValue * 0.01
-    ADJUST_PERSONALITY 0 var22 Rnd
-    ADJUST_PERSONALITY 3 -11 1
-    ADJUST_PERSONALITY 3 1.1 1
-    ADJUST_PERSONALITY 10 -11 1
-    ADJUST_PERSONALITY 4 -11 1
-    ADJUST_PERSONALITY 5 -11 1
-    ADJUST_PERSONALITY 0 2 Rnd
-    ADJUST_PERSONALITY 3 2 Rnd
-    ADJUST_PERSONALITY 10 3 Rnd
-    ADJUST_PERSONALITY 4 3 Rnd
-    ADJUST_PERSONALITY 5 3 Rnd
-    if Rnd < 0.25
-      ADJUST_PERSONALITY 1 -3 1
-      var22 = 0.30 * 3
-      ADJUST_PERSONALITY 1 1 1
-      ADJUST_PERSONALITY 1 var22 Rnd
-    endif
-    if Rnd < 0.25
-      ADJUST_PERSONALITY 2 -3 1
-      var22 = 0.65 * 3
-      ADJUST_PERSONALITY 2 1 1
-      ADJUST_PERSONALITY 2 var22 Rnd
-    endif
-    if Rnd < 0.25
-      ADJUST_PERSONALITY 7 -3 1
-      var22 = 0.05 * 4
-      ADJUST_PERSONALITY 7 1 1
-      ADJUST_PERSONALITY 7 var22 Rnd
-    endif
-    if Rnd < 0.25
-      ADJUST_PERSONALITY 6 -3 1
-      var22 = 0.03 * 4
-      ADJUST_PERSONALITY 6 1 1
-      ADJUST_PERSONALITY 6 var22 Rnd
-    endif
-    if Rnd < 0.25
-      ADJUST_PERSONALITY 8 -3 1
-      var22 = 0.23 * 4
-      ADJUST_PERSONALITY 8 1 1
-      ADJUST_PERSONALITY 8 var22 Rnd
-    endif
+  Goto shuffle_AI
+  if !(True)
+    label shuffle_AI
+      var22 = LevelValue * 0.005
+      if Rnd < var22
+        ADJUST_PERSONALITY 0 -11 1
+        ADJUST_PERSONALITY 0 1.25 1
+        var22 = LevelValue * 0.02
+        ADJUST_PERSONALITY 0 var22 Rnd
+        ADJUST_PERSONALITY 3 -11 1
+        ADJUST_PERSONALITY 3 1 1
+        ADJUST_PERSONALITY 10 -11 1
+        ADJUST_PERSONALITY 10 1.25 1
+        ADJUST_PERSONALITY 4 -11 1
+        ADJUST_PERSONALITY 4 1.25 1
+        ADJUST_PERSONALITY 5 -11 1
+        ADJUST_PERSONALITY 0 3 Rnd
+        ADJUST_PERSONALITY 3 2.5 Rnd
+        ADJUST_PERSONALITY 10 6 Rnd
+        ADJUST_PERSONALITY 4 3.5 Rnd
+        ADJUST_PERSONALITY 5 4 Rnd
+        if Rnd < 0.25
+          ADJUST_PERSONALITY 1 -3 1
+          var22 = 0.30 * 3
+          ADJUST_PERSONALITY 1 1 1
+          ADJUST_PERSONALITY 1 var22 Rnd
+        endif
+        if Rnd < 0.25
+          ADJUST_PERSONALITY 2 -3 1
+          var22 = 0.65 * 3
+          ADJUST_PERSONALITY 2 1 1
+          ADJUST_PERSONALITY 2 var22 Rnd
+        endif
+        if Rnd < 0.25
+          ADJUST_PERSONALITY 7 -3 1
+          var22 = 0.05 * 4
+          ADJUST_PERSONALITY 7 1 1
+          ADJUST_PERSONALITY 7 var22 Rnd
+        endif
+        if Rnd < 0.25
+          ADJUST_PERSONALITY 6 -3 1
+          var22 = 0.03 * 4
+          ADJUST_PERSONALITY 6 1 1
+          ADJUST_PERSONALITY 6 var22 Rnd
+        endif
+        if Rnd < 0.25
+          ADJUST_PERSONALITY 8 -3 1
+          var22 = 0.23 * 4
+          ADJUST_PERSONALITY 8 1 1
+          ADJUST_PERSONALITY 8 var22 Rnd
+        endif
+      endif
+    Return
   endif
 elif Equal var22 20000
   if Rnd <= 0.02 && Rnd <= 0.1
@@ -658,19 +780,23 @@ elif Equal var22 20000
   XReciever
     if Equal var22 0
       var22 = (LevelValue / 35) * 0.2
-      ADJUST_PERSONALITY 3 0.004 var22
+      ADJUST_PERSONALITY 3 0.002 var22
       ADJUST_PERSONALITY 1 0.002 var22
       ADJUST_PERSONALITY 2 0.002 var22
-      ADJUST_PERSONALITY 10 0.001 var22
+      ADJUST_PERSONALITY 10 0.005 var22
       ADJUST_PERSONALITY 5 0.002 var22
     endif
-  elif CHANCE_MUL_LE PT_AGGRESSION 0.0001 && LevelValue >= 60
+  elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= 60
     ADJUST_PERSONALITY 0 -11 1
-    ADJUST_PERSONALITY 3 0.5 1
+    ADJUST_PERSONALITY 0 1.7 1
+    ADJUST_PERSONALITY 3 0.4 1
+    ADJUST_PERSONALITY 10 1.2 1
   elif Rnd < 0.2 && Rnd <= 0.2
     var22 = (LevelValue / 35) * 0.4
-    ADJUST_PERSONALITY 0 0.015 var22
-    ADJUST_PERSONALITY 10 0.005 var22
+    ADJUST_PERSONALITY 0 0.005 var22
+    ADJUST_PERSONALITY 10 0.015 var22
+  elif Rnd < 0.2 && Rnd < 0.2 && Rnd < 0.2
+    Goto shuffle_AI
   endif
 elif Equal var22 10000
   ADJUST_PERSONALITY 5 0.2 Rnd
@@ -689,30 +815,33 @@ elif Equal var22 40000
   XReciever
 var23 = var22
     if !(Equal var20 -1) || Equal var21 10.2
-    elif var23 >= 12
-      var22 = var23 * 2
-      // if OCurrAction >= 74 && OCurrAction <= 101
-      // elif XDistLE var22 && OAttacking
-      //   var21 = 10.6
-      //   if CHANCE_MUL_LE PT_AGGRESSION 0.6
-      //     var21 = 10.2
-      //   endif
-      // endif
-      predictAverage var22 10 LevelValue
-      var22 *= 1
-      var22 += var23 + 20
-      if XDistLE var22
-        RetrieveFullATKD var22 var23 var17 var23 var23 var23 var23 OCurrSubaction 1
-        if Equal var22 0
-          var22 = OEndFrame
-        endif 
-        if OAnimFrame >= var17 || Equal OHitboxConnected 1
-          var23 = var22 - OAnimFrame
-        else
-          var23 = -1
+    elif var23 >= 4
+      var22 = var23 * 1.2
+      if OCurrAction >= 74 && OCurrAction <= 101
+      elif !(XDistLE var22) && OAttacking && var23 <= 12
+        var21 = 10
+        if CHANCE_MUL_LE PT_AGGRESSION 0.3 && CHANCE_MUL_LE PT_BRAVECHANCE 0.4
+          var21 = 10.2
+          if CHANCE_MUL_LE PT_AGGRESSION 0.25
+            var21 = 16
+          endif
         endif
-        if var23 > 0
-          var21 =  16.4
+      else
+        predictAverage var22 10 LevelValue
+        var22 *= 1
+        var22 += var23 + 5
+        var17 = var22 * 0.3
+        if OAttacking
+          var17 += 5
+        endif
+        var23 = OTopNY + 5
+        DrawDebugRectOutline OTopNX var23 var17 1 255 0 0 221
+        var23 += 5
+        DrawDebugRectOutline OTopNX var23 var22 1 255 255 0 221
+        if XDistLE var17
+          var21 = 16.4
+        elif XDistLE var22
+          var21 = 16
         endif
       endif
     endif
@@ -720,7 +849,7 @@ var23 = var22
   var22 = 200
   XGoto GetChrSpecific
   XReciever
-  if Equal var22 0
+  if Equal var22 0 && !(Equal var21 12)
     // react to/read the opponent's attack patterns
     var22 = (1 - (LevelValue / 100)) * 30 + 4
     var22 *= PT_REACTION_TIME
@@ -730,34 +859,21 @@ var23 = var22
     MOD var23 var23 var22
     if var17 > 1 && var23 > 1
     elif Equal OCurrAction 77 && OAnimFrame > 25
-    elif var21 >= 16 && var21 < 17 && ODistLE 30
-    elif Equal var21 16.4 || Equal var21 10.2 || Equal var21 10.6
+    elif Equal var21 16.3 || Equal var21 10.2 || Equal var21 10.6
     elif var21 >= 16.7
     elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
       if OCurrAction < 66 || OCurrAction >= 72
         predictAverage var22 10 LevelValue
         var22 += 15
-        if Equal var21 12 || Equal CurrAction 73
-          var22 += 14
-        endif
-        if ODistLE var22
+        var17 = OPos * var22
+        GetYDistFloorOffset var17 var17 10 1
+        if XDistLE var22 && var17 > 0
           GetCommitPredictChance var17 LevelValue
-          // var22 = (2 - Weight * 0.01) * (Damage - LevelValue * 0.65) * 0.1
-          // if var22 < 0
-          //   var17 += var22
-          // endif
-          if Equal var21 12 || Equal CurrAction 73
-            var22 = Damage * 0.2
-            var17 += var22
+          if Equal var21 10.5
+            var17 *= 0.3 * PT_BAITCHANCE
           endif
-          // var22 = (Rnd * 12) + (1 - LevelValue / 100) * 15 + 8
-          // var22 *= PT_REACTION_TIME
-          if Rnd < var17
-            if Rnd < 0.7
-              CallI DefendHub
-            elif Equal var21 12 || Equal CurrAction 73
-              CallI DefendHub
-            endif
+          if Rnd < var17 && Rnd < 0.7
+            CallI DefendHub
           endif
         endif
       endif

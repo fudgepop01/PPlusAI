@@ -4,7 +4,6 @@ unk 0x0
 
 XReciever
 
-
 label setup
 XGoto PerFrameChecks
 XReciever
@@ -28,11 +27,10 @@ if !(Equal shouldFullHop 0)
 else
   shouldFullHop = 0
 endif
-PRINTLN
 label jumpCommand
-Button X
-if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
-  Return
+MOD globTempVar AnimFrame 4
+if Equal AirGroundState 2 || globTempVar <= 2 || Equal CurrSubaction JumpSquat
+  Button X
 endif
 label locomotion
 XGoto PerFrameChecks
@@ -44,16 +42,13 @@ if !(Equal lastAttack -1)
   XGoto CheckAttackWillHit
   XReciever
 endif
-if Equal shouldFullHop 1 && Equal AirGroundState 1
-  Seek jumpCommand
-else
-  Seek locomotion
-endif
-
-
-if Equal CurrSubaction JumpSquat
+Seek locomotion
+if Equal shouldFullHop 1 && Equal CurrSubaction JumpSquat
   Button X
+elif Equal YSpeed 0
+  Seek jumpCommand
 endif
+
 if Equal scriptVariant sv_jump_over
   globTempVar = OPos * 30
   GetYDistFloorOffset globTempVar globTempVar 10 1
@@ -61,8 +56,6 @@ if Equal scriptVariant sv_jump_over
     scriptVariant = sv_jump_away
     Return
   endif
-  skipMainInit = mainInitSkip
-  currGoal = cg_attack_reversal
   if Equal AirGroundState 1
     if XSpeed > 1.5 || XSpeed < -1.5
       Stick -1

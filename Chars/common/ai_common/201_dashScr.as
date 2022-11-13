@@ -30,7 +30,7 @@ if Equal CurrAction hex(0x4) || Equal CurrAction hex(0x5)
 endif
 
 timeLimit = dashForceTurnFrame - dashDanceMinFrames
-timeLimit = Rnd * timeLimit + dashDanceMinFrames 
+timeLimit = Rnd * timeLimit + dashDanceMinFrames + 5
 startOPos = OPos
 if Equal scriptVariant sv_dash_away_defense
   timeLimit += 8
@@ -45,17 +45,21 @@ XReciever
 //   XReciever
 // endif
 Seek execution
-if Equal CurrAction hex(0x1)
+if Equal CurrAction hex(0x1) || Equal CurrAction hex(0x7) || Equal CurrAction hex(0x6)
   ClearStick
   Return
 endif
 
-if XDistFrontEdge < 20 && !(Equal scriptVariant sv_dash_towards)
-  scriptVariant = sv_dash_towards
-elif XDistFrontEdge < 15
-  Call MainHub
+if XDistFrontEdge < 5 || XDistFrontEdge > -5
+  scriptVariant = sv_dash_toCenter
 elif XDistBackEdge > -25 && Equal Direction OPos && !(Equal scriptVariant sv_dash_through)
   scriptVariant = sv_dash_towards
+endif
+
+globTempVar = OPos * 15
+GetYDistFloorOffset globTempVar globTempVar 10 1
+if globTempVar < 0 && !(Equal scriptVariant sv_dash_toCenter)
+  Call MainHub
 endif
 
 if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through) || Equal scriptVariant sv_dash_away_defense
@@ -90,7 +94,7 @@ if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through) || 
 elif Equal scriptVariant sv_dash_through
   AbsStick OPos
   if !(Equal startOPos OPos)
-    if CHANCE_MUL_LE PT_AGGRESSION 0.75
+    if CHANCE_MUL_LE PT_AGGRESSION 0.7
       currGoal = cg_attack_reversal
       skipMainInit = mainInitSkip
     endif

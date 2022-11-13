@@ -63,14 +63,14 @@ cmd EstXCoord : 0x49 variable time
 ///Estimates the AI's y coordinate after "time" passes
 cmd EstYCoord : 0x4A variable time
 
-cmd GetColDistPosAbs : 0x4B colXVar colYVar startX startY destX destY detectPlats
-cmd GetColDistPosRel : 0x4C colXVar colYVar startX startY relDestX relDestY detectPlats
+cmd GetColDistPosRel : 0x4B colXVar colYVar startX startY destX destY detectPlats
+cmd GetColDistPosAbs : 0x4C colXVar colYVar startX startY relDestX relDestY detectPlats
 
 cmd SetDebugMode : 0x4D value
 
 cmd CalcPercentForKnockback : 0x4E percent target damage bkb kbg weight isWeightDependent
 
-cmd CalcMoveWeight : 0x4F rollWeightVariable ODamage OWeight moveAngle moveBaseKnockback moveKnockbackGrowth moveHitFrame moveDuration moveIASA moveDamage moveIsWeightDependent stageWidth nearXBlastzone TBoundary TopNX TopNY OTopNX OTopNY OInCombo jumpVelocity XTerminalVelocity
+cmd CalcMoveWeight : 0x4F rollWeightVariable ODamage OWeight moveAngle moveBaseKnockback moveKnockbackGrowth moveHitFrame moveDuration moveIASA moveDamage moveIsWeightDependent XTerminalVelocity jumpVelocity OEndLag OTopNY OTopNX EstOYDistFloor TopNX TopBZ NearXBZ stageWidth
 
 //AI TRACKING CODES
 

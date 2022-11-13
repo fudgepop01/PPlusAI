@@ -3,12 +3,12 @@ id 0x820A
 unk 0x0
 
 XReciever
-if var21 >= 16.7
-  var21 = 15.1
-else
-  var21 = 15
-endif
 label begin
+if Equal OIsOnStage 1
+  var21 = 15
+else
+  var21 = 16.71
+endif
 XGoto PerFrameChecks
 XReciever
 Seek begin
@@ -23,22 +23,25 @@ if CurrAction <= 33
 endif
 
 if AnimFrame > 2
-  if Equal var21 15.1
+  if Equal var21 16.71
     // LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
     var0 = OTopNX - TopNX
     var1 = var0
     Abs var1
 
-    if ODistLE 30
-      if OCurrAction >= 272
+    if XDistLE 40
+      if OCurrAction >= 272 && CHANCE_MUL_GE PT_AGGRESSION 0.25
         Button R
         Call MainHub
-      elif Invincible && AnimFrame < 15
-        Stick -1
+      elif OYDistBackEdge > -40 && AnimFrame < 15
+        if OYDistBackEdge < -15
+          Button X
+        else
+          Stick -1
+        endif
         XGoto CalcAttackGoal
         XReciever
         var15 = -1
-        var21 = 16.7
         Call MainHub
         Return
       endif
@@ -55,7 +58,7 @@ if AnimFrame > 2
       var15 = -1
       var21 = 16.7
       Call MainHub
-    elif ODistLE 70
+    elif XDistLE 70
       if Rnd < 0.2
         Seek exec_wait
         Jump
@@ -67,7 +70,7 @@ if AnimFrame > 2
     DynamicDiceClear 0
     DynamicDiceAdd 0 1 0.8
     if LevelValue >= 60
-      DynamicDiceAdd 0 2 2.5
+      DynamicDiceAdd 0 2 1.6
     endif
     DynamicDiceAdd 0 3 1.6
     DynamicDiceAdd 0 4 0.8
@@ -85,23 +88,24 @@ if AnimFrame > 2
     elif Equal var22 3
       Seek exec_wait
       Jump
-    elif Equal var22 4 && ODistLE 60
+    elif Equal var22 4 && XDistLE 60
       Button R
       Call MainHub
     elif Equal var22 2 
       Call LedgeDash
-    elif Equal var22 5 && ODistLE 40
+    elif Equal var22 5 && XDistLE 40
       Button A
-    elif Equal var22 6 && ODistLE 30
+    elif Equal var22 6 && XDistLE 30
       XGoto CalcAttackGoal
       XReciever
       Stick -1
       Seek
       Return
-      label
+      label _jAttack
       XGoto PerFrameChecks
       XReciever
-      
+      Seek _jAttack
+
       if YDistBackEdge <= 0
         var15 = -2
         var21 = 16

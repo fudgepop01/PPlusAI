@@ -10,8 +10,9 @@ var14 = Rnd * 0
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 Abs var0
+  var11 = 20
   var4 = 0
   var5 = Rnd
   if var1 > 85 || var0 > 90
@@ -33,14 +34,9 @@ var21 = 3
 SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
-if FramesHitstun > 0 && CurrAction >= 67 && CurrAction <= 69
-  CallI AttackedHub
-elif CurrAction >= 115 && CurrAction <= 117
-  CallI OnLedge
-elif Equal CurrAction 189 || Equal CurrAction 190
-  var21 = 0
-  CallI MainHub
-endif
+XGoto PerFrameChecks
+XReciever
+Seek begin
 
 
 // detects if below stage
@@ -78,7 +74,7 @@ endif
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
 
 if Equal CurrAction 16 || Equal CurrSubaction 478
   Goto handleSFall
@@ -133,25 +129,25 @@ if YDistFloor > -1 || Equal AirGroundState 1
   Call MainHub
 endif
 
-if YDistBackEdge < 0
-  XGoto PerFrameChecks
-  XReciever
-  Seek begin
-endif
-
   GetNearestCliff var0
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
-  var1 = var1 - (TopNY * -1)
+  var1 += TopNY
   Norm var3 var0 var1
   Abs var3
   if Equal var16 0
-    if var6 < 0.7
-      var3 += 15
+    if var6 < 0.85
+      var22 = 0.7 - var9
+      var22 /= 0.7
+      var22 *= 25
+      var11 += var22
     endif
-    if var9 < 0.5
-      var3 += 15
+    if var9 < 0.7
+      var22 = 0.7 - var9
+      var22 /= 0.7
+      var22 *= 50
+      var11 += var22
     endif
   endif
   
@@ -172,20 +168,21 @@ endif
     Return
   endif
   var1 -= var14
-  if var7 <= 0.7 && YDistBackEdge > -3 && YDistBackEdge < 3 && var2 <= 90
+  if var7 <= 0.7 && YDistBackEdge > -12 && YDistBackEdge < 3 && var2 <= 90
     Button B
     ClearStick
     Stick 1
     Return
   endif
-  if var6 <= 0.7 && var3 < 85 && YDistBackEdge < 20 && Equal var4 0
+  if var6 <= 0.85 && var3 < 85 && YDistBackEdge < 20 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var3 > 65 && var3 < 85 && Equal var4 0
+  var22 = 85 - var11
+  if var3 > var22 && var3 < 85 && Equal var4 0
     var4 = 1
     Button B
     ClearStick

@@ -17,12 +17,16 @@ if Equal currGoal cg_edgeguard_ledge
 endif
 
 #let hitFrame = var3
+#let xRange = var4
 if !(Equal lastAttack -1)
-  GET_MOVE_DATA(globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, hitFrame, anotherTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
+  GET_MOVE_DATA(globTempVar, globTempVar, globTempVar, xRange, globTempVar, hitFrame, anotherTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
   anotherTempVar *= 0.5
   hitFrame += anotherTempVar
+  anotherTempVar = OWidth * 0.5
+  xRange += anotherTempVar
 else
   hitFrame = 9
+  xRange = 10
 endif
 
 #let techSkill = var18
@@ -99,7 +103,7 @@ GetAttribute globTempVar attr_jumpXVelGroundMult 0
 immediateTempVar = XSpeed * hitFrame * globTempVar + TopNX
 immediateTempVar -= goalX
 Abs immediateTempVar
-if immediateTempVar <= 10 || Equal CurrSubaction JumpSquat && TopNY < goalY
+if immediateTempVar <= xRange || Equal CurrSubaction JumpSquat && TopNY < goalY
   #let totalJumpHeight = var1
   #let djumpHeight = var2
   GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
@@ -190,16 +194,26 @@ label stickMovement
   if currGoal < cg_attack || Equal immediateTempVar 0
     anotherTempVar = TopNX
   endif
+  
   if anotherTempVar > goalX
     AbsStick -1
   else
     AbsStick 1
   endif
+  if Equal AirGroundState 1 && Equal immediateTempVar 0
+    anotherTempVar -= goalX
+    Abs anotherTempVar
+    if Equal CurrAction hex(0x3) && anotherTempVar < 20
+      ClearStick
+    elif anotherTempVar < 10
+      ClearStick
+    endif
+  endif
 
-  anotherTempVar = TopNX + XSpeed * 9
-  globTempVar = 10 * Direction
+  globTempVar = TopNX + Width * Direction * 0.5
+  anotherTempVar = XSpeed * 2 + 3 * Direction
   anotherTempVar += globTempVar
-  GetColDistPosAbs anotherTempVar globTempVar CenterX CenterY anotherTempVar CenterY 0
+  GetColDistPosAbs anotherTempVar globTempVar globTempVar CenterY anotherTempVar CenterY 0
   if !(Equal anotherTempVar -1)
     ClearStick
     Button X
@@ -207,9 +221,11 @@ label stickMovement
   endif 
   anotherTempVar = TopNX - goalX
   Abs anotherTempVar
-  if anotherTempVar <= 8 && Equal AirGroundState 1 && !(Equal CurrAction hex(0xA))
-    if CurrAction < hex(0x3) || Equal CurrAction hex(0x16) || Equal CurrAction hex(0x17) || Equal CurrAction hex(0x18) 
+  if anotherTempVar < 20 && Equal AirGroundState 1 && !(Equal CurrAction hex(0xA))
+    if Equal CurrAction hex(0x3) || Equal CurrAction hex(0x16) || Equal CurrAction hex(0x17) || Equal CurrAction hex(0x18) 
       ClearStick
+    endif
+    if !(Equal currGoal cg_attack_wall)
       if TopNX > goalX
         AbsStick -0.65
       else
@@ -229,7 +245,7 @@ label stickMovement
         if Equal immediateTempVar 0
           if globTempVar > 0.1
             scriptVariant = sv_wavedash_neutral
-            if XDistFrontEdge < 10
+            if XDistFrontEdge < 5
               scriptVariant = sv_wavedash_awayFromLedge
             endif
             CallI Wavedash
@@ -237,18 +253,26 @@ label stickMovement
             ClearStick
           endif
         elif True
-          #let djumpHeight = var2
-          GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
-          immediateTempVar = OTopNY - TopNY + OHurtboxSize
-          if immediateTempVar > djumpHeight
-            if !(Equal CurrSubaction JumpSquat)
+          GetYDistFloorAbsPos anotherTempVar goalX TopNY
+          if anotherTempVar < 0
+            ClearStick
+          endif
+          globTempVar = TopNX - goalX
+          Abs globTempVar
+          if globTempVar <= 80
+            #let djumpHeight = var2
+            GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
+            immediateTempVar = OTopNY - TopNY + OHurtboxSize
+            if immediateTempVar > djumpHeight || globTempVar > 60
+              if !(Equal CurrSubaction JumpSquat)
+                Goto jumpPreCheck
+              else
+                Button X
+                Goto jumpDirHandler
+              endif
+            elif immediateTempVar > -15 && !(Equal CurrSubaction JumpSquat) && globTempVar > 30
               Goto jumpPreCheck
-            else
-              Button X
-              Goto jumpDirHandler
             endif
-          elif immediateTempVar > -15 && !(Equal CurrSubaction JumpSquat)
-            Goto jumpPreCheck
           endif
         endif
       endif
@@ -325,14 +349,12 @@ endif
 Return
 label handleWaveland
 globTempVar = 1
-if XDistFrontEdge < 30 && XDistBackEdge > -30
-  globTempVar = 0.6
-endif
-if XDistFrontEdge < 10 || XDistBackEdge > -10
-  globTempVar = 0.3
-endif
 if XDistFrontEdge < 3 || XDistBackEdge > -3
-  globTempVar = -0.5
+  globTempVar = -0.3
+elif XDistFrontEdge < 10 || XDistBackEdge > -10
+  globTempVar = 0.3
+elif XDistFrontEdge < 30 && XDistBackEdge > -30
+  globTempVar = 0.6
 endif
 if TopNX < goalX
   AbsStick globTempVar (-1)
@@ -361,7 +383,6 @@ if !(Equal AirGroundState 3)
   #let nearCliffX = var0
   GetNearestCliff nearCliffX  
   nearCliffX = TopNX - nearCliffX
-  nearCliffX *= -1
   if Equal IsOnStage 1 && !(Equal DistBackEdge DistFrontEdge)
     // wavedash back to ledge?
     immediateTempVar = XSpeed
@@ -371,21 +392,22 @@ if !(Equal AirGroundState 3)
     Abs globTempVar
     if globTempVar < immediateTempVar
       globTempVar = nearCliffX * Direction
-      if globTempVar < -10
+      LOGVAL_NL globTempVar
+      if globTempVar < 20 && globTempVar > 0
         Stick -1
         Return
-      elif globTempVar < 5
+      elif globTempVar > -5 && globTempVar < 0
         Stick 1
         Return
-      elif YDistBackEdge > -1 && InAir && globTempVar > 5 && Equal IsOnStage 1
+      elif YDistBackEdge > -1 && InAir && globTempVar < -5 && Equal IsOnStage 1
         Button R
         GetAttribute immediateTempVar attr_groundFriction 0
-        globTempVar *= immediateTempVar * -1
+        globTempVar *= immediateTempVar
         if globTempVar > -0.3
           globTempVar = -0.3
         endif
         Stick globTempVar (-0.75)
-      elif globTempVar > 0 && !(Equal CurrAction hex(0x0A)) && Equal IsOnStage 1
+      elif globTempVar < 0 && !(Equal CurrAction hex(0x0A)) && Equal IsOnStage 1
         if CurrAction >= hex(0x16) && CurrAction <= hex(0x19)
         else
           Button X

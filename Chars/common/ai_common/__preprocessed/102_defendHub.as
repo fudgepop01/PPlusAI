@@ -5,7 +5,9 @@ unk 0x0
 XReciever
 EnableDebugOverlay 
 SetDebugOverlayColor 221 221 0 136
-var21 = 13
+if !(Equal var21 16.41)
+  var21 = 13
+endif
 label begin
 XGoto PerFrameChecks
 XReciever
@@ -27,10 +29,6 @@ var1 = 0.65
 //   endif
 // endif
 
-if CHANCE_MUL_LE PT_AGGRESSION 0.65
-  var21 = 16.4
-endif
-
 if Equal AirGroundState 1
   predictOOption var22 7 LevelValue
   predictionConfidence var17 7 LevelValue
@@ -38,9 +36,15 @@ if Equal AirGroundState 1
   if CHANCE_MUL_GE PT_AGGRESSION 0.65 && Rnd < var17 && Equal var22 1
     PredictOMov var22 15 LevelValue
     var22 *= 2.5
-    if var22 < 0.25
+    if var22 < 0.25      
       CallI Shield
     endif
+  endif
+
+  var22 = 25 * PT_AGGRESSION
+  if CHANCE_MUL_LE PT_AGGRESSION 1 && Damage < var22 && CurrAction <= 32
+    var21 = 13.1
+    CallI Shield
   endif
 
   predictAverage var2 10 LevelValue
@@ -73,8 +77,7 @@ if Equal AirGroundState 1
       var16 = 1
       CallI Roll
     elif Rnd < 0.4 && Rnd < var3
-      var16 = 1
-      var16 += 0.1
+      var16 = 1.1
       CallI JumpScr
     endif
     GetAttribute var22 40; 0
@@ -136,31 +139,29 @@ if Equal AirGroundState 1
   endif
 endif
 
-// maybe make driftAway based on air mobility?
-predictAverage var0 10 LevelValue
-var0 += 25
-PredictOMov var22 14 LevelValue
-if ODistLE var0 && CHANCE_MUL_LE var22 4
-  if CalledFrom AttackedHub && CHANCE_MUL_LE PT_AGGRESSION 0.75
-    var16 = 1
+if Equal var21 16.41
+  if CHANCE_MUL_LE PT_AGGRESSION 0.65
     XGoto CalcAttackGoal
     XReciever
     var15 = -1
     CallI MainHub
-  endif 
+  endif
+endif 
+
+// maybe make driftAway based on air mobility?
+predictAverage var0 10 LevelValue
+var0 += 20
+PredictOMov var22 14 LevelValue
+if ODistLE var0 && CHANCE_MUL_LE var22 4
   if NumJumps > 0 && Rnd < 0.2
-    var16 = 1
-    var16 += 0.1
+    var16 = 1.1
     CallI JumpScr
   elif NumJumps > 0 && Rnd < 0.1
-    var16 = 3
-    var16 += 0.1
+    var16 = 3.1
     CallI JumpScr
-  elif CalledFrom AttackedHub && NumJumps > 0 && OTopNY < TopNY && CHANCE_MUL_LE PT_AGGRESSION 0.8
-    var16 = 3
-    var16 += 0.1
+  elif Equal var21 16.41 && NumJumps > 0 && OTopNY < TopNY && CHANCE_MUL_LE PT_AGGRESSION 0.65
+    var16 = 3.1
     var15 = -1
-    var21 = 16.4
     CallI JumpScr
   elif Rnd < 0.4 && YDistFloor > 25
     var16 = 2
@@ -173,6 +174,7 @@ var22 *= 2
 if var22 < 0.30 && Rnd > var22 && Equal AirGroundState 1
   CallI Shield
 endif
+var21 = 16.4
 if !(Equal var20 -1)
   var15 = -1
   CallI MainHub

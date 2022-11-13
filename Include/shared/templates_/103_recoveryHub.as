@@ -17,14 +17,9 @@ currGoal = cg_recover
 SetDebugOverlayColor color(0xFF8800DD)
 EnableDebugOverlay
 
-if FramesHitstun > 0 && CurrAction >= hex(0x43) && CurrAction <= hex(0x45)
-  CallI AttackedHub
-elif CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
-  CallI OnLedge
-elif Equal CurrAction hex(0xBD) || Equal CurrAction hex(0xBE)
-  currGoal = cg_nothing
-  CallI MainHub
-endif
+XGoto PerFrameChecks
+XReciever
+Seek begin
 
 #let isBelowStage = var16
 
@@ -104,12 +99,6 @@ if YDistFloor > -1 || Equal AirGroundState 1
   goalY = BBoundary
   goalX = 0
   Call MainHub
-endif
-
-if YDistBackEdge < 0
-  XGoto PerFrameChecks
-  XReciever
-  Seek begin
 endif
 
 {RECOVERY_CONDITIONS}

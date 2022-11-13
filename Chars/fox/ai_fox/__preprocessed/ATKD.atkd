@@ -59,4 +59,8 @@ SpecialAirSEnd unk=0,start=0,end=3,xmin=-36.00,xmax=7.00,ymin=0.00,ymax=8.00
 SpecialHiHold unk=0,start=19,end=32,xmin=-8.00,xmax=8.00,ymin=0.00,ymax=16.00
 SpecialHiHoldAir unk=0,start=19,end=32,xmin=-8.00,xmax=8.00,ymin=0.00,ymax=16.00
 SpecialHi unk=0,start=0,end=30,xmin=-5.00,xmax=5.00,ymin=4.00,ymax=12.00
+// COUNTER RECOVERY INFO
+ACTIONx113 unk=3,start=23,end=10,xmin=85.00,xmax=0.00,ymin=0.00,ymax=0.00
+ACTIONx114 unk=0,start=19,end=40,xmin=0.00,xmax=0.00,ymin=0.00,ymax=0.00
+ACTIONx117 unk=1,start=0,end=30,xmin=85.00,xmax=0.00,ymin=0.00,ymax=0.00
 

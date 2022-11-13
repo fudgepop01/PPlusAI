@@ -3,6 +3,12 @@
 #const true = 1
 #const false = 0
 
+// RECOVERY TYPES (for telling AI how to counter a target's recovery)
+#const RECOVERY_IDLE = 0
+#const RECOVERY_AIM = 1
+#const RECOVERY_VERTICAL = 2
+#const RECOVERY_HORIZONTAL = 3
+
 // MOVE RANGE STUFF
 #const DIRY_ABOVE = 10
 #const DIRY_BELOW = 5
@@ -47,7 +53,7 @@
 #const cs_shortHopHeight = 25.344
 #const cs_djumpHeight = 39.514
 #const cs_wavedashDist = 25
-#const cs_recoveryDistY = -40
+#const cs_recoveryDistY = -20
 #const cs_recoveryDistX = 50
 
 // used with common ai pac
@@ -73,6 +79,7 @@
 #const chr_cs_recoveryDistX = 17
 #const chr_cs_recoveryDistY = 18
 #const chr_cs_moveData = 19
+#const chr_cs_moveName = 19.1
 #const chr_calc_angleFix = 20
 #const chr_calc_certainty = 21
 
@@ -320,6 +327,9 @@
 #const sv_execute_willhit = 2
 
 #const sv_fastAttack = 1
+#const sv_campAttack = 2
+
+#const sv_punishRecovery = 10
 
 // dice slots
 #const dslot0 = 0
@@ -352,6 +362,7 @@
 #const cg_string = 11
 #const cg_inHitstun = 12
 #const cg_defend = 13
+#const cg_defend_crouchCancel = 13.1
 #const cg_special = 14
 #const cg_ledge = 15
 #const cg_ledge_edgeguard = 15.1
@@ -360,10 +371,12 @@
 #const cg_attack_undershoot = 16.2
 #const cg_attack_wall = 16.3
 #const cg_attack_reversal = 16.4
+#const cg_attack_inCombo = 16.41
 #const cg_attack_shieldPunish = 16.5
 #const cg_attack_crossup = 16.6
 #const cg_edgeguard = 16.7
-#const cg_edgeguard_ledge = 16.8
+#const cg_ledge_edgeguard = 16.71
+#const cg_edgeguard_ledge = 16.72
 #const cg_recover_reversal = 16.9
 #const cg_lying = 17
 

@@ -1,12 +1,13 @@
 #macro ACTIONABLE_ON_GROUND()
-  if Equal CurrAction hex(0x16) 
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction hex(0x16) 
     if Equal PrevAction hex(0x21)
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= hex(0x18) && !(Equal CurrAction hex(0x49))
+  elif CurrAction >= hex(0x18) && !(Equal CurrAction hex(0x49)) && !(Equal CurrAction hex(0x67)) && !(Equal CurrAction hex(0x6C))
     Return
   endif
 #endmacro
@@ -744,9 +745,8 @@
   globTempVar = {frameCount}
   if Equal CurrSubaction JumpSquat
     GetAttribute immediateTempVar attr_jumpYInitVelShort 0
-    immediateTempVar *= -1
   else
-    immediateTempVar = YSpeed * -1
+    immediateTempVar = YSpeed
   endif
   CalcYChange {outVar} globTempVar immediateTempVar Gravity MaxFallSpeed FastFallSpeed 1
 #endmacro
@@ -1358,7 +1358,7 @@
   {xVar} = TopNX - {xVar}
   {xVar} *= -1
   {yVar} *= -1
-  {yVar} = {yVar} - (TopNY * -1)
+  {yVar} += TopNY
 #endmacro
 
 #macro TIMED_NEAREST_CLIFF(xVar, yVar, time)

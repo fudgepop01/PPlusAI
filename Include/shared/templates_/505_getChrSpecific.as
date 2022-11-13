@@ -4,7 +4,7 @@ unk 0x0
 
 XReciever
 
-if Equal chr_trait_select chr_cs_moveData
+if Equal chr_trait_select chr_cs_moveData || Equal chr_trait_select chr_cs_moveName
   $generateFetchMoveData()
 elif Equal chr_trait_select chr_cs_dashForceTurnFrame
   chr_trait_return = cs_dashForceTurnFrame
@@ -19,23 +19,33 @@ elif Equal chr_trait_select chr_cs_wavedashDist
 elif Equal chr_trait_select chr_cs_recoveryDistX
   chr_trait_return = cs_recoveryDistX
 elif Equal chr_trait_select chr_cs_recoveryDistY
-  chr_trait_return = calc(-1 * cs_recoveryDistY)
+  chr_trait_return = calc(-1 * cs_recoveryDistY - 10)
+  if NumJumps > 0
+    chr_trait_return += cs_djumpHeight
+  endif
 elif Equal chr_trait_select chr_chk_isAerialAttack
   chr_trait_return = 0
   $ifAerialAttack()
     chr_trait_return = 1
   endif
 elif Equal chr_trait_select chr_chk_OInCombo
-  getCurrentPredictValue globTempVar man_OFramesPostHitstun
-  anotherTempVar = PT_AGGRESSION * 30 + 25
-  if globTempVar <= anotherTempVar || OFramesHitstun > 0 || OFramesHitlag > 0
+  if XDistLE 70
+    getCurrentPredictValue globTempVar man_OFramesPostHitstun
+    anotherTempVar = PT_AGGRESSION * 15 + 10
+    if globTempVar <= anotherTempVar || OFramesHitstun > 0 || OFramesHitlag > 0
+      chr_trait_return = 1
+      // LOGSTR_NL str("IS COMBO (1)")
+      Return
+    endif
     if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59) && !(Equal OCurrAction hex(0x49))
     elif Equal OCurrAction hex(0x49) && OYDistFloor > 15
     elif Equal HitboxConnected 1 || Equal PrevAction hex(0x3C)
     else
+      // LOGSTR_NL str("NOT COMBOING")
       chr_trait_return = 0
       Return
     endif
+    // LOGSTR_NL str("IS COMBO (2)")
     chr_trait_return = 1
     Return
   endif

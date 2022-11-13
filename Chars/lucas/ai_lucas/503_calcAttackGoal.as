@@ -24,21 +24,21 @@
       $elifLastAttack(usmash)
         lastAttack = -1
       endif
-    if !(Equal priority priority_kill)
-      $ifLastAttack(fsmash_strong)
-        lastAttack = -1
-      $elifLastAttack(dsmash_strong)
-        lastAttack = -1
-      $elifLastAttack(dsmash2_strong)
-        lastAttack = -1
-      $elifLastAttack(usmash_strong)
-        lastAttack = -1
-      $elifLastAttack(nspecial)
-        lastAttack = -1
-      $elifLastAttack(nspecialair)
-        lastAttack = -1
-      endif
-    endif
+    // if !(Equal priority priority_kill)
+    //   $ifLastAttack(fsmash_strong)
+    //     lastAttack = -1
+    //   $elifLastAttack(dsmash_strong)
+    //     lastAttack = -1
+    //   $elifLastAttack(dsmash2_strong)
+    //     lastAttack = -1
+    //   $elifLastAttack(usmash_strong)
+    //     lastAttack = -1
+    //   $elifLastAttack(nspecial)
+    //     lastAttack = -1
+    //   $elifLastAttack(nspecialair)
+    //     lastAttack = -1
+    //   endif
+    // endif
   endif
 #endsnippet
 

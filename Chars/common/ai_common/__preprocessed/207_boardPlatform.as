@@ -65,15 +65,17 @@ DrawDebugRectOutline var2 TopNY 5 5 255 136 0 85
 Return
 label execute
 DrawDebugRectOutline var0 var1 5 5 255 136 0 153
-if Equal AirGroundState 1
-  if Equal CurrAction 22 
+MOD var22 AnimFrame 3
+if Equal AirGroundState 1 && var22 <= 1
+  if Equal CanCancelAttack 1
+  elif Equal HitboxConnected 1 && HasCurry
+  elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
     elif AnimFrame <= 3
       Return
     endif
-  elif Equal CanCancelAttack 1
-  elif CurrAction >= 24 && !(Equal CurrAction 73)
+  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
     Return
   endif
   Button X
