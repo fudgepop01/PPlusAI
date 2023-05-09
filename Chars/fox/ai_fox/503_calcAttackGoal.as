@@ -37,10 +37,10 @@
 //   $addToDice(1, nspecialair, 2)
 // #endsnippet
 
-#snippet CAMP_MOVES
-  if !(XDistLE 15)
-    DynamicDiceClear dslot0
-    $addToDice(1, nspecialair, 3)
-    $addToDice(1, nspecial, 0.1)
-  endif
-#endsnippet
+// #snippet CAMP_MOVES
+//   if !(XDistLE 15)
+//     DynamicDiceClear dslot0
+//     $addToDice(1, nspecialair, 3)
+//     $addToDice(1, nspecial, 0.1)
+//   endif
+// #endsnippet

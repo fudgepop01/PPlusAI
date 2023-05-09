@@ -1,0 +1,62 @@
+#include <Subactions_common.h>
+#include <Subactions_Stub.h>
+flag1=0x1CE
+flag2=0x18
+
+Attack11 unk=14,start=3,end=3,xmin=1.35,xmax=14.47,ymin=3.78,ymax=10.34
+Attack12 unk=14,start=2,end=3,xmin=1.72,xmax=19.46,ymin=2.76,ymax=10.93
+Attack13 unk=30,start=4,end=6,xmin=3.72,xmax=20.44,ymin=4.57,ymax=12.83
+AttackDash unk=39,start=2,end=22,xmin=-1.43,xmax=37.30,ymin=0.16,ymax=9.20
+AttackS3Hi_AttackS3S_ unk=31,start=7,end=11,xmin=3.23,xmax=20.43,ymin=0.19,ymax=12.89
+AttackS3S unk=31,start=7,end=11,xmin=3.50,xmax=22.46,ymin=-0.17,ymax=11.25
+AttackS3Lw_AttackS3S_ unk=31,start=7,end=11,xmin=3.54,xmax=22.34,ymin=-1.92,ymax=9.92
+AttackHi3 unk=29,start=6,end=10,xmin=-10.10,xmax=13.83,ymin=2.02,ymax=22.30
+AttackLw3 unk=28,start=6,end=10,xmin=2.95,xmax=21.06,ymin=-2.58,ymax=5.88
+AttackS4Hi_AttackS4S_ unk=31,start=6,end=9,xmin=2.56,xmax=21.84,ymin=2.97,ymax=15.23
+AttackS4S unk=31,start=6,end=9,xmin=2.41,xmax=23.83,ymin=2.12,ymax=10.89
+AttackS4Lw_AttackS4S_ unk=31,start=6,end=9,xmin=2.70,xmax=23.01,ymin=-1.33,ymax=9.95
+AttackHi4 unk=0,start=5,end=11,xmin=-8.00,xmax=9.00,ymin=2.50,ymax=29.14
+AttackLw4 unk=46,start=5,end=25,xmin=-11.59,xmax=17.12,ymin=-1.98,ymax=11.65
+AttackAirN unk=33,start=4,end=21,xmin=-5.62,xmax=6.43,ymin=-1.56,ymax=10.51
+AttackAirF unk=37,start=8,end=13,xmin=-6.83,xmax=15.69,ymin=-6.22,ymax=19.32
+AttackAirB unk=33,start=13,end=21,xmin=-16.59,xmax=1.51,ymin=1.38,ymax=11.91
+AttackAirHi unk=37,start=5,end=14,xmin=-10.03,xmax=10.30,ymin=0.32,ymax=20.95
+AttackAirLw unk=35,start=9,end=24,xmin=-3.50,xmax=7.45,ymin=-3.00,ymax=9.50
+Catch unk=0,start=7,end=7,xmin=-0.31,xmax=9.48,ymin=2.51,ymax=9.24
+CatchDash unk=0,start=10,end=10,xmin=5.85,xmax=20.42,ymin=2.51,ymax=8.77
+CatchTurn unk=0,start=10,end=10,xmin=-11.58,xmax=3.13,ymin=2.51,ymax=8.77
+DownAttackU unk=0,start=12,end=19,xmin=-22.00,xmax=19.00,ymin=0.00,ymax=12.00
+DownAttackD unk=0,start=16,end=24,xmin=-22.00,xmax=22.00,ymin=-1.00,ymax=12.00
+SlipAttack unk=0,start=18,end=32,xmin=-16.00,xmax=15.00,ymin=0.00,ymax=9.00
+CliffAttackQuick unk=0,start=21,end=32,xmin=3.00,xmax=22.00,ymin=6.00,ymax=25.00
+CliffAttackSlow unk=0,start=54,end=59,xmin=5.00,xmax=24.00,ymin=8.00,ymax=18.00
+Swing1 unk=0,start=3,end=7,xmin=-3.00,xmax=31.00,ymin=-5.00,ymax=8.00
+Swing3 unk=0,start=8,end=11,xmin=-2.00,xmax=33.00,ymin=-5.00,ymax=9.00
+Swing4 unk=0,start=2,end=5,xmin=3.00,xmax=45.00,ymin=-5.00,ymax=17.00
+SwingDash unk=0,start=5,end=17,xmin=5.00,xmax=49.00,ymin=-3.00,ymax=10.00
+Swing1_1 unk=0,start=3,end=7,xmin=-3.00,xmax=22.00,ymin=-5.00,ymax=9.00
+Swing3_1 unk=0,start=8,end=11,xmin=-5.00,xmax=21.00,ymin=-5.00,ymax=10.00
+Swing4Bat unk=0,start=59,end=61,xmin=0.00,xmax=26.00,ymin=1.00,ymax=14.00
+SwingDash_1 unk=0,start=5,end=18,xmin=2.00,xmax=35.00,ymin=-2.00,ymax=10.00
+Swing1_2 unk=0,start=2,end=7,xmin=-2.00,xmax=23.00,ymin=-4.00,ymax=11.00
+Swing3_2 unk=0,start=7,end=11,xmin=-7.00,xmax=21.00,ymin=-4.00,ymax=14.00
+Swing4_1 unk=0,start=2,end=5,xmin=0.00,xmax=25.00,ymin=-4.00,ymax=16.00
+SwingDash_2 unk=0,start=5,end=18,xmin=2.00,xmax=41.00,ymin=-3.00,ymax=11.00
+Swing1_3 unk=0,start=2,end=7,xmin=-5.00,xmax=21.00,ymin=-4.00,ymax=9.00
+Swing3_3 unk=0,start=7,end=11,xmin=-4.00,xmax=19.00,ymin=-4.00,ymax=14.00
+Swing4_2 unk=0,start=2,end=5,xmin=2.00,xmax=23.00,ymin=-4.00,ymax=16.00
+SwingDash_3 unk=0,start=5,end=18,xmin=5.00,xmax=36.00,ymin=-3.00,ymax=11.00
+Swing1_4 unk=0,start=3,end=7,xmin=-5.00,xmax=18.00,ymin=-4.00,ymax=9.00
+Swing3_4 unk=0,start=7,end=11,xmin=-2.00,xmax=16.00,ymin=-4.00,ymax=13.00
+Swing4_3 unk=0,start=2,end=5,xmin=1.00,xmax=20.00,ymin=-4.00,ymax=14.00
+SwingDash_4 unk=0,start=5,end=18,xmin=4.00,xmax=35.00,ymin=-3.00,ymax=10.00
+ItemScrew unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-3.00,ymax=13.00
+ItemScrew_1 unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-3.00,ymax=13.00
+ItemHammerWait unk=0,start=0,end=16,xmin=-17.00,xmax=19.00,ymin=0.00,ymax=23.00
+ItemHammerMove unk=0,start=0,end=16,xmin=-17.00,xmax=19.00,ymin=0.00,ymax=23.00
+ItemHammerAir unk=0,start=0,end=16,xmin=-17.00,xmax=19.00,ymin=0.00,ymax=23.00
+subaction0x1DE unk=0,start=1,end=3,xmin=-11.72,xmax=11.72,ymin=-2.72,ymax=20.72
+// subaction467 unk=0,start=4,end=39,xmin=-2.00,xmax=9.00,ymin=-2.00,ymax=9.00
+// subaction478 unk=0,start=0,end=3,xmin=-15.00,xmax=15.00,ymin=-4.00,ymax=25.00
+// subaction480 unk=0,start=0,end=3,xmin=-15.00,xmax=15.00,ymin=-4.00,ymax=25.00
+

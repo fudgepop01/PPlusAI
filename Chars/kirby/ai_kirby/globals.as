@@ -176,6 +176,25 @@
 #const uspecial_lastHitFrame = 37
 #const uspecial_damage_info = USpecial|8|50|75|82
 
+#const mv_uspecial_proj = 1
+#const uspecial_IASA = 47
+#const uspecial_xOffset = 15
+#const uspecial_yOffset = 6
+#const uspecial_xRange = 40
+#const uspecial_yRange = 7.75
+#const uspecial_hitFrame = 23
+#const uspecial_lastHitFrame = 40
+#const uspecial_damage_info = USpecial|-6|50|75|82
+
+#const uspecialair_IASA = 47
+#const uspecialair_xOffset = 2.75
+#const uspecialair_yOffset = 6
+#const uspecialair_xRange = 11.9
+#const uspecialair_yRange = 7.75
+#const uspecialair_hitFrame = 23
+#const uspecialair_lastHitFrame = 37
+#const uspecialair_damage_info = USpecialAir|8|50|75|82
+
 // downB
 #const dspecial_IASA = 47
 #const dspecial_xOffset = 3.09

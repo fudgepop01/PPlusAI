@@ -1,0 +1,639 @@
+#include <Definition_AIPD.h>
+//Attack dice roll table
+//_____On ground_____
+slot0 {
+    JabAttack 100,100
+    FTiltAttack 20,20
+    DTiltAttack 10,10
+    FSmashAttack 30,6
+    USmashAttack 10,2
+    DSmashAttack 50,10
+    FBGroundAttack 5,5
+    DBGroundAttack 20,20
+    GrabAttack 0,0
+    NoAttack 0,40
+}
+
+slot1 {
+    JabAttack 20,20
+    FTiltAttack 100,100
+    DTiltAttack 50,50
+    FSmashAttack 100,20
+    FBGroundAttack 60,60
+    DBGroundAttack 100,100
+    NoAttack 0,30
+}
+
+slot2 {
+    NBGroundAttack 100,100
+    NoAttack 0,50
+}
+
+slot3 {
+    JabAttack 30,30
+    FTiltAttack 10,10
+    DTiltAttack 10,10
+    FSmashAttack 100,20
+    DSmashAttack 20,4
+    FBGroundAttack 30,30
+    NoAttack 0,20
+}
+
+slot4 {
+    USmashAttack 100,20
+    DSmashAttack 50,10
+    NoAttack 0,20
+}
+
+slot5 {
+    UTiltAttack 100,100
+    USmashAttack 100,20
+    NoAttack 0,30
+}
+
+slot6 {
+    DSmashAttack 100,20
+    FBGroundAttack 60,60
+    DBGroundAttack 10,10
+    NoAttack 0,50
+}
+
+slot8 {
+    JabAttack 100,50
+    USmashAttack 50,5
+    DSmashAttack 20,5
+    FBGroundAttack 10,10
+    DBGroundAttack 40,40
+    GrabAttack 0,0
+    NoAttack 0,100
+    NAirAttack 10,0
+    FAirAttack 10,0
+    BAirAttack 5,0
+    UAirAttack 100,0
+}
+
+slot9 {
+    DTiltAttack 50,50
+    FSmashAttack 100,20
+    DSmashAttack 100,20
+    DBGroundAttack 100,100
+}
+
+slot10 {
+    FSmashAttack 80,16
+    USmashAttack 20,4
+    DSmashAttack 20,4
+    DBGroundAttack 100,100
+}
+
+//_____In air_____
+slot11 {
+    NAirAttack 100,100
+}
+
+slot12 {
+    NAirAttack 100,100
+    FAirAttack 50,50
+    DSpecialAirAttack 10,10
+}
+
+slot13 {
+    NAirAttack 50,50
+    BAirAttack 100,100
+}
+
+slot14 {
+    NAirAttack 5,5
+    FAirAttack 10,10
+    UAirAttack 100,100
+}
+
+slot15 {
+    NAirAttack 50,50
+    FAirAttack 20,20
+    DAirAttack 50,50
+}
+
+slot16 {
+    NSpecialAirAttack 100,100
+}
+
+slot17 {
+    BAirAttack 100,100
+}
+
+slot18 {
+    UAirAttack 100,100
+}
+
+slot19 {
+    FAirAttack 100,100
+}
+
+slot21 {
+    USpecialAirAttack 100,100
+}
+
+slot23 {
+    DAirAttack 30,30
+    USpecialAirAttack 80,80
+}
+
+
+//Routine call table
+//_____Section1 starts_____
+//Entry number : 0x0
+JumpRecoverRange&&CanJump {
+    EdgeRecover 10,20,100,0
+}
+
+//Entry number : 0x1
+CanJump {
+    JumpOnStage 100,100,0,0
+}
+
+//Entry number : 0x2
+True {
+    EdgeRecover 100,100,0,0
+}
+
+//_____Section1 ends_____
+//_____Section2 starts_____
+//Entry number : 0x3
+if OBlown
+
+//Entry number : 0x4
+InAir {
+    AerialCombo 100,100,100,0
+}
+
+//Entry number : 0x5
+True {
+    GroundCombo 100,100,100,0
+}
+
+//Entry number : 0x6
+endif
+
+//Entry number : 0x7
+MeteoChance {
+    BlockRecovery 100,0,70,20
+}
+
+//Entry number : 0x8
+Lying&&SamePlane {
+    InterceptCliff 100,0,80,20
+}
+
+//Entry number : 0x9
+Not1_4_9_12And2 {
+    Unk1060 30,0,100,0
+}
+
+//Entry number : 0xA
+OInHigh&&XVeryClose {
+    DJNeutral 95,30,60,0
+}
+
+//Entry number : 0xB
+Back&&OInHigh {
+    WalkUp 70,80,100,0
+    FHopAway 30,20,100,0
+}
+
+//Entry number : 0xC
+OInHigh&&!fVeryClose {
+    FHopTowards 95,30,60,0
+}
+
+//Entry number : 0xD
+InAir {
+    Unk1080 100,10,70,0
+}
+
+//Entry number : 0xE
+ev3 {
+    DashUp 100,40,60,0
+}
+
+//Entry number : 0xF
+Back {
+    WalkUp 55,50,100,0
+    Unk10D0 7,10,100,0
+    Unk3020 3,0,100,10
+    FHopAway 5,5,100,0
+    SHopAway 20,0,100,0
+    Unk3080 2,0,80,30
+    Unk3010 8,0,80,30
+    Unk10 0,10,50,0
+}
+
+//Entry number : 0x10
+fXFar&&!FullCharge {
+    Unk3030 40,0,100,30
+}
+
+//Entry number : 0x11
+fXFar {
+    Unk33 1,5,100,0
+    Unk32 2,0,100,0
+    Unk22 2,30,100,0
+    RollF 1,0,100,0
+    Unk1090 16,0,100,10
+    FHopTowards 3,40,100,0
+    SHopTowards 10,0,100,0
+    GetBehind0 1,0,50,0
+    Unk1050 15,1,100,0
+    Unk3080 10,0,80,30
+    Unk3010 44,0,80,30
+    Unk10 0,10,50,0
+}
+
+//Entry number : 0x12
+fXMiddle {
+    Unk1050 8,0,100,10
+    Unk33 1,0,100,10
+    Unk1090 7,0,100,10
+    Unk31 1,0,100,10
+    SHopTowards 12,0,70,0
+    SHopAway 9,0,100,0
+    FHopTowards 3,30,80,0
+    SHopNeutral 1,2,80,0
+    DJNeutral 0,2,80,0
+    SHopDJ 10,0,100,0
+    FHopDJ 4,0,100,0
+    GetBehind0 1,0,50,0
+    Unk23 1,15,100,0
+    Unk21 0,1,100,0
+    RollB 1,0,100,0
+    Jab123 0,20,80,0
+    USmash 0,10,80,0
+    DTilt 0,10,80,0
+    FSmash 0,10,80,0
+    DSmash 0,10,80,0
+    USpecial 0,5,80,0
+    FTilt 0,10,80,0
+    UTilt 0,10,80,0
+    Unk3020 0,20,50,0
+    Unk24 0,10,30,0
+    Unk3090 10,0,80,30
+    Unk3080 20,0,80,30
+    Unk3010 31,0,80,30
+    Unk10 0,10,50,0
+}
+
+//Entry number : 0x13
+fVeryClose {
+    Unk1010 20,8,100,0
+    Unk1020 12,1,100,0
+    Unk1030 15,1,100,0
+    Unk3020 15,10,100,10
+    Unk22 0,30,50,0
+    RollF 1,1,100,0
+    RollB 7,1,100,0
+    DodgeWhenAttacked 12,0,100,20
+    Spotdodge 3,0,100,0
+    Unk3090 13,0,80,30
+    SHopAway 2,10,100,0
+    Unk10 0,20,50,0
+}
+
+//Entry number : 0x14
+fXClose {
+    Unk1010 2,1,100,0
+    Unk1020 3,1,100,0
+    Unk1030 2,1,100,0
+    Unk1040 4,1,100,0
+    Unk3020 4,25,100,10
+    RollF 1,0,100,10
+    Unk1090 2,0,100,10
+    SHopTowards 6,0,70,0
+    FHopTowards 2,15,100,0
+    SHopDJ 8,0,100,0
+    SHopNeutral 1,0,80,0
+    SHopAway 12,0,100,0
+    Jab123 0,20,80,0
+    DTilt 0,20,80,0
+    UTilt 0,10,80,0
+    USpecial 0,5,80,0
+    RollF 0,10,100,0
+    Unk24 0,10,30,0
+    RollB 5,2,100,0
+    Unk22 0,40,70,0
+    SHopNeutral 0,11,80,0
+    FHopAway 0,3,80,0
+    DodgeWhenAttacked 6,0,100,20
+    Spotdodge 1,1,100,0
+    Unk3090 11,0,80,30
+    Unk3080 16,0,80,30
+    Unk3010 36,0,80,30
+    Unk10 0,10,50,0
+}
+
+//_____Section2 ends_____
+//_____Section3 starts_____
+//Entry number : 0x15
+InAir {
+    OnGotDamaged 100,40,60,0
+}
+
+//Entry number : 0x16
+MeteoChance {
+    BlockRecovery 100,0,70,20
+}
+
+//Entry number : 0x17
+if !SamePlane
+
+//Entry number : 0x18
+fXClose&&ev3 {
+    FHopTowards 20,10,100,0
+    DashUp 50,40,60,0
+    Unk22 4,10,100,0
+    RollB 6,0,100,0
+    Unk10 0,40,60,0
+    Nothing 20,0,60,0
+}
+
+//Entry number : 0x19
+fXClose&&OInHigh {
+    FHopTowards 30,10,60,0
+    Unk22 5,10,100,0
+    RollB 5,0,100,0
+    Unk3010 40,20,100,0
+    Unk10 0,60,60,0
+    Nothing 20,0,60,0
+}
+
+//Entry number : 0x1A
+fXClose {
+    RollB 20,0,100,0
+}
+
+//Entry number : 0x1B
+!FullCharge {
+    Unk3030 90,0,100,30
+}
+
+//Entry number : 0x1C
+Far {
+    Unk1050 30,0,100,0
+    Unk3040 20,0,100,50
+    FHopTowards 1,20,100,0
+    SHopNeutral 1,10,100,0
+    Unk3080 10,5,100,0
+    Unk3010 38,15,100,0
+    Unk10 0,50,50,0
+}
+
+//Entry number : 0x1D
+True {
+    Unk1050 25,0,100,0
+    Unk3040 10,0,100,50
+    FHopTowards 1,30,100,0
+    SHopNeutral 1,10,100,0
+    Unk3080 13,0,100,0
+    Unk3010 50,10,100,0
+    Unk10 0,50,50,0
+}
+
+//Entry number : 0x1E
+endif
+
+//Entry number : 0x1F
+Back {
+    WalkUp 90,38,100,0
+    Unk10D0 10,2,100,0
+    Unk10 0,60,50,0
+}
+
+//Entry number : 0x20
+fVeryClose {
+    Unk1010 10,0,100,0
+    Unk31 8,5,100,0
+    Unk22 1,15,100,0
+    Unk3020 25,5,100,0
+    RollF 1,0,100,0
+    RollB 28,10,100,0
+    DodgeWhenAttacked 13,0,100,20
+    Spotdodge 7,0,100,0
+    Unk3090 7,0,80,30
+    Unk10 0,65,50,0
+}
+
+//Entry number : 0x21
+fXClose {
+    Unk1040 5,2,100,0
+    Unk31 7,5,100,0
+    Unk22 2,15,100,0
+    SHopTowards 2,0,100,0
+    SHopAway 3,0,100,0
+    RollF 1,5,100,0
+    Unk3020 27,10,100,0
+    RollB 17,10,100,0
+    DodgeWhenAttacked 10,0,100,20
+    Spotdodge 3,0,100,0
+    Unk3090 3,0,80,30
+    Unk3080 5,0,100,0
+    Unk3010 15,10,100,0
+    Unk10 0,45,50,0
+}
+
+//Entry number : 0x22
+fXMiddle {
+    Unk1040 5,0,100,0
+    Unk21 8,60,100,0
+    Unk23 5,20,50,0
+    RollB 7,0,100,0
+    Unk1090 10,0,100,0
+    SHopTowards 2,0,100,0
+    SHopAway 3,0,100,0
+    Unk3090 2,0,80,30
+    Unk3080 10,0,100,0
+    Unk3010 48,10,100,0
+    Unk10 0,30,50,0
+}
+
+//Entry number : 0x23
+!FullCharge {
+    Unk3030 80,0,100,30
+}
+
+//Entry number : 0x24
+True {
+    Unk1050 10,2,100,0
+    Unk22 30,40,100,0
+    RollF 10,0,100,0
+    Unk3080 5,5,100,0
+    Unk3010 45,15,100,0
+    FHopTowards 0,8,50,0
+    Unk10 0,30,50,0
+}
+
+//_____Section3 ends_____
+//Threshold values
+defmax.float1=60.00
+defmax.float2=35.00
+defmax.byte1=0x3
+defmax.byte2=0x7
+defmax.byte3=0x0
+defmax.byte4=0x0
+defmax.byte5=0x2
+defmax.byte6=0x8
+defmax.byte7=0x0
+defmax.byte8=0x0
+defmax.float3=66.90
+defmax.float4=55.00
+defmax.byte9=0x3
+defmax.byte10=0x5
+defmax.byte11=0x32
+defmax.byte12=0x46
+defmax.float5=0.00
+defmax.float6=-40.00
+defmax.short1=0xFA
+defmax.short2=0x3C
+defmax.float7=200.00
+defmax.byte13=0x0
+defmax.byte14=0x2
+defmax.byte15=0x0
+defmax.byte16=0x0
+defmax.float8=60.00
+defmax.float9=100.00
+defmax.float10=40.00
+defmax.float11=76.70
+defmax.int1=0x0
+defmax.int2=0x0
+defmax.int3=0x0
+defmax.int4=0x0
+defmax.int5=0x0
+defmax.int6=0x0
+defmax.byte17=0x0
+defmax.byte18=0x0
+defmax.byte19=0x0
+defmax.byte20=0x50
+defmax.byte21=0x1E
+defmax.byte22=0x1
+defmax.byte23=0xA
+defmax.byte24=0x0
+defmin.float1=60.00
+defmin.float2=35.00
+defmin.byte1=0x14
+defmin.byte2=0x14
+defmin.byte3=0x0
+defmin.byte4=0x0
+defmin.byte5=0xC
+defmin.byte6=0x10
+defmin.byte7=0x0
+defmin.byte8=0x0
+defmin.float3=66.90
+defmin.float4=55.00
+defmin.byte9=0x8
+defmin.byte10=0x18
+defmin.byte11=0x32
+defmin.byte12=0x46
+defmin.float5=-20.00
+defmin.float6=-50.00
+defmin.short1=0xFA
+defmin.short2=0x14
+defmin.float7=50.00
+defmin.byte13=0x4
+defmin.byte14=0x32
+defmin.byte15=0x0
+defmin.byte16=0x0
+defmin.float8=60.00
+defmin.float9=100.00
+defmin.float10=40.00
+defmin.float11=76.70
+defmin.int1=0x0
+defmin.int2=0x0
+defmin.int3=0x0
+defmin.int4=0x0
+defmin.int5=0x0
+defmin.int6=0x0
+defmin.byte17=0x0
+defmin.byte18=0x0
+defmin.byte19=0x0
+defmin.byte20=0x0
+defmin.byte21=0x0
+defmin.byte22=0x1
+defmin.byte23=0xA
+defmin.byte24=0x0
+submax.byte1=0xA
+submax.byte2=0x3C
+submax.byte3=0x0
+submax.byte4=0x28
+submax.byte5=0x0
+submax.byte6=0x5
+submax.byte7=0x5
+submax.byte8=0x0
+submax.float1=100.00
+submax.float2=10.00
+submax.short1=0x46
+submax.short2=0x78
+submax.short3=0x0
+submax.short4=0x64
+submax.byte9=0x0
+submax.byte10=0x5
+submax.byte11=0x0
+submax.byte12=0x5
+submax.byte13=0x28
+submax.byte14=0x28
+submax.byte15=0x28
+submax.byte16=0x0
+submax.byte17=0x4
+submax.byte18=0x0
+submax.byte19=0x9
+submax.pad1=0x0
+submax.pad2=0x0
+submax.pad3=0x0
+submax.pad4=0x0
+submin.byte1=0x1E
+submin.byte2=0x0
+submin.byte3=0x1E
+submin.byte4=0x14
+submin.byte5=0x0
+submin.byte6=0xA
+submin.byte7=0x0
+submin.byte8=0x14
+submin.float1=100.00
+submin.float2=10.00
+submin.short1=0x46
+submin.short2=0x78
+submin.short3=0x0
+submin.short4=0x64
+submin.byte9=0x0
+submin.byte10=0x5
+submin.byte11=0x0
+submin.byte12=0x5
+submin.byte13=0x1E
+submin.byte14=0x14
+submin.byte15=0x14
+submin.byte16=0x0
+submin.byte17=0x4
+submin.byte18=0x0
+submin.byte19=0x9
+submin.pad1=0x0
+submin.pad2=0x0
+submin.pad3=0x0
+submin.pad4=0x0
+unk.section1Start=0x0
+unk.section1End=0x2
+unk.section2Start=0x3
+unk.section2End=0x14
+unk.section3Start=0x15
+unk.section3End=0x24
+unk.unk1=0x0
+unk.unk2=0xFEFFFB00
+unk.unk3=0xFFFE0000
+unk.unk4=0x5000000
+unk.unk5=0x0
+unk.unk6=0x0
+unk.unk7=0x0
+unk.unk8=0x0
+unk.unk9=0x0
+unk.unk10=0x71
+unk.unk11=0x80101
+unk.unk12=0x1A0300
+unk.unk13=0x0
+unk.unk14=0x7F
+unk.unk15=0x240480

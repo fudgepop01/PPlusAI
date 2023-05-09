@@ -2,11 +2,11 @@
 id 0x8203
 unk 0x0
 
-XReciever
+//= XReciever
 
 label setup
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek setup
 
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
@@ -34,18 +34,18 @@ if Equal AirGroundState 2 || globTempVar <= 2 || Equal CurrSubaction JumpSquat
 endif
 label locomotion
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 if !(Equal lastAttack -1) 
   NoRepeat
   XGoto SetAttackGoal
-  XReciever
+  //= XReciever
   XGoto CheckAttackWillHit
-  XReciever
+  //= XReciever
 endif
 Seek locomotion
 if Equal shouldFullHop 1 && Equal CurrSubaction JumpSquat
   Button X
-elif Equal YSpeed 0
+elif Equal YSpeed 0 && Equal AirGroundState 1
   Seek jumpCommand
 endif
 

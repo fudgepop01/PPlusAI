@@ -2,24 +2,18 @@
 id 0x8203
 unk 0x0
 
-XReciever
+//= XReciever
 
 label setup
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek setup
 
 if CurrAction >= 26 && CurrAction <= 29
 elif True
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
+  var22 = 300
+  XGoto GetChrSpecific
+  if Equal var22 0 
     Return
   endif
 endif
@@ -42,18 +36,18 @@ if Equal AirGroundState 2 || var17 <= 2 || Equal CurrSubaction JumpSquat
 endif
 label locomotion
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 if !(Equal var20 -1) 
   NoRepeat
   XGoto SetAttackGoal
-  XReciever
+  //= XReciever
   XGoto CheckAttackWillHit
-  XReciever
+  //= XReciever
 endif
 Seek locomotion
 if Equal var1 1 && Equal CurrSubaction JumpSquat
   Button X
-elif Equal YSpeed 0
+elif Equal YSpeed 0 && Equal AirGroundState 1
   Seek jumpCommand
 endif
 

@@ -12,6 +12,14 @@ export const clearMovesUsed = () => {
   return "";
 }
 
+export const genActions = (name, actions) => {
+  clearOut();
+  const items = actions.split("|");
+  const data = `#const ${name}_ACTIONS = Equal CurrAction hex(0x${items.join(') || Equal CurrAction hex(0x')})`
+  out(data);
+  return _out;
+}
+
 export const genPersonalityStrings = () => {
   clearOut();
   const items = Object.entries($globals).filter(([k, v]) => {
@@ -349,30 +357,35 @@ export const tempVar = (name, source) => {
   return _out;
 }
 
-export const generateFetchMoveData = () => {
+export const generateFetchMoveData = (includeNames = "1") => {
+  console.log(includeNames);
+  includeNames = !!(parseInt(includeNames))
   clearOut();
   const moves = Object.values(getMoveData());
-  out(`if Equal chr_trait_select chr_cs_moveName`);
-    out(`if lastAttack >= 0 && lastAttack < ${moves.length}`);
-      out(`GotoByValue lastAttack`);
+  if (includeNames) {
+    out(`if Equal chr_trait_select chr_cs_moveName`);
+      out(`if lastAttack >= 0 && lastAttack < ${moves.length}`);
+        out(`GotoByValue lastAttack`);
+        out(`Return`);
+        out(`if !(True)`);
+        for (const [idx, {moveName}] of moves.entries()) {
+          const mn = moveName.toLowerCase();
+          out("");
+          out(`label _${mn}Str`)
+          out(`LOGSTR str("${mn}")`)
+          out(`Return`)
+        }
+        out(`endif`);
+      out(`else`);
+      out(`LOGSTR str("NO MOVE")`);
       out(`Return`);
-      out(`if !(True)`);
-      for (const [idx, {moveName}] of moves.entries()) {
-        const mn = moveName.toLowerCase();
-        out("");
-        out(`label _${mn}Str`)
-        out(`LOGSTR str("${mn}")`)
-        out(`Return`)
-      }
-      out(`endif`);
-    out(`else`);
-    out(`LOGSTR str("NO MOVE")`);
-    out(`Return`);
-  out(`endif`);
-  out(`endif`);
+    out(`endif`);
+    out(`endif`);
+  }
 
   out(`if lastAttack >= 0 && lastAttack < ${moves.length}`)
-  out(`chr_trait_select = lastAttack + ${moves.length}`)
+  if (includeNames) out(`chr_trait_select = lastAttack + ${moves.length}`)
+  else out(`chr_trait_select = lastAttack`)
   out(`GotoByValue chr_trait_select`)
   out(`Goto __ANGLE_FIX__`)
   out(`else`)
@@ -397,7 +410,6 @@ export const generateFetchMoveData = () => {
     out(`// ${mn}`)
     out(`label ${mn}`)
     // angle var
-    out(`immediateTempVar = STACK_POP`);
     out(`SetVarByNum STACK_POP ${xOffset}`)
     out(`SetVarByNum STACK_POP ${yOffset}`)
     out(`SetVarByNum STACK_POP ${xRange}`)
@@ -414,7 +426,6 @@ export const generateFetchMoveData = () => {
     out(`SetVarByNum STACK_POP ${isWeightDependent}`);
     out(`SetVarByNum STACK_POP ${bkb}`);
     out(`SetVarByNum STACK_POP ${kbg}`);
-    out(`STACK_PUSH immediateTempVar 0`);
     out(`immediateTempVar = ${angle}`);
     // out(`CalcKnockback anotherTempVar ODamage ${dmg} ${bkb} ${kbg} OWeight ${isWeightDependent}`);
     out(`Return`)
@@ -471,13 +482,100 @@ export const generateAllMovesGotoLocRange = () => {
   return _out;
 }
 
+export const WARIOMAN_MOVE_SNIPPETS = () => {
+  clearOut();
+  const moves = Object.values(getMoveData());
+  for (const [idx, {origin, moveName, moveVariant, lastHitFrame}] of moves.entries()) {
+    out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
+    out(`lastHitFrame = ${lastHitFrame}`);
+    switch(origin.toLowerCase()) {
+      case 'nair':
+      case 'jab123': out('Button A'); break;
+      case 'dashattack': out('Goto execDA'); break;
+      case 'ftilt': 
+        out('Button A'); 
+        out('Goto getHeight')
+        out('Stick 0.7 immediateTempVar'); 
+        break;
+      case 'utilt': out('Button A'); out('Stick 0 0.7'); break;
+      case 'dair': out('Button A'); out('Stick 0 (-0.6)'); break;
+      case 'dtilt': out('Button A'); out('Stick 0 (-0.7)'); break;
+      case 'fair':
+      case 'fsmash': 
+        out('Button A'); 
+        out('Goto getHeight')
+        out('Stick 1'); 
+        break;
+      case 'uair':
+      case 'usmash': out('Button A'); out('Stick 0 1'); break;
+      case 'bair': out('Button A'); out('Stick (-1) 0'); break;
+      case 'dsmash': out('Button A'); out('Stick 0 (-1)'); break;
+      case 'nspecialair':
+      case 'nspecial': out('Button B'); break;
+      case 'sspecialair':
+      case 'sspecial': out('Button B'); out('AbsStick OPos'); break;
+      case 'uspecialair':
+      case 'uspecial': out('Button B'); out('Stick 0 1'); break;
+      case 'dspecialair':
+      case 'dspecial': out('Button B'); out('Stick 0 (-0.7)'); break;
+      case 'grab': out('Button R|A'); break;
+    }
+    if (moveVariant !== 0) {
+      // out(`LOGSTR str("-------")`);
+      // out(`LOGVAL PlayerNum`);
+      // out(`LOGSTR str("${moveName.toLowerCase()}")`);
+      out(`Seek`);
+    } else {
+      // out(`LOGSTR str("-------")`);
+      // out(`LOGVAL PlayerNum`);
+      // out(`LOGSTR str("${moveName.toLowerCase()}")`);
+      out(`Seek`);
+    }
+    out('Return');
+  }
+  out('endif');
+  out('');
+  out('// IMPLEMENTATIONS');
+  out('if !(True)')
+  for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
+    if (moveVariant !== 0) {
+      out(`label ${moveName.toLowerCase()}`);
+      out('Goto PFC')
+      if (origin.toLowerCase().includes("special")) {
+        out("if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)")
+        out("  AbsStick OPos")
+        out("endif")
+      }
+      out(`{${moveName.toUpperCase()}}`);
+      out('Goto common_checks')
+      out(`Seek ${moveName.toLowerCase()}`);
+    } else {
+      out(`label ${origin.toLowerCase()}`);
+      out('Goto PFC')
+      if (origin.toLowerCase().includes("special")) {
+        // out('  LOGSTR str("THING")')
+        // out("  LOGVAL OPos")
+        out("if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)")
+        out("  AbsStick OPos")
+        out("endif")
+      }
+      out(`{${origin.toUpperCase()}}`);
+      out('Goto common_checks')
+      out(`Seek ${origin.toLowerCase()}`);
+    }
+    out ('Return');
+  }
+  out('endif')
+
+  return _out;
+}
 
 export const generateMoveSnippets = () => {
   clearOut();
   const moves = Object.values(getMoveData());
   for (const [idx, {origin, moveName, moveVariant, lastHitFrame}] of moves.entries()) {
     out(`${idx > 0 ? 'elif' : 'if'} Equal lastAttack ${idx}`);
-    out(`lastHitFrame = ${lastHitFrame}`);
+    // out(`lastHitFrame = ${lastHitFrame}`);
     switch(origin.toLowerCase()) {
       case 'nair':
       case 'jab123': out('Button A'); break;
@@ -543,7 +641,9 @@ export const generateMoveSnippets = () => {
       out(`label ${origin.toLowerCase()}`);
       out('Goto PFC')
       if (origin.toLowerCase().includes("special")) {
-        out("if AnimFrame >= 2 && AnimFrame <= 7")
+        // out('  LOGSTR str("THING")')
+        // out("  LOGVAL OPos")
+        out("if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)")
         out("  AbsStick OPos")
         out("endif")
       }
@@ -581,6 +681,38 @@ export const ifMoveRequiresIdleGround = () => {
   
   out(str);
   return _out;
+}
+
+const recoverBase = (dir,varsToSet = "") => {
+  clearOut();
+  const varNames = varsToSet.split("|");
+  if (dir === "jump") {
+    out("Button X")
+    out("Goto handleJumpToStage")
+  } else {
+    if (varNames[0].length > 0) {
+      for (const name of varNames) {
+        out(`hasTriedTo${name} = 1`);
+      }
+    }
+    out("Button B");
+    out("ClearStick");
+    switch(dir) {
+      case "up": out("AbsStick 0 (0.7)"); break;
+      case "down": out("AbsStick 0 (-0.7)"); break;
+      case "side": out("Stick 1"); break;
+    }
+  }
+  out("Return")
+  return _out;
+}
+
+export const recover = (dir) => {
+  return recoverBase(dir);
+}
+
+export const recoverVar = (dir) => {
+  return recoverBase(dir, `${dir.toUpperCase()[0]}${dir.substring(1)}B`);
 }
 
 export const generateChecks = (labelName) => {
@@ -710,13 +842,18 @@ export const getMoveLocationParams = () => {
   return _out;
 }
 
-export const ifAerialAttack = () => {
+const AERIAL_BASE_ENUM = {
+  noInclude: 0,
+doInclude: 1,
+  forceInclude: 2
+}
+const ifAerialBase = (includeSpecials) => {
   clearOut();
   let str = "if !(True) ";
   const moves = Object.values(getMoveData());
 
   for (const [idx, {origin, moveName, moveVariant}] of moves.entries()) {
-    if (origin.toLowerCase().endsWith('air')) {
+    if ((includeSpecials == includeSpecials.forceInclude) || (origin.toLowerCase().endsWith('air') && (includeSpecials || !origin.toLowerCase().includes("special")))) {
       // console.log(`moveName: ${moveName}`)
       str += `|| Equal lastAttack ${idx}`;
     }
@@ -724,6 +861,18 @@ export const ifAerialAttack = () => {
   
   out(str);
   return _out;
+}
+
+export const ifAerialAttack = () => {
+  return ifAerialBase(AERIAL_BASE_ENUM.doInclude);
+}
+
+export const ifAerialAttackNotSpecial = () => {
+  return ifAerialBase(AERIAL_BASE_ENUM.noInclude);
+}
+
+export const ifAerialAttackForceSpecial = () => {
+  return ifAerialBase(AERIAL_BASE_ENUM.forceInclude);
 }
 
 export const printMoveName = () => {
@@ -751,7 +900,11 @@ const getMoveData = () => {
 
     let isWeightDependent = false;
     let [origin, dmg, bkb, kbg, angle] = value.split("|");
-    dmg = parseFloat(dmg);
+    if (dmg.charAt(0) == "-") {
+      dmg = parseInt(dmg.substring(1)) * -1;
+    } else {
+      dmg = parseInt(dmg);
+    }
     if (bkb.startsWith("w")) {
       isWeightDependent = true;
       bkb = bkb.substr(1);
@@ -846,6 +999,14 @@ const commonRecoveryBase = (AIHubConditions) => `
   {COMMON_RECOVERY_BASE}
 `;
 
+const commonRecoveryBaseNew = (AIHubConditions) => `
+  if CurrAction <= hex(0x20) 
+    currGoal = cg_nothing
+    Call MainHub
+  endif
+  {COMMON_RECOVERY_BASE_NEW}
+`;
+
 const customRecoveryBase = (AIHubConditions) => `
   if CurrAction <= hex(0x20) 
     currGoal = cg_nothing
@@ -866,6 +1027,9 @@ export const makeRecovery = (move) => {
   switch (kind) {
     case "common":
       out(commonRecoveryBase(subactionCheck));
+      break;
+    case "new":
+      out(commonRecoveryBaseNew(subactionCheck));
       break;
     case "custom":
       out(customRecoveryBase(subactionCheck));

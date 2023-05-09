@@ -3,6 +3,9 @@
 #const true = 1
 #const false = 0
 
+// presently used EXCLUSIVELY with RetrieveFullATKD
+#const noVar = -1
+
 // RECOVERY TYPES (for telling AI how to counter a target's recovery)
 #const RECOVERY_IDLE = 0
 #const RECOVERY_AIM = 1
@@ -43,6 +46,21 @@
 #const idx_wall_chance = 10
 #const idx_reaction_time = 11
 
+#const TRAIN_JUMP = hex(0x0)
+#const TRAIN_ATTACK = hex(0x1)
+#const TRAIN_CONTROL = hex(0x2)
+#const TRAIN_STOP = hex(0x3)
+#const TRAIN_WALK = hex(0x4)
+#const TRAIN_RUN = hex(0x5)
+#const TRAIN_SHIELD = hex(0x6)
+#const TRAIN_CROUCH = hex(0x7)
+#const TRAIN_DI_OUT = hex(0x8)
+#const TRAIN_SLIGHT_DI_OUT = hex(0x9)
+#const TRAIN_NO_DI = hex(0xA)
+#const TRAIN_SLIGHT_DI_IN = hex(0xB)
+#const TRAIN_DI_IN = hex(0xC)
+#const TRAIN_SLIGHT_DI = hex(0xD)
+
 
 // #const cs_airdodge_speed = 3.1
 #const cs_riskReactionBalance = 1.0
@@ -56,7 +74,7 @@
 #const cs_recoveryDistY = -20
 #const cs_recoveryDistX = 50
 
-// used with common ai pac
+// used with common ai pac 
 #let chr_trait_select = var22
 #let chr_trait_return = var22
 #const chr_pt_jumpiness = 0
@@ -82,9 +100,11 @@
 #const chr_cs_moveName = 19.1
 #const chr_calc_angleFix = 20
 #const chr_calc_certainty = 21
+#const chr_calc_ORecoverPos = 22
 
 #const chr_chk_isAerialAttack = 100
 #const chr_chk_OInCombo = 200
+#const chr_chk_actionableOnGround = 300
 
 #const chr_get_moveDir = 0.001
 #const chr_get_moveDirY = 0.002
@@ -95,6 +115,7 @@
 #const evt_chrChecks = 20000
 #const evt_gotHit = 30000
 #const evt_checkDefend = 40000
+#const evt_grabbed = 50000
 
 #const shortEdgeRange = 15
 
@@ -103,7 +124,7 @@
 #const mov_walk = 2
 #const mov_run = 3
 #const mov_dash = 4
-#const mov_dashturn = 5
+#const mov_hitstun = 5
 #const mov_crouch = 6
 #const mov_jump = 7
 #const mov_djump = 8
@@ -115,6 +136,15 @@
 #const mov_attack = 14
 #const mov_grab = 15
 
+// MOVE BITS
+#const bf_USpecial = hex(0x1)
+#const bf_USpecial_OFF = hex(0xE)
+#const bf_NSpecial = hex(0x2)
+#const bf_NSpecial_OFF = hex(0xD)
+#const bf_SSpecial = hex(0x4)
+#const bf_SSpecial_OFF = hex(0xB)
+#const bf_DSpecial = hex(0x8)
+#const bf_DSpecial_OFF = hex(0x7)
 
 // ATTRIBUTES
 #const attr_walkInitVel = hex(0x18);
@@ -251,7 +281,7 @@
 // #const attr_unk_0x294 = hex(0x3e8);
 // #const attr_unk_0x29c = hex(0x3ec);
 
-#const OAttackCond = OCurrAction >= hex(0x24) && OCurrAction <= hex(0x34)
+#const OAttackCond = OCurrAction >= hex(0x24) && OCurrAction <= hex(0x34) || OCurrAction >= hex(0x112)
 
 // ACTION CATEGORIES N' STUFF
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
@@ -313,9 +343,11 @@
 #const sv_dash_away_defense = 3
 #const sv_dash_toCenter = 4
 #const sv_dash_through = 5
+#const sv_dash_outOfRange = 6
 
 #const sv_aerialdrift_towards = 1
 #const sv_aerialdrift_away = 2
+#const sv_aerialdrift_away_withJump = 3
 
 #const sv_attackgoal_justy = 1
 #const sv_attackgoal_justx = 2
@@ -334,6 +366,10 @@
 // dice slots
 #const dslot0 = 0
 #const dslot1 = 1
+
+// stack type
+#const st_function = 0
+#const st_longterm = 1
 
 // what variation of the move to use. Important when a move
 // has multiple or complex uses (such as grab)
@@ -440,7 +476,7 @@
 #const man_OBaitDirection = 8
 #const man_OBaitOption = 9
 #const man_OXHitDist = 10
-#const man_OXAttackDist = 11
+#const man_OYHitDist = 11
 #const man_OGetupOption = 12
 #const man_OTechOption = 13
 #const man_OOOSOption = 14

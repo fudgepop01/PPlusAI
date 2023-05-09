@@ -63,8 +63,8 @@ cmd EstXCoord : 0x49 variable time
 ///Estimates the AI's y coordinate after "time" passes
 cmd EstYCoord : 0x4A variable time
 
-cmd GetColDistPosRel : 0x4B colXVar colYVar startX startY destX destY detectPlats
-cmd GetColDistPosAbs : 0x4C colXVar colYVar startX startY relDestX relDestY detectPlats
+cmd GetColDistPosRel : 0x4B colXVar colYVar startX startY relDestX relDestY detectPlats
+cmd GetColDistPosAbs : 0x4C colXVar colYVar startX startY destX destY detectPlats
 
 cmd SetDebugMode : 0x4D value
 
@@ -128,6 +128,7 @@ cmd GotoByValue : 0x6A value
 cmd SeekNoCommit : 0x6B ID
 
 cmd RESET_LTF_STACK_PTR : 0x6C
+cmd STACK_TOSS : 0x6D numToToss
 
 // ITEM CODES
 cmd GetItemLocFromIdx : 0x70 variable1 variable2 idx

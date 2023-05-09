@@ -2,7 +2,7 @@
 id 0x8207
 unk 0x0
 
-XReciever
+//= XReciever
 NoRepeat
 label setup
 
@@ -52,7 +52,7 @@ else
 endif
 label solidNav
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek solidNav
 var17 = var2 - TopNX
 var22 = var17
@@ -67,24 +67,24 @@ label execute
 DrawDebugRectOutline var0 var1 5 5 255 136 0 153
 MOD var22 AnimFrame 3
 if Equal AirGroundState 1 && var22 <= 1
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
+  var22 = 300
+  XGoto GetChrSpecific
+  if Equal var22 0 
     Return
   endif
+  label ground_jump
   Button X
   ClearStick
   var17 = var0 - TopNX
   var17 *= 0.1
   AbsStick var17
+  if Equal AirGroundState 2
+    Seek adrift
+    Jump
+  endif
   Return
 elif Equal AirGroundState 2
+  label air_jump
   if !(Equal PrevAction 10)
     Button X
     var22 = var0 - TopNX
@@ -96,11 +96,13 @@ endif
 
 label adrift
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek adrift
 DrawDebugRectOutline var0 var1 5 5 255 136 0 136
-
 if TopNY > var1 || YSpeed < -0.1 || !(Equal AirGroundState 2)
+  if var21 >= 16
+    var15 = -1
+  endif
   CallI MainHub
 endif
 var22 = var0 - TopNX + XSpeed * 11

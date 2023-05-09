@@ -24,11 +24,11 @@ Catch unk=0,start=7,end=7,xmin=3.00,xmax=14.50,ymin=3.50,ymax=10.50
 CatchDash unk=0,start=10,end=11,xmin=12.87,xmax=28.87,ymin=2.00,ymax=10.00
 CatchTurn unk=0,start=9,end=9,xmin=-19.00,xmax=-3.00,ymin=3.50,ymax=9.50
 
-DownAttackU unk=0,start=16,end=26,xmin=-22.00,xmax=21.00,ymin=2.00,ymax=15.00
-DownAttackD unk=0,start=18,end=26,xmin=-20.00,xmax=15.00,ymin=2.00,ymax=16.00
+DownAttackU unk=0,start=16,end=26,xmin=-19.48,xmax=20.08,ymin=-2.01,ymax=8.70
+DownAttackD unk=0,start=16,end=27,xmin=-17.29,xmax=17.44,ymin=0.16,ymax=10.91
 SlipAttack unk=0,start=18,end=26,xmin=-15.00,xmax=15.00,ymin=1.00,ymax=8.00
-CliffAttackQuick unk=0,start=24,end=32,xmin=-6.00,xmax=36.00,ymin=15.00,ymax=31.00
-CliffAttackSlow unk=0,start=55,end=58,xmin=2.00,xmax=28.00,ymin=17.00,ymax=26.00
+CliffAttackQuick unk=0,start=28,end=30,xmin=-0.05,xmax=23.40,ymin=-1.18,ymax=12.90
+CliffAttackSlow unk=0,start=50,end=53,xmin=1.33,xmax=19.25,ymin=-1.09,ymax=8.53
 Swing1 unk=0,start=4,end=7,xmin=8.00,xmax=36.00,ymin=0.00,ymax=17.00
 Swing3 unk=0,start=8,end=11,xmin=4.00,xmax=35.00,ymin=0.00,ymax=17.00
 Swing4 unk=0,start=4,end=7,xmin=5.00,xmax=45.00,ymin=0.00,ymax=17.00
@@ -54,5 +54,14 @@ ItemScrew_1 unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-4.00,ymax=12.00
 ItemHammerWait unk=0,start=0,end=16,xmin=-16.00,xmax=17.00,ymin=0.00,ymax=29.00
 ItemHammerMove unk=0,start=0,end=16,xmin=-16.00,xmax=17.00,ymin=0.00,ymax=29.00
 ItemHammerAir unk=0,start=0,end=16,xmin=-16.00,xmax=17.00,ymin=0.00,ymax=29.00
-subaction480 unk=0,start=4,end=24,xmin=2.00,xmax=40.00,ymin=9.00,ymax=15.00
-subaction481 unk=0,start=4,end=24,xmin=2.00,xmax=40.00,ymin=9.00,ymax=15.00
+// uspecial
+subaction0x1ED unk=0,start=1,end=36,xmin=-5.65,xmax=5.00,ymin=-6.00,ymax=11.14
+// dspecial
+subaction0x1F1 unk=39,start=18,end=22,xmin=-9.82,xmax=-1.64,ymin=7.72,ymax=15.09
+subaction0x1F2 unk=39,start=18,end=22,xmin=-12.82,xmax=-5.25,ymin=3.51,ymax=11.70
+// nspecial
+subaction0x1D6 unk=0,start=1,end=3,xmin=-2.53,xmax=11.02,ymin=-0.50,ymax=12.95
+subaction0x1D7 unk=0,start=1,end=3,xmin=-1.13,xmax=11.19,ymin=-2.66,ymax=10.77
+// sspecial
+subaction0x1DA unk=0,start=6,end=18,xmin=-4.40,xmax=1.60,ymin=-2.00,ymax=9.00
+subaction0x1DB unk=0,start=4,end=25,xmin=-2.69,xmax=7.92,ymin=-0.19,ymax=7.69

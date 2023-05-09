@@ -1,9 +1,10 @@
 #snippet ADDITIONAL_FILTERS
+  // $setLastAttack(dspecialair)
   $ifLastAttack(dspecialair)
     if NumJumps < 1
       lastAttack = -1
     endif
-    if YDistFloor < 10 && Equal OFramesHitstun 0
+    if YDistFloor < 10 && Equal OFramesHitstun 0 && OYDistFloor > 0 && YDistFloor > 0
       $setLastAttack(dspecial)
     endif
   $elifLastAttack(nspecial)

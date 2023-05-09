@@ -2,7 +2,7 @@
 id 0x840E
 unk 0x0
 
-XReciever
+//= XReciever
 Call Nothing
 Return
 Return

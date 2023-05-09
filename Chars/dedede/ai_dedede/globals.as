@@ -8,8 +8,8 @@
 #const cs_jumpHeight = 35.57
 #const cs_djumpHeight = 12.8
 #const cs_wavedashDist = 15
-#const cs_recoveryDistX = 70
-#const cs_recoveryDistY = -85
+#const cs_recoveryDistX = 75
+#const cs_recoveryDistY = -100
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.04
@@ -183,20 +183,20 @@
 #const sspecial_IASA = 58
 #const sspecial_xOffset = 0
 #const sspecial_yOffset = 10
-#const sspecial_xRange = 30
+#const sspecial_xRange = 80
 #const sspecial_yRange = 30
-#const sspecial_hitFrame = 30
+#const sspecial_hitFrame = 17
 #const sspecial_lastHitFrame = 51 // just a dummy
-#const sspecial_damage_info = SSpecial|8|10|100|90
+#const sspecial_damage_info = SSpecial|-7|22|130|70
 
 #const sspecialair_IASA = 58
 #const sspecialair_xOffset = 0
 #const sspecialair_yOffset = 10
-#const sspecialair_xRange = 30
+#const sspecialair_xRange = 80
 #const sspecialair_yRange = 30
-#const sspecialair_hitFrame = 30
+#const sspecialair_hitFrame = 17
 #const sspecialair_lastHitFrame = 51 // just a dummy
-#const sspecialair_damage_info = SSpecialAir|8|10|100|90
+#const sspecial_damage_info = SSpecialAir|-7|22|130|70
 
 // grab
 // when I want to techchase using grab, i'll set move_variant to this value

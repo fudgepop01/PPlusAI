@@ -2,25 +2,25 @@
 id 0x1120
 unk 0x0
 
-XReciever
+//= XReciever
 
 var0 = 0
 
   var22 = 19
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
-STACK_PUSH 17 0
 STACK_PUSH 1 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
+STACK_PUSH 17 0
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 
 label start
 
@@ -59,7 +59,7 @@ elif CurrSubaction >= 448 && CurrSubaction <= 483
 elif Equal CurrSubaction 115
 elif CurrAction < 52 || CurrAction > 60
   XGoto CalcAttackGoal
-  XReciever
+  //= XReciever
   var15 = -1
   var21 = 16.4
   CallI MainHub

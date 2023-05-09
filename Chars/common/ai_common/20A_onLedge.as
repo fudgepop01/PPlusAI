@@ -2,7 +2,7 @@
 id 0x820A
 unk 0x0
 
-XReciever
+//= XReciever
 label begin
 if Equal OIsOnStage 1
   currGoal = cg_ledge
@@ -10,17 +10,15 @@ else
   currGoal = cg_ledge_edgeguard
 endif
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek begin
 
 if Equal CurrAction hex(0x73) || Equal CurrAction hex(0x74)
   Return
 endif
 
-if CurrAction <= hex(0x21)
-  currGoal = cg_nothing
-  CallI MainHub
-endif
+Goto actionCheck
+Seek begin
 
 if AnimFrame > 2
   if Equal currGoal cg_ledge_edgeguard
@@ -31,18 +29,19 @@ if AnimFrame > 2
     absOCloseness = oCloseness
     Abs absOCloseness
 
-    if XDistLE 40
-      if OCurrAction >= hex(0x110) && CHANCE_MUL_GE PT_AGGRESSION 0.25
+    if XDistLE 40 && CHANCE_MUL_LE PT_AGGRESSION 0.25
+      if OCurrAction >= hex(0x110) && AnimFrame > 20
         Button R
         Call MainHub
-      elif OYDistBackEdge > -40 && AnimFrame < 15
+      elif OYDistBackEdge > -45
         if OYDistBackEdge < -15
           Button X
         else
           Stick -1
         endif
+        currGoal = cg_edgeguard
         XGoto CalcAttackGoal
-        XReciever
+        //= XReciever
         skipMainInit = mainInitSkip
         Call MainHub
         Return
@@ -50,17 +49,13 @@ if AnimFrame > 2
     elif Rnd < 0.2
       Seek exec_wait
       Jump
-    elif OYDistBackEdge < -5 && absOCloseness < 15
+    elif OYDistBackEdge < 5 && absOCloseness < 15
       Button A
       Call MainHub
-    elif OYDistBackEdge < -25 && absOCloseness < 45
-      Button X
-      XGoto CalcAttackGoal
-      XReciever
-      skipMainInit = mainInitSkip
-      currGoal = cg_edgeguard
+    elif OYDistBackEdge < 25 && absOCloseness < 50
+      Button R
       Call MainHub
-    elif XDistLE 70
+    elif !(XDistLE 70)
       if Rnd < 0.2
         Seek exec_wait
         Jump
@@ -80,7 +75,7 @@ if AnimFrame > 2
     if LevelValue >= LV7
       DynamicDiceAdd dslot0 ledgedash 1.6
     endif
-    DynamicDiceAdd dslot0 wait 1.6
+    DynamicDiceAdd dslot0 wait 1.2
     DynamicDiceAdd dslot0 roll 0.8
     DynamicDiceAdd dslot0 getupAttack 1.2
     DynamicDiceAdd dslot0 jumpAttack 1.2
@@ -103,15 +98,16 @@ if AnimFrame > 2
       Call LedgeDash
     elif Equal immediateTempVar getupAttack && XDistLE 40
       Button A
+      Call MainHub
     elif Equal immediateTempVar jumpAttack && XDistLE 30
       XGoto CalcAttackGoal
-      XReciever
+      //= XReciever
       Stick -1
       Seek
       Return
       label _jAttack
       XGoto PerFrameChecks
-      XReciever
+      //= XReciever
       Seek _jAttack
 
       if YDistBackEdge <= 0
@@ -131,11 +127,18 @@ label exec_wait
   timer = Rnd * 45 + 10
   label waiting
   XGoto PerFrameChecks
-  XReciever
-  Seek waiting
+  //= XReciever
   timer -= 1
+  Goto actionCheck
+  Seek waiting
   if timer <= 0
     Seek begin
+  endif
+Return
+label actionCheck
+  if CurrAction <= hex(0x21)
+    currGoal = cg_nothing
+    CallI MainHub
   endif
 Return
 Return

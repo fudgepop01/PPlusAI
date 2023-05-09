@@ -2,16 +2,16 @@
 id 0x820D
 unk 0x0
 
-XReciever
+//= XReciever
 label prep
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Stick -1
-Seek
+Seek start
 Return
 label start
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek start
 
 #let HSize = var0
@@ -25,7 +25,7 @@ endif
 Return
 label dashCheck
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek dashCheck
 if YDistFloor >= 0
   Button R

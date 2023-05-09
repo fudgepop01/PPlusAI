@@ -2,11 +2,15 @@
 id 0x8501
 unk 0x0
 
-XReciever
+//= XReciever
 //--- keep this script from being called more than once per frame
 NoRepeat
 SetTimeout 999
 
+// SetDebugMode 1
+// LOGSTR 1836016640 1694498816 0 0 0
+// LOGVAL var21
+// PRINTLN
 //--- visualize stuffs
 if Equal PlayerNum 0
   DrawDebugRectOutline var13 var14 5 5 255 0 0 221
@@ -19,6 +23,7 @@ elif Equal PlayerNum 3
 else
   DrawDebugRectOutline var13 var14 5 5 34 34 34 221
 endif
+// SetDebugMode 0
 //--- prevent auto-attack
 Cmd30
 // keeps the AI from targeting itself because that can happen for some reason
@@ -47,7 +52,7 @@ elif OFramesHitstun > 0
   trackOAction 4 0
 else 
   getCurrentPredictValue var22 4
-  if var22 < 100
+  if var22 < 250
     incrementPrediction 4
   endif
 endif
@@ -60,32 +65,23 @@ if Equal OAnimFrame 0 && OFramesSinceShield < 20
   elif Equal OCurrAction 52
     trackOAction 14 3
   endif
-elif OCurrAction >= 36 && OCurrAction <= 52 && Equal OAnimFrame 0
-  var17 = TopNX - OTopNX
-  Abs var17
-  predictAverage var22 10 LevelValue
-  
-  var22 += 10
-  var23 = var22 + 20
-  if var17 < var22
-    trackOAction 11 1
-  elif var17 < var23
-    trackOAction 11 2
-  else
-    trackOAction 11 3
-  endif
-
+elif OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnimFrame 0
   RetrieveFullATKD var23 var23 var23 var17 var22 var23 var23 OCurrSubaction 1
-  Abs var17
-  Abs var22
-  if var17 < var22
-    var17 = var22
+  if var23 >= 0
+    Abs var17
+    Abs var22
+    if var17 < var22
+      var17 = var22
+    endif
+    GetAttribute var22 40; 1
+    var22 *= 5
+    var17 += var22
+        
+    trackOAction 10 var17
+    // RetrieveFullATKD var23 var23 var23 var23 var23 var17 var22 OCurrSubaction 1
+    // Goto getMax
+    // trackOAction 11 var17    
   endif
-  GetAttribute var22 40; 1
-  var22 *= 5
-  var17 += var22
-  var17 += 10
-  trackOAction 10 var17
 endif
 // O Tech Option
 if Equal OAnimFrame 10
@@ -116,13 +112,10 @@ endif
 // O Bait/Defend Option
 if var21 >= 7 && var21 < 11
   Goto baitDefendOption
-  XReciever
 elif Equal var21 13
   Goto baitDefendOption
-  XReciever
 elif Rnd < 0.2
   Goto baitDefendOption
-  XReciever
 endif
 if !(True)
   label baitDefendOption
@@ -130,32 +123,32 @@ if !(True)
   MOD var22 AnimFrame var22
   if var22 < 1
     var17 = 9
-    if Equal var21 13
+    if Equal var21 13 || Equal var21 13.1
       var17 = 7
     endif
     predictAverage var22 10 LevelValue
     var22 += 20
     // var17 = var22 + 15
-    if ODistLE var22
-      if 3 <= OCurrAction && OCurrAction <= 5 && Rnd < 0.65 && !(Equal var21 13)
+    if XDistLE var22
+      if 4 <= OCurrAction && OCurrAction <= 5 && Rnd < 0.65 && !(Equal var17 7)
         trackOAction 9 1
         if OAnimFrame >= 4
           // the target is running in a direction as a result of a bait
-          if !(Equal OPos ODirection) 
-            // the target is advancing, therefor undershoot
-            trackOAction 8 3
-          else
-            // the target is running away, therefor overshoot
+          if Equal OPos ODirection 
+            // the target is advancing, therefor overshoot
             trackOAction 8 2
+          else
+            // the target is running away, therefor undershoot
+            trackOAction 8 3
           endif
         endif
-      elif Rnd < 0.25 && OCurrAction <= 2 && !(Equal var21 13)
+      elif Rnd < 0.5 && OCurrAction <= 2 && !(Equal var17 7)
         // the target is roughly in-place, therefor neutral
         trackOAction 9 1
         trackOAction 8 1
-      elif OAttacking && Rnd < 0.5 && Equal var21 13
+      elif OAttacking && Rnd < 0.5 && Equal var17 7
         trackOAction var17 1
-      elif OAttacking && Rnd < 0.5 && !(Equal var21 13)
+      elif OAttacking && Rnd < 0.5 && !(Equal var17 7)
         trackOAction 9 2
       elif 26 <= OCurrAction && OCurrAction <= 28 && Rnd < 0.6
         trackOAction var17 3
@@ -170,10 +163,14 @@ if Equal CurrAction 124 || Equal CurrAction 125
   Stick -0.78
 elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
   CallI Unk1120
+elif CurrAction >= 61 && CurrAction <= 63
+  var22 = Rnd * 2 - 1
+  var23 = Rnd * 2 - 1
+  AbsStick var22 var23
 elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 elif !(CalledFrom LyingDown)
-  if Equal CurrAction 77
+  if CurrAction >= 74 && CurrAction <= 84 
     CallI LyingDown
   elif CurrAction >= 138 && CurrAction <= 141
     CallI LyingDown
@@ -195,18 +192,18 @@ endif
 if Equal OFramesHitlag 1 && OFramesHitstun > 0 && Equal HitboxConnected 0
   var22 = 10000
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 endif
 
   var22 = 20000
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 
 if !(True)
   label OnGotHitAdjustments
   var22 = 30000
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   Return
 endif
 
@@ -214,35 +211,51 @@ if Equal CurrAction 190
   Stick 1
 endif
 
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
+  var22 = 300
+  XGoto GetChrSpecific
+  if Equal var22 0 
     Return
   endif
 
-if !(CalledFrom RecoveryHub)
-  if Equal IsOnStage 0 && Equal PlayerNum OPlayerNum
+if !(CalledFrom RecoveryHub) && DangerEnabled && Equal IsOnStage 0
+  if Equal PlayerNum OPlayerNum
     CallI RecoveryHub
+  endif
+  var22 = 17
+  XGoto GetChrSpecific
+  //= XReciever
+var17 = var22
+  if Equal IsOnStage 0 && var21 < 16.7
+    var17 *= 0.5
+    GetYDistFloorOffset var22 var17 15 0
+    var17 *= -1
+    GetYDistFloorOffset var23 var17 15 0
+    if Equal var22 -1 && Equal var23 -1
+      CallI RecoveryHub
+    endif
+    var17 *= -2
   endif
   var22 = 18
   XGoto GetChrSpecific
-  XReciever
-  var22 = 17
-  XGoto GetChrSpecific
-  XReciever
-var17 = var22
+  //= XReciever
+
   var23 = var17 / var22
   var17 = var23
 
+  // X = direction to cliff
+  // Y = vertical height if cliff height = 0
+  //
+  // if char is above ledge, yVar is positive
+  // if below, yVar is negative
+  // <= means "lower than" and >= means "higher than"
+  //
+  // AbsStick X = to ledge
+  // AbsStick X * -1 = away from ledge
+  // 
+  // if left of ledge, xVar is positive
+  // if right, xVar is negative
   GetNearestCliff var22
   var22 = TopNX - var22
-  var22 *= -1
   var23 *= -1
   var23 += TopNY
 
@@ -250,29 +263,29 @@ var17 = var22
   var17 *= var22
   var22 = 18
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   var17 -= var22
   if var23 < var17 && TotalYSpeed < -0.2 && AnimFrame > 2 && Equal IsOnStage 0
     CallI RecoveryHub
   endif
-  DrawDebugRectOutline TopNX var17 3 3 255 0 0 221
-  if !(CalledFrom ExecuteAttack)
-    if var21 >= 16.7 && Equal OIsOnStage 0
-    elif !(Equal var21 15) && !(Equal var21 16.71) && Equal FramesHitstun 0  
-      if Equal IsOnStage 0
-        GetYDistFloorOffset var22 100 15 0
-        GetYDistFloorOffset var17 -100 15 0
-        if Equal var22 -1 && Equal var17 -1
-          CallI RecoveryHub
-        endif
-      elif Equal OIsOnStage 0 && var21 < 16.7
-        GetYDistFloorOffset var22 10 15 1
-        GetYDistFloorOffset var17 -10 15 1
-        if Equal var22 -1 && Equal var17 -1
-          var21 = 16.7
-          var15 = -1
-          CallI MainHub
-        endif
+  // var22 = OTopNY - TopNY
+  // var17 += var22
+  // if var23 < var17 && TotalYSpeed < -1 && AnimFrame > 2 && Equal IsOnStage 0
+  //   CallI RecoveryHub
+  // endif
+
+  // DrawDebugRectOutline TopNX var17 3 3 255 0 0 221
+endif
+if !(CalledFrom ExecuteAttack) && !(CalledFrom RecoveryHub)
+  if var21 >= 16.7 && Equal OIsOnStage 0
+  elif !(Equal var21 15) && !(Equal var21 16.71) && Equal FramesHitstun 0
+    if Equal OIsOnStage 0 && var21 < 16.7
+      GetYDistFloorOffset var22 10 15 1
+      GetYDistFloorOffset var17 -10 15 1
+      if Equal var22 -1 && Equal var17 -1
+        var21 = 16.7
+        var15 = -1
+        CallI MainHub
       endif
     endif
   endif
@@ -282,10 +295,10 @@ if Equal CurrAction 29 && !(CalledFrom Shield)
   CallI Shield
 endif
 
-if !(CalledFrom ExecuteAttack)
+if !(CalledFrom ExecuteAttack) && !(Equal var21 16.41)
   var22 = 40000
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 endif
 Return
 Return

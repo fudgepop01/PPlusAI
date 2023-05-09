@@ -2,17 +2,20 @@
 id 0x8103
 unk 0x0
 
-XReciever
+//= XReciever
 // because some things might rely on these being unset
 label reroll
-var14 = Rnd * 0
   GetNearestCliff var0
   var0 = TopNX - var0
   var0 *= -1
   var1 *= -1
   var1 += TopNY
 Abs var0
-  var4 = 0
+  if PrevAction >= 116 && PrevAction <= 123 
+    AND var4 var4 14
+  else
+    var4 = 0
+  endif
   var5 = Rnd
   var6 = Rnd
   var7 = Rnd
@@ -22,7 +25,7 @@ SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek begin
 
 
@@ -63,30 +66,52 @@ endif
   var1 *= -1
   var1 += TopNY
 
+var17 = 0
 if Equal CurrAction 16 || Equal CurrAction 282
+  var17 = 1
   Goto handleSFall
-  Return
 elif Equal CurrAction 276 || Equal CurrAction 281
+  var17 = 1
   Goto handleUSpecial
-  Return
 elif Equal CurrAction 274
+  var17 = 1
   Goto handleNSpecial
-  Return
 elif Equal CurrAction 275 || Equal CurrAction 279 || Equal CurrAction 280
+  var17 = 1
   Goto handleSSpecial
-  Return
 elif !(True)
+  var17 = 1
   Goto handleDSpecial
-  Return
 elif CurrAction >= 11 && CurrAction <= 13
   if YDistBackEdge < -10
     var21 = 0
     var20 = -1
     Call MainHub 
-  elif YSpeed > 0 || AnimFrame < 2
+  elif YSpeed > 0 || AnimFrame < 8
+    var17 = 1
     Goto handleJumpToStage
     Return
   endif
+endif
+
+if YDistFloor > -1 
+  if Equal AirGroundState 1 || Equal CurrAction 190
+    var21 = 0
+    var20 = -1
+    var14 = BBoundary
+    var13 = 0
+    Call MainHub
+  elif !(Equal var17 0)
+    ClearStick
+    var17 = TopNX * -1
+    AbsStick var17
+    Return
+  endif
+elif HasCurry && Equal HitboxConnected 1
+  var21 = 0
+  Call MainHub
+elif !(Equal var17 0)
+  Return
 endif
 
   var17 = 15
@@ -108,14 +133,6 @@ endif
     var2 = 0
   endif
 
-if YDistFloor > -1 || Equal AirGroundState 1
-  var21 = 0
-  var20 = -1
-  var14 = BBoundary
-  var13 = 0
-  Call MainHub
-endif
-
   GetNearestCliff var0
   EstXCoord var22 33
   var0 = var22 - var0
@@ -130,44 +147,58 @@ endif
   AbsStick var17
   var2 = var0
   Abs var2
-  var17 = TopNY - BBoundary
+  var1 -= TotalYSpeed
+  var1 += HurtboxSize
   if !(NoOneHanging) && !(Equal var16 1)
-    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
-    var1 -= 25
+    // LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
+    // 40 += 25
   endif
-  if YDistBackEdge > 22.19 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 22.19 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
-  var1 -= var14
-  if var6 <= 0.65 && YDistBackEdge > 40 && Equal var4 0
-    var4 = 1
+  
+  var22 = var0 + XSpeed * 30
+  Abs var22
+  var23 = YDistBackEdge + YSpeed * -30
+  AND var17 var4 1
+  if var6 <= 0.65 && var23 > 40 && var17 <= 0
+    OR var4 var4 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if var2 <= 80 && YDistBackEdge > 40 && Equal var4 0
-    var4 = 1
+  if var22 <= 80 && var23 > 40 && var17 <= 0
+    OR var4 var4 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif 
-  if Equal var4 1 || var5 <= 0.7 && NumJumps > 0
+  AND var17 var4 2
+  if var7 <= 0.4 && YDistBackEdge < 20 && var17 <= 0
+    OR var4 var4 2
+    Button B
+    ClearStick
+    Return
+  endif
+  var17 = TopNY - BBoundary
+  AND var22 var4 1
+  if var22 <= 0 || var5 <= 0.7 && NumJumps > 0
     if YDistBackEdge > 20.19 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > 86.19 || var17 < 18
+  elif var23 > 86.19 || var17 < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     else
-      var4 = 1
+      OR var4 var4 1
       Button B
       ClearStick
       AbsStick 0 (0.7)
@@ -178,7 +209,12 @@ endif
 Return
 
 label handleNSpecial
-
+  if AnimFrame > 2 && AnimFrame < 5
+    var22 = TopNX * -1
+    AbsStick var22
+  elif AnimFrame > 4
+    Stick 1
+  endif
 Return
 
 label handleSSpecial
@@ -198,25 +234,29 @@ label handleUSpecial
       var0 -= 2
     endif
   endif
+  if !(NoOneHanging) && !(Equal var16 1)
+    var1 -= 25
+    if var0 > 0
+      var0 += 15
+    else
+      var0 -= 15
+    endif
+  endif
+  var4 = var0
+  var3 = var1
+  if var4 < 10 && var3 < 10 && var3 > -10
+    Button B
+  endif
+  
   if !(Equal CurrAction 281)
-    if !(NoOneHanging) && !(Equal var16 1)
-      var1 -= 25
-      if var0 > 0
-        var0 += 15
-      else
-        var0 -= 15
-      endif
-    endif
-    var4 = var0
-    var3 = var1
-    if var4 < 10 && var3 < 0 && var3 > -10
-      Button B
-    endif
     Norm var17 var0 var1
     var0 /= var17
     var1 /= var17
     var0 *= -1
     var1 *= -1
+    if var1 < 0.3 && var1 > 0
+      var1 = 0.3
+    endif
     if 0.1 < var0 && var0 < 0.25
       AbsStick 0.3 var1
     elif -0.25 < var0 && var0 < -0.1

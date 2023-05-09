@@ -4,11 +4,12 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = -3
 
-#const cs_shortHopHeight = 8
-#const cs_djumpHeight = 25
+#const cs_shortHopHeight = 17.51
+#const cs_jumpHeight = 40.04
+#const cs_djumpHeight = 28.93
 #const cs_wavedashDist = 30
-#const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -60
+#const cs_recoveryDistX = 110
+#const cs_recoveryDistY = -70
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 4
@@ -42,6 +43,10 @@
 
 #const sspecial_subaction_check = !(Equal CurrSubaction hex(0x1D4)) && !(Equal CurrSubaction hex(0x1D5))
 #const sspecial_recovery_info = custom
+
+//=========================================
+// RECOVERY ACTIONS MOVED TO RECOVERY HUB
+//=========================================
 
 // jab123
 #const jab123_IASA = 16
@@ -183,20 +188,20 @@
 #const nspecial_IASA = 39
 #const nspecial_xOffset = 5
 #const nspecial_yOffset = 0
-#const nspecial_xRange = 20
+#const nspecial_xRange = 60
 #const nspecial_yRange = 8
 #const nspecial_hitFrame = 14
 #const nspecial_lastHitFrame = 30
-#const nspecial_damage_info = NSpecial|3|0|0|0
+#const nspecial_damage_info = NSpecial|-8|40|140|361
 
 #const nspecialair_IASA = 39
 #const nspecialair_xOffset = 5
 #const nspecialair_yOffset = 0
-#const nspecialair_xRange = 40
+#const nspecialair_xRange = 80
 #const nspecialair_yRange = 8
 #const nspecialair_hitFrame = 14
 #const nspecialair_lastHitFrame = 30
-#const nspecialair_damage_info = NSpecialAir|3|0|0|0
+#const nspecialair_damage_info = NSpecialAir|-8|40|140|361
 
 // upB
 #const uspecial_IASA = 9999.9999
@@ -228,23 +233,43 @@
 #const dspecialair_damage_info = DSpecialAir|0|0|0|0
 
 // sideB
-// #const sspecial_IASA = calc(12 + 4 + 41)
-// #const sspecial_xOffset = -4
-// #const sspecial_yOffset = 0
-// #const sspecial_xRange = 27
-// #const sspecial_yRange = 4
-// #const sspecial_hitFrame = 17
-// #const sspecial_lastHitFrame = 20
-// #const sspecial_damage_info = SSpecial|7|74|60|65
+#const sspecial_IASA = 57
+#const sspecial_xOffset = 3.492
+#const sspecial_yOffset = -4.601
+#const sspecial_xRange = 23.419
+#const sspecial_yRange = 7.542
+#const sspecial_hitFrame = 15
+#const sspecial_lastHitFrame = 37
+#const sspecial_damage_info = SSpecial|12|40|70|361
 
-// #const sspecialair_IASA = calc(12 + 4 + 41)
-// #const sspecialair_xOffset = -4
-// #const sspecialair_yOffset = 0
-// #const sspecialair_xRange = 27
-// #const sspecialair_yRange = 4
-// #const sspecialair_hitFrame = 17
-// #const sspecialair_lastHitFrame = 20
-// #const sspecialair_damage_info = SSpecialAir|7|72|38|270
+#const mv_sspecial_grab = 1
+#const sspecial_IASA = 57
+#const sspecial_xOffset = 5.420
+#const sspecial_yOffset = -5.200
+#const sspecial_xRange = 15.064
+#const sspecial_yRange = 8.200
+#const sspecial_hitFrame = 17
+#const sspecial_lastHitFrame = 30
+#const sspecial_damage_info = SSpecial|7|30|100|280
+
+#const sspecialair_IASA = 107
+#const sspecialair_xOffset = 3.492
+#const sspecialair_yOffset = -4.601
+#const sspecialair_xRange = 23.419
+#const sspecialair_yRange = 7.542
+#const sspecialair_hitFrame = 15
+#const sspecialair_lastHitFrame = 37
+#const sspecialair_damage_info = SSpecialAir|12|40|70|361
+
+#const mv_sspecialair_grab = 1
+#const sspecialair_IASA = 107
+#const sspecialair_xOffset = 5.420
+#const sspecialair_yOffset = -5.200
+#const sspecialair_xRange = 15.064
+#const sspecialair_yRange = 8.200
+#const sspecialair_hitFrame = 17
+#const sspecialair_lastHitFrame = 30
+#const sspecialair_damage_info = SSpecialAir|7|30|100|280
 
 // grab
 #const grab_IASA = 32

@@ -144,14 +144,14 @@
 #const dsmash_damage_info = DSmash|17|52|132|280
 
 // noochB
-#const nspecial_IASA = 44
-#const nspecial_xOffset = -17.53
-#const nspecial_yOffset = -0.63
-#const nspecial_xRange = 24.76
-#const nspecial_yRange = 10.45
-#const nspecial_hitFrame = 17
-#const nspecial_lastHitFrame = 21
-// #const nspecial_damage_info = NSpecial|10|30|80|361
+#const nspecialair_IASA = 8
+#const nspecialair_xOffset = 3.280
+#const nspecialair_yOffset = 0.830
+#const nspecialair_xRange = 50
+#const nspecialair_yRange = 22
+#const nspecialair_hitFrame = 8
+#const nspecialair_lastHitFrame = 50
+#const nspecialair_damage_info = NSpecialAir|-5|20|50|70
 
 // upB
 #const uspecial_IASA = 29

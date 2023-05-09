@@ -1,5 +1,5 @@
 #include <Subactions_common.h>
-#include <Fox.h>
+#include <Subactions_Stub.h>
 flag1=0x1CE
 flag2=0x24
 Attack11 unk=15,start=2,end=3,xmin=-0.27,xmax=14.06,ymin=5.44,ymax=12.89
@@ -22,11 +22,11 @@ AttackAirLw unk=0,start=5,end=24,xmin=-4.34,xmax=9.59,ymin=-2.33,ymax=11.83
 Catch unk=0,start=7,end=7,xmin=1.77,xmax=12.16,ymin=2.84,ymax=10.66
 CatchDash unk=0,start=10,end=12,xmin=5.00,xmax=21.00,ymin=2.00,ymax=11.00
 CatchTurn unk=0,start=8,end=10,xmin=-13.00,xmax=5.00,ymin=4.00,ymax=12.00
-DownAttackU unk=0,start=16,end=26,xmin=-22.00,xmax=20.00,ymin=-2.00,ymax=15.00
-DownAttackD unk=0,start=18,end=26,xmin=-21.00,xmax=20.00,ymin=0.00,ymax=15.00
+DownAttackU unk=0,start=17,end=26,xmin=-20.09,xmax=18.74,ymin=0.66,ymax=13.58
+DownAttackD unk=0,start=19,end=26,xmin=-19.19,xmax=12.78,ymin=-0.60,ymax=14.28
 SlipAttack unk=0,start=18,end=26,xmin=-15.00,xmax=15.00,ymin=1.00,ymax=8.00
-CliffAttackQuick unk=0,start=24,end=32,xmin=-2.00,xmax=36.00,ymin=14.00,ymax=31.00
-CliffAttackSlow unk=0,start=55,end=58,xmin=7.00,xmax=32.00,ymin=17.00,ymax=27.00
+CliffAttackQuick unk=54,start=25,end=32,xmin=-4.30,xmax=29.64,ymin=-4.19,ymax=13.30
+CliffAttackSlow unk=69,start=56,end=58,xmin=3.96,xmax=20.70,ymin=-0.69,ymax=8.69
 Swing1 unk=0,start=3,end=7,xmin=8.00,xmax=36.00,ymin=0.00,ymax=16.00
 Swing3 unk=0,start=8,end=11,xmin=2.00,xmax=36.00,ymin=0.00,ymax=20.00
 Swing4 unk=0,start=5,end=8,xmin=5.00,xmax=45.00,ymin=0.00,ymax=13.50
@@ -52,13 +52,13 @@ ItemScrew_1 unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-4.00,ymax=12.00
 ItemHammerWait unk=0,start=0,end=16,xmin=-15.00,xmax=19.00,ymin=0.00,ymax=26.00
 ItemHammerMove unk=0,start=0,end=16,xmin=-15.00,xmax=19.00,ymin=0.00,ymax=26.00
 ItemHammerAir unk=0,start=0,end=16,xmin=-15.00,xmax=19.00,ymin=0.00,ymax=26.00
-SpecialS unk=0,start=1,end=3,xmin=-4.00,xmax=34.00,ymin=0.00,ymax=8.00
-SpecialAirS unk=0,start=1,end=3,xmin=-4.00,xmax=34.00,ymin=0.00,ymax=8.00
-SpecialSEnd unk=0,start=0,end=3,xmin=-36.00,xmax=7.00,ymin=0.00,ymax=8.00
-SpecialAirSEnd unk=0,start=0,end=3,xmin=-36.00,xmax=7.00,ymin=0.00,ymax=8.00
-SpecialHiHold unk=0,start=19,end=32,xmin=-8.00,xmax=8.00,ymin=0.00,ymax=16.00
-SpecialHiHoldAir unk=0,start=19,end=32,xmin=-8.00,xmax=8.00,ymin=0.00,ymax=16.00
-SpecialHi unk=0,start=0,end=30,xmin=-5.00,xmax=5.00,ymin=4.00,ymax=12.00
+// dspecial
+subaction0x1E0 unk=0,start=1,end=1,xmin=-8.00,xmax=8.00,ymin=-1.50,ymax=14.50
+subaction0x1E4 unk=0,start=1,end=1,xmin=-8.00,xmax=8.00,ymin=-1.50,ymax=14.50
+// uspecial
+subaction0x1DA unk=0,start=20,end=32,xmin=-8.20,xmax=8.20,ymin=-0.70,ymax=15.70
+subaction0x1DB unk=0,start=20,end=32,xmin=-8.20,xmax=8.20,ymin=-0.70,ymax=15.70
+subaction0x1DC unk=0,start=1,end=30,xmin=-0.51,xmax=7.89,ymin=0.45,ymax=10.43
 // COUNTER RECOVERY INFO
 ACTIONx113 unk=RECOVERY_HORIZONTAL,start=23,end=10,xmin=85.00,xmax=0.00,ymin=0.00,ymax=0.00
 ACTIONx114 unk=RECOVERY_IDLE,start=19,end=40,xmin=0.00,xmax=0.00,ymin=0.00,ymax=0.00

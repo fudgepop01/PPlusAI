@@ -2,11 +2,11 @@
 id 0x8205
 unk 0x0
 
-XReciever
+//= XReciever
 // less perfect for lower levels
 label setup
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek setup
   var0 = LevelValue / 100
   var0 = 1 - var0
@@ -19,15 +19,9 @@ label setup
   endif
   if CurrAction >= 26 && CurrAction <= 29
   elif True
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
+  var22 = 300
+  XGoto GetChrSpecific
+  if Equal var22 0 
     Return
   endif
   endif  
@@ -36,7 +30,7 @@ label setup
   Return
 label jumpSquat
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek jumpSquat
   if Equal AirGroundState 2
     Seek 
@@ -45,7 +39,7 @@ label jumpSquat
   Return
 label landing
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Goto edgeCheck
   Seek landing
 
@@ -70,7 +64,7 @@ label landing
     elif Equal var16 5
   var22 = 16
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var17 = var22
       var22 = var13 - TopNX
       var17 = 1 / var17

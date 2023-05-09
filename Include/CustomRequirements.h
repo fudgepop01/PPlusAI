@@ -12,4 +12,11 @@ req CHANCE_MUL_GE : 0x1023 trait multiplier
 /// if the script listed was called anywhere in the stack
 req CalledFrom : 0x1024 AIID
 
+/// if the fighter has turbo/curry 
 req HasCurry : 0x1025
+
+/// if blastzone wrapping is enabled (volatile)
+req DangerEnabled : 0x1026
+
+/// if the current animation of the target has a throw release that should be teched
+req ShouldTechThrow : 0x1027

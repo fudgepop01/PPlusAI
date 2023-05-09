@@ -30,7 +30,16 @@
   AbsStick globTempVar
 #endsnippet
 
-#snippet JUMP_TO_STAGE
+#snippet CD_OLD
+  NEAREST_CLIFF(cliffDistX, cliffDistY)
+#endsnippet
+
+#snippet CD_NEW
+  DIST_TO_CLIFF(cliffDistX, cliffDistY)
+#endsnippet
+
+
+#snippet JUMP_TO_STAGE_OLD
   ClearStick
   if Equal isBelowStage 1
     globTempVar = nearCliffX * -1
@@ -44,22 +53,46 @@
   endif
 #endsnippet
 
-#snippet PRE_CONDITIONS
-  if !(NoOneHanging) && !(Equal isBelowStage 1)
-    LOGSTR_NL str("someone hanging")
-    nearCliffY -= 25
+#snippet JUMP_TO_STAGE_NEW
+  ClearStick
+  if Equal isBelowStage 1
+    AbsStick cliffDistX
+  elif cliffDistX > 6 || cliffDistX < -6
+    AbsStick cliffDistX
+  elif YDistBackEdge < cs_djumpHeight
+    globTempVar = cliffDistX * 3
+    AbsStick globTempVar
   endif
-  if YDistBackEdge > calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
+#endsnippet
+
+#snippet CLIFF_DIST_MACRO
+  {CD_OLD}
+#endsnippet
+#snippet JUMP_TO_STAGE
+  {JUMP_TO_STAGE_OLD}
+#endsnippet
+
+#snippet JUMP_TO_STAGE_BELOW
+
+#endsnippet
+
+#snippet PRE_CONDITIONS
+  cliffDistY -= TotalYSpeed
+  cliffDistY += HurtboxSize
+  if !(NoOneHanging) && !(Equal isBelowStage 1)
+    // LOGSTR_NL str("someone hanging")
+    // tolerence += 25
+  endif
+  if YDistBackEdge < calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
-  nearCliffY -= yRecoveryOffset
 #endsnippet
 
 #snippet DRAW_RADIUS
   #const parts = 32
-  GetNearestCliff nearCliffX
+  GetNearestCliff cliffDistX
   globTempVar = 0
   if !(True)
     label NC_draw
@@ -70,9 +103,9 @@
   SIN immediateTempVar immediateTempVar
   anotherTempVar *= UpBRadius
   immediateTempVar *= UpBRadius
-  anotherTempVar += nearCliffX
-  immediateTempVar += nearCliffY
-  DrawDebugLine nearCliffX nearCliffY anotherTempVar immediateTempVar color(0xFFFFFFDD)
+  anotherTempVar += cliffDistX
+  immediateTempVar += cliffDistY
+  DrawDebugLine cliffDistX cliffDistY anotherTempVar immediateTempVar color(0xFFFFFFDD)
   if globTempVar < parts
     SeekNoCommit NC_draw
   endif
@@ -88,5 +121,15 @@
   else
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
+  endif
+#endsnippet
+
+#snippet COMMON_RECOVERY_BASE_NEW
+  if Equal isBelowStage 0 && cliffDistY > 0
+    GetRndPointOnStage cliffDistX
+    globTempVar = cliffDistX - TopNX
+    AbsStick globTempVar
+  else
+    AbsStick cliffDistX
   endif
 #endsnippet

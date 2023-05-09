@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  generates various stats that fudge can then copy/paste
 // @author       fudgepop01
-// @match        https://rukaidata.com/P+/*
+// @match        localhost:8000/*
 // @icon         https://www.google.com/s2/favicons?domain=rukaidata.com
 // @grant        none
 // ==/UserScript==
@@ -304,7 +304,15 @@ const roundToDec = (num: number, decimals: number) => {
 
 const getSubactionName = () => {
   const loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
-  if (!loc.startsWith("Special")) return loc;
+  if (!loc.startsWith("Special")) {
+    switch(loc) {
+      case "AttackS3Hi": return "AttackS3Hi_AttackS3S_";
+      case "AttackS3Lw": return "AttackS3Lw_AttackS3S_";
+      case "AttackS4Hi": return "AttackS4Hi_AttackS4S_";
+      case "AttackS4Lw": return "AttackS4Lw_AttackS4S_";
+    }
+    return loc;
+  }
   let idxTablePos = 10;
   let subActPiece = "";
   while (idxTablePos > 0) {
@@ -318,6 +326,24 @@ const getSubactionName = () => {
   
   return "subaction0x" + subActPiece;
 }
+const getRawSubactionValue = () => {
+  let idxTablePos = 10;
+  let subActPiece = "";
+  while (idxTablePos > 0) {
+    let component = document.querySelector(`body > div > div > div > table > tbody > tr:nth-child(${idxTablePos}) > td:nth-child(2)`);
+    if (component != undefined) {
+      subActPiece = component.innerHTML.toString().substring(2).toUpperCase();
+      break;
+    }
+    idxTablePos -= 1;
+  }
+  
+  return subActPiece;
+}
+const getCharacterName = () => {
+  return location.pathname.substring(location.pathname.indexOf("Project+/") + 9, location.pathname.lastIndexOf("/subactions"));
+}
+
 const getNameFromPage = () => {
   const loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
   switch (loc) {
@@ -685,7 +711,13 @@ class DataCalculator {
         let name = selector.getName();
         const bbox = selector.getSelectedBBox();
         if (idx === 0) {
-          append(`${getSubactionName()} unk=${this.data.iasa || 0},start=${selector.getStartFrame()},end=${selector.getEndFrame()},xmin=${round(bbox.minX).toFixed(2)},xmax=${round(bbox.maxX).toFixed(2)},ymin=${round(bbox.minY).toFixed(2)},ymax=${round(bbox.maxY).toFixed(2)}`);
+          const subactionData = `${getSubactionName()} unk=${this.data.iasa || 0},start=${selector.getStartFrame()},end=${selector.getEndFrame()},xmin=${round(bbox.minX).toFixed(2)},xmax=${round(bbox.maxX).toFixed(2)},ymin=${round(bbox.minY).toFixed(2)},ymax=${round(bbox.maxY).toFixed(2)}`;
+          if (selector.getStartFrame() !== Infinity) {
+            const stored = JSON.parse(localStorage.getItem(`Rukai-${getCharacterName()}`) ?? "{}");
+            stored[getRawSubactionValue()] = subactionData;
+            localStorage.setItem(`Rukai-${getCharacterName()}`, JSON.stringify(stored));
+          }
+          append(subactionData);
           append("==========================");
           name = rootName.toLowerCase();
           append(`#const ${name}_IASA = ${this.data.iasa || (this.data.frames.length + 1)}`)
@@ -784,6 +816,7 @@ const styling = `
   if (location.pathname.includes("/subactions/")) {
     const subactionList = document.querySelector("body > div > div > nav.d-none.d-md-block.col-2.sidebar.sidebar-right");
     let specialsIDX = 0; 
+    let currCategoryIdx = 0;
     let currItem: Element;
     while ((currItem = subactionList.children.item(specialsIDX)) != null && currItem.innerHTML != "Specials") {
       specialsIDX ++;
@@ -792,9 +825,19 @@ const styling = `
     while ((currItem = subactionList.children.item(grabsIDX)) != null && currItem.innerHTML != "Grabs") {
       grabsIDX ++;
     }
-    
     subactionList.insertBefore(subactionList.children.item(specialsIDX), subactionList.children.item(grabsIDX + 2))
     subactionList.insertBefore(subactionList.children.item(specialsIDX + 1), subactionList.children.item(grabsIDX + 3))
+    
+    wloop: while ((currItem = subactionList.children.item(currCategoryIdx)) != null) {
+      if (currItem.nextElementSibling?.tagName == "UL") {
+        for (const child of Array.from(currItem.nextElementSibling?.children)) {
+          if (child.children[0].classList.contains("active")) break wloop;
+        }
+      }
+      currCategoryIdx ++;
+    }
+    subactionList.insertBefore(subactionList.children.item(currCategoryIdx), subactionList.children.item(0))
+    subactionList.insertBefore(subactionList.children.item(currCategoryIdx + 1), subactionList.children.item(1))
   }
 
   const style = document.createElement("style");
@@ -867,6 +910,14 @@ const styling = `
       sActData,
       document.querySelector("body > div > div > div")
     );
+    const collectedData = JSON.parse(localStorage.getItem(`Rukai-${getCharacterName()}`) ?? "{}");
+    const dataToSort = Object.entries(collectedData);
+    const sorted = dataToSort.sort((a, b) => (parseInt(a[0], 16) - parseInt(b[0], 16)));
+    let subactionList = "";
+    for (const [idx, item] of sorted) {
+      subactionList += item + "\n";
+    }
+    console.log(`ATKD:\n\n${subactionList}`);
   } else {
     // sActData = window["subaction_data"] as SubactionData;
   }

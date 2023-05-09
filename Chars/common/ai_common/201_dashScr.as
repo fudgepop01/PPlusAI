@@ -2,7 +2,7 @@
 id 0x8201
 unk 0x0
 
-XReciever
+//= XReciever
 label setup
 #let timeLimit = var0
 #let timePassed = var1
@@ -30,43 +30,36 @@ if Equal CurrAction hex(0x4) || Equal CurrAction hex(0x5)
 endif
 
 timeLimit = dashForceTurnFrame - dashDanceMinFrames
-timeLimit = Rnd * timeLimit + dashDanceMinFrames + 5
+timeLimit = Rnd * timeLimit + dashDanceMinFrames
 startOPos = OPos
+dashForceTurnFrame -= 1
 if Equal scriptVariant sv_dash_away_defense
   timeLimit += 8
 endif
 label execution
 XGoto PerFrameChecks
-XReciever
-// if !(Equal lastAttack -1) && !(Equal scriptVariant sv_dash_away) && !(Equal scriptVariant sv_dash_away_defense)
-//   XGoto SetAttackGoal
-//   XReciever
-//   XGoto CheckAttackWillHit
-//   XReciever
-// endif
+//= XReciever
 Seek execution
-if Equal CurrAction hex(0x1) || Equal CurrAction hex(0x7) || Equal CurrAction hex(0x6)
+if Equal CurrAction hex(0x1) || Equal CurrAction hex(0x6)
   ClearStick
   Return
 endif
 
-if XDistFrontEdge < 5 || XDistFrontEdge > -5
-  scriptVariant = sv_dash_toCenter
-elif XDistBackEdge > -25 && Equal Direction OPos && !(Equal scriptVariant sv_dash_through)
+if XDistBackEdge > -25 && Equal Direction OPos && !(Equal scriptVariant sv_dash_through)
   scriptVariant = sv_dash_towards
 endif
 
 globTempVar = OPos * 15
 GetYDistFloorOffset globTempVar globTempVar 10 1
 if globTempVar < 0 && !(Equal scriptVariant sv_dash_toCenter)
-  Call MainHub
+  scriptVariant = sv_dash_toCenter
 endif
 
-if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through) || Equal scriptVariant sv_dash_away_defense
+if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through)
   if Equal scriptVariant sv_dash_towards
     AbsStick OPos
-  elif Equal scriptVariant sv_dash_away || Equal scriptVariant sv_dash_away_defense
-    if XDistBackEdge > -10 || XDistFrontEdge < 4
+  elif Equal scriptVariant sv_dash_away || Equal scriptVariant sv_dash_away_defense || Equal scriptVariant sv_dash_outOfRange
+    if DistFrontEdge < 15
       scriptVariant = sv_dash_towards
       AbsStick OPos
       Return
@@ -74,7 +67,12 @@ if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through) || 
     immediateTempVar = OPos * -1
     AbsStick immediateTempVar
 
-    if Equal scriptVariant sv_dash_away_defense
+    if Equal scriptVariant sv_dash_outOfRange
+      predictAverage immediateTempVar man_OXHitDist LevelValue
+      if XDistLE immediateTempVar
+        Return
+      endif
+    elif Equal scriptVariant sv_dash_away_defense
       GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlagSafe)
       Seek execution
       if immediateTempVar >= 10

@@ -22,11 +22,11 @@ LandingAirLw unk=25,start=1,end=2,xmin=-10.16,xmax=10.16,ymin=-2.96,ymax=10.16
 Catch unk=0,start=7,end=7,xmin=-0.32,xmax=10.35,ymin=2.46,ymax=9.50
 CatchDash unk=0,start=9,end=9,xmin=9.74,xmax=22.04,ymin=2.46,ymax=9.50
 CatchTurn unk=0,start=10,end=10,xmin=-13.42,xmax=0.43,ymin=2.46,ymax=9.50
-DownAttackU unk=0,start=12,end=19,xmin=-22.00,xmax=19.00,ymin=0.00,ymax=12.00
-DownAttackD unk=0,start=16,end=24,xmin=-22.00,xmax=22.00,ymin=-1.00,ymax=12.00
-SlipAttack unk=0,start=18,end=32,xmin=-16.00,xmax=15.00,ymin=0.00,ymax=9.00
-CliffAttackQuick unk=0,start=21,end=32,xmin=3.00,xmax=22.00,ymin=6.00,ymax=25.00
-CliffAttackSlow unk=0,start=54,end=59,xmin=5.00,xmax=24.00,ymin=8.00,ymax=18.00
+DownAttackU unk=0,start=13,end=19,xmin=-16.83,xmax=16.83,ymin=-1.76,ymax=10.74
+DownAttackD unk=0,start=17,end=24,xmin=-13.13,xmax=13.13,ymin=-0.20,ymax=9.18
+CliffAttackQuick unk=0,start=22,end=24,xmin=2.05,xmax=18.46,ymin=-2.25,ymax=15.15
+CliffAttackSlow unk=0,start=54,end=59,xmin=2.08,xmax=15.12,ymin=-1.40,ymax=6.80
+SlipAttack unk=0,start=19,end=32,xmin=-15.00,xmax=10.00,ymin=1.00,ymax=9.00
 Swing1 unk=0,start=3,end=7,xmin=-3.00,xmax=31.00,ymin=-5.00,ymax=8.00
 Swing3 unk=0,start=8,end=11,xmin=-2.00,xmax=33.00,ymin=-5.00,ymax=9.00
 Swing4 unk=0,start=2,end=5,xmin=3.00,xmax=45.00,ymin=-5.00,ymax=17.00
@@ -52,7 +52,6 @@ ItemScrew_1 unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-3.00,ymax=13.00
 ItemHammerWait unk=0,start=0,end=16,xmin=-17.00,xmax=19.00,ymin=0.00,ymax=23.00
 ItemHammerMove unk=0,start=0,end=16,xmin=-17.00,xmax=19.00,ymin=0.00,ymax=23.00
 ItemHammerAir unk=0,start=0,end=16,xmin=-17.00,xmax=19.00,ymin=0.00,ymax=23.00
+subaction0x1D3 unk=0,start=5,end=40,xmin=-0.66,xmax=7.16,ymin=0.09,ymax=7.91
 subaction0x1DE unk=0,start=1,end=3,xmin=-11.72,xmax=11.72,ymin=-2.72,ymax=20.72
-// subaction467 unk=0,start=4,end=39,xmin=-2.00,xmax=9.00,ymin=-2.00,ymax=9.00
-// subaction478 unk=0,start=0,end=3,xmin=-15.00,xmax=15.00,ymin=-4.00,ymax=25.00
-// subaction480 unk=0,start=0,end=3,xmin=-15.00,xmax=15.00,ymin=-4.00,ymax=25.00
+subaction0x1E0 unk=0,start=1,end=3,xmin=-11.72,xmax=11.72,ymin=-2.72,ymax=20.72

@@ -2,25 +2,43 @@
 id 0x8103
 unk 0x0
 
-XReciever
+//= XReciever
 // because some things might rely on these being unset
 label reroll
-var14 = Rnd * 0
+  // X = direction to cliff
+  // Y = vertical height if cliff height = 0
+  //
+  // if char is above ledge, yVar is positive
+  // if below, yVar is negative
+  // <= means "lower than" and >= means "higher than"
+  //
+  // AbsStick X = to ledge
+  // AbsStick X * -1 = away from ledge
+  // 
+  // if left of ledge, xVar is positive
+  // if right, xVar is negative
   GetNearestCliff var0
   var0 = TopNX - var0
-  var0 *= -1
   var1 *= -1
   var1 += TopNY
 Abs var0
+  
+  var11 = 10
   var4 = 0
   var5 = Rnd
-  if var1 > 60 || var0 > 80
+  if var1 < 60 || var0 > 80
     var5 = 0
   endif
   var6 = Rnd
+  var9 = Rnd
   var7 = Rnd
   if var0 > 80
     var7 = 0
+  endif
+  var8 = Rnd
+  var10 = Rnd
+  if var0 > 30
+    var10 = 1
   endif
 label begin
 var21 = 3
@@ -28,7 +46,7 @@ SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek begin
 
 
@@ -63,36 +81,69 @@ if !(Equal var17 -1) || !(Equal var22 -1)
   var16 = 1
 endif
 
+  // X = direction to cliff
+  // Y = vertical height if cliff height = 0
+  //
+  // if char is above ledge, yVar is positive
+  // if below, yVar is negative
+  // <= means "lower than" and >= means "higher than"
+  //
+  // AbsStick X = to ledge
+  // AbsStick X * -1 = away from ledge
+  // 
+  // if left of ledge, xVar is positive
+  // if right, xVar is negative
   GetNearestCliff var0
   var0 = TopNX - var0
-  var0 *= -1
   var1 *= -1
   var1 += TopNY
 
+var17 = 0
 if Equal CurrAction 16
+  var17 = 1
   Goto handleSFall
-  Return
-elif Equal CurrAction 276
+elif Equal CurrAction 276 || Equal CurrAction 279 || Equal CurrAction 280
+  var17 = 1
   Goto handleUSpecial
-  Return
 elif Equal CurrAction 274
+  var17 = 1
   Goto handleNSpecial
-  Return
 elif Equal CurrAction 275
+  var17 = 1
   Goto handleSSpecial
-  Return
 elif Equal CurrAction 277
+  var17 = 1
   Goto handleDSpecial
-  Return
 elif CurrAction >= 11 && CurrAction <= 13
   if YDistBackEdge < -10
     var21 = 0
     var20 = -1
     Call MainHub 
-  elif YSpeed > 0 || AnimFrame < 2
+  elif YSpeed > 0 || AnimFrame < 8
+    var17 = 1
     Goto handleJumpToStage
     Return
   endif
+endif
+
+if YDistFloor > -1 
+  if Equal AirGroundState 1 || Equal CurrAction 190
+    var21 = 0
+    var20 = -1
+    var14 = BBoundary
+    var13 = 0
+    Call MainHub
+  elif !(Equal var17 0)
+    ClearStick
+    var17 = TopNX * -1
+    AbsStick var17
+    Return
+  endif
+elif HasCurry && Equal HitboxConnected 1
+  var21 = 0
+  Call MainHub
+elif !(Equal var17 0)
+  Return
 endif
 
   var17 = 15
@@ -114,76 +165,98 @@ endif
     var2 = 0
   endif
 
-if YDistFloor > -1 || Equal AirGroundState 1
-  var21 = 0
-  var20 = -1
-  var14 = BBoundary
-  var13 = 0
-  Call MainHub
-endif
-
+  // X = direction to cliff
+  // Y = vertical height if cliff height = 0
+  //
+  // if char is above ledge, yVar is positive
+  // if below, yVar is negative
+  // <= means "lower than" and >= means "higher than"
+  //
+  // AbsStick X = to ledge
+  // AbsStick X * -1 = away from ledge
+  // 
+  // if left of ledge, xVar is positive
+  // if right, xVar is negative
   GetNearestCliff var0
   var0 = TopNX - var0
-  var0 *= -1
   var1 *= -1
   var1 += TopNY
-  Norm var3 var0 var1
-  Abs var3
+  var22 = Direction * var0
+  if Equal var16 0 && var22 > 0
+    if var6 < 0.85
+      var22 = 0.7 - var9
+      var22 /= 0.7
+      var22 *= 15
+      var11 += var22
+    endif
+    if var9 < 0.7
+      var22 = 0.7 - var9
+      var22 /= 0.7
+      var22 *= 30
+      var11 += var22
+    endif
+  endif
   
   // drift towards goal
-  var17 = var0 * -1
   ClearStick
-  AbsStick var17
+  AbsStick var0
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
+  var1 -= TotalYSpeed
+  var1 += HurtboxSize
   if !(NoOneHanging) && !(Equal var16 1)
-    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
-    var1 -= 25
+    // LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
+    // var11 += 25
   endif
-  if YDistBackEdge > 39.68 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 39.68 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
-  var1 -= var14
-  if var7 <= 0.75 && YDistBackEdge > -4 && YDistBackEdge < 4 && var2 <= 80
-    Button B
-    ClearStick
-    Stick 1
-    Return
+  Norm var3 var0 var1
+  Abs var3
+  if var7 <= 0.7 && var1 > -4 && var1 < 11 && var2 <= 80
+Button B
+ClearStick
+Stick 1
+Return
   endif
-  if var6 <= 0.15 && var3 < 60 && YDistBackEdge < 20 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
+  if var6 <= 0.85 && var3 < 60 && var1 > -20 && Equal var4 0
+var4 = 1
+Button B
+ClearStick
+AbsStick 0 (0.7)
+Return
   endif
-  if var3 > 54 && var3 < 66 && Equal var4 0
-    var4 = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
+  var22 = 60 - var11
+  if var3 > var22 && var3 < 60 && Equal var4 0
+var4 = 1
+Button B
+ClearStick
+AbsStick 0 (0.7)
+Return
   endif
-  if Equal var4 1 || var5 <= 0.3 && NumJumps > 0
-    if YDistBackEdge > 37.68 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
+  if var17 < 18 && TotalYSpeed < -0.1
+    var17 = -1
+  endif
+  if Equal var4 1 || var5 <= 0.5 && NumJumps > 0
+    if var1 < -37.68 && Rnd < 0.5
+Button X
+Goto handleJumpToStage
+Return
     endif
-  elif YDistBackEdge > 83.68 || var17 < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
+  elif var1 < 3.6799999999999997 || Equal var17 -1
+    if NumJumps > 0
+Button X
+Goto handleJumpToStage
+Return
     else
-      var4 = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
+var4 = 1
+Button B
+ClearStick
+AbsStick 0 (0.7)
+Return
     endif
   endif
 
@@ -195,16 +268,22 @@ Return
 
 label handleSSpecial
   if AnimFrame > 2 && AnimFrame < 5
-    var22 = TopNX * -1
-    AbsStick var22
+    AbsStick var0
   else
-    Stick 1
+    AbsStick var0
+    if var8 <= 0.7 && ActionTimer >= 14
+      var22 = Direction * 36
+      GetYDistFloorOffset var22 var22 5 0
+      if var22 > -1
+        Button B
+      endif
+    endif
   endif
 Return
 
 label handleUSpecial
   if Equal var16 1
-    if var0 > TopNX
+    if var0 < TopNX
       var0 += 2
     else
       var0 -= 2
@@ -213,19 +292,20 @@ label handleUSpecial
   if !(Equal CurrSubaction 479)
     if !(NoOneHanging) && !(Equal var16 1)
       var1 -= 25
-      if var0 > 0
+      if var0 < 0
         var0 += 15
       else
         var0 -= 15
       endif
     endif
     var4 = var0
-    var3 = var1
     Norm var17 var0 var1
     var0 /= var17
     var1 /= var17
-    var0 *= -1
     var1 *= -1
+    if var1 < 0.3 && var1 > 0
+      var1 = 0.3
+    endif
     if 0.1 < var0 && var0 < 0.25
       AbsStick 0.3 var1
     elif -0.25 < var0 && var0 < -0.1
@@ -234,8 +314,7 @@ label handleUSpecial
       AbsStick var0 var1
     endif
   else
-    var17 = TopNX * -1
-    AbsStick var17
+    AbsStick var0
   endif
 Return
 
@@ -252,13 +331,11 @@ Return
 label handleJumpToStage
   ClearStick
   if Equal var16 1
-    var17 = var0 * -1
-    AbsStick var17
+    AbsStick var0
   elif var0 > 6 || var0 < -6
-    var17 = var0 * -1
-    AbsStick var17
+    AbsStick var0
   elif YDistBackEdge < 43.68
-    var17 = var0 * -3
+    var17 = var0 * 3
     AbsStick var17
   endif
 Return

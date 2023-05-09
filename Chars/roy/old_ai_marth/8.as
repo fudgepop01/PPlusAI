@@ -1,0 +1,62 @@
+#include <Definition_AIMain.h>
+//TrueID=0x8
+id 0x8008
+
+//Set Unknown
+unk 0x20000
+
+//Strings
+
+if !(InAir) && Idling
+    Seek
+else
+    Finish
+endif
+Return
+if Back
+    if FrameGE 0 && !(FrameGE 2)
+        Stick 0.3
+    endif
+else
+    Seek
+endif
+Return
+//____________________
+label
+if XDistLE 20
+    Seek
+else
+    AbsStick OPos
+endif
+Return
+//____________________
+label
+if FrameGE 0 && !(FrameGE 1)
+    Stick 0 1
+endif
+if FrameGE 5 && !(FrameGE 6)
+    Stick (-0.5) (-1)
+    Button R
+endif
+if FrameGE 15
+    Seek
+endif
+Return
+//____________________
+label
+if !(DistFrontEdge <= 25)
+    Stick 0.5
+else
+    Seek
+endif
+Return
+//____________________
+label
+if FrameGE 0 && !(FrameGE 1)
+    Stick 0.5 (-0.5)
+    Button A
+endif
+if FrameGE 10
+    Finish
+endif
+Return

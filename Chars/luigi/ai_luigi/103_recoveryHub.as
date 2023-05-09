@@ -10,17 +10,26 @@
   #const downBChance = 0.8
   #const highSideBChance = 0.6
   #const earlySideBChance = 0.8
-  #let hasTriedToUpB = var4
+  #let hasUsedMove = var4
   #let jumpValue = var5
   #let highUpBValue = var6
   #let sideBValue = var7
   #let downBValue = var8
   #let highSideBValue = var9
   #let earlySideBValue = var10
-  hasTriedToUpB = 0
+  if PrevAction >= hex(0x74) && PrevAction <= hex(0x7B) 
+    AND hasUsedMove hasUsedMove bf_USpecial_OFF
+  else
+    hasUsedMove = 0
+  endif
   jumpValue = Rnd
   sideBValue = Rnd
   downBValue = Rnd
+  if cliffDistY < UpBYDist || cliffDistX > UpBXDist
+    jumpValue = 0
+    sideBValue = 0
+    downBValue = 0
+  endif
   highSideBValue = Rnd
   earlySideBValue = Rnd
 #endsnippet
@@ -51,34 +60,37 @@
   {PRE_CONDITIONS}
   immediateTempVar = Direction * -1 * 5
   GetYDistFloorOffset immediateTempVar immediateTempVar 80 0
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
-    hasTriedToUpB = 1
+  AND anotherTempVar hasUsedMove bf_USpecial
+  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal anotherTempVar 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
+    OR hasUsedMove hasUsedMove bf_USpecial
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
   
-  if YDistBackEdge < -20 && absNCX > 15 && earlySideBValue < earlySideBChance
+  if YDistBackEdge < 20 && absNCX > 30 && earlySideBValue < earlySideBChance
     Button B
     ClearStick
     Stick 1 0
     Return
   endif
-  if YDistBackEdge > -40 && YDistBackEdge < -10 && absNCX > 15 && sideBValue < sideBChance
+  if YDistBackEdge < 80 && YDistBackEdge > 10 && absNCX > 30 && sideBValue < sideBChance
     Button B
     ClearStick
     Stick 1 0
     Return
   endif
 
-  if YDistBackEdge > -40 && YDistBackEdge < -10 && downBValue < downBChance 
+  AND anotherTempVar hasUsedMove bf_DSpecial
+  if YDistBackEdge > 10 && downBValue < downBChance && Equal anotherTempVar 0
+    OR hasUsedMove hasUsedMove bf_DSpecial
     Button B
     ClearStick
     Stick 0 (-0.7)
     Return
   endif
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+  if Equal hasUsedMove 1 || jumpValue <= jumpChance && NumJumps > 0
     immediateTempVar = calc(cs_djumpHeight - 6)
     if !(NoOneHanging)
       immediateTempVar -= 20
@@ -96,7 +108,7 @@
       Goto handleJumpToStage
       Return
     else
-      hasTriedToUpB = 1
+      hasUsedMove = 1
       Button B
       ClearStick
       AbsStick 0 (0.7)

@@ -11,7 +11,7 @@
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 6
-#const cs_recoveryDistX = 70
+#const cs_recoveryDistX = 90
 #const cs_recoveryDistY = -60
 
 #const pt_aggression = 1.25
@@ -24,6 +24,19 @@
 #const pt_jumpiness = 0.18
 #const pt_platChance = 0.25
 #const pt_wall_chance = 0.6
+
+// #const pt_aggression = 8.00
+// #const pt_bait_dashAwayChance = 0.35
+// #const pt_bait_wdashAwayChance = 0.65
+// #const pt_baitChance = 0.00
+// #const pt_braveChance = 8.00
+// #const pt_circleCampChance = 0.00
+// #const pt_djumpiness = 0.04
+// #const pt_jumpiness = 0.18
+// #const pt_platChance = 0.25
+// #const pt_wall_chance = 0.00
+
+
 
 
 // the following is the data that I give the AI that allows it to determine
@@ -44,6 +57,10 @@
 
 #const sspecial_subaction_check = !(Equal CurrSubaction hex(0x1D4)) && !(Equal CurrSubaction hex(0x1D5))
 #const sspecial_recovery_info = custom
+
+//=========================================
+// RECOVERY ACTIONS MOVED TO RECOVERY HUB
+//=========================================
 
 // jab123
 #const jab123_IASA = 15
@@ -144,14 +161,14 @@
 #const dsmash_damage_info = DSmash|16|20|70|25
 
 // noochB
-#const nspecial_IASA = 40
+#const nspecial_IASA = 60
 #const nspecial_xOffset = 5
 #const nspecial_yOffset = -2
 #const nspecial_xRange = 200
 #const nspecial_yRange = 2
 #const nspecial_hitFrame = 20
 #const nspecial_lastHitFrame = 30
-#const nspecial_damage_info = NSpecial|0|0|0|0
+#const nspecial_damage_info = NSpecial|-3|w5|100|361
 
 #const nspecialair_IASA = 8
 #const nspecialair_xOffset = 5
@@ -160,7 +177,7 @@
 #const nspecialair_yRange = 2
 #const nspecialair_hitFrame = 13
 #const nspecialair_lastHitFrame = 30
-#const nspecialair_damage_info = NSpecialAir|0|0|0|0
+#const nspecialair_damage_info = NSpecialAir|-3|w5|100|361
 
 
 // upB
@@ -171,7 +188,7 @@
 #const uspecial_yRange = 8
 #const uspecial_hitFrame = 44
 #const uspecial_lastHitFrame = 66
-// #const uspecial_damage_info = USpecial|16|80|60|80
+#const uspecial_damage_info = USpecial|16|80|60|80
 
 // downB
 #const dspecial_IASA = 5
@@ -193,23 +210,23 @@
 #const dspecialair_damage_info = DSpecialAir|8|110|50|84
 
 // sideB
-#const sspecial_IASA = calc(16 + 4 + 41)
+#const sspecial_IASA = 61
 #const sspecial_xOffset = -4
 #const sspecial_yOffset = 0
 #const sspecial_xRange = 27
 #const sspecial_yRange = 4
 #const sspecial_hitFrame = 17
 #const sspecial_lastHitFrame = 20
-// #const sspecial_damage_info = SSpecial|7|74|60|65
+#const sspecial_damage_info = SSpecial|7|74|60|65
 
-#const sspecialair_IASA = calc(16 + 4 + 41)
+#const sspecialair_IASA = 91
 #const sspecialair_xOffset = -4
 #const sspecialair_yOffset = 0
 #const sspecialair_xRange = 27
 #const sspecialair_yRange = 4
 #const sspecialair_hitFrame = 17
 #const sspecialair_lastHitFrame = 20
-// #const sspecialair_damage_info = SSpecialAir|7|72|38|270
+#const sspecialair_damage_info = SSpecialAir|7|72|38|270
 
 // grab
 #const grab_IASA = 32

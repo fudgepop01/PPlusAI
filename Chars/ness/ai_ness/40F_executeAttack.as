@@ -63,7 +63,7 @@
     timer = 20
     label exec_uspecial
     XGoto PerFrameChecks
-    XReciever
+    //= XReciever
     Seek exec_uspecial
 
     #let targetPosX = var3

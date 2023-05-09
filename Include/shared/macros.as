@@ -1,13 +1,7 @@
 #macro ACTIONABLE_ON_GROUND()
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif Equal CurrAction hex(0x16) 
-    if Equal PrevAction hex(0x21)
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= hex(0x18) && !(Equal CurrAction hex(0x49)) && !(Equal CurrAction hex(0x67)) && !(Equal CurrAction hex(0x6C))
+  chr_trait_select = chr_chk_actionableOnGround
+  XGoto GetChrSpecific
+  if Equal chr_trait_return 0 
     Return
   endif
 #endmacro
@@ -15,7 +9,7 @@
 #macro GET_CHAR_TRAIT_SEEK(targetVar, targetTrait, seeker)
   chr_trait_select = {targetTrait}
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
   Seek {seeker}
 #endmacro
@@ -23,12 +17,70 @@
 #macro GET_CHAR_TRAIT(targetVar, targetTrait)
   chr_trait_select = {targetTrait}
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
+#endmacro
+
+#macro IF_AERIAL_ATTACK(targetVar)
+  #let isAerialAttack = {targetVar}
+  GET_CHAR_TRAIT(isAerialAttack, chr_chk_isAerialAttack)
+  if Equal isAerialAttack 1
+#endmacro
+
+#macro O_RECOVERY_POSITION(targetXVar, targetYVar, framesAhead)
+  STACK_PUSH var0 0
+  STACK_PUSH var1 0
+  STACK_PUSH var2 0
+  STACK_PUSH var3 0
+  STACK_PUSH var4 0
+  STACK_PUSH var5 0
+  STACK_PUSH var6 0
+
+  $pushVarAsValue({targetYVar})
+  $pushVarAsValue({targetXVar})
+  STACK_PUSH {framesAhead} 0
+  chr_trait_select = chr_calc_ORecoverPos
+  XGoto GetChrSpecific
+
+  var6 = STACK_POP
+  var5 = STACK_POP
+  var4 = STACK_POP
+  var3 = STACK_POP
+  var2 = STACK_POP
+  var1 = STACK_POP
+  var0 = STACK_POP
+#endmacro
+
+#macro DIST_TO_CLIFF(xVar, yVar)
+  // X = direction to cliff
+  // Y = vertical height if cliff height = 0
+  //
+  // if char is above ledge, yVar is positive
+  // if below, yVar is negative
+  // <= means "lower than" and >= means "higher than"
+  //
+  // AbsStick X = to ledge
+  // AbsStick X * -1 = away from ledge
+  // 
+  // if left of ledge, xVar is positive
+  // if right, xVar is negative
+  GetNearestCliff {xVar}
+  {xVar} = TopNX - {xVar}
+  {yVar} *= -1
+  {yVar} += TopNY
+#endmacro
+
+#macro NEAREST_CLIFF(xVar, yVar)
+  GetNearestCliff {xVar}
+  {xVar} = TopNX - {xVar}
+  {xVar} *= -1
+  {yVar} *= -1
+  {yVar} += TopNY
 #endmacro
 
 #macro GET_MOVE_DATA(angle, xOffset, yOffset, xRange, yRange, hitFrame, duration, IASA, damage, isWeightDependent, baseKnockback, knockbackGrowth)
   chr_trait_select = chr_cs_moveData
+  $pushVarAsValue({angle})
   $pushVarAsValue({knockbackGrowth})
   $pushVarAsValue({baseKnockback})
   $pushVarAsValue({isWeightDependent})
@@ -40,16 +92,15 @@
   $pushVarAsValue({xRange})
   $pushVarAsValue({yOffset})
   $pushVarAsValue({xOffset})
-  $pushVarAsValue({angle})
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 #endmacro
 
 
 #macro CALL_EVENT(targetEvent)
   chr_trait_select = {targetEvent}
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 #endmacro
 
 #macro CALC_ENDLAG(targetVar)
@@ -75,38 +126,39 @@
     {targetVar} = immediateTempVar - OEndFrame
     {targetVar} *= 1.25
     {targetVar} += globTempVar + anotherTempVar
-    {targetVar} += imperfection
     
   elif Equal OCurrAction hex(0x18)
     {targetVar} = OEndFrame - OAnimFrame
     {targetVar} *= 0.65
-    {targetVar} += imperfection
-  elif Equal OCurrAction hex(0x21) && OYDistBackEdge < -15
+  elif OCurrAction >= hex(0x1E) && OCurrAction <= hex(0x20)
+    {targetVar} = OEndFrame - OAnimFrame
+  elif Equal OCurrAction hex(0x21) && OYDistFloor > 15
     {targetVar} = 35
-    {targetVar} += imperfection
-  elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B) || Equal OCurrAction hex(0x10)
+  elif Equal OCurrAction hex(0x10) && OYDistFloor > 0
+    {targetVar} = OYDistFloor * 0.5
+  elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B) || Equal OCurrAction hex(0x1C)
     GetAttribute immediateTempVar attr_jumpSquatFrames 1
     {targetVar} = 10 + immediateTempVar
-    {targetVar} += imperfection
   elif Equal OCurrAction hex(0x1D)
     GetRaBasic globTempVar hex(0x5) 1
     {targetVar} = globTempVar + 15
-    {targetVar} += imperfection
-  elif OAttacking 
+  elif OAttackCond
     if Equal immediateTempVar 0
       immediateTempVar = OEndFrame
     endif 
     {targetVar} = immediateTempVar - OAnimFrame
-    {targetVar} += imperfection
   elif OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
     {targetVar} = OEndFrame - OAnimFrame
-    {targetVar} += imperfection
+  elif OCurrAction >= hex(0x77) && OCurrAction <= hex(0x78)
+    {targetVar} = OEndFrame - OAnimFrame
   elif OFramesHitstun > 0
     if Equal OAirGroundState 1
       {targetVar} = 8
     else
       {targetVar} = OFramesHitstun + OFramesHitlag
     endif
+  endif
+  if {targetVar} > -1
     {targetVar} += imperfection
   endif
 #endmacro
@@ -1353,14 +1405,6 @@
   DrawDebugRectOutline TopNX TopNY globTempVar globTempVar color(0xFF000099)
 #endmacro
 
-#macro NEAREST_CLIFF(xVar, yVar)
-  GetNearestCliff {xVar}
-  {xVar} = TopNX - {xVar}
-  {xVar} *= -1
-  {yVar} *= -1
-  {yVar} += TopNY
-#endmacro
-
 #macro TIMED_NEAREST_CLIFF(xVar, yVar, time)
   GetNearestCliff {xVar}
   EstXCoord immediateTempVar {time}
@@ -2073,4 +2117,81 @@ endif
     DrawDebugLine OTopNX OTopNY colX colY 0 intensity intensity 254
   endif
   Return
+#endmacro
+
+#macro LUC_SHIELD_PRESSURE()
+  #const shieldAct = hex(0x1B)
+  #const shieldStunAct = hex(0x1D)
+
+  #let hasHitShield = var0
+
+  #const LUC_SFALL_ACTIONS = Equal OCurrAction hex(0x10) || Equal OCurrAction hex(0x11c)
+  #const LUC_NSPECIAL_ACTIONS = Equal OCurrAction hex(0x112) || Equal OCurrAction hex(0x117) || Equal OCurrAction hex(0x118) || Equal OCurrAction hex(0x119)
+  #const LUC_SSPECIAL_ACTIONS = Equal OCurrAction hex(0x113) || Equal OCurrSubaction hex(0x66)
+  #const LUC_USPECIAL_ACTIONS = Equal OCurrAction hex(0x114) || Equal OCurrAction hex(0x11b)
+  #const LUC_DSPECIAL_ACTIONS = Equal OCurrAction hex(0x115)
+
+  label shieldLoop
+  if Equal AirGroundState 1
+    Button R
+    if Equal CurrAction shieldStunAct && ShieldStunRemaining <= 1
+      if Equal OCurrSubaction Attack12 // jab
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackDash // DA
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrAction hex(0x27) // ftilt
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackHi3 // utilt
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackLw3 // dtilt
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackS4S || Equal OCurrSubaction AttackS4Start
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackHi4 || Equal OCurrSubaction AttackHi4Start
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackLw4 || Equal OCurrSubaction AttackLw4Start
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackAirN
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackAirHi
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackAirLw
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackAirF
+        AbsStick OPos
+        hasHitShield = 0
+      elif Equal OCurrSubaction AttackAirB
+        AbsStick OPos
+        hasHitShield = 0
+      elif LUC_NSPECIAL_ACTIONS
+        AbsStick OPos
+        hasHitShield = 0
+      elif LUC_SSPECIAL_ACTIONS
+        AbsStick OPos
+        hasHitShield = 0
+      elif LUC_USPECIAL_ACTIONS
+        AbsStick OPos
+        hasHitShield = 0
+      elif LUC_DSPECIAL_ACTIONS
+        AbsStick OPos
+        hasHitShield = 0
+      endif
+    endif
+  endif
+  if Equal YDistFloor -1
+    CallI RecoveryHub
+  endif
+  Return
+
 #endmacro

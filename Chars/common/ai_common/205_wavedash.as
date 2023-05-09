@@ -2,11 +2,11 @@
 id 0x8205
 unk 0x0
 
-XReciever
+//= XReciever
 // less perfect for lower levels
 label setup
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek setup
   #let airTime = var0
   airTime = LevelValue / 100
@@ -27,7 +27,7 @@ label setup
   Return
 label jumpSquat
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek jumpSquat
   if Equal AirGroundState 2
     Seek 
@@ -36,7 +36,7 @@ label jumpSquat
   Return
 label landing
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Goto edgeCheck
   Seek landing
 

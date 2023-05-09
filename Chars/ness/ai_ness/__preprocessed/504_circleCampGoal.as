@@ -2,7 +2,7 @@
 id 0x8504
 unk 0x0
 
-XReciever
+//= XReciever
 
 
 var17 = -1
@@ -25,7 +25,7 @@ endif
 
 if Equal var17 -1
   XGoto RandomizeGoal
-  XReciever
+  //= XReciever
   DynamicDiceClear 0
   Return
 endif
@@ -97,12 +97,15 @@ elif Equal var23 6
   var14 = 30 - var22
 else
   XGoto RandomizeGoal
-  XReciever
+  //= XReciever
   DynamicDiceClear 0
   Return
 endif
 
-var23 = Rnd * 20 - 10
+var23 = Rnd * 20 - 2
+if var13 > 0
+  var23 *= -1
+endif
 var13 += var23
 DynamicDiceClear 0
 

@@ -2,7 +2,7 @@
 id 0x8207
 unk 0x0
 
-XReciever
+//= XReciever
 NoRepeat
 label setup
 #let xGoal = var0
@@ -55,7 +55,7 @@ else
 endif
 label solidNav
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek solidNav
 globTempVar = midGoal - TopNX
 immediateTempVar = globTempVar
@@ -71,13 +71,19 @@ DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880099)
 MOD immediateTempVar AnimFrame 3
 if Equal AirGroundState 1 && immediateTempVar <= 1
   ACTIONABLE_ON_GROUND
+  label ground_jump
   Button X
   ClearStick
   globTempVar = xGoal - TopNX
   globTempVar *= 0.1
   AbsStick globTempVar
+  if Equal AirGroundState 2
+    Seek adrift
+    Jump
+  endif
   Return
 elif Equal AirGroundState 2
+  label air_jump
   if !(Equal PrevAction hex(0xA))
     Button X
     immediateTempVar = xGoal - TopNX
@@ -89,11 +95,13 @@ endif
 
 label adrift
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek adrift
 DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880088)
-
 if TopNY > yGoal || YSpeed < -0.1 || !(Equal AirGroundState 2)
+  if currGoal >= cg_attack
+    skipMainInit = mainInitSkip
+  endif
   CallI MainHub
 endif
 immediateTempVar = xGoal - TopNX + XSpeed * 11

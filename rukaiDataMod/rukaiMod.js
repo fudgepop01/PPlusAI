@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  generates various stats that fudge can then copy/paste
 // @author       fudgepop01
-// @match        https://rukaidata.com/P+/*
+// @match        localhost:8000/*
 // @icon         https://www.google.com/s2/favicons?domain=rukaidata.com
 // @grant        none
 // ==/UserScript==
@@ -61,12 +61,19 @@ var roundToDec = function (num, decimals) {
 };
 var getSubactionName = function () {
     var loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
-    if (!loc.startsWith("Special"))
+    if (!loc.startsWith("Special")) {
+        switch (loc) {
+            case "AttackS3Hi": return "AttackS3Hi_AttackS3S_";
+            case "AttackS3Lw": return "AttackS3Lw_AttackS3S_";
+            case "AttackS4Hi": return "AttackS4Hi_AttackS4S_";
+            case "AttackS4Lw": return "AttackS4Lw_AttackS4S_";
+        }
         return loc;
+    }
     var idxTablePos = 10;
     var subActPiece = "";
     while (idxTablePos > 0) {
-        var component = document.querySelector("body > div > div > div > table > tbody > tr:nth-child(".concat(idxTablePos, ") > td:nth-child(2)"));
+        var component = document.querySelector("body > div > div > div > table > tbody > tr:nth-child(" + idxTablePos + ") > td:nth-child(2)");
         if (component != undefined) {
             subActPiece = component.innerHTML.toString().substring(2).toUpperCase();
             break;
@@ -74,6 +81,22 @@ var getSubactionName = function () {
         idxTablePos -= 1;
     }
     return "subaction0x" + subActPiece;
+};
+var getRawSubactionValue = function () {
+    var idxTablePos = 10;
+    var subActPiece = "";
+    while (idxTablePos > 0) {
+        var component = document.querySelector("body > div > div > div > table > tbody > tr:nth-child(" + idxTablePos + ") > td:nth-child(2)");
+        if (component != undefined) {
+            subActPiece = component.innerHTML.toString().substring(2).toUpperCase();
+            break;
+        }
+        idxTablePos -= 1;
+    }
+    return subActPiece;
+};
+var getCharacterName = function () {
+    return location.pathname.substring(location.pathname.indexOf("Project+/") + 9, location.pathname.lastIndexOf("/subactions"));
 };
 var getNameFromPage = function () {
     var loc = location.pathname.substring(location.pathname.lastIndexOf("/") + 1, location.pathname.lastIndexOf("."));
@@ -147,7 +170,7 @@ var HitboxSelector = /** @class */ (function () {
                 for (var _e = __values(_this.bboxGroups[groupIdx]), _f = _e.next(); !_f.done; _f = _e.next()) {
                     var idx = _f.value;
                     _this.selectedBBoxes[idx] = shouldSelectAll;
-                    _this.bboxIdButtons[idx].setAttribute("selected", "".concat(shouldSelectAll));
+                    _this.bboxIdButtons[idx].setAttribute("selected", "" + shouldSelectAll);
                 }
             }
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -157,11 +180,11 @@ var HitboxSelector = /** @class */ (function () {
                 }
                 finally { if (e_3) throw e_3.error; }
             }
-            _this.bboxGroupButtons[groupIdx].setAttribute("selected", "".concat(shouldSelectAll));
+            _this.bboxGroupButtons[groupIdx].setAttribute("selected", "" + shouldSelectAll);
             _this.parent.output();
         };
         this.changeBBoxStatus = function (bbox) {
-            _this.bboxIdButtons[bbox].setAttribute("selected", "".concat(!_this.selectedBBoxes[bbox]));
+            _this.bboxIdButtons[bbox].setAttribute("selected", "" + !_this.selectedBBoxes[bbox]);
             _this.selectedBBoxes[bbox] = !_this.selectedBBoxes[bbox];
             if (!_this.selectedBBoxes[bbox])
                 _this.bboxIdButtons[bbox].parent.setAttribute("selected", "false");
@@ -205,7 +228,7 @@ var HitboxSelector = /** @class */ (function () {
             var atkdIdx = _this.selectedAttackData;
             if (atkdIdx != undefined) {
                 var _a = _this.attackData[atkdIdx], damage = _a.damage, angle = _a.angle, bkb = _a.bkb, kbg = _a.kbg, wdsk = _a.wdsk;
-                return "".concat(damage, "|").concat(wdsk ? "w".concat(wdsk) : bkb, "|").concat(kbg, "|").concat(angle);
+                return damage + "|" + (wdsk ? "w" + wdsk : bkb) + "|" + kbg + "|" + angle;
             }
             else {
                 return "0|0|0|0";
@@ -225,14 +248,14 @@ var HitboxSelector = /** @class */ (function () {
             var e_4, _e, e_5, _f;
             var currPicker = document.createElement("div");
             var groupBtn = document.createElement("button");
-            groupBtn.innerText = "group ".concat(idx);
+            groupBtn.innerText = "group " + idx;
             this_1.bboxGroups.push([]);
             var idPicker = document.createElement("div");
             var _loop_2 = function (bbox) {
                 var id = this_1.allBBoxes.length;
                 this_1.bboxGroups[idx].push(id);
                 var idSelect = document.createElement("button");
-                idSelect.innerText = "".concat(id);
+                idSelect.innerText = "" + id;
                 idSelect.onclick = function () { return _this.changeBBoxStatus(id); };
                 idSelect.parent = groupBtn;
                 this_1.bboxIdButtons.push(idSelect);
@@ -263,7 +286,7 @@ var HitboxSelector = /** @class */ (function () {
             var _loop_3 = function (atkd) {
                 var hb = this_1.attackData.length;
                 var hbSelect = document.createElement("button");
-                hbSelect.innerText = "".concat(hb);
+                hbSelect.innerText = "" + hb;
                 hbSelect.onclick = function () { return _this.selectAttackData(hb); };
                 this_1.attackData.push(atkd);
                 this_1.attackDataButtons.push(hbSelect);
@@ -465,45 +488,52 @@ var DataCalculator = /** @class */ (function () {
         };
         this.output = function () {
             var e_10, _a;
+            var _b;
             var out = "";
-            var append = function (s) { out += "".concat(s, "\n"); };
+            var append = function (s) { out += s + "\n"; };
             var round = function (num) { return roundToDec(num, 2); };
             var rootName = (_this.rootName.value.length > 0) ? _this.rootName.value : getNameFromPage();
             if (['uthrow', 'bthrow', 'dthrow', 'fthrow'].includes(getNameFromPage()) && _this.throwData) {
-                append("#const ".concat(rootName, "_IASA = ").concat(_this.data.iasa || (_this.data.frames.length + 1)));
-                append("#const ".concat(rootName, "_throwFrame = ").concat(_this.throwData.frame));
-                append("#const ".concat(rootName, "_damage_info = Grab|").concat(_this.throwData.damage, "|").concat(_this.throwData.bkb, "|").concat(_this.throwData.kbg, "|").concat(_this.throwData.angle));
+                append("#const " + rootName + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
+                append("#const " + rootName + "_throwFrame = " + _this.throwData.frame);
+                append("#const " + rootName + "_damage_info = Grab|" + _this.throwData.damage + "|" + _this.throwData.bkb + "|" + _this.throwData.kbg + "|" + _this.throwData.angle);
             }
             else {
                 try {
-                    for (var _b = __values(_this.selectors.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                        var _d = __read(_c.value, 2), idx = _d[0], selector = _d[1];
+                    for (var _c = __values(_this.selectors.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                        var _e = __read(_d.value, 2), idx = _e[0], selector = _e[1];
                         var name_1 = selector.getName();
                         var bbox = selector.getSelectedBBox();
                         if (idx === 0) {
-                            append("".concat(getSubactionName(), " unk=").concat(_this.data.iasa || 0, ",start=").concat(selector.getStartFrame(), ",end=").concat(selector.getEndFrame(), ",xmin=").concat(round(bbox.minX).toFixed(2), ",xmax=").concat(round(bbox.maxX).toFixed(2), ",ymin=").concat(round(bbox.minY).toFixed(2), ",ymax=").concat(round(bbox.maxY).toFixed(2)));
+                            var subactionData = getSubactionName() + " unk=" + (_this.data.iasa || 0) + ",start=" + selector.getStartFrame() + ",end=" + selector.getEndFrame() + ",xmin=" + round(bbox.minX).toFixed(2) + ",xmax=" + round(bbox.maxX).toFixed(2) + ",ymin=" + round(bbox.minY).toFixed(2) + ",ymax=" + round(bbox.maxY).toFixed(2);
+                            if (selector.getStartFrame() !== Infinity) {
+                                var stored = JSON.parse((_b = localStorage.getItem("Rukai-" + getCharacterName())) !== null && _b !== void 0 ? _b : "{}");
+                                stored[getRawSubactionValue()] = subactionData;
+                                localStorage.setItem("Rukai-" + getCharacterName(), JSON.stringify(stored));
+                            }
+                            append(subactionData);
                             append("==========================");
                             name_1 = rootName.toLowerCase();
-                            append("#const ".concat(name_1, "_IASA = ").concat(_this.data.iasa || (_this.data.frames.length + 1)));
+                            append("#const " + name_1 + "_IASA = " + (_this.data.iasa || (_this.data.frames.length + 1)));
                             customBBox = bbox;
                         }
                         else {
-                            append("#const mv_".concat(name_1, " = ").concat(idx));
+                            append("#const mv_" + name_1 + " = " + idx);
                         }
-                        append("#const ".concat(name_1, "_xOffset = ").concat(round(bbox.minX)));
-                        append("#const ".concat(name_1, "_yOffset = ").concat(round(bbox.minY) * -1));
-                        append("#const ".concat(name_1, "_xRange = ").concat(round((bbox.maxX - bbox.minX) / 2)));
-                        append("#const ".concat(name_1, "_yRange = ").concat(round((bbox.maxY - bbox.minY) / 2)));
-                        append("#const ".concat(name_1, "_hitFrame = ").concat(selector.getStartFrame()));
-                        append("#const ".concat(name_1, "_lastHitFrame = ").concat(selector.getEndFrame()));
-                        append("#const ".concat(name_1, "_damage_info = ").concat(rootName, "|").concat(selector.getAttackData()));
+                        append("#const " + name_1 + "_xOffset = " + round(bbox.minX));
+                        append("#const " + name_1 + "_yOffset = " + round(bbox.minY) * -1);
+                        append("#const " + name_1 + "_xRange = " + round((bbox.maxX - bbox.minX) / 2));
+                        append("#const " + name_1 + "_yRange = " + round((bbox.maxY - bbox.minY) / 2));
+                        append("#const " + name_1 + "_hitFrame = " + selector.getStartFrame());
+                        append("#const " + name_1 + "_lastHitFrame = " + selector.getEndFrame());
+                        append("#const " + name_1 + "_damage_info = " + rootName + "|" + selector.getAttackData());
                         append("---------------------------");
                     }
                 }
                 catch (e_10_1) { e_10 = { error: e_10_1 }; }
                 finally {
                     try {
-                        if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+                        if (_d && !_d.done && (_a = _c["return"])) _a.call(_c);
                     }
                     finally { if (e_10) throw e_10.error; }
                 }
@@ -561,10 +591,12 @@ var DataCalculator = /** @class */ (function () {
 var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    border: 2px solid #FFF;\n    display: flex;\n    flex-direction: column;\n  }\n  #custom-result {\n    font-family: monospace;\n    background-color: black;\n    color: #DDD;\n    flex-grow: 1;\n  }\n  #custom-selectors {\n    max-height: 100px;\n    overflow-y: scroll;\n  }\n  #custom-selectors > div:first-child > input {\n    display: none;\n  }\n\n  .picker-container {\n    display: flex;\n    flex-direction: column;\n  }\n\n  .bbox-picker {\n    display: flex;\n    flex-direction: row;\n  }\n\n  .bbox-picker > div {\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column;\n  }\n\n  .bbox-picker > div > div {\n    display: flex; \n    flex-direction: row;\n  }\n\n  .bbox-picker button {\n    flex-grow: 1;\n    border: 1px solid black;\n    background-color: #DDD;\n  }\n\n  .bbox-picker button[selected=\"true\"] {\n    background-color: #999;\n  }\n\n  .attackData-picker {\n    display: flex;\n    flex-direction: row;\n  }\n  .attackData-picker button {\n    flex-grow: 1;\n    border: 1pxx solid black;\n    background-color: #FDD;\n  }\n  .attackData-picker button[selected=\"true\"] {\n    background-color: #F99;\n  }\n";
 (function () {
     'use strict';
-    var e_11, _a;
+    var e_11, _a, e_12, _b, e_13, _c;
+    var _d, _e, _f;
     if (location.pathname.includes("/subactions/")) {
         var subactionList = document.querySelector("body > div > div > nav.d-none.d-md-block.col-2.sidebar.sidebar-right");
         var specialsIDX = 0;
+        var currCategoryIdx = 0;
         var currItem = void 0;
         while ((currItem = subactionList.children.item(specialsIDX)) != null && currItem.innerHTML != "Specials") {
             specialsIDX++;
@@ -575,6 +607,27 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
         }
         subactionList.insertBefore(subactionList.children.item(specialsIDX), subactionList.children.item(grabsIDX + 2));
         subactionList.insertBefore(subactionList.children.item(specialsIDX + 1), subactionList.children.item(grabsIDX + 3));
+        wloop: while ((currItem = subactionList.children.item(currCategoryIdx)) != null) {
+            if (((_d = currItem.nextElementSibling) === null || _d === void 0 ? void 0 : _d.tagName) == "UL") {
+                try {
+                    for (var _g = (e_11 = void 0, __values(Array.from((_e = currItem.nextElementSibling) === null || _e === void 0 ? void 0 : _e.children))), _h = _g.next(); !_h.done; _h = _g.next()) {
+                        var child = _h.value;
+                        if (child.children[0].classList.contains("active"))
+                            break wloop;
+                    }
+                }
+                catch (e_11_1) { e_11 = { error: e_11_1 }; }
+                finally {
+                    try {
+                        if (_h && !_h.done && (_a = _g["return"])) _a.call(_g);
+                    }
+                    finally { if (e_11) throw e_11.error; }
+                }
+            }
+            currCategoryIdx++;
+        }
+        subactionList.insertBefore(subactionList.children.item(currCategoryIdx), subactionList.children.item(0));
+        subactionList.insertBefore(subactionList.children.item(currCategoryIdx + 1), subactionList.children.item(1));
     }
     var style = document.createElement("style");
     style.innerText = styling;
@@ -637,6 +690,24 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
             }
         };
         new DataCalculator(sActData, document.querySelector("body > div > div > div"));
+        var collectedData = JSON.parse((_f = localStorage.getItem("Rukai-" + getCharacterName())) !== null && _f !== void 0 ? _f : "{}");
+        var dataToSort = Object.entries(collectedData);
+        var sorted = dataToSort.sort(function (a, b) { return (parseInt(a[0], 16) - parseInt(b[0], 16)); });
+        var subactionList = "";
+        try {
+            for (var sorted_1 = __values(sorted), sorted_1_1 = sorted_1.next(); !sorted_1_1.done; sorted_1_1 = sorted_1.next()) {
+                var _j = __read(sorted_1_1.value, 2), idx = _j[0], item = _j[1];
+                subactionList += item + "\n";
+            }
+        }
+        catch (e_12_1) { e_12 = { error: e_12_1 }; }
+        finally {
+            try {
+                if (sorted_1_1 && !sorted_1_1.done && (_b = sorted_1["return"])) _b.call(sorted_1);
+            }
+            finally { if (e_12) throw e_12.error; }
+        }
+        console.log("ATKD:\n\n" + subactionList);
     }
     else {
         // sActData = window["subaction_data"] as SubactionData;
@@ -650,7 +721,7 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
         var shortHop = Math.floor(heightOfJump(jumpYInitVelShort, gravity) * 100) / 100;
         var fullhop = Math.floor(heightOfJump(jumpYInitVel, gravity) * 100) / 100;
         var djump = Math.floor(heightOfJump(airJumpYMultiplier * jumpYInitVel, gravity) * 100) / 100;
-        console.log("\n#const cs_shortHopHeight = ".concat(shortHop, "\n#const cs_jumpHeight = ").concat(fullhop, "\n#const cs_djumpHeight = ").concat(djump, "\n    "));
+        console.log("\n#const cs_shortHopHeight = " + shortHop + "\n#const cs_jumpHeight = " + fullhop + "\n#const cs_djumpHeight = " + djump + "\n    ");
     };
     var attrs = Array.from(document.getElementsByTagName("td")).map(function (el) { return el.innerText; });
     var jumpYInitVel = 0;
@@ -658,8 +729,8 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
     var airJumpYMultiplier = 0;
     var gravity = 0;
     try {
-        for (var _b = __values(attrs.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var _d = __read(_c.value, 2), i = _d[0], attr = _d[1];
+        for (var _k = __values(attrs.entries()), _l = _k.next(); !_l.done; _l = _k.next()) {
+            var _m = __read(_l.value, 2), i = _m[0], attr = _m[1];
             switch (attr) {
                 case "jump y init vel:":
                     jumpYInitVel = parseFloat(attrs[i + 1]);
@@ -676,12 +747,12 @@ var styling = "\n  #custom-element {\n    width: 100%;\n    height: 420px;\n    
             }
         }
     }
-    catch (e_11_1) { e_11 = { error: e_11_1 }; }
+    catch (e_13_1) { e_13 = { error: e_13_1 }; }
     finally {
         try {
-            if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+            if (_l && !_l.done && (_c = _k["return"])) _c.call(_k);
         }
-        finally { if (e_11) throw e_11.error; }
+        finally { if (e_13) throw e_13.error; }
     }
     if (airJumpYMultiplier == 0)
         airJumpYMultiplier = 1;

@@ -1,21 +1,30 @@
 #snippet INITIALIZATION
   #const UpBXDist = 70
   #const UpBYDist = 30
+  #const DownBXDist = 5
+  #const DownBYDist = -60
   #const tolerence = 6
 
   #const jumpChance = 0.4
   #const highUpBChance = 0.25
   #const sideBChance = 0.5
+  #const downBChance = 0.5
   #let hasTriedToUpB = var4
   #let jumpValue = var5
   #let highUpBValue = var6
   #let sideBValue = var7
   #let hasUsedSideB = var8
+  #let downBValue = var9
   hasTriedToUpB = 0
   hasUsedSideB = 0
   jumpValue = Rnd
   highUpBValue = Rnd
   sideBValue = Rnd
+  if cliffDistY < UpBYDist || cliffDistX > UpBXDist
+    jumpValue = 0
+    sideBValue = 0
+  endif
+  downBValue = Rnd
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -58,6 +67,14 @@
       Return
     endif
   endif
+
+  if downBValue <= downBChance && YDistBackEdge < -40 && absNCX < DownBXDist
+    Button B
+    ClearStick
+    Stick 0 -1
+    Return
+  endif
+
   if XSpeed > 1 || XSpeed < -1
     if sideBValue <= sideBChance && YDistBackEdge < 20 && Rnd < 0.2 && Equal hasUsedSideB 0
       Button B

@@ -139,6 +139,10 @@
     nearCliffX *= -1
     nearCliffY *= -1
 
+    if cliffDistY < 0.3 && cliffDistY > 0
+      cliffDistY = 0.3
+    endif
+
     if 0.1 < nearCliffX && nearCliffX < 0.25
       AbsStick 0.3 nearCliffY
     elif -0.25 < nearCliffX && nearCliffX < -0.1
@@ -161,9 +165,13 @@
   endif
 
   if sideBLedgeValue < sideBLedgeChance
-    Abs nearCliffX
-    if Equal CurrSubaction hex(0x1d1) && nearCliffX < 60
-      Button B
+    AbsStick cliffDistX
+    if sideBLedgeValue <= sideBLedgeChance && ActionTimer >= 17
+      immediateTempVar = Direction * calc(20 * 2)
+      GetYDistFloorOffset immediateTempVar immediateTempVar 5 0
+      if immediateTempVar > -1
+        Button B
+      endif
     endif
   endif
 #endsnippet

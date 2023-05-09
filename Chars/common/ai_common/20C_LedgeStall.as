@@ -2,16 +2,16 @@
 id 0x820C
 unk 0x0
 
-XReciever
+//= XReciever
 label prep
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Stick 0 (-1)
 Seek
 Return
 label start
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 
 GET_CHAR_TRAIT(immediateTempVar, chr_cs_djumpHeight)
 if YDistBackEdge >= immediateTempVar

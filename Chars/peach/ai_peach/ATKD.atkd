@@ -19,11 +19,11 @@ AttackAirLw unk=0,start=12,end=31,xmin=-3.69,xmax=9.48,ymin=-8.28,ymax=6.79
 Catch unk=0,start=7,end=7,xmin=-1.33,xmax=12.00,ymin=6.87,ymax=14.69
 CatchDash unk=0,start=7,end=7,xmin=6.47,xmax=20.76,ymin=5.97,ymax=13.79
 CatchTurn unk=0,start=13,end=13,xmin=-16.13,xmax=3.13,ymin=5.97,ymax=13.79
-DownAttackU unk=0,start=16,end=27,xmin=-19.00,xmax=19.00,ymin=-1.00,ymax=11.00
-DownAttackD unk=0,start=16,end=26,xmin=-16.00,xmax=18.00,ymin=-5.00,ymax=8.00
-SlipAttack unk=0,start=18,end=27,xmin=-16.00,xmax=16.00,ymin=1.00,ymax=9.00
-CliffAttackQuick unk=0,start=6,end=16,xmin=-2.00,xmax=23.00,ymin=11.00,ymax=29.00
-CliffAttackSlow unk=0,start=43,end=47,xmin=5.00,xmax=28.00,ymin=10.00,ymax=25.00
+DownAttackU unk=0,start=17,end=27,xmin=-16.79,xmax=17.40,ymin=-0.79,ymax=10.24
+DownAttackD unk=0,start=17,end=26,xmin=-15.07,xmax=11.62,ymin=-3.30,ymax=7.05
+CliffAttackQuick unk=0,start=10,end=14,xmin=-2.88,xmax=17.33,ymin=-3.36,ymax=11.66
+CliffAttackSlow unk=0,start=44,end=47,xmin=4.23,xmax=24.04,ymin=-2.17,ymax=6.72
+SlipAttack unk=0,start=19,end=27,xmin=-16.00,xmax=16.00,ymin=1.00,ymax=9.00
 Swing1 unk=0,start=3,end=5,xmin=3.00,xmax=27.00,ymin=3.00,ymax=26.00
 Swing3 unk=0,start=8,end=10,xmin=2.00,xmax=38.00,ymin=1.00,ymax=31.00
 Swing4 unk=0,start=5,end=8,xmin=5.00,xmax=48.00,ymin=-2.00,ymax=21.00
@@ -49,13 +49,9 @@ ItemScrew_1 unk=0,start=0,end=20,xmin=-8.00,xmax=8.00,ymin=-4.00,ymax=12.00
 ItemHammerWait unk=0,start=0,end=16,xmin=-12.00,xmax=20.00,ymin=0.00,ymax=30.00
 ItemHammerMove unk=0,start=0,end=16,xmin=-12.00,xmax=20.00,ymin=0.00,ymax=30.00
 ItemHammerAir unk=0,start=0,end=16,xmin=-12.00,xmax=20.00,ymin=0.00,ymax=30.00
-subaction0x1D4 unk=0,start=6,end=29,xmin=-4.90,xmax=11.96,ymin=5.71,ymax=64.29
 subaction0x1B unk=0,start=2,end=4,xmin=-4.52,xmax=3.70,ymin=-3.22,ymax=5.29
 subaction0x1F unk=0,start=2,end=4,xmin=-4.56,xmax=4.59,ymin=-3.77,ymax=17.03
-subaction0x1D3 unk=20,start=1,end=3,xmin=-4.77,xmax=17.77,ymin=-2.38,ymax=13.78
-// subaction463 unk=0,start=0,end=25,xmin=-1.00,xmax=7.00,ymin=2.00,ymax=10.00
-// subaction467 unk=0,start=0,end=3,xmin=-4.00,xmax=10.50,ymin=-2.00,ymax=13.00
-// subaction468 unk=0,start=6,end=32,xmin=-6.00,xmax=13.00,ymin=4.00,ymax=72.00
-// subaction469 unk=0,start=6,end=32,xmin=-6.00,xmax=13.00,ymin=4.00,ymax=72.00
-// subaction470 unk=0,start=10,end=15,xmin=1.00,xmax=7.00,ymin=18.00,ymax=23.00
-// subaction471 unk=0,start=0,end=100,xmin=1.00,xmax=7.00,ymin=18.00,ymax=23.00
+subaction0x1D3 unk=20,start=1,end=3,xmin=-4.77,xmax=10.77,ymin=-2.38,ymax=13.78
+subaction0x1D4 unk=0,start=6,end=29,xmin=-4.90,xmax=11.96,ymin=5.71,ymax=64.29
+subaction0x1D5 unk=0,start=6,end=29,xmin=-4.84,xmax=11.91,ymin=5.85,ymax=62.30
+subaction0x1D6 unk=0,start=10,end=16,xmin=-0.83,xmax=12.53,ymin=8.26,ymax=20.04

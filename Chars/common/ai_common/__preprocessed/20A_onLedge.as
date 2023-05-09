@@ -2,7 +2,7 @@
 id 0x820A
 unk 0x0
 
-XReciever
+//= XReciever
 label begin
 if Equal OIsOnStage 1
   var21 = 15
@@ -10,17 +10,15 @@ else
   var21 = 16.71
 endif
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek begin
 
 if Equal CurrAction 115 || Equal CurrAction 116
   Return
 endif
 
-if CurrAction <= 33
-  var21 = 0
-  CallI MainHub
-endif
+Goto actionCheck
+Seek begin
 
 if AnimFrame > 2
   if Equal var21 16.71
@@ -29,18 +27,19 @@ if AnimFrame > 2
     var1 = var0
     Abs var1
 
-    if XDistLE 40
-      if OCurrAction >= 272 && CHANCE_MUL_GE PT_AGGRESSION 0.25
+    if XDistLE 40 && CHANCE_MUL_LE PT_AGGRESSION 0.25
+      if OCurrAction >= 272 && AnimFrame > 20
         Button R
         Call MainHub
-      elif OYDistBackEdge > -40 && AnimFrame < 15
+      elif OYDistBackEdge > -45
         if OYDistBackEdge < -15
           Button X
         else
           Stick -1
         endif
+        var21 = 16.7
         XGoto CalcAttackGoal
-        XReciever
+        //= XReciever
         var15 = -1
         Call MainHub
         Return
@@ -48,17 +47,13 @@ if AnimFrame > 2
     elif Rnd < 0.2
       Seek exec_wait
       Jump
-    elif OYDistBackEdge < -5 && var1 < 15
+    elif OYDistBackEdge < 5 && var1 < 15
       Button A
       Call MainHub
-    elif OYDistBackEdge < -25 && var1 < 45
-      Button X
-      XGoto CalcAttackGoal
-      XReciever
-      var15 = -1
-      var21 = 16.7
+    elif OYDistBackEdge < 25 && var1 < 50
+      Button R
       Call MainHub
-    elif XDistLE 70
+    elif !(XDistLE 70)
       if Rnd < 0.2
         Seek exec_wait
         Jump
@@ -72,7 +67,7 @@ if AnimFrame > 2
     if LevelValue >= 60
       DynamicDiceAdd 0 2 1.6
     endif
-    DynamicDiceAdd 0 3 1.6
+    DynamicDiceAdd 0 3 1.2
     DynamicDiceAdd 0 4 0.8
     DynamicDiceAdd 0 5 1.2
     DynamicDiceAdd 0 6 1.2
@@ -95,15 +90,16 @@ if AnimFrame > 2
       Call LedgeDash
     elif Equal var22 5 && XDistLE 40
       Button A
+      Call MainHub
     elif Equal var22 6 && XDistLE 30
       XGoto CalcAttackGoal
-      XReciever
+      //= XReciever
       Stick -1
       Seek
       Return
       label _jAttack
       XGoto PerFrameChecks
-      XReciever
+      //= XReciever
       Seek _jAttack
 
       if YDistBackEdge <= 0
@@ -122,11 +118,18 @@ label exec_wait
   var0 = Rnd * 45 + 10
   label waiting
   XGoto PerFrameChecks
-  XReciever
-  Seek waiting
+  //= XReciever
   var0 -= 1
+  Goto actionCheck
+  Seek waiting
   if var0 <= 0
     Seek begin
+  endif
+Return
+label actionCheck
+  if CurrAction <= 33
+    var21 = 0
+    CallI MainHub
   endif
 Return
 Return

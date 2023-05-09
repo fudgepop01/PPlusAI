@@ -163,7 +163,7 @@
 #const nspecial_yRange = 10
 #const nspecial_hitFrame = 18
 #const nspecial_lastHitFrame = 40
-#const nspecial_damage_info = NSpecial|3|0|0|0
+#const nspecial_damage_info = NSpecial|-5|8|50|30
 
 #const nspecialair_IASA = 48
 #const nspecialair_xOffset = 0
@@ -172,7 +172,7 @@
 #const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 18
 #const nspecialair_lastHitFrame = 40
-#const nspecialair_damage_info = NSpecialAir|3|0|0|0
+#const nspecialair_damage_info = NSpecialAir|-5|8|50|30
 
 // upB
 #const uspecial_IASA = 81
@@ -210,7 +210,7 @@
 #const dspecial_yRange = 50
 #const dspecial_hitFrame = 49
 #const dspecial_lastHitFrame = 60
-#const dspecial_damage_info = DSpecial|11|0|0|0
+#const dspecial_damage_info = DSpecial|-11|0|0|0
 
 #const dspecialair_IASA = 75
 #const dspecialair_xOffset = 20
@@ -219,7 +219,7 @@
 #const dspecialair_yRange = 50
 #const dspecialair_hitFrame = 49
 #const dspecialair_lastHitFrame = 60
-#const dspecialair_damage_info = DSpecialAir|11|0|0|0
+#const dspecialair_damage_info = DSpecialAir|-11|0|0|0
 
 // sideB
 #const sspecial_IASA = 58
@@ -229,7 +229,7 @@
 #const sspecial_yRange = 30
 #const sspecial_hitFrame = 25
 #const sspecial_lastHitFrame = 51 // just a dummy
-#const sspecial_damage_info = SSpecial|8|10|100|90
+#const sspecial_damage_info = SSpecial|-11|55|42|70
 
 #const sspecialair_IASA = 58
 #const sspecialair_xOffset = -2
@@ -238,7 +238,7 @@
 #const sspecialair_yRange = 30
 #const sspecialair_hitFrame = 25
 #const sspecialair_lastHitFrame = 51 // just a dummy
-#const sspecialair_damage_info = SSpecialAir|8|10|100|90
+#const sspecialair_damage_info = SSpecialAir|-11|55|42|70
 
 // grab
 // when I want to techchase using grab, i'll set move_variant to this value

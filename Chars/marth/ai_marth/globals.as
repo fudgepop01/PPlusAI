@@ -1,4 +1,4 @@
-#const DIRY_ABOVE = 13
+#const DIRY_ABOVE = 19
 #const DIRY_BELOW_AIR = 3
 #const DIRY_BELOW_GROUND = 0
 #const DIRX_FRONT = 2

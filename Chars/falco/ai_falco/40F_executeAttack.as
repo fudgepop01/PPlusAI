@@ -1,5 +1,23 @@
+#snippet SKIP_CHECKS
+  $ifLastOrigin(sspecial,false)
+    Goto sspecialCheck 
+  $ifLastOrigin(sspecialAir,true)
+    Goto sspecialCheck 
+  endif
+  if !(True)
+    label sspecialCheck
+    anotherTempVar = OPos * 80
+    GetYDistFloorOffset immediateTempVar anotherTempVar 5 0
+    if immediateTempVar < 0
+      Seek finish
+      Jump
+    endif
+    Return
+  endif
+#endsnippet
+
 #snippet DSPECIAL
-  if AnimFrame >= 6
+  if ActionTimer >= 6
     Button X
     Seek finish
     Jump
@@ -7,7 +25,7 @@
 #endsnippet
 
 #snippet DSPECIALAIR
-  if AnimFrame >= 6
+  if ActionTimer >= 6
     Button X
     CallI MainHub
   endif

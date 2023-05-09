@@ -2,7 +2,7 @@
 id 0x8102
 unk 0x0
 
-XReciever
+//= XReciever
 EnableDebugOverlay 
 SetDebugOverlayColor color(0xDDDD0088)
 if !(Equal currGoal cg_attack_inCombo)
@@ -10,7 +10,7 @@ if !(Equal currGoal cg_attack_inCombo)
 endif
 label begin
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 
 #let aggression = var0
 aggression = PT_AGGRESSION
@@ -21,30 +21,32 @@ baitChance = pt_baitChance
 // immediateTempVar = aggression * 0.08
 // globTempVar *= 1.75
 // if !(CalledFrom AttackedHub)
-//   GetCommitPredictChance anotherTempVar LevelValue
+//   GetCommitPredictChance anotherTempVar LevelValue"C:\Users\dareb\Documents\AIScriptCLA\bin\Debug\netcoreapp3.1\win-x86\publish\AIScriptCLA.exe" --compile --path "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed" --out "C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac" --include "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include"
 //   if anotherTempVar > 0.45 && Rnd < anotherTempVar && CHANCE_MUL_LE immediateTempVar 1
 //     scriptVariant = sv_fastAttack
 //     XGoto CalcAttackGoal
-//     XReciever
+//     //= XReciever
 //     skipMainInit = mainInitSkip
 //     CallI MainHub
 //   endif
 // endif
 
 if Equal AirGroundState 1
+  // LOGSTR_NL str("AGS 1??")
+
   predictOOption immediateTempVar man_ODefendOption LevelValue
   predictionConfidence globTempVar man_ODefendOption LevelValue
-  globTempVar *= 2
-  if CHANCE_MUL_GE PT_AGGRESSION 0.65 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
+  globTempVar *= 3.5
+  if CHANCE_MUL_GE PT_AGGRESSION 0.15 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
     PredictOMov immediateTempVar mov_grab LevelValue
     immediateTempVar *= 2.5
-    if immediateTempVar < 0.25      
+    if immediateTempVar < 0.25 || Equal OAirGroundState 2
       CallI Shield
     endif
   endif
 
-  immediateTempVar = 25 * PT_AGGRESSION
-  if CHANCE_MUL_LE PT_AGGRESSION 1 && Damage < immediateTempVar && CurrAction <= hex(0x20)
+  immediateTempVar = 10 * PT_AGGRESSION
+  if CHANCE_MUL_LE PT_AGGRESSION 0.35 && Damage < immediateTempVar && CurrAction <= hex(0x20)
     currGoal = cg_defend_crouchCancel
     CallI Shield
   endif
@@ -147,9 +149,9 @@ if Equal AirGroundState 1
 endif
 
 if Equal currGoal cg_attack_inCombo
-  if CHANCE_MUL_LE PT_AGGRESSION 0.65
+  if CHANCE_MUL_LE PT_AGGRESSION 0.15 && Damage < 40
     XGoto CalcAttackGoal
-    XReciever
+    //= XReciever
     skipMainInit = mainInitSkip
     CallI MainHub
   endif
@@ -161,17 +163,19 @@ predictAverage OXHitDist man_OXHitDist LevelValue
 OXHitDist += 20
 PredictOMov immediateTempVar mov_attack LevelValue
 if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
-  if NumJumps > 0 && Rnd < 0.2
+  if NumJumps > 0 && CHANCE_MUL_LE PT_BRAVECHANCE 0.1
     scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
     CallI JumpScr
   elif NumJumps > 0 && Rnd < 0.1
     scriptVariant = calc(sv_jump_away + svp_jump_fullhop)
     CallI JumpScr
-  elif Equal currGoal cg_attack_inCombo && NumJumps > 0 && OTopNY < TopNY && CHANCE_MUL_LE PT_AGGRESSION 0.65
-    scriptVariant = calc(sv_jump_away + svp_jump_fullhop)
+  elif Equal currGoal cg_attack_inCombo && OTopNY < TopNY
+    // LOGSTR_NL str("awayWithJump")
+    scriptVariant = sv_aerialdrift_away_withJump
     skipMainInit = mainInitSkip
-    CallI JumpScr
-  elif Rnd < 0.4 && YDistFloor > 25
+    CallI AerialDrift
+  elif Rnd < 0.75 && YDistFloor > 10
+    // LOGSTR_NL str("away")
     scriptVariant = sv_aerialdrift_away
     CallI AerialDrift
   endif
@@ -188,7 +192,7 @@ if !(Equal lastAttack -1)
   CallI MainHub
 else
   XGoto CalcAttackGoal
-  XReciever
+  //= XReciever
   skipMainInit = mainInitSkip
   CallI MainHub
 endif 

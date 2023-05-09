@@ -2,15 +2,15 @@
 id 0x8201
 unk 0x0
 
-XReciever
+//= XReciever
 label setup
   var22 = 12
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var3 = var22
   var22 = 13
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var4 = var22
   Seek setup
 
@@ -32,43 +32,36 @@ if Equal CurrAction 4 || Equal CurrAction 5
 endif
 
 var0 = var3 - var4
-var0 = Rnd * var0 + var4 + 5
+var0 = Rnd * var0 + var4
 var2 = OPos
+var3 -= 1
 if Equal var16 3
   var0 += 8
 endif
 label execution
 XGoto PerFrameChecks
-XReciever
-// if !(Equal var20 -1) && !(Equal var16 2) && !(Equal var16 3)
-//   XGoto SetAttackGoal
-//   XReciever
-//   XGoto CheckAttackWillHit
-//   XReciever
-// endif
+//= XReciever
 Seek execution
-if Equal CurrAction 1 || Equal CurrAction 7 || Equal CurrAction 6
+if Equal CurrAction 1 || Equal CurrAction 6
   ClearStick
   Return
 endif
 
-if XDistFrontEdge < 5 || XDistFrontEdge > -5
-  var16 = 4
-elif XDistBackEdge > -25 && Equal Direction OPos && !(Equal var16 5)
+if XDistBackEdge > -25 && Equal Direction OPos && !(Equal var16 5)
   var16 = 1
 endif
 
 var17 = OPos * 15
 GetYDistFloorOffset var17 var17 10 1
 if var17 < 0 && !(Equal var16 4)
-  Call MainHub
+  var16 = 4
 endif
 
-if var1 < var3 && !(Equal var16 5) || Equal var16 3
+if var1 < var3 && !(Equal var16 5)
   if Equal var16 1
     AbsStick OPos
-  elif Equal var16 2 || Equal var16 3
-    if XDistBackEdge > -10 || XDistFrontEdge < 4
+  elif Equal var16 2 || Equal var16 3 || Equal var16 6
+    if DistFrontEdge < 15
       var16 = 1
       AbsStick OPos
       Return
@@ -76,10 +69,15 @@ if var1 < var3 && !(Equal var16 5) || Equal var16 3
     var22 = OPos * -1
     AbsStick var22
 
-    if Equal var16 3
+    if Equal var16 6
+      predictAverage var22 10 LevelValue
+      if XDistLE var22
+        Return
+      endif
+    elif Equal var16 3
   var22 = 0.004
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
       Seek execution
       if var22 >= 10
         var21 = 16.4

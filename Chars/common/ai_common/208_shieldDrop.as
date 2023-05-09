@@ -2,7 +2,7 @@
 id 0x8208
 unk 0x0
 
-XReciever
+//= XReciever
 if Equal IsOnPassableGround 0
   Call MainHub
 endif
@@ -11,9 +11,9 @@ label setup
 timer = 0
 label drop
 XGoto PerFrameChecks
-XReciever
-Seek drop
+//= XReciever
 Goto AGSCheck
+Seek drop
 Button R
 if timer >= 2
   immediateTempVar = timer - 1

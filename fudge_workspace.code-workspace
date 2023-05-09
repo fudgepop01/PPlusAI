@@ -6,31 +6,58 @@
 		},
 		{
 			"name": "PPlusCpp",
-			"path": "..\\..\\..\\..\\Documents\\PPlusCpp"
+			"path": "../../../../Documents/PPlusCpp"
 		},
 		{
-			"path": "..\\..\\..\\..\\Documents\\RAIExt"
+			"name": "RAIExt",
+			"path": "../../../../Documents/RAIExt"
 		},
 		{
-			"path": "..\\..\\..\\..\\Documents\\RukaiData"
+			"name": "Source",
+			"path": "../Wombuild-content/exported/Source"
 		},
 		{
-			"path": "..\\Wombuild-content\\exported\\Source"
+			"name": "aiscriptpad-editor",
+			"path": "../../../../Documents/aiscriptpad-editor"
 		},
 		{
-			"path": "..\\..\\..\\..\\Downloads\\reltools-v1.1.5-alpha"
-		},
-		{
-			"path": "..\\..\\..\\..\\Documents\\aiscriptpad-editor"
-		},
-		{
+			"name": "Wombuild-content",
 			"path": "../Wombuild-content"
 		},
 		{
-			"path": "../../../../Documents/PanTruthConverter"
+			"name": "PPlusSpark",
+			"path": "../../../../Documents/PPlusSpark"
 		},
 		{
-			"path": "../../../../Documents/PPlusSpark"
+			"name": "ghidra_scripts",
+			"path": "../../../Documents/ghidra_scripts"
+		},
+		{
+			"name": "PPlusPSA",
+			"path": "../../../../Documents/PPlusPSA"
+		},
+		{
+			"name": "Kaitai-Struct",
+			"path": "../../../../Documents/Kaitai-Struct"
+		},
+		{
+			"name": "fudgedit",
+			"path": "../../../../Documents/fudgedit"
+		},
+		{
+			"path": "../../../../Documents/Rukai/RukaiData"
+		},
+		{
+			"path": "../../../../Documents/Rukai/brawllib_rs"
+		},
+		{
+			"path": "../Wombuild-content/reltools-v1.3.0-beta"
+		},
+		{
+			"path": "../../../../Downloads/ProjectPlusMemory"
+		},
+		{
+			"path": "../../../../Documents/AIScriptCLA"
 		}
 	],
 	"settings": {
@@ -63,8 +90,20 @@
 			"locale": "cpp",
 			"thread": "cpp",
 			"xlocmes": "cpp",
-			"xloctime": "cpp"
+			"xloctime": "cpp",
+			"compare": "cpp"
 		},
-		"liveServer.settings.multiRootWorkspaceName": "Project-Plus-Stream-Tool-main"
+		"liveServer.settings.multiRootWorkspaceName": "Project-Plus-Stream-Tool-main",
+		"lldb.displayFormat": "auto",
+		"lldb.showDisassembly": "auto",
+		"lldb.dereferencePointers": true,
+		"lldb.consoleMode": "evaluate",
+		"cmake.additionalCompilerSearchDirs": [
+			"C:\\Program Files\\mingw-w64\\x86_64-8.1.0-release-posix-seh-rt_v6-rev0\\mingw64\\bin"
+		],
+		"cmake.cmakePath": "cmake",
+		"cmake.configureEnvironment": {
+			"CMAKE_MAKE_PROGRAM": "C:\\Program Files\\mingw-w64\\x86_64-8.1.0-release-posix-seh-rt_v6-rev0\\mingw64\\bin\\mingw32-make.exe"
+		}
 	}
 }

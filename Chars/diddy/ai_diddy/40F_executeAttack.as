@@ -1,44 +1,41 @@
-#snippet DSPECIAL
-  // if AnimFrame >= 6
-  //   Button X
-  //   scriptVariant = sv_wavedash_in
-  //   CallI Wavedash
-  // endif
+#snippet SKIP_CHECKS
+  $ifLastOrigin(sspecial,false)
+    Goto sspecialCheck 
+  $ifLastOrigin(sspecialAir,true)
+    Goto sspecialCheck 
+  endif
+  if !(True)
+    label sspecialCheck
+    anotherTempVar = OPos * 45
+    GetYDistFloorOffset immediateTempVar anotherTempVar 5 0
+    if immediateTempVar < 0
+      lastAttack = -1
+      Return
+    endif
+    Return
+  endif
 #endsnippet
 
-#snippet DSPECIALAIR
-  // if AnimFrame >= 6
-  //   Button X
-  //   CallI MainHub
-  // endif
+#snippet SSPECIAL
+  if Equal CurrAction hex(0x11B) && Rnd < techSkill
+    Button A
+  endif
 #endsnippet
 
-#snippet SKIP_EXEC
-  // $ifLastAttack(nspecialair)
-  //   Seek nspecialair
-  //   Jump
-  // endif
+#snippet SSPECIALAIR
+  if Equal CurrAction hex(0x11B) && Rnd < techSkill
+    Button A
+  endif
 #endsnippet
 
-#snippet NSPECIAL
-  // if !(ODistLE 70) && AnimFrame > 3 && Equal CurrSubaction hex(0x1cf)
-  //   Button B
-  // endif
+#snippet SSPECIAL_GRAB
+  if Equal CurrAction hex(0x11E) && Rnd < techSkill
+    Button A
+  endif
 #endsnippet
 
-#snippet NSPECIALAIR
-  // ClearStick
-  // AbsStick OPos
-  // Seek nspecialair
-  // if !(Equal CurrSubaction hex(0x1d2)) && Equal AirGroundState 2
-  //   if !(Equal CurrSubaction JumpSquat) && AnimFrame >= 6 && Rnd < 0.8
-  //     ClearStick
-  //     Button B
-  //   endif
-  //   Return
-  // elif True
-  //   if AnimFrame >= 5 && Rnd <= techSkill && Equal IsOnStage 1 && Equal AirGroundState 2
-  //     scriptVariant = sv_execute_fastfall
-  //   endif
-  // endif
+#snippet SSPECIALAIR_GRAB
+  if Equal CurrAction hex(0x11E) && Rnd < techSkill
+    Stick 0 1
+  endif
 #endsnippet

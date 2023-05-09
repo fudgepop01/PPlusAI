@@ -47,3 +47,15 @@
     Button B
   endif
 #endsnippet
+
+#snippet USPECIAL
+  if Equal CurrAction hex(0x85)
+    Button A
+  endif
+#endsnippet
+
+#snippet USPECIALAIR
+  if Equal CurrAction hex(0x85)
+    Button A
+  endif
+#endsnippet

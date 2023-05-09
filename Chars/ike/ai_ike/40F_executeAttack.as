@@ -50,3 +50,9 @@
     endif
   endif
 #endsnippet
+
+#snippet DSMASH_HIT2
+  if Rnd < 0.5
+    Button A
+  endif
+#endsnippet

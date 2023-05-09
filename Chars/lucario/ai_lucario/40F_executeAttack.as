@@ -17,9 +17,9 @@
     LUC_CANCEL_CHECK(lucCanCancel, immediateTempVar)
     if Equal lucCanCancel 1
       XGoto CalcAttackGoal
-      XReciever
+      //= XReciever
       if lastAttack > -1
-        CallI ExecuteAttack
+        Call ExecuteAttack
       endif
     endif
     Return

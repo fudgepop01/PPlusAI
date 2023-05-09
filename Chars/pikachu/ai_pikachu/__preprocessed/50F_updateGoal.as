@@ -2,27 +2,33 @@
 id 0x850F
 unk 0x0
 
-XReciever
+//= XReciever
 NoRepeat
+// var21 = 16.4
+// $setLastAttack(usmash)
 var16 = 0
 
-if var21 >= 16 && var21 < 17
-else 
-  predictOOption var22 10 LevelValue
-  var22 *= 0.15
-  GetCommitPredictChance var23 LevelValue
-  if XDistLE var22
-    if var23 < 0.05
-      var21 = 16
-      XGoto CalcAttackGoal
-      XReciever
-    elif OAnimFrame > 45 && OCurrAction <= 1 && var23 < 0.25
-      var21 = 16
-      XGoto CalcAttackGoal
-      XReciever
-    endif
-  endif
-endif
+// if var21 >= 16 && var21 < 17
+// else 
+//   predictOOption var22 10 LevelValue
+//   var22 *= 0.25
+//   GetCommitPredictChance var23 LevelValue
+//   if XDistLE var22
+//     if var23 < 0.1
+//       var21 = 16
+//       XGoto CalcAttackGoal
+//       //= XReciever
+//     elif OAnimFrame > 45 && OCurrAction <= 1 && var23 < 0.3
+//       var21 = 16
+//       XGoto CalcAttackGoal
+//       //= XReciever
+//     endif
+//   endif
+// endif
+
+// if var21 < 10 || var21 > 10.6
+//   var21 = 10
+// endif
 
 LOGSTR 1667718912 1986096128 1969553408 0 0
 LOGVAL var21
@@ -52,7 +58,7 @@ if var21 >= 7 && var21 < 8
   EnableDebugOverlay
   var22 = 21
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var17 = var22
   var17 *= -1
   var17 += 1
@@ -78,10 +84,10 @@ var17 = var22
       endif
       var16 = 2
       XGoto CalcAttackGoal
-      XReciever
+      //= XReciever
       var16 = 0
       
-      if !(Equal var20 -1)
+      if !(Equal var20 -1) && !(XDistLE 20)
         var15 = -2
         CallI MainHub
       else
@@ -119,7 +125,7 @@ var17 = var22
     endif
   var22 = 21
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var17 = var22
     var17 *= -1
     var17 += 1
@@ -148,9 +154,8 @@ elif var21 >= 10 && var21 < 11
   var20 = -1
   var22 = 200
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   if Equal var22 1
-    LOGSTR_NL 1229856768 1129270528 1112473600 0 0
     var21 = 16.4
     Return
   endif
@@ -177,7 +182,7 @@ elif var21 >= 10 && var21 < 11
 
   var22 = 21
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var17 = var22
   var17 *= -1
   var17 += 1
@@ -197,32 +202,38 @@ var17 = var22
       endif
     endif
     
-    GetAttribute var23 40; 0
-    var22 = 2 - var23
-    var22 *= 0.25 * PT_CIRCLECAMPCHANCE
-    if CHANCE_MUL_LE PT_AGGRESSION var22
-      if YDistFloor > -1 && YDistFloor < 25
-        var16 = 2
-        XGoto CalcAttackGoal
-        XReciever
-        if !(Equal var20 -1)
-          var15 = -2
-          CallI MainHub
-        endif
-        var16 = 0
-      endif
-    endif
-    Norm var22 OTopNX OTopNY
-    Abs var22
-    if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.05 && var22 < 35
-      var21 = 7
-      Return
-    endif
+    // GetAttribute var23 40; 0
+    // var22 = 2 - var23
+    // var22 *= 0.25 * PT_CIRCLECAMPCHANCE
+    // if CHANCE_MUL_LE PT_AGGRESSION var22
+    //   if YDistFloor > -1 && YDistFloor < 25
+    //     var16 = 2
+    //     XGoto CalcAttackGoal
+    //     //= XReciever
+    //     if !(Equal var20 -1)
+    //       var15 = -2
+    //       CallI MainHub
+    //     endif
+    //     var16 = 0
+    //   endif
+    // endif
+    // Norm var22 OTopNX OTopNY
+    // Abs var22
+    // if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.005 && var22 < 35
+    //   var21 = 7
+    //   Return
+    // endif
 
     if Equal var21 10.4
       Return
-    elif Equal var21 10.5 && CHANCE_MUL_LE PT_BAITCHANCE 0.8
-      Return
+    elif Equal var21 10.5
+      if CHANCE_MUL_LE PT_BAITCHANCE 0.25 || CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.5 || CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.5
+        Return
+      else
+        LOGSTR_NL 1179603456 1128603648 1095190272 1380909056 0
+        var21 = 10.1
+        XGoto CalcAttackGoal
+      endif
     elif !(Equal var21 10.1)
       if Equal CurrAction 3 || Equal CurrAction 4
         GetCommitPredictChance var22 LevelValue
@@ -230,10 +241,10 @@ var17 = var22
         if var23 < 5
           var23 = 5
         endif
-        if var22 > 0.2 && !(XDistLE var23) && CHANCE_MUL_LE PT_BAITCHANCE 0.2
+        if var22 > 0.3 && !(XDistLE var23) && CHANCE_MUL_LE PT_BAITCHANCE 0.02
           var15 = -1
           var21 = 10.4
-          if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
+          if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.1
             var21 = 10.5
           endif
           var16 = 3
@@ -247,7 +258,7 @@ var17 = var22
     if CHANCE_MUL_LE PT_AGGRESSION 0.4 && YDistFloor > -1 && YDistFloor < 15 && !(XDistLE var22)
       if Equal var21 10.1
         XGoto CalcAttackGoal
-        XReciever
+        //= XReciever
         if !(Equal var20 -1)
           var15 = -2
           CallI MainHub
@@ -270,7 +281,7 @@ var17 = var22
     //         var21 = 10.1
     //       endif
     //       XGoto CalcAttackGoal
-    //       XReciever
+    //       //= XReciever
           
     //       if !(Equal var20 -1)
     //         var15 = -2
@@ -286,7 +297,7 @@ var17 = var22
     //         var21 = 10.1
     //       endif
     //       XGoto CalcAttackGoal
-    //       XReciever
+    //       //= XReciever
           
     //       if !(Equal var20 -1)
     //         var15 = -2
@@ -324,7 +335,7 @@ var17 = var22
   GetCommitPredictChance var23 LevelValue
   if var22 >= 55 || var23 < 0.25
     var1 = 1
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.05
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.1
     var1 = -1
   endif 
 
@@ -344,7 +355,7 @@ var17 = var22
   endif
   var22 = var17
   if XDistLE var17 && Equal AirGroundState 1 && Equal var21 10.5
-    if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.65
+    if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.25
       var15 = -1
     endif
     if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.45
@@ -358,7 +369,7 @@ var17 = var22
         Call DefendHub
       endif
       XGoto PerFrameChecks
-      XReciever
+      //= XReciever
       Seek wdback
       if Equal AirGroundState 2
         var22 = OPos * -1
@@ -373,13 +384,23 @@ var17 = var22
       Return
     endif
     label exec_dash
-    var16 = 2
+    var16 = 6
     CallI DashScr
     // endif
   endif
 
-
-  if Equal var21 10.5
+  if Equal var21 10.5 
+    if YDistFloor > 1
+      var16 = 2
+      var15 = -1
+      CallI AerialDrift
+    endif
+    GetCommitPredictChance var22 LevelValue
+    var23 = 1 - var22
+    var23 *= 2
+    if CHANCE_MUL_GE PT_BAITCHANCE var23
+      var21 = 16
+    endif
     Return
   endif
 
@@ -396,6 +417,7 @@ var17 = var22
         Seek slide
         Jump
       endif
+      XGoto PerFrameChecks
       Return
       label slide
       Stick 1
@@ -405,10 +427,7 @@ var17 = var22
       endif
       Return
     elif Equal var21 10.6 && Equal AirGroundState 1
-      var16 = 2
-      if CHANCE_MUL_LE PT_AGGRESSION 0.75
-        var16 = 3
-      endif
+      var16 = 3
       Call DashScr
     endif
   endif
@@ -429,14 +448,17 @@ var17 = var22
       DynamicDiceAdd 0 3 PT_BAIT_WDASHAWAYCHANCE
       var22 = 6 - PT_AGGRESSION
       DynamicDiceAdd 0 4 var22
-      var22 = PT_BAITCHANCE * 8
+      DynamicDiceAdd 0 7 PT_BAITCHANCE
+      var22 = PT_BAITCHANCE * 2.5
       Abs var22
-      DynamicDiceAdd 0 7 var22
+      DynamicDiceAdd 0 8 var22
+      
+
       if Equal var23 -1
       elif Equal var1 1 && CHANCE_MUL_LE PT_AGGRESSION 0.3
         GetCommitPredictChance var22 LevelValue
         GetAttribute var23 40; 0
-        if var22 < 0.6 && var23 > 1.5
+        if var22 < 0.1 && var23 > 1.5
           DynamicDiceAdd 0 6 1.25
         endif
       endif
@@ -446,23 +468,25 @@ var17 = var22
         DynamicDiceAdd 0 5 1 
       endif
       DynamicDiceRoll 0 var22 0
-      if CHANCE_MUL_GE PT_AGGRESSION 0.2
+      if CHANCE_MUL_GE PT_AGGRESSION 0.75
         var21 = 10.4
         if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
           var21 = 10.5
         endif
       endif
       if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
-        var16 = 2
+        var16 = 6
+        var21 = 16.3
         Call DashScr
       elif CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.05
         var16 = 2
         Call Wavedash
       endif
       if Equal var22 1
-        var16 = 2
+        var16 = 6
         if CHANCE_MUL_LE PT_AGGRESSION 0.2
           var16 = 1
+          var21 = 16.3
         endif
         Call DashScr
       elif Equal var22 6
@@ -473,8 +497,9 @@ var17 = var22
         if CHANCE_MUL_GE PT_AGGRESSION 0.25
           var16 = 3
         endif
+        var16 += 0.1
         Goto getDist
-        if CHANCE_MUL_LE PT_AGGRESSION 0.9 && var22 <= 100
+        if CHANCE_MUL_LE PT_AGGRESSION 0.35 && var22 <= 100
           var21 = 16
           var15 = -1
         endif
@@ -486,6 +511,8 @@ var17 = var22
         var21 = 10.2
       elif Equal var22 7
         var21 = 10.4
+      elif Equal var22 8
+        var21 = 10.5
       endif
       GetYDistFloorOffset var17 0 50 0
       if var17 < 40 && CHANCE_MUL_LE PT_PLATCHANCE 1
@@ -537,13 +564,13 @@ var17 = var22
 elif var21 >= 16 && var21 < 17
   if CalledFrom ExecuteAttack
     XGoto SetAttackGoal
-    XReciever
+    //= XReciever
     Return
   endif
   
   if Equal var21 16.41 && Rnd < 0.05
     XGoto DefendHub
-    XReciever
+    //= XReciever
     Return
   endif
 
@@ -569,28 +596,36 @@ elif var21 >= 16 && var21 < 17
     Return
   elif Equal var21 16.71
     SetDebugOverlayColor 0 255 136 255
-    if Equal AirGroundState 1
+    if Equal CanCancelAttack 1 && Equal AirGroundState 1
       var21 = 16
     endif
   else
     SetDebugOverlayColor 0 255 255 136
 
-    if Rnd < 0.1 && !(Equal OAirGroundState 3)
-      if CHANCE_MUL_LE PT_BAITCHANCE 0.05 || CHANCE_MUL_LE PT_BRAVECHANCE 0.05
+    if Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0 && YDistFloor > 0
+      if CHANCE_MUL_LE PT_BAITCHANCE 0.15 || CHANCE_MUL_LE PT_AGGRESSION 0.1
         var21 = 16.72
         Return
       endif
     endif
-    if Equal OAirGroundState 1
-      var21 = 16.4
-    endif
+    // if Equal OAirGroundState 1 
+    //   var21 = 16.4
+    // endif
   endif
   EnableDebugOverlay
 
-  if Equal var20 -1
+  MOD var22 AnimFrame 4
+  if Equal var20 -1 && var22 >= 3
     Goto OPosGoal
     Goto changeGoal
     Return
+  else 
+    MOD var22 AnimFrame 20
+    if var22 >= 19
+      Goto OPosGoal
+      Goto changeGoal
+      Return
+    endif
   endif
 
   // $ifLastOrigin(grab,0)
@@ -678,8 +713,10 @@ elif var21 >= 16 && var21 < 17
           endif
           Return
         elif CHANCE_MUL_LE PT_BAITCHANCE 0.2 || CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.2
-          var21 = 10.5
-          Return
+          if YDistFloor < 15 && YDistFloor > 0
+            var21 = 10.5
+            Return
+          endif
         endif
       endif
     endif
@@ -694,7 +731,7 @@ elif var21 >= 16 && var21 < 17
   // standard
   var22 = 200
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   if Equal var22 0
     var2 = (1 - (LevelValue / 100)) * 30 + 15
     var17 = OAnimFrame
@@ -702,9 +739,13 @@ elif var21 >= 16 && var21 < 17
 
   var22 = 21
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var23 = var22
   var23 = (1 - var23)
+  var23 *= 2
+  if var23 < 0.25
+    var23 = 0.25
+  endif
   var2 *= var23
   var2 += 4
 
@@ -717,6 +758,12 @@ var23 = var22
   if OAnimFrame <= var23 && var22 < 5
     var2 = 2
   endif
+
+  // if var2 <= 1
+  //   DrawDebugRectOutline 0 10 var2 2 255 255 255 238
+  // else
+  //   DrawDebugRectOutline 0 10 var2 2 255 0 0 238
+  // endif
 
 if !(True) || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15
   elif OCurrAction >= 26 && OCurrAction <= 29 && var2 < 1 && Rnd < 0.2
@@ -732,8 +779,8 @@ if !(True) || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 
   //   elif var21 >= 16.7
   //   elif True
   //     if var2 <= 1 && Equal AirGroundState 1
-  //       predictOOption var22 11 LevelValue 
-  //       predictionConfidence var23 11 LevelValue
+  //       predictOOption var22 man_OXAttackDist LevelValue 
+  //       predictionConfidence var23 man_OXAttackDist LevelValue
   //       if Equal var22 1 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.6
   //         var21 = 10.5
   //         Return
@@ -771,13 +818,13 @@ if !(True) || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 
 
   // if Equal var23 var17 && var22 > 55
   //   XGoto GoalChoiceHub
-  //   XReciever
+  //   //= XReciever
   //   Return
   // endif
 
   // prevents truly unreactable adjustements
   // Goto getDist
-  // XReciever
+  // //= XReciever
 
   var23 = XSpeed
   Abs var23
@@ -791,17 +838,17 @@ if !(True) || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 
   if var21 >= 16.7
     var16 = 0
     XGoto SetAttackGoal
-    XReciever
+    //= XReciever
   elif OCurrAction <= 33 && !(Equal CurrAction 10) && Equal OFramesHitstun 0
     if var2 <= 1
       XGoto SetAttackGoal
-      XReciever
+      //= XReciever
     endif
 
     // if OCurrAction >= 11 && OCurrAction <= 13 && OAnimFrame < 20
     // else
     //   XGoto SetAttackGoal
-    //   XReciever
+    //   //= XReciever
     // endif
 
     if var21 <= 16.4 && !(Equal var21 16.3)
@@ -814,12 +861,17 @@ if !(True) || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 
       endif
       if Equal var23 -1 && CHANCE_MUL_GE PT_AGGRESSION 0.4 && CHANCE_MUL_GE PT_WALL_CHANCE 0.65
         var21 = 10.4
-        if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.4
+        if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
           var21 = 10.5
         endif
         Return
       elif Equal var23 -1
-if !(True) || Equal var20 9|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
+  var22 = 100
+  XGoto GetChrSpecific
+  //= XReciever
+var0 = var22
+  if Equal var0 1
+          var20 = -1
           var21 = 16.3      
           Return
         endif
@@ -832,17 +884,17 @@ if !(True) || Equal var20 9|| Equal var20 16|| Equal var20 17|| Equal var20 18||
       if var22 > var23
   var22 = 200
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
         if Equal var22 1
         elif var21 >= 16.7
-        elif !(SamePlane) && CHANCE_MUL_LE PT_BAITCHANCE 1 && Rnd < 0.2 && var2 <= 1 && OFramesHitstun <= 0
+        elif !(SamePlane) && CHANCE_MUL_LE PT_BAITCHANCE 0.15 && Rnd < 0.2 && OFramesHitstun <= 0
           var21 = 10
           Return
         endif
 
         // var16 = 3
         XGoto SetAttackGoal
-        XReciever
+        //= XReciever
       endif
     endif
   endif
@@ -856,8 +908,9 @@ if !(True) || Equal var20 9|| Equal var20 16|| Equal var20 17|| Equal var20 18||
   if var16 < 10
     var16 = 0
   endif
-  XGoto CheckAttackWillHit
-  XReciever
+  if var20 > -1
+    XGoto CheckAttackWillHit
+  endif
 else
   var21 = 10
 endif
@@ -891,19 +944,16 @@ Norm var22 var22 var23
 Abs var22
 Return
 label changeGoal
-MOD var22 AnimFrame 8
-if Equal var22 0
+// MOD var22 AnimFrame 8
+// if Equal var22 0
   XGoto CalcAttackGoal
-  XReciever
-endif
+// endif
 Return
 label forceChangeGoal
   if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.35
     XGoto CircleCampGoal
-    XReciever
   else
     XGoto RandomizeGoal
-    XReciever
   endif
 Return
 Return

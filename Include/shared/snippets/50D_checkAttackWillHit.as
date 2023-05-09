@@ -7,33 +7,43 @@
     if Equal AirGroundState 2 && !(Equal currGoal cg_edgeguard)
       #let fastfallDist = var18
       CALC_FASTFALL_DIST(fastfallDist, move_hitFrame + move_duration - counter + 1)
+      
 
       anotherTempVar = HurtboxSize * 0.5
       immediateTempVar = fastfallDist + YDistFloor + anotherTempVar
-      anotherTempVar = move_hitFrame + move_duration - counter + 1
+      anotherTempVar = globTempVar
+      globTempVar -= move_IASA
+      globTempVar *= FastFallSpeed
+      globTempVar += TopNY
+
       // LOGSTR str("FFSTUFF")
       // LOGVAL fastfallDist
       // LOGVAL YDistFloor
       // LOGVAL anotherTempVar
       // PRINTLN
       if immediateTempVar > 0
-        globTempVar = targetX - TopNX
-        immediateTempVar = TopNY + fastfallDist
-        // DrawDebugRectOutline TopNX immediateTempVar 10 2 color(0x00FFFFDD)
-        immediateTempVar = targetY - immediateTempVar
-        
-        Abs globTempVar
-        Abs immediateTempVar
-        if globTempVar <= tempXRange && immediateTempVar <= tempYRange
-          if !(Equal scriptVariant sv_checkHit)
-            scriptVariant = sv_execute_fastfall
-            SetDebugOverlayColor color(0xFF0000FF)
-            CallI ExecuteAttack
-            Finish
-          else
-            scriptVariant = sv_execute_fastfall
-            Return
+        GET_CHAR_TRAIT(anotherTempVar, chr_cs_recoveryDistY)
+        if OYDistBackEdge > -1 || globTempVar >= anotherTempVar || !(DangerEnabled)
+
+          globTempVar = targetX - TopNX
+          immediateTempVar = TopNY + fastfallDist
+          // DrawDebugRectOutline TopNX immediateTempVar 10 2 color(0x00FFFFDD)
+          immediateTempVar = targetY - immediateTempVar
+          
+          Abs globTempVar
+          Abs immediateTempVar
+          if globTempVar <= tempXRange && immediateTempVar <= tempYRange
+            if !(Equal scriptVariant sv_checkHit)
+              scriptVariant = sv_execute_fastfall
+              SetDebugOverlayColor color(0xFF0000FF)
+              CallI ExecuteAttack
+              Finish
+            else
+              scriptVariant = sv_execute_fastfall
+              Return
+            endif
           endif
+
         endif
       endif
     endif
@@ -48,21 +58,24 @@
   if Equal AirGroundState 1
     $ifAerialAttack()
       GetAttribute immediateTempVar attr_jumpYInitVelShort 0
-      anotherTempVar = 0 + immediateTempVar * globTempVar - Gravity * globTempVar * globTempVar
+      anotherTempVar = OHurtboxSize * 0.5
+      anotherTempVar += TopNY + immediateTempVar
+      if anotherTempVar < OTopNY
+        GetAttribute immediateTempVar attr_jumpYInitVel 0
+      endif
+      estYPos = immediateTempVar * estFrame - Gravity * estFrame * estFrame
+      estYPos += TopNY
     else
-      anotherTempVar = 0
+      estYPos = TopNY
     endif
   elif AnimFrame <= 3
-    if TotalYSpeed > 0
-      anotherTempVar = 0 + TotalYSpeed * globTempVar - Gravity * globTempVar * globTempVar
-    else
-      anotherTempVar = 0 + TotalYSpeed * globTempVar
-    endif
+    // MARKER THINGY HERE
+    CalcYChange estYPos estFrame YSpeed Gravity MaxFallSpeed FastFallSpeed 0
+    estYPos += TopNY
   else
-    EstYCoord anotherTempVar globTempVar
-    anotherTempVar -= TopNY
+    EstYCoord estYPos estFrame
   endif
-  tempGoalY -= anotherTempVar
+  estYPos -= LTF_STACK_READ // move_centerY
 #endsnippet
 
 #snippet SELF_X_ADJUST
@@ -70,15 +83,29 @@
 #endsnippet
 
 #snippet SELF_X_ADJUST_INNER
-  anotherTempVar = TotalXSpeed * 3
-  $ifAerialAttack()
-    EstXCoord anotherTempVar globTempVar
-    anotherTempVar -= XCoord
+  // LOGSTR_NL str("TNX, XSp, eFr")
+  // LOGVAL_NL TopNX 
+  // LOGVAL_NL XSpeed
+  // LOGVAL_NL estFrame
+  estXPos = TopNX + XSpeed * estFrame
+  // LOGSTR_NL str("initial")
+  // LOGVAL_NL estXPos 
+  // LOGSTR_NL str("OFFS")
+  // LOGVAL_NL move_xOffset
+  immediateTempVar = LTF_STACK_READ * -1 // move_centerX
+  $ifAerialAttackNotSpecial()
+    immediateTempVar *= Direction
+  else
+    estXPos = TopNX
   endif
-  tempGoalX -= anotherTempVar
+  // LOGSTR_NL str("ADJUSTED")
+  // LOGVAL_NL immediateTempVar
+  estXPos -= immediateTempVar
+  // LOGSTR_NL str("final")
+  // LOGVAL_NL estXPos 
 #endsnippet
 
 #snippet MOVE_IASA_CHECK
-  CalcYChange immediateTempVar move_IASA YSpeed Gravity MaxFallSpeed FastFallSpeed 0
-  immediateTempVar += TopNY
+  CalcYChange globTempVar move_IASA YSpeed Gravity MaxFallSpeed FastFallSpeed 0
+  globTempVar += TopNY
 #endsnippet

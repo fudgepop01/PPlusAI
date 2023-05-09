@@ -6,7 +6,7 @@
 
 #const cs_shortHopHeight = 17.63
 #const cs_jumpHeight = 32.48
-#const cs_djumpHeight = 32.48
+#const cs_djumpHeight = 20.00
 #const cs_wavedashDist = 10
 
 #const cs_dashForceTurnFrame = 12

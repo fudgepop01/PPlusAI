@@ -2,44 +2,48 @@
 id 0x8204
 unk 0x0
 
-XReciever
+//= XReciever
 label setup
 #let OHasHitShield = var0
 #let OEndLag = var1
-#let timer = var2
-#let patience = var3
-#let willStrike = var4
+#let patience = var2
+#let willStrike = var3
 
 OHasHitShield = 0
-timer = 0
 
 willStrike = false
-if CHANCE_MUL_LE PT_AGGRESSION 0.4
+PredictOMov immediateTempVar mov_grab LevelValue
+if CHANCE_MUL_LE PT_AGGRESSION 0.35 || immediateTempVar > 0.4
   willStrike = true
 endif
 
 patience = Rnd * 35 + 5
-if Equal currGoal cg_bait_shield || XDistLE 30
-  immediateTempVar = 60 * Rnd + 20
+PredictOMov immediateTempVar mov_attack LevelValue
+if Equal currGoal cg_bait_shield || immediateTempVar > 0.36
+  immediateTempVar = 30 * Rnd + 10
   patience += immediateTempVar
 endif
 if Equal currGoal cg_defend_crouchCancel
   patience *= 0.5
 endif
-Seek shield
-Return
 label shield
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek shield
 
-if !(Equal AirGroundState 1)
+if Equal CurrAction hex(0x39)
+  currGoal = cg_attack_reversal
+  CallI ExecuteAttack
+elif !(Equal AirGroundState 1)
   Return
 endif
 
-timer += 1
+patience -= 1
 if Equal currGoal cg_defend_crouchCancel
   AbsStick 0 (-0.7)
+  if patience <= 0
+    CallI MainHub
+  endif
 else
   Button R
   if Equal LevelValue LV9
@@ -52,15 +56,23 @@ else
     endif
     AbsStick immediateTempVar globTempVar
   endif
+  GetCommitPredictChance immediateTempVar LevelValue
+  PredictOMov anotherTempVar mov_grab LevelValue
+  if Rnd < 0.1 && immediateTempVar > 0.125
+    Goto rollOption
+  elif anotherTempVar > 0.125
+    Goto rollOption
+  endif
 endif
 
-GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
 Seek shield
+// LOGSTR_NL str("endl")
+// LOGVAL_NL OEndLag
 
 if Equal CurrAction hex(0x1D)
-  MOD globTempVar timer 14
+  MOD globTempVar patience 14
   if Equal globTempVar 0
-    if OEndLag >= 35
+    if OEndLag >= 25
       AbsStick OPos
     else
       immediateTempVar = OPos * -1
@@ -69,27 +81,32 @@ if Equal CurrAction hex(0x1D)
   endif 
   OHasHitShield += 1
 endif
+GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
+if OAttackCond && Equal OEndLag -1
+  patience += 1
+  Return
+endif
 
-MOD globTempVar timer 3
-if Equal globTempVar 0 
+MOD globTempVar patience 3
+if Equal globTempVar 0 || patience <= 0
   if Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x11) || Equal CurrAction hex(0x12)
     GetShieldRemain globTempVar
-    immediateTempVar = OHasHitShield * 0.02
+    immediateTempVar = OHasHitShield * 0.05
     GetCommitPredictChance anotherTempVar LevelValue
-    if globTempVar < 40 || OEndLag > 12 || !(XDistLE 50)
+    if globTempVar < 40 || OEndLag > 6 || !(XDistLE 50)
       Seek pickOption
       Jump
-    elif anotherTempVar > 0.20 && Rnd <= 0.85
+    elif anotherTempVar > 0.20 && Rnd <= 0.85 && Equal willStrike false
       Return
+    elif Equal willStrike true && XDistLE 40 && Rnd < 0.4
+      Seek pickOption
+      Jump
     elif OAttacking && OEndLag < 1
       Return
     elif Rnd <= immediateTempVar
       Seek pickOption
       Jump
-    elif Equal willStrike true && XDistLE 40 && Rnd < 0.4
-      Seek pickOption
-      Jump
-    elif timer >= patience && !(XDistLE 10) 
+    elif patience <= 0 && !(XDistLE 10)
       Seek pickOption
       Jump
     endif
@@ -97,11 +114,11 @@ if Equal globTempVar 0
 endif
 Return
 label pickOption
-OEndLag += 15
+OEndLag += 8
 predictAverage immediateTempVar man_OXHitDist LevelValue
 immediateTempVar += 10
-if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true
-  if OEndLag > 10 && Rnd < 0.4
+if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
+  if OEndLag > 10 && Rnd < 0.85
     Seek exec_attack
     Jump
   elif Rnd < 0.2 && XDistLE immediateTempVar
@@ -111,21 +128,25 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true
     Seek exec_attack
     Jump
   endif
-
+  
   if !(True)
     label exec_attack
-    Button X
     GetCommitPredictChance immediateTempVar LevelValue
-    currGoal = cg_attack_reversal
-    if XDistLE 5 && immediateTempVar > 0.15
-      currGoal = cg_attack_wall
+    if !(Equal currGoal cg_defend_crouchCancel)
+      Button X
+      Seek jumpExec
+      // LOGSTR_NL str("jumping")
+      Return
     endif
+    label jumpExec
+    // LOGSTR_NL str("execing")
     XGoto CalcAttackGoal
-    XReciever
+    //= XReciever
     scriptVariant = sv_none
     XGoto SetAttackGoal
-    XReciever
+    //= XReciever
     skipMainInit = mainInitSkip
+    currGoal = cg_attack_reversal
     CallI MainHub
   endif
 
@@ -133,33 +154,18 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true
   if Equal OPos Direction && XDistLE 10
     if OEndLag > 5 && Rnd < 0.75 || Equal willStrike true
       Button A
-      Call 0x1120
+      Call ExecuteAttack
     endif
   endif
 endif
 
 if !(Equal currGoal cg_defend_crouchCancel)
-  GetCommitPredictChance immediateTempVar LevelValue
-  if Rnd < 0.4 && immediateTempVar > 0.15
-    if Rnd < 0.2
-      AbsStick OPos
-    elif Rnd < 0.2
-      immediateTempVar = OPos * -1
-      AbsStick immediateTempVar
-    elif Rnd < 0.6
-      AbsStick 0 (-1)
-    endif
-  endif
-
+  // LOGSTR_NL str("wdPlace")
   if OEndLag > 15 && Rnd < 0.75
-    scriptVariant = sv_wavedash_in
-    currGoal = cg_attack_reversal
-    skipMainInit = mainInitSkip
-    CallI Wavedash
-  elif OEndLag > 9 && Rnd < 0.7
+    Goto wdPunish
+  elif OEndLag > 4 && Rnd < 0.4
     scriptVariant = sv_wavedash_out
-    currGoal = cg_attack_reversal
-    skipMainInit = mainInitSkip
+    currGoal = cg_nothing
     CallI Wavedash
   endif
 
@@ -168,7 +174,7 @@ if !(Equal currGoal cg_defend_crouchCancel)
     predictOOption globTempVar man_ODefendOption LevelValue 
     if Rnd < immediateTempVar
       if Equal globTempVar op_defend_attack && Rnd < immediateTempVar
-        if Rnd < 1
+        if Rnd < 0.3
           scriptVariant = sv_jump_away
           if XDistBackEdge > -15
             scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
@@ -178,16 +184,29 @@ if !(Equal currGoal cg_defend_crouchCancel)
         Seek shield
         Return
       elif True
-        scriptVariant = sv_wavedash_in
-        if XDistBackEdge > -10 && XDistFrontEdge < 10
-          scriptVariant = sv_wavedash_awayFromLedge
-        endif
-        currGoal = cg_attack_reversal
-        CallI Wavedash
+        Goto wdPunish
       endif
     endif
   endif
 endif
 Seek shield
+Return
+label wdPunish
+scriptVariant = sv_wavedash_in
+if XDistBackEdge > -10 && XDistFrontEdge < 10
+  scriptVariant = sv_wavedash_awayFromLedge
+endif
+skipMainInit = mainInitSkip
+currGoal = cg_attack_reversal
+CallI Wavedash
+label rollOption
+if Rnd < calc(0.1 * 1/3)
+  AbsStick OPos
+elif Rnd < calc(0.1 * 2/3)
+  immediateTempVar = OPos * -1
+  AbsStick immediateTempVar
+elif Rnd < 0.1
+  AbsStick 0 (-1)
+endif
 Return
 Return

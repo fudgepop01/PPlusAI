@@ -1,25 +1,44 @@
 #snippet INITIALIZATION
+  $genActions(SFALL, 10)
+  $genActions(NSPECIAL, 112)
+  $genActions(SSPECIAL, 113)
+  $genActions(USPECIAL, 114|117|118)
+  $genActions(DSPECIAL, 115)
+  
   #const UpBRadius = 60
-  #const sideBHeight = 4
   #const sideBRange = 80
-  #const tolerence = 6
+  #const sideBHeight = -4
 
-  #const jumpChance = 0.3
-  #const highUpBChance = 0.15
-  #const sideBChance = 0.75
+  #const jumpChance = 0.5
+  #const highUpBChance = 0.85
+  #const highHighUpBChance = 0.7
+  #const sideBChance = 0.7
+  #const sideBLedgeChance = 0.7
+  #const trickAngleChance = 0.6
   #let hasTriedToUpB = var4
   #let jumpValue = var5
   #let highUpBValue = var6
   #let sideBValue = var7
+  #let sideBLedgeValue = var8
+  #let highHighUpBValue = var9
+  #let trickAngleValue = var10
+  #let tolerence = var11
+  tolerence = 10
   hasTriedToUpB = 0
   jumpValue = Rnd
-  if nearCliffY > UpBRadius || nearCliffX > sideBRange
+  if cliffDistY < UpBRadius || cliffDistX > sideBRange
     jumpValue = 0
   endif
   highUpBValue = Rnd
+  highHighUpBValue = Rnd
   sideBValue = Rnd
-  if nearCliffX > sideBRange
+  if cliffDistX > sideBRange
     sideBValue = 0
+  endif
+  sideBLedgeValue = Rnd
+  trickAngleValue = Rnd
+  if cliffDistX > calc(UpBRadius * 0.5)
+    trickAngleValue = 1
   endif
 #endsnippet
 
@@ -29,116 +48,129 @@
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
-  #let nearCliffX = var0
-  #let nearCliffY = var1
+  #let cliffDistX = var0
+  #let cliffDistY = var1
   #let absNCX = var2
   #let distFromEdge = var3
 
-  NEAREST_CLIFF(nearCliffX, nearCliffY)
-  Norm distFromEdge nearCliffX nearCliffY
-  Abs distFromEdge
+  DIST_TO_CLIFF(cliffDistX, cliffDistY)
+
+  immediateTempVar = Direction * cliffDistX
+  if Equal isBelowStage 0 && immediateTempVar > 0
+    if highUpBValue < highUpBChance
+      immediateTempVar = highHighUpBChance - highHighUpBValue
+      immediateTempVar /= 0.7
+      immediateTempVar *= 15
+      tolerence += immediateTempVar
+    endif
+    if highHighUpBValue < highHighUpBChance
+      immediateTempVar = highHighUpBChance - highHighUpBValue
+      immediateTempVar /= 0.7
+      immediateTempVar *= 30
+      tolerence += immediateTempVar
+    endif
+  endif
   
   // drift towards goal
-  globTempVar = nearCliffX * -1
   ClearStick
-  AbsStick globTempVar
+  AbsStick cliffDistX
 
-  absNCX = nearCliffX
+  absNCX = cliffDistX
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
-  if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
-    Button B
-    ClearStick
-    Stick 1
-    Return
+  Norm distFromEdge cliffDistX cliffDistY
+  Abs distFromEdge
+  if sideBValue <= sideBChance && cliffDistY > sideBHeight && cliffDistY < calc(sideBHeight + 15) && absNCX <= sideBRange
+    $recover(side)
   endif
-  if highUpBValue <= highUpBChance && distFromEdge < UpBRadius && YDistBackEdge < 20 && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
+  if highUpBValue <= highUpBChance && distFromEdge < UpBRadius && cliffDistY > -20 && Equal hasTriedToUpB 0
+    $recoverVar(up)
   endif
-  if distFromEdge > calc(UpBRadius - tolerence) && distFromEdge < calc(UpBRadius + tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
+  immediateTempVar = UpBRadius - tolerence
+  if distFromEdge > immediateTempVar && distFromEdge < UpBRadius && Equal hasTriedToUpB 0
+    $recoverVar(up)
+  endif
+  if globTempVar < 18 && TotalYSpeed < -0.1
+    globTempVar = -1
   endif
   if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
+    if cliffDistY < calc(rec_jumpHeight + 6) && Rnd < 0.5
+      $recover(jump)
     endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBRadius - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
+  elif cliffDistY < calc(cs_djumpHeight - UpBRadius + 20) || Equal globTempVar -1
+    if NumJumps > 0
+      $recover(jump)
     else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
+      $recoverVar(up)
     endif
   endif
 #endsnippet
 
 #snippet USPECIAL
   if Equal isBelowStage 1
-    if nearCliffX > TopNX
-      nearCliffX += 2
+    if cliffDistX < TopNX
+      cliffDistX += 2
     else
-      nearCliffX -= 2
+      cliffDistX -= 2
     endif
   endif
 
   if !(Equal CurrSubaction hex(0x1DF))
     if !(NoOneHanging) && !(Equal isBelowStage 1)
-      nearCliffY -= 25
-      if nearCliffX > 0
-        nearCliffX += 15
+      cliffDistY -= 25
+      if cliffDistX < 0
+        cliffDistX += 15
       else
-        nearCliffX -= 15
+        cliffDistX -= 15
       endif
     endif
 
     #let absNCX = var4
-    #let NCY = var3
-    absNCX = nearCliffX
-    NCY = nearCliffY
+    absNCX = cliffDistX
 
-    Norm globTempVar nearCliffX nearCliffY
-    nearCliffX /= globTempVar
-    nearCliffY /= globTempVar
-    nearCliffX *= -1
-    nearCliffY *= -1
+    Norm globTempVar cliffDistX cliffDistY
+    cliffDistX /= globTempVar
+    cliffDistY /= globTempVar
+    cliffDistY *= -1
 
-    if 0.1 < nearCliffX && nearCliffX < 0.25
-      AbsStick 0.3 nearCliffY
-    elif -0.25 < nearCliffX && nearCliffX < -0.1
-      AbsStick -0.3 nearCliffY
+    if cliffDistY < 0.3 && cliffDistY > 0
+      cliffDistY = 0.3
+    endif
+
+    if 0.1 < cliffDistX && cliffDistX < 0.25
+      AbsStick 0.3 cliffDistY
+    elif -0.25 < cliffDistX && cliffDistX < -0.1
+      AbsStick -0.3 cliffDistY
     else
-      AbsStick nearCliffX nearCliffY
+      AbsStick cliffDistX cliffDistY
     endif
   else
-    globTempVar = TopNX * -1
-    AbsStick globTempVar
+    AbsStick cliffDistX
   endif
 #endsnippet
 
 #snippet SSPECIAL
   if AnimFrame > 2 && AnimFrame < 5
-    immediateTempVar = TopNX * -1
-    AbsStick immediateTempVar
+    AbsStick cliffDistX
   else
-    Stick 1
+    AbsStick cliffDistX
+    if sideBLedgeValue <= sideBLedgeChance && ActionTimer >= 14
+      immediateTempVar = Direction * calc(18 * 2)
+      GetYDistFloorOffset immediateTempVar immediateTempVar 5 0
+      if immediateTempVar > -1
+        Button B
+      endif
+    endif
   endif
 #endsnippet
 
 #snippet NSPECIAL
+#endsnippet
+
+#snippet CLIFF_DIST_MACRO
+  {CD_NEW}
+#endsnippet
+#snippet JUMP_TO_STAGE
+  {JUMP_TO_STAGE_NEW}
 #endsnippet

@@ -2,10 +2,9 @@
 id 0x8103
 unk 0x0
 
-XReciever
+//= XReciever
 // because some things might rely on these being unset
 label reroll
-var14 = Rnd * 0
   GetNearestCliff var0
   var0 = TopNX - var0
   var0 *= -1
@@ -23,7 +22,7 @@ SetDebugOverlayColor 255 136 0 221
 EnableDebugOverlay
 
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek begin
 
 
@@ -64,30 +63,52 @@ endif
   var1 *= -1
   var1 += TopNY
 
+var17 = 0
 if Equal CurrAction 16
+  var17 = 1
   Goto handleSFall
-  Return
 elif Equal CurrAction 276
+  var17 = 1
   Goto handleUSpecial
-  Return
 elif Equal CurrAction 274 || Equal CurrAction 302 || Equal CurrAction 304
+  var17 = 1
   Goto handleNSpecial
-  Return
 elif Equal CurrAction 275
+  var17 = 1
   Goto handleSSpecial
-  Return
 elif Equal CurrAction 277
+  var17 = 1
   Goto handleDSpecial
-  Return
 elif CurrAction >= 11 && CurrAction <= 13
   if YDistBackEdge < -10
     var21 = 0
     var20 = -1
     Call MainHub 
-  elif YSpeed > 0 || AnimFrame < 2
+  elif YSpeed > 0 || AnimFrame < 8
+    var17 = 1
     Goto handleJumpToStage
     Return
   endif
+endif
+
+if YDistFloor > -1 
+  if Equal AirGroundState 1 || Equal CurrAction 190
+    var21 = 0
+    var20 = -1
+    var14 = BBoundary
+    var13 = 0
+    Call MainHub
+  elif !(Equal var17 0)
+    ClearStick
+    var17 = TopNX * -1
+    AbsStick var17
+    Return
+  endif
+elif HasCurry && Equal HitboxConnected 1
+  var21 = 0
+  Call MainHub
+elif !(Equal var17 0)
+  Return
 endif
 
   var17 = 15
@@ -109,14 +130,6 @@ endif
     var2 = 0
   endif
 
-if YDistFloor > -1 || Equal AirGroundState 1
-  var21 = 0
-  var20 = -1
-  var14 = BBoundary
-  var13 = 0
-  Call MainHub
-endif
-
   GetNearestCliff var0
   var0 = TopNX - var0
   var0 *= -1
@@ -130,16 +143,17 @@ endif
   var2 = var0
   Abs var2
   var17 = TopNY - BBoundary
+  var1 -= TotalYSpeed
+  var1 += HurtboxSize
   if !(NoOneHanging) && !(Equal var16 1)
-    LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
-    var1 -= 25
+    // LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
+    // 6 += 25
   endif
-  if YDistBackEdge > 26.18 && var2 <= 15 && NumJumps > 0
+  if YDistBackEdge < 26.18 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
     Return
   endif
-  var1 -= var14
   if var6 <= 0.25 && YDistBackEdge < -10 && Equal var4 0
     var4 = 1
     Button B

@@ -2,7 +2,7 @@
 id 0x8208
 unk 0x0
 
-XReciever
+//= XReciever
 if Equal IsOnPassableGround 0
   Call MainHub
 endif
@@ -10,9 +10,9 @@ label setup
 var0 = 0
 label drop
 XGoto PerFrameChecks
-XReciever
-Seek drop
+//= XReciever
 Goto AGSCheck
+Seek drop
 Button R
 if var0 >= 2
   var22 = var0 - 1

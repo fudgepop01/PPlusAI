@@ -16,25 +16,68 @@ str "1"
 str "0.5"
 str "0.95"
 
-XReciever
+//= XReciever
 
-XGoto PerFrameChecks
-XReciever
+// XGoto PerFrameChecks
+//= XReciever
 
 SetAutoDefend 0
 SetDisabledSwitch 1
 SetDebugMode TEMP_DEBUG_TOGGLE
+// SetDebugMode 1
 
-if ODistLE 180
-  SetDisabledMd 6
-else
-  SetDisabledMd -1
+SetDisabledMd -1
+
+LOGSTR 1667702784 1835100416 1850962944 1634890752 0
+LOGVAL var21
+PRINTLN
+
+if TRAINING_MODE_OPTION >= 0
+  XGoto PerFrameChecks
+  ADJUST_PERSONALITY 0 -100 1
+  ADJUST_PERSONALITY 1 -100 1
+  ADJUST_PERSONALITY 2 -100 1
+  ADJUST_PERSONALITY 3 -100 1
+  ADJUST_PERSONALITY 4 -100 1
+  ADJUST_PERSONALITY 5 -100 1
+  // ADJUST_PERSONALITY 6 -100 1
+  // ADJUST_PERSONALITY 7 -100 1
+  // ADJUST_PERSONALITY 8 -100 1
+  // ADJUST_PERSONALITY 9  1
+  ADJUST_PERSONALITY 10 -100 1
+  // ADJUST_PERSONALITY 11 100 1
+  
+  ClearStick
+  if Equal TRAINING_MODE_OPTION 1
+    ADJUST_PERSONALITY 0 100 1
+    ADJUST_PERSONALITY 4 100 1
+    Seek initHitPredictValues
+  elif Equal TRAINING_MODE_OPTION 5
+    ADJUST_PERSONALITY 5 100 1
+    ADJUST_PERSONALITY 3 100 1
+    Seek initHitPredictValues
+  elif Equal TRAINING_MODE_OPTION 6
+    Button R
+  elif Equal TRAINING_MODE_OPTION 7
+    AbsStick 0 -1
+  elif Equal TRAINING_MODE_OPTION 4
+    if Equal CurrAction 124 || Equal CurrAction 125
+      Stick -0.7
+    else
+      Stick 0.7
+    endif 
+  elif Equal TRAINING_MODE_OPTION 0
+    if Equal AirGroundState 1 && CurrAction <= 10
+      Button X
+    endif
+  endif
+  Return
 endif
 
 label initHitPredictValues
 getCurrentPredictValue var22 10
 if Equal var22 0
-  trackOAction 10 40
+  trackOAction 10 15
   Seek initHitPredictValues
   Jump
 endif
@@ -51,7 +94,7 @@ elif var21 >= 16.7
 endif
 
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek start
 
 GetIsTeammateCloser var3
@@ -63,14 +106,18 @@ if Equal var15 -1
   var15 = -100
   var22 = 200
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   if Equal var22 1
     var21 = 16.4
   endif
   if !(Equal var20 -1)
     XGoto SetAttackGoal
-    XReciever
-if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|| Equal var20 18|| Equal var20 19|| Equal var20 20|| Equal var20 21|| Equal var20 22
+    //= XReciever
+  var22 = 100
+  XGoto GetChrSpecific
+  //= XReciever
+var0 = var22
+  if Equal var0 1
     elif Equal CurrSubaction JumpSquat
       var16 = 1
       Call Wavedash      
@@ -81,7 +128,7 @@ if !(True) || Equal var20 14|| Equal var20 15|| Equal var20 16|| Equal var20 17|
 elif Equal var15 -2
   label empty_0
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek empty_0
 
   if Equal CurrAction 3 || Equal CurrAction 4
@@ -95,16 +142,23 @@ if !(True)
     endif
   endif
   Goto isActionable
+  Seek empty_0
   if Equal var22 0
     Return
   endif
   var15 = -100
 
   CallI ExecuteAttack
-elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
+elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25) 
+  if YDistFloor > 25
+    var21 = 0
+    var20 = -1
+    Seek rollTactics
+    Jump
+  endif
   label empty_1
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek empty_1
 
   Goto isActionable
@@ -113,11 +167,12 @@ elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
   endif
   label setupWallDelay
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
 
   if Rnd < 0.1 && CHANCE_MUL_LE PT_WALL_CHANCE 1
     XGoto CalcAttackGoal
-    XReciever
+  elif Equal var20 -1 
+    XGoto CalcAttackGoal
   endif
   Seek setupWallDelay
   
@@ -135,7 +190,7 @@ elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
   var0 *= 0.35
   label wallDelay
   XGoto PerFrameChecks 
-  XReciever
+  //= XReciever
   Seek wallDelay
   if var0 <= 0
     CallI ExecuteAttack
@@ -145,7 +200,7 @@ elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
 elif Equal var21 7.1 && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1.3 && CHANCE_MUL_LE PT_AGGRESSION 1
   label empty_2
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek empty_2
 
   Goto isActionable
@@ -159,8 +214,10 @@ elif Equal var21 10.4
   Jump
 endif
 
+label rollTactics
+
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 
 var16 = 0
 var20 = -1
@@ -168,29 +225,39 @@ var20 = -1
 DynamicDiceClear 0
 var23 = TopNX - OTopNX
 Abs var23
-var22 = PT_CIRCLECAMPCHANCE * var23
+var22 = PT_CIRCLECAMPCHANCE * var23 * 0.025
 DynamicDiceAdd 0 10.1 var22
 var22 *= 2
-DynamicDiceAdd 0 0.4 var22
+DynamicDiceAdd 0 7 var22
 
 // Functions = things that give a value
 // Requirements = stuff that go in an if condition
 // Commands = controls logic flow and interacts with game itself
 
-var22 = PT_BAITCHANCE * 12
+var22 = PT_BAITCHANCE
 DynamicDiceAdd 0 10 var22
-var22 = PT_BAIT_DASHAWAYCHANCE * 10
+var22 += PT_AGGRESSION
+DynamicDiceAdd 0 10.1 var22
+var22 = PT_BAIT_DASHAWAYCHANCE * 2
 DynamicDiceAdd 0 10.5 var22
 
-if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.1
+var23 = LevelValue * 0.0075
+if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.2
   SeekNoCommit attack_roll
-elif CHANCE_MUL_LE PT_AGGRESSION 0.2
+elif CHANCE_MUL_LE PT_AGGRESSION var23
+  SeekNoCommit attack_roll
+endif
+var22 = LevelValue * 0.0075
+var23 = 1 - var22
+PredictOMov var22 14 LevelValue
+var22 *= var23
+if var22 < 0.05
   SeekNoCommit attack_roll
 elif Equal HitboxConnected 1
   if !(True)
     label attack_roll
   endif
-  var22 = PT_BAIT_DASHAWAYCHANCE * 2
+  var22 = PT_BAIT_DASHAWAYCHANCE
   DynamicDiceAdd 0 10.5 var22
   predictionConfidence var22 9 LevelValue
   if var22 > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
@@ -199,17 +266,23 @@ elif Equal HitboxConnected 1
   var22 = PT_AGGRESSION * 4
   DynamicDiceAdd 0 16 var22
   GetCommitPredictChance var22 LevelValue
-  var22 *= 90 * PT_WALL_CHANCE
-  DynamicDiceAdd 0 16.3 var22
+  if YDistFloor < 25
+    var22 *= 2.5 * PT_WALL_CHANCE
+    DynamicDiceAdd 0 16.3 var22
+  endif
   var22 = 5 - var22
   DynamicDiceAdd 0 16.4 var22
 endif
 
 DynamicDiceRoll 0 var21 0
 
+LOGSTR 1735352576 1811939328 0 0 0
+LOGVAL var21
+PRINTLN
+
   var22 = 200
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 if Equal var3 1
   var21 = 7
 elif Equal HitboxConnected 1 || Equal PrevAction 60
@@ -226,21 +299,25 @@ endif
 
 label initial
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek initial
 // if Equal var13 0 && Equal var14 0
 //   XGoto GoalChoiceHub
-//   XReciever
+//   //= XReciever
 //   Seek initial
 // endif
+Goto isActionable
+if Equal var22 0
+  Seek initial
+  Return
+endif
 
 var0 = LevelValue * 0.01
 if var0 < 0
-  var0 = 0.05
+  var0 = 0.01
 endif
 label tskillWait
 XGoto PerFrameChecks
-XReciever
 Seek tskillWait
 if Rnd < var0
   Seek selectGoal
@@ -249,20 +326,35 @@ endif
 Return
 label selectGoal
 XGoto PerFrameChecks
-XReciever
 Cmd30
-XGoto UpdateGoal
-XReciever
+// if TEMP_DEBUG_TOGGLE > 0
+//   var20 = Damage
+//   var21 = 16.4
+//   CALL_EVENT(19.1)
+//   PRINTLN
+//   XGoto SetAttackGoal
+//   XGoto CheckAttackWillHit
+// else
+  XGoto UpdateGoal
+  LOGSTR 1667706112 1886352128 1948275968 1883504640 0
+  LOGVAL var21
+// endif
+PRINTLN
 
 if Equal var21 10.4
   label waitSetup
   var4 = Rnd * 55 + 5
   label baitWait
   LOGSTR_NL 1111574784 1415534336 1095324672 0 0
+  STACK_PUSH var4 0
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   XGoto UpdateGoal
-  XReciever
+  //= XReciever
+  if Equal CurrAction 73
+    XGoto AttackedHub
+  endif
+  var4 = STACK_POP
   Seek baitWait
   var4 -= 1
   predictAverage var22 10 LevelValue
@@ -272,6 +364,7 @@ if Equal var21 10.4
   endif
   var22 *= 3
   if XDistLE var22 && CHANCE_MUL_LE PT_AGGRESSION 0.05
+    var20 = -1
     var21 = 16.3
     Seek selectGoal
     Jump
@@ -298,28 +391,20 @@ elif Equal var21 16 && Equal var20 -1
 endif
 label navigateToGoal
 XGoto PerFrameChecks
-XReciever
-Seek selectGoal
 Goto isActionable
+Seek selectGoal
 if Equal var22 0
   Return
 endif
 
 XGoto MoveToGoal
-XReciever
 Seek selectGoal
 Return
 label isActionable
 var22 = 0
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif Equal CurrAction 22 
-    if Equal PrevAction 33
-      Return
-    elif AnimFrame <= 3
-      Return
-    endif
-  elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
+  var22 = 300
+  XGoto GetChrSpecific
+  if Equal var22 0 
     Return
   endif
 var22 = 1

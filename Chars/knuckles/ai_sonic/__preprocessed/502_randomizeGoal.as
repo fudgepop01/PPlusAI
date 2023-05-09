@@ -2,7 +2,7 @@
 id 0x8502
 unk 0x0
 
-XReciever
+//= XReciever
 var13 = Rnd * 300 - 150
 var14 = Rnd * 150
 GetColDistPosRel var17 var17 var13 var14 0 -150 0

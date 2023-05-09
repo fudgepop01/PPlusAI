@@ -2,20 +2,20 @@
 id 0x820C
 unk 0x0
 
-XReciever
+//= XReciever
 label prep
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Stick 0 (-1)
 Seek
 Return
 label start
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 
   var22 = 15
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 if YDistBackEdge >= var22
   Button X
 endif

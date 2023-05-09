@@ -1,5 +1,5 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 20
+  #const UpBXDist = 15
   #const UpBYDist = 25
   #const sideBHeight = 4
   #const sideBRange = 80
@@ -18,6 +18,10 @@
   hasTriedToUpB = 0
   jumpValue = Rnd
   sideBValue = Rnd
+  if cliffDistY < UpBYDist || cliffDistX > UpBXDist
+    jumpValue = 0
+    sideBValue = 0
+  endif
   highSideBValue = Rnd
   earlySideBValue = Rnd
 #endsnippet
@@ -56,16 +60,23 @@
     Return
   endif
   
-  if YDistBackEdge < -20 && absNCX > 15 && earlySideBValue < earlySideBChance
+  if YDistBackEdge < 20 && absNCX > 15 && earlySideBValue < earlySideBChance
     Button B
     ClearStick
     Stick 1 0
     Return
   endif
-  if YDistBackEdge > -40 && YDistBackEdge < -10 && absNCX > 15 && sideBValue < sideBChance
+  if YDistBackEdge < 40 && YDistBackEdge > 10 && absNCX > 15 && sideBValue < sideBChance
     Button B
     ClearStick
     Stick 1 0
+    Return
+  endif
+  if Equal hasTriedToUpB 0 && YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 80) && absNCX > 5 && sideBValue < sideBChance
+    hasTriedToUpB = 1
+    Button B
+    ClearStick
+    Stick 0 1
     Return
   endif
 
@@ -81,7 +92,7 @@
       jumpValue *= 1.25
       Return
     endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
+  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 10) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage

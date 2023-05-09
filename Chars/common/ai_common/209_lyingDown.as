@@ -2,13 +2,13 @@
 id 0x8209
 unk 0x0
 
-XReciever
+//= XReciever
 label setup
 #let timer = var0
 timer = 0
 label begin
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek begin
 currGoal = cg_lying
 
@@ -19,6 +19,23 @@ if CurrAction <= hex(0x20) || Equal CanCancelAttack 1
   CallI MainHub
 endif
 
+if !(Equal CurrAction hex(0x4D))
+  Return
+endif
+
+if TRAINING_MODE_OPTION >= 0
+  immediateTempVar = Rnd * 4 - 2
+  if immediateTempVar > 1
+    Button R
+    if immediateTempVar > 2
+      Button A
+    endif
+  else
+    immediateTempVar *= 5
+    Stick immediateTempVar
+  endif 
+endif
+
 // react to/read the opponent's attack patterns
 immediateTempVar = (1 - (LevelValue / 100)) * 12
 immediateTempVar *= PT_REACTION_TIME
@@ -26,30 +43,32 @@ MOD immediateTempVar AnimFrame immediateTempVar
 if Equal immediateTempVar 0
   predictAverage immediateTempVar man_OXHitDist LevelValue
   immediateTempVar += 35
-  if ODistLE immediateTempVar
-    GetCommitPredictChance globTempVar LevelValue
-    globTempVar *= 0.5
-    immediateTempVar = (Rnd * 4) + 14 + (1 - LevelValue / 100) * 15
-    if Rnd < globTempVar
-      Goto smartRoll
-      Return
-    elif OAnimFrame >= immediateTempVar && OAttacking
-      Goto smartRoll
-      Return
-    endif
+  if XDistLE immediateTempVar
+    Goto smartRoll
+    Seek begin
   endif
 endif
 
-if timer >= 10 && Rnd <= 0.1 && Equal CurrAction hex(0x4D)
+if timer >= 1 && Rnd <= 0.1 && Equal CurrAction hex(0x4D)
   Goto smartRoll
+  Seek begin
   Return
 endif
 timer += 1
 Return
 label smartRoll
-if ODistLE 50 && Rnd < 0.25
+if XDistLE 35 && Rnd < 0.5
   Button A
 else
+  GetCommitPredictChance immediateTempVar LevelValue
+  PredictOMov anotherTempVar mov_shield LevelValue
+  if XDistLE 45 && anotherTempVar < 0.28
+    if Rnd < 0.5 || immediateTempVar > 0.15
+      Button A
+    endif
+    Button R
+    Return
+  endif
   immediateTempVar = OPos * -30
   GetYDistFloorOffset immediateTempVar immediateTempVar 5 0
   if Equal immediateTempVar -1 && Rnd < 0.45

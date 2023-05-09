@@ -1,5 +1,5 @@
 #snippet DSPECIAL
-  if AnimFrame >= 6
+  if ActionTimer >= 6
     Button X
     Seek finish
     Return
@@ -13,7 +13,7 @@
 // #endsnippet
 
 #snippet DSPECIALAIR
-  if AnimFrame >= 6
+  if ActionTimer >= 6
     Button X
   endif
 #endsnippet
@@ -25,7 +25,6 @@
 #endsnippet
 
 #snippet NSPECIALAIR
-  ClearStick
   if !(ODistLE 15) && AnimFrame > 3 && Equal CurrSubaction hex(0x1d2) && Equal IsOnStage 1 && Equal AirGroundState 2
     Button B
   endif

@@ -1,0 +1,30 @@
+#include <Subactions_common.h>
+#include <Subactions_Stub.h>
+flag1=0x1CE
+flag2=0x1
+Attack11 unk=0,start=2,end=5,xmin=-1.00,xmax=15.00,ymin=8.00,ymax=17.00
+Attack12 unk=0,start=4,end=7,xmin=1.00,xmax=20.00,ymin=8.00,ymax=16.00
+Attack13 unk=0,start=5,end=12,xmin=3.00,xmax=23.00,ymin=8.00,ymax=20.00
+Attack100 unk=0,start=2,end=29,xmin=6.00,xmax=25.00,ymin=1.00,ymax=26.00
+AttackDash unk=0,start=6,end=16,xmin=13.00,xmax=41.00,ymin=4.00,ymax=18.00
+AttackS3Hi_AttackS3S_ unk=0,start=8,end=11,xmin=3.00,xmax=23.00,ymin=11.00,ymax=28.00
+AttackS3S unk=0,start=8,end=11,xmin=3.00,xmax=26.00,ymin=3.00,ymax=21.00
+AttackS3Lw_AttackS3S_ unk=0,start=8,end=11,xmin=3.00,xmax=25.00,ymin=4.00,ymax=18.00
+AttackHi3 unk=0,start=16,end=21,xmin=0.00,xmax=27.00,ymin=-5.00,ymax=35.00
+AttackLw3 unk=0,start=10,end=15,xmin=2.00,xmax=29.00,ymin=-1.00,ymax=15.00
+AttackS4Hi_AttackS4S_ unk=0,start=6,end=10,xmin=5.00,xmax=36.00,ymin=7.00,ymax=20.00
+AttackS4S unk=0,start=6,end=10,xmin=5.00,xmax=38.00,ymin=7.00,ymax=17.00
+AttackS4Lw_AttackS4S_ unk=0,start=6,end=10,xmin=4.00,xmax=40.00,ymin=4.00,ymax=18.00
+AttackHi4 unk=0,start=13,end=21,xmin=-4.00,xmax=15.00,ymin=3.00,ymax=39.00
+AttackLw4 unk=0,start=7,end=20,xmin=-28.00,xmax=22.00,ymin=1.00,ymax=23.00
+AttackAirN unk=0,start=6,end=29,xmin=-3.00,xmax=20.00,ymin=2.00,ymax=22.00
+AttackAirF unk=0,start=13,end=30,xmin=-8.00,xmax=15.00,ymin=2.00,ymax=15.00
+AttackAirB unk=0,start=9,end=17,xmin=-19.00,xmax=-2.00,ymin=3.00,ymax=17.00
+AttackAirHi unk=0,start=5,end=13,xmin=-18.00,xmax=19.00,ymin=8.00,ymax=35.00
+AttackAirLw unk=0,start=15,end=20,xmin=-5.00,xmax=8.00,ymin=-11.00,ymax=18.00
+Catch unk=0,start=6,end=8,xmin=-2.00,xmax=14.00,ymin=6.00,ymax=16.00
+CatchDash unk=0,start=10,end=12,xmin=6.00,xmax=31.00,ymin=8.00,ymax=18.00
+CatchTurn unk=0,start=15,end=17,xmin=-18.00,xmax=4.00,ymin=8.00,ymax=18.00
+DownAttackU unk=0,start=18,end=29,xmin=-22.00,xmax=21.00,ymin=6.00,ymax=27.00
+DownAttackD unk=0,start=19,end=29,xmin=-22.00,xmax=26.00,ymin=0.00,ymax=25.00
+SlipAttack unk=0,start=18,end=24,xmin=-16.00,xmax=16.00,ymin=1.00,ymax=9.00

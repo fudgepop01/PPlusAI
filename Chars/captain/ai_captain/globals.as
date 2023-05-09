@@ -8,6 +8,8 @@
 #const cs_jumpHeight = 40.12
 #const cs_djumpHeight = 29.93
 #const cs_wavedashDist = 20
+#const cs_recoveryDistX = 60
+#const cs_recoveryDistY = -48
 
 #const dashForceTurnFrame = 14
 #const dashDanceMinFrames = 2
@@ -37,7 +39,7 @@
 #const recovery_moves = uspecial|sspecial
 
 #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
-#const uspecial_recovery_info = common|60
+#const uspecial_recovery_info = new|60
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117)

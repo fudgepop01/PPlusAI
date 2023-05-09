@@ -25,11 +25,9 @@
 #const cs_recoveryDistX = 80
 #const cs_recoveryDistY = -40
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrAction hex(0x11d)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x11b) || Equal CurrAction hex(0x11c)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x11e) || Equal CurrAction hex(0x11f) || Equal CurrAction hex(0x120) 
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+//=========================================
+// RECOVERY ACTIONS MOVED TO RECOVERY HUB
+//=========================================
 
 // jab123
 #const jab123_IASA = 16

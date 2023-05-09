@@ -104,7 +104,7 @@
   timer = 30
   label exec_uspecial
   XGoto PerFrameChecks
-  XReciever
+  //= XReciever
   Seek exec_uspecial
 
   #let nearCliffX = var1

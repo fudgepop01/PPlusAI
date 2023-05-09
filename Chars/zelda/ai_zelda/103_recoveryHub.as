@@ -6,11 +6,15 @@
   #const jumpChance = 0.7
   #const highUpBChance = 0.65
   #const neutralBChance = 0.4
-  #let hasTriedToUpB = var4
+  #let hasUsedMove = var4
   #let jumpValue = var5
   #let highUpBValue = var6
   #let neutralBValue = var7
-  hasTriedToUpB = 0
+  if PrevAction >= hex(0x74) && PrevAction <= hex(0x7B) 
+    AND hasUsedMove hasUsedMove bf_USpecial_OFF
+  else
+    hasUsedMove = 0
+  endif
   jumpValue = Rnd
   highUpBValue = Rnd
   neutralBValue = Rnd
@@ -34,35 +38,50 @@
 
   absNCX = nearCliffX
   Abs absNCX
-  globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
+  
+  immediateTempVar = nearCliffX + XSpeed * 30
+  Abs immediateTempVar
+  anotherTempVar = YDistBackEdge + YSpeed * -30
+  AND globTempVar hasUsedMove bf_USpecial
+  if highUpBValue <= highUpBChance && anotherTempVar > calc(UpBYDist - 40) && globTempVar <= 0
+    OR hasUsedMove hasUsedMove bf_USpecial
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
+  if immediateTempVar <= UpBXDist && anotherTempVar > calc(UpBYDist - tolerence) && globTempVar <= 0
+    OR hasUsedMove hasUsedMove bf_USpecial
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif 
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+
+  AND globTempVar hasUsedMove bf_NSpecial
+  if neutralBValue <= neutralBChance && YDistBackEdge < 20 && globTempVar <= 0
+    OR hasUsedMove hasUsedMove bf_NSpecial
+    Button B
+    ClearStick
+    Return
+  endif
+
+  globTempVar = TopNY - BBoundary
+  AND immediateTempVar hasUsedMove bf_USpecial
+  if immediateTempVar <= 0 || jumpValue <= jumpChance && NumJumps > 0
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
+  elif anotherTempVar > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
     if NumJumps > 0 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
       Return
     else
-      hasTriedToUpB = 1
+      OR hasUsedMove hasUsedMove bf_USpecial
       Button B
       ClearStick
       AbsStick 0 (0.7)
@@ -80,30 +99,34 @@
     endif
   endif
 
+  if !(NoOneHanging) && !(Equal isBelowStage 1)
+    nearCliffY -= 25
+    if nearCliffX > 0
+      nearCliffX += 15
+    else
+      nearCliffX -= 15
+    endif
+  endif
+
+  #let absNCX = var4
+  #let NCY = var3
+  absNCX = nearCliffX
+  NCY = nearCliffY
+
+  if absNCX < 10 && NCY < 10 && NCY > -10
+    Button B
+  endif
+  
   if !(Equal CurrAction hex(0x119))
-    if !(NoOneHanging) && !(Equal isBelowStage 1)
-      nearCliffY -= 25
-      if nearCliffX > 0
-        nearCliffX += 15
-      else
-        nearCliffX -= 15
-      endif
-    endif
-
-    #let absNCX = var4
-    #let NCY = var3
-    absNCX = nearCliffX
-    NCY = nearCliffY
-
-    if absNCX < 10 && NCY < 0 && NCY > -10
-      Button B
-    endif
-
     Norm globTempVar nearCliffX nearCliffY
     nearCliffX /= globTempVar
     nearCliffY /= globTempVar
     nearCliffX *= -1
     nearCliffY *= -1
+
+    if nearCliffY < 0.3 && nearCliffY > 0
+      nearCliffY = 0.3
+    endif
 
     if 0.1 < nearCliffX && nearCliffX < 0.25
       AbsStick 0.3 nearCliffY
@@ -128,4 +151,10 @@
 #endsnippet
 
 #snippet NSPECIAL
+  if AnimFrame > 2 && AnimFrame < 5
+    immediateTempVar = TopNX * -1
+    AbsStick immediateTempVar
+  elif AnimFrame > 4
+    Stick 1
+  endif
 #endsnippet

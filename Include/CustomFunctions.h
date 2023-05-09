@@ -253,10 +253,13 @@ func LTF_STACK_READ : 0x5F
 
 /// current training script selected
 /// 0xFFFF = default
-func TrainingScript : 0x60
+func ShieldStunRemaining : 0x60
 
 func ActionTimer : 0x70
 func OActionTimer : 0x170
+
+func ThrowReleaseFrame : 0x71
+func OThrowReleaseFrame : 0x171
 
 /// FETCH PERSONALITY TRAIT VALUES WITH THESE
 func PT_AGGRESSION : 0x80
@@ -271,6 +274,9 @@ func PT_PLATCHANCE : 0x88
 func PT_SDICHANCE : 0x89
 func PT_WALL_CHANCE : 0x8A
 func PT_REACTION_TIME : 0x8B
+
+/// OBTAINS THE TRAINING MODE OPTION, OR -1 IF NOT IN TRAINING MODE
+func TRAINING_MODE_OPTION : 0xFE
 
 /// TEMPORARY FOR TOGGLING DEBUG CODE
 func TEMP_DEBUG_TOGGLE : 0xFF

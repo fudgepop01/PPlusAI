@@ -2,10 +2,10 @@
 id 0x850C
 unk 0x0
 
-XReciever
+//= XReciever
 
-XGoto PerFrameChecks
-XReciever
+NoRepeat
+//= XReciever
 if CalledAs ExecuteAttack
   Goto XStickMovement
   Return
@@ -23,22 +23,25 @@ STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
+STACK_PUSH 17 0
 STACK_PUSH 23 0
 STACK_PUSH 3 0
-STACK_PUSH 17 0
+STACK_PUSH 5 0
 STACK_PUSH 4 0
 STACK_PUSH 17 0
 STACK_PUSH 17 0
-STACK_PUSH 17 0
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
   var23 *= 0.5
   var3 += var23
+  var4 *= 0.5
   var23 = OWidth * 0.5
   var4 += var23
+  var5 *= 0.5
 else
   var3 = 9
   var4 = 10
+  var5 = 0
 endif
 
 var18 = LevelValue * 0.01
@@ -55,31 +58,21 @@ if var22 <= 8 && Equal AirGroundState 1
   Return
 endif
 GetAttribute var17 76; 0
-var22 = XSpeed * var3 * var17
-GetYDistFloorOffset var17 var22 110 0
-GetYDistFloorOffset var22 var22 3 0
-if var17 > 0
+var1 = XSpeed * var3 * var17
+GetYDistFloorOffset var17 var1 110 0
+GetYDistFloorOffset var22 var1 3 0
+if var17 > 0 && var21 < 10.5
   var22 = TopNY + 3 - var22
   var17 = TopNY + 100 - var17
-  if var21 <= 16 && var21 <= 17
+  if var21 >= 16 && var21 <= 17
   elif var22 < var17 && !(CalledFrom BoardPlatform)
     var0 = PT_PLATCHANCE
     if Rnd < var0
-      label empty_0
-      Goto PFC
-      Seek empty_0
-      if Rnd < var18
-        CallI BoardPlatform
-      endif
-      Return
+      Seek platSkill
+      Jump
     elif var17 < var14 && Rnd < var0
-      label empty_1
-      Goto PFC
-      Seek empty_1
-      if Rnd < var18
-        CallI BoardPlatform
-      endif
-      Return
+      Seek platSkill
+      Jump
     endif
   endif
 endif
@@ -96,7 +89,7 @@ if Equal AirGroundState 2 && YSpeed < var22 && YDistBackEdge > -3 && !(Equal var
   Abs var22
   if var22 > 15 && Equal IsOnStage 1
     if CurrAction >= 11 && CurrAction <= 13
-      if AnimFrame >= 4
+      if AnimFrame >= 10
         Goto handleWaveland
         Return
       endif
@@ -116,20 +109,22 @@ Abs var22
 if var22 <= var4 || Equal CurrSubaction JumpSquat && TopNY < var14
   var22 = 15
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var2 = var22
   var22 = var14 - TopNY
-  var1 = var2 * NumJumps * 1.2
+  var1 = var2 * NumJumps * 1.2 + OHurtboxSize + var5
   if var22 < var1
     if Equal AirGroundState 1 
   var22 = 14
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var1 = var22
       var22 = var14
-      var17 = var1 + TopNY
+      var17 = var1 + TopNY + OHurtboxSize + var5
+      var17 += 10
       if Equal CurrSubaction JumpSquat && var14 > var17
-        Goto jumpPreCheck
+        Button X
+        Goto jumpDirHandler
       elif TopNY < var14 && !(Equal CurrSubaction JumpSquat)
         Goto jumpPreCheck
       endif
@@ -139,11 +134,9 @@ var1 = var22
         var22 = YSpeed / Gravity
         EstYCoord var23 var22
       endif
+      var23 += OHurtboxSize + var5           
       if var23 < var14
-  var22 = 100
-  XGoto GetChrSpecific
-  XReciever
-var0 = var22
+        Goto isAirAttack
         if Equal var0 1 || Equal var20 -1
           Button X
           Goto jumpDirHandler
@@ -166,7 +159,7 @@ elif var22 <= 15 && TopNY > var14 && Equal IsOnPassableGround 1
 
   if var17 <= var13 && var13 <= var22 && Rnd < var1
     label empty_2
-    Goto PFC
+    XGoto PerFrameChecks
     Seek empty_2
     if Rnd < var18
       CallI ShieldDrop
@@ -175,15 +168,21 @@ elif var22 <= 15 && TopNY > var14 && Equal IsOnPassableGround 1
   endif
 endif
 Return
-label PFC
-XGoto PerFrameChecks
-XReciever
-Return
 label XStickMovement
 if Equal CurrSubaction JumpSquat
   Goto jumpDirHandler
 else
   Goto stickMovement
+  if var21 <= 11 && LevelValue >= 60
+  var22 = 12
+  XGoto GetChrSpecific
+  //= XReciever
+var1 = var22
+    var1 -= 1
+    if Equal CurrAction 3 && AnimFrame >= var22 && AnimFrame < 16
+      ClearStick
+    endif
+  endif
 endif
 if var21 < 16.7
   if Equal AirGroundState 2 && !(OutOfStage) || Equal CurrAction 10
@@ -215,13 +214,13 @@ endif
 Return
 label stickMovement
   
-  var22 = 0
-  var22 = 100
-  XGoto GetChrSpecific
-  XReciever
+
+  Goto isAirAttack
+  var1 = var0
+  
 
   var23 = XSpeed * var3 + TopNX
-  if var21 < 16 || Equal var22 0
+  if var21 < 16 || Equal var1 0
     var23 = TopNX
   endif
   
@@ -230,7 +229,7 @@ label stickMovement
   else
     AbsStick 1
   endif
-  if Equal AirGroundState 1 && Equal var22 0
+  if Equal AirGroundState 1 && Equal var1 0
     var23 -= var13
     Abs var23
     if Equal CurrAction 3 && var23 < 20
@@ -244,7 +243,7 @@ label stickMovement
   var23 = XSpeed * 2 + 3 * Direction
   var23 += var17
   GetColDistPosAbs var23 var17 var17 CenterY var23 CenterY 0
-  if !(Equal var23 -1)
+  if !(Equal var23 -1) && var21 < 16.7
     ClearStick
     Button X
     Goto jumpDirHandler
@@ -268,47 +267,60 @@ label stickMovement
   
   if Equal AirGroundState 1
     if Equal var21 16.7
-      var23 = OPos * 15
+      var22 = 15
+      if OXDistBackEdge < 20 && OYDistBackEdge > -10
+        var22 = 40
+      endif
+      var23 = OPos * var22
       GetYDistFloorOffset var23 var23 15 0
       var17 = XSpeed * OPos
       if Equal var23 -1
-        if Equal var22 0
-          if var17 > 0.1
+        if Equal var1 0
+          if Equal YDistFloor -1
+            Call RecoveryHub
+          elif var17 > 0.1
             var16 = 3
             if XDistFrontEdge < 5
               var16 = 4
             endif
             CallI Wavedash
-          else
-            ClearStick
+          elif True
+            Goto stopMoveIfAhead
           endif
         elif True
-          GetYDistFloorAbsPos var23 var13 TopNY
-          if var23 < 0
-            ClearStick
-          endif
           var17 = TopNX - var13
           Abs var17
+
+          // within 80 x units
           if var17 <= 80
   var22 = 15
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var2 = var22
-            var22 = OTopNY - TopNY + OHurtboxSize
-            if var22 > var2 || var17 > 60
-              if !(Equal CurrSubaction JumpSquat)
+            var22 = var14 - TopNY - OHurtboxSize - var5
+            // within djump height
+            if var22 < var2 || var17 > 60
+              if Equal CurrSubaction JumpSquat
                 Goto jumpPreCheck
               else
                 Button X
                 Goto jumpDirHandler
               endif
-            elif var22 > -15 && !(Equal CurrSubaction JumpSquat) && var17 > 30
+            // within 30 x units and jumping and O below ledge
+            elif var14 < -15 && Equal CurrSubaction JumpSquat && var17 <= 30
               Goto jumpPreCheck
+            // within 30 x units and O more below ledge
+            elif var14 < -25 && var17 <= 30 
+            elif True
+              Goto stopMoveIfAhead
             endif
+            Return
           endif
+          Goto stopMoveIfAhead
+
         endif
       endif
-    elif True
+    else
       var22 = Direction * 15
       GetYDistFloorOffset var22 var22 5 0
       var17 = XSpeed * Direction
@@ -322,7 +334,18 @@ var2 = var22
           CallI Wavedash
         endif
       endif
+      if Equal CurrAction 8
+        var16 = 1
+        CallI Wavedash
+      endif
     endif
+  endif
+Return
+label stopMoveIfAhead
+  var22 = var13 - TopNX
+  var22 *= OPos
+  if var22 >= 0
+    ClearStick 
   endif
 Return
 label jumpPreCheck
@@ -332,14 +355,11 @@ elif 16 <= var21 && var21 <= 17
   if (!True)
     label jpc_if
   endif
-  var22 = 100
-  XGoto GetChrSpecific
-  XReciever
-var0 = var22
+  Goto isAirAttack
   if Equal var0 1 && Equal AirGroundState 1
   var22 = 0.001
   XGoto GetChrSpecific
-  XReciever
+  //= XReciever
 var0 = var22
     if Equal var0 -1 && Equal Direction OPos
       ClearStick
@@ -427,7 +447,6 @@ if !(Equal AirGroundState 3)
     Abs var17
     if var17 < var22
       var17 = var0 * Direction
-      LOGVAL_NL var17
       if var17 < 20 && var17 > 0
         Stick -1
         Return
@@ -460,5 +479,18 @@ if !(Equal AirGroundState 3)
     Stick 1 (-1)
   endif
 endif
+Return
+label platSkill
+  XGoto PerFrameChecks
+  Seek platSkill
+  if Rnd < var18
+    Call BoardPlatform
+  endif
+Return
+label isAirAttack
+  var22 = 100
+  XGoto GetChrSpecific
+  //= XReciever
+var0 = var22
 Return
 Return

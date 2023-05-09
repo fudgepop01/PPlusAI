@@ -2,12 +2,12 @@
 id 0x8202
 unk 0x0
 
-XReciever
+//= XReciever
 if !(Equal AirGroundState 1)
   CallI MainHub
 endif
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Button R
 if Equal scriptVariant sv_roll_through
   AbsStick OPos

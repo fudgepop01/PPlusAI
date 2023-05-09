@@ -1,6 +1,9 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 15
-  #const UpBYDist = 45
+  #const MarioSideB_RABit = hex(0x12)
+  #const MarioDownB_LABit = hex(0x74)
+  
+  #const UpBXDist = 13
+  #const UpBYDist = 35
   #const sideBHeight = 4
   #const sideBRange = 140
   #const tolerence = 10
@@ -10,17 +13,20 @@
   #const downBChance = 0.8
   #const highSideBChance = 0.6
   #const earlySideBChance = 0.8
-  #let hasTriedToUpB = var4
   #let jumpValue = var5
   #let highUpBValue = var6
   #let sideBValue = var7
   #let downBValue = var8
   #let highSideBValue = var9
   #let earlySideBValue = var10
-  hasTriedToUpB = 0
   jumpValue = Rnd
   sideBValue = Rnd
   downBValue = Rnd
+  if cliffDistY < UpBYDist || cliffDistX > UpBXDist
+    jumpValue = 0
+    sideBValue = 0
+    downBValue = 0
+  endif
   highSideBValue = Rnd
   earlySideBValue = Rnd
 #endsnippet
@@ -51,34 +57,47 @@
   {PRE_CONDITIONS}
   immediateTempVar = Direction * -1 * 5
   GetYDistFloorOffset immediateTempVar immediateTempVar 80 0
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
-    hasTriedToUpB = 1
+  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal isBelowStage 0 && Equal immediateTempVar -1 
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
   
-  if YDistBackEdge < -20 && absNCX > 15 && earlySideBValue < earlySideBChance
-    Button B
-    ClearStick
-    Stick 1 0
-    Return
-  endif
-  if YDistBackEdge > -40 && YDistBackEdge < -10 && absNCX > 15 && sideBValue < sideBChance
-    Button B
-    ClearStick
-    Stick 1 0
-    Return
+  
+  GetRaBit anotherTempVar MarioSideB_RABit 0
+  if Equal anotherTempVar 1
+    if YDistBackEdge < 80 && YDistBackEdge > -10 && sideBValue < sideBChance
+      Button B
+      ClearStick
+      Stick 1 0
+      Return
+    endif
+  else
+    immediateTempVar = XSpeed
+    Abs immediateTempVar
+    if YDistBackEdge < -20 && absNCX > 15 && earlySideBValue < earlySideBChance && immediateTempVar > 1.5
+      Button B
+      ClearStick
+      Stick 1 0
+      Return
+    endif
+    if YDistBackEdge < 80 && YDistBackEdge > -10 && absNCX > 15 && sideBValue < sideBChance && immediateTempVar > 1.5
+      Button B
+      ClearStick
+      Stick 1 0
+      Return
+    endif
   endif
 
-  if YDistBackEdge > -40 && YDistBackEdge < -10 && downBValue < downBChance 
+  GetLaBit anotherTempVar MarioDownB_LABit 0
+  if YDistBackEdge > -10 && downBValue < downBChance && Equal anotherTempVar 0
     Button B
     ClearStick
     Stick 0 (-0.7)
     Return
   endif
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+  if jumpValue <= jumpChance && NumJumps > 0
     immediateTempVar = calc(cs_djumpHeight - 6)
     if !(NoOneHanging)
       immediateTempVar -= 20
@@ -96,7 +115,6 @@
       Goto handleJumpToStage
       Return
     else
-      hasTriedToUpB = 1
       Button B
       ClearStick
       AbsStick 0 (0.7)

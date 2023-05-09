@@ -2,7 +2,7 @@
 id 0x1120
 unk 0x0
 
-XReciever
+//= XReciever
 
 #let framesAfterHitlag = var0
 framesAfterHitlag = 0
@@ -47,7 +47,7 @@ elif CurrSubaction >= hex(0x1c0) && CurrSubaction <= hex(0x1e3)
 elif Equal CurrSubaction hex(0x73)
 elif CurrAction < hex(0x34) || CurrAction > hex(0x3C)
   XGoto CalcAttackGoal
-  XReciever
+  //= XReciever
   skipMainInit = mainInitSkip
   currGoal = cg_attack_reversal
   CallI MainHub

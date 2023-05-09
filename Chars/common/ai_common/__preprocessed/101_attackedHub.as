@@ -2,11 +2,21 @@
 id 0x8101
 unk 0x0
 
-XReciever
+//= XReciever
+
+if CalledFrom MainHub
+  var5 = -2
+  Goto _checkTech
+  if Equal var5 -2 
+    Return
+  endif
+  Seek HSHandler
+  Jump
+endif
 var21 = 12
 
 // label inThrow
-// #let techDirection = var5
+// #let var5 = var5
 // if Equal CurrAction 66 && Equal OCurrSubaction ThrowLw 
 //   if FramesSinceShield > 40 && Rnd <= 0.1
 //     Goto checkTech
@@ -15,8 +25,9 @@ var21 = 12
 // endif
 
 label hitlag
+
 XGoto PerFrameChecks
-XReciever
+//= XReciever
 Seek hitlag
 EnableDebugOverlay
 SetDebugOverlayColor 255 255 255 221
@@ -70,7 +81,7 @@ elif FramesHitlag > 1
   predictionConfidence var17 7 LevelValue
   var17 *= 2
   predictOOption var23 7 LevelValue 
-
+  
   if Rnd < 0.25 && Rnd < var17
     AbsStick var22 (-1)
   elif Rnd < var17 && Equal var23 1 && Rnd < 0.25
@@ -78,18 +89,23 @@ elif FramesHitlag > 1
   else
     AbsStick var22
   endif
+  if Damage > 40 && Damage < 110
+    // clears Y direction
+    ClearStick 1
+  endif
   Return
 endif
 
 label hitstun
+
 // XGoto PerFrameChecks
-// XReciever
+// //= XReciever
 // Seek hitstun
 SetDebugOverlayColor 255 255 255 102
 
 if FramesHitstun > 0 || Equal CurrAction 66 
   if LevelValue >= 48
-    var0 = Rnd * 4 * OPos * -1
+    var0 = Rnd * 8 * OPos * -1
     if KBAngle > 90 && KBAngle < 170
       var0 *= -1
     endif
@@ -104,7 +120,7 @@ if FramesHitstun > 0 || Equal CurrAction 66
     if Rnd < 0.5
       var1 -= 0.5
     endif
-    if Equal IsOnStage 0 || KBSpeed > 3 || XDistBackEdge > -20 || XDistFrontEdge < 20
+    if Equal IsOnStage 0 || KBSpeed > 3 || DistBackEdge > -20 || DistFrontEdge < 20
       if Rnd < 0.8
         // if offstage with high damage, switch to survival DI
         var0 = TopNX * -1
@@ -125,23 +141,29 @@ if FramesHitstun > 0 || Equal CurrAction 66
   var4 = 0
   var5 = -2
   label HSHandler
+  
   if FramesHitlag > 1
     Seek hitlag
     Jump
   endif
   XGoto PerFrameChecks
-  XReciever
   Seek HSHandler
-
-  if LevelValue >= 21
+    
+  // LOGSTR 1950640384 1912602624 0 0 0
+  // LOGVAL var5
+  // LOGVAL var2
+  // PRINTLN
+  if LevelValue >= 21 && Equal var5 -2
     if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
       Goto _checkTech
-    elif Equal IsOnStage 1 && YDistFloor < 25 && TotalYSpeed < -0.3
+    elif Equal CurrAction 66 
       Goto _checkTech
-    elif Equal CurrAction 66
+    elif Equal PrevAction 66 && AnimFrame < 5
+    elif Equal IsOnStage 1 && YDistFloor < 25 && TotalYSpeed < 0.3
       Goto _checkTech
     endif
   endif
+  Seek HSHandler
 
   if !(Equal var5 -2) && TotalYSpeed <= 0
     if CurrAction <= 32 || FramesHitstun <= 1
@@ -157,14 +179,19 @@ if FramesHitstun > 0 || Equal CurrAction 66
     endif
     Return
   elif CurrAction < 11 || 16 < CurrAction
-    if !(Equal AirGroundState 1)
-      if FramesHitstun > 1
-        Goto exec_DI
-        Return
-      elif CurrAction >= 66 && CurrAction <= 69
-        Goto exec_DI
-        Return
-      endif
+    // until hitstun is 0
+    if LevelValue >= 48
+      Goto _checkMeteorCancel
+      Seek HSHandler
+    endif
+    if FramesHitstun > 1
+      Goto exec_DI
+      Seek HSHandler
+      Return
+    elif Equal CurrAction 66
+      Goto exec_DI
+      Seek HSHandler
+      Return
     endif
     if !(True)
       label exec_DI
@@ -209,18 +236,15 @@ if FramesHitstun > 0 || Equal CurrAction 66
       endif
       Return
     endif
-    // until hitstun is 0
-    if LevelValue >= 48
-      Goto _checkMeteorCancel
-    endif
   endif
 endif
+
 if FramesHitstun > 0 && CurrAction <= 16
   Seek
   Jump
 elif FramesHitstun > 0 && var4 > 3 && LevelValue >= 42
   label _done
-
+  Seek _done
   // techskill
   var22 = LevelValue * 0.004
   var22 -= 0.1
@@ -236,7 +260,9 @@ elif FramesHitstun > 0 && var4 > 3 && LevelValue >= 42
   Seek
   Jump
 elif FramesHitstun <= 1 && LevelValue >= 42
-  label
+  label _done2
+  Seek _done2
+
   // tempVar = Damage / 100
   // tempVar *= 0.4
   // if Rnd < tempVar && ODistLE 40
@@ -248,8 +274,8 @@ elif FramesHitstun <= 1 && LevelValue >= 42
   var22 *= 0.005
   if var22 > 0.9
     var22 = 0.9
-  elif var22 < 0.2
-    var22 = 0.2
+  elif var22 < 0.05
+    var22 = 0.05
   endif
 
   if Rnd < var22
@@ -278,16 +304,16 @@ label _hitstunEnd
   // var17 *= 3
   if Equal IsOnStage 0 && YDistBackEdge > -20
     Call RecoveryHub
-  elif YDistFloor < 5
+  elif YDistFloor < 5 && Equal IsOnStage 1
     XGoto CalcAttackGoal
-    XReciever
-
     XGoto SetAttackGoal
-    XReciever
 
     var15 = -1
     CallI MainHub
   else
+    XGoto CalcAttackGoal
+    XGoto SetAttackGoal
+
     var21 = 16.41
     CallI DefendHub
   endif
@@ -296,11 +322,10 @@ Return
 label _checkTech
   if var2 <= 0
     if CurrAction >= 66 && CurrAction <= 77 && FramesSinceShield > 40
-      var17 = OEndFrame - 23
+      var17 = OThrowReleaseFrame - 10
       if Equal CurrAction 66
-        if !(Equal CurrSubaction ThrownLw)
-          Return
-        elif OAnimFrame < var17
+        if ShouldTechThrow && OAnimFrame > var17
+        else
           Return
         endif
       endif
@@ -312,14 +337,15 @@ label _checkTech
         endif
         Button R
       endif
-      var2 = 15
+      
+      var2 = 5
     endif
   endif
   var2 -= 1
 Return
 
 label _checkMeteorCancel
-  if KBAngle >= 260 && KBAngle <= 280 && var3 <= 0 && Equal IsOnStage 0
+  if KBAngle >= 250 && KBAngle <= 290 && var3 <= 0 && Equal IsOnStage 0
     var17 = (100 - LevelValue) / 100
     var17 = 0.9 - var17
     if Rnd < 0.9

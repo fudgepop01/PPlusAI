@@ -145,10 +145,10 @@
     if YDistBackEdge < 15 && YSpeed > 2
       currGoal = cg_recover_reversal
       XGoto CalcAttackGoal
-      XReciever
+      //= XReciever
       scriptVariant = sv_none
       XGoto SetAttackGoal
-      XReciever
+      //= XReciever
       skipMainInit = mainInitSkip
       Call MainHub
     endif
@@ -166,10 +166,10 @@
   elif Equal CurrAction hex(0x113) && anotherTempVar > immediateTempVar
     currGoal = cg_recover_reversal
     XGoto CalcAttackGoal
-    XReciever
+    //= XReciever
     scriptVariant = sv_none
     XGoto SetAttackGoal
-    XReciever
+    //= XReciever
     skipMainInit = mainInitSkip
     Call MainHub
   elif YDistBackEdge > 10

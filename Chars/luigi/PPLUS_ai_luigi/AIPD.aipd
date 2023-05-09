@@ -212,7 +212,7 @@ OInHigh&&!fVeryClose {
 
 //Entry number : 0x9
 InAir {
-    //routine0x8000 100,100,0,0
+    routine0x8000 100,100,0,0
     Nothing 100,100,0,0
 }
 
