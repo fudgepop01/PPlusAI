@@ -73,7 +73,7 @@
     immediateTempVar = (LevelValue / 35) * 0.05
     if Rnd < immediateTempVar
       GET_CHAR_TRAIT(immediateTempVar, chr_calc_certainty)
-      PredictOMov immediateTempVar mov_attack LevelValue
+      PredictOMov immediateTempVar mov_attack
       if immediateTempVar > 0.2
         ADJUST_PERSONALITY idx_aggression -0.025 immediateTempVar
         ADJUST_PERSONALITY idx_wall_chance 0.025 immediateTempVar
@@ -82,8 +82,8 @@
         ADJUST_PERSONALITY idx_jumpiness 0.01 immediateTempVar
         ADJUST_PERSONALITY idx_djumpiness 0.01 immediateTempVar
       endif
-      PredictOMov immediateTempVar mov_dash LevelValue
-      PredictOMov anotherTempVar mov_idle LevelValue
+      PredictOMov immediateTempVar mov_dash
+      PredictOMov anotherTempVar mov_idle
       if anotherTempVar > immediateTempVar
         immediateTempVar = anotherTempVar
       endif
@@ -93,7 +93,7 @@
         ADJUST_PERSONALITY idx_bait_dashAwayChance 0.005 immediateTempVar
         ADJUST_PERSONALITY idx_braveChance 0.01 immediateTempVar
       endif
-      PredictOMov anotherTempVar mov_shield LevelValue
+      PredictOMov anotherTempVar mov_shield
       if immediateTempVar >= 0.2
         ADJUST_PERSONALITY idx_baitChance -0.025 immediateTempVar
         ADJUST_PERSONALITY idx_wall_chance -0.025 immediateTempVar
@@ -103,7 +103,7 @@
       endif
     endif
 
-    PredictOMov anotherTempVar mov_shield LevelValue
+    PredictOMov anotherTempVar mov_shield
     if Rnd <= 0.02
       GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
       if Equal immediateTempVar 0
@@ -151,12 +151,12 @@
       elif Equal currGoal cg_attack_wall || Equal currGoal cg_bait_shield || Equal currGoal cg_bait_dashawayWhenApproached
       elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
         if OCurrAction < hex(0x42) || OCurrAction >= hex(0x48)
-          predictAverage immediateTempVar man_OXHitDist LevelValue
+          predictAverage immediateTempVar man_OXHitDist
           immediateTempVar += 15
           globTempVar = OPos * immediateTempVar
           GetYDistFloorOffset globTempVar globTempVar 10 1
           if XDistLE immediateTempVar && globTempVar > 0
-            GetCommitPredictChance globTempVar LevelValue
+            GetCommitPredictChance globTempVar
             // if Equal currGoal cg_bait_dashdance
             //   globTempVar *= 0.06 * PT_BAITCHANCE
             // endif
@@ -175,7 +175,7 @@
     if !(Equal currGoal cg_attack_inCombo) && !(Equal currGoal cg_defend)
       immediateTempVar = (1 - (LevelValue / 100)) * 60 + 10
       immediateTempVar *= PT_REACTION_TIME
-      GetCommitPredictChance anotherTempVar LevelValue
+      GetCommitPredictChance anotherTempVar
       anotherTempVar = 1.1 - anotherTempVar
       anotherTempVar *= 0.5
       immediateTempVar *= anotherTempVar
@@ -199,7 +199,7 @@
               endif
             endif
           else
-            predictAverage immediateTempVar man_OXHitDist LevelValue
+            predictAverage immediateTempVar man_OXHitDist
             immediateTempVar *= 1
             immediateTempVar += OEndLag + 5
             globTempVar = immediateTempVar * 0.3

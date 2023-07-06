@@ -29,12 +29,12 @@
       elif Equal currGoal cg_attack_wall || Equal currGoal cg_bait_shield || Equal currGoal cg_bait_dashawayWhenApproached
       elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
         if OCurrAction < hex(0x42) || OCurrAction >= hex(0x48)
-          predictAverage immediateTempVar man_OXHitDist LevelValue
+          predictAverage immediateTempVar man_OXHitDist
           immediateTempVar += 15
           globTempVar = OPos * immediateTempVar
           GetYDistFloorOffset globTempVar globTempVar 10 1
           if XDistLE immediateTempVar && globTempVar > 0
-            GetCommitPredictChance globTempVar LevelValue
+            GetCommitPredictChance globTempVar
             // if Equal currGoal cg_bait_dashdance
             //   globTempVar *= 0.06 * PT_BAITCHANCE
             // endif

@@ -19,7 +19,7 @@ else
     Stick 0 1
 endif
 if CurrAction <= hex(0x20) || FramesHitstun > 0
-    Finish
+    Call MainHub
 endif
 Return
 Return

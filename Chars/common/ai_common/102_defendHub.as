@@ -21,7 +21,7 @@ baitChance = pt_baitChance
 // immediateTempVar = aggression * 0.08
 // globTempVar *= 1.75
 // if !(CalledFrom AttackedHub)
-//   GetCommitPredictChance anotherTempVar LevelValue"C:\Users\dareb\Documents\AIScriptCLA\bin\Debug\netcoreapp3.1\win-x86\publish\AIScriptCLA.exe" --compile --path "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed" --out "C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac" --include "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include"
+//   GetCommitPredictChance anotherTempVar"C:\Users\dareb\Documents\AIScriptCLA\bin\Debug\netcoreapp3.1\win-x86\publish\AIScriptCLA.exe" --compile --path "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed" --out "C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac" --include "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include"
 //   if anotherTempVar > 0.45 && Rnd < anotherTempVar && CHANCE_MUL_LE immediateTempVar 1
 //     scriptVariant = sv_fastAttack
 //     XGoto CalcAttackGoal
@@ -34,11 +34,11 @@ baitChance = pt_baitChance
 if Equal AirGroundState 1
   // LOGSTR_NL str("AGS 1??")
 
-  predictOOption immediateTempVar man_ODefendOption LevelValue
-  predictionConfidence globTempVar man_ODefendOption LevelValue
+  predictOOption immediateTempVar man_ODefendOption
+  predictionConfidence globTempVar man_ODefendOption
   globTempVar *= 3.5
   if CHANCE_MUL_GE PT_AGGRESSION 0.15 && Rnd < globTempVar && Equal immediateTempVar op_defend_attack
-    PredictOMov immediateTempVar mov_grab LevelValue
+    PredictOMov immediateTempVar mov_grab
     immediateTempVar *= 2.5
     if immediateTempVar < 0.25 || Equal OAirGroundState 2
       CallI Shield
@@ -52,7 +52,7 @@ if Equal AirGroundState 1
   endif
 
   #let OXHitDist = var2
-  predictAverage OXHitDist man_OXHitDist LevelValue
+  predictAverage OXHitDist man_OXHitDist
 
   immediateTempVar = TopNX
   globTempVar = OTopNX
@@ -149,7 +149,8 @@ if Equal AirGroundState 1
 endif
 
 if Equal currGoal cg_attack_inCombo
-  if CHANCE_MUL_LE PT_AGGRESSION 0.15 && Damage < 40
+  immediateTempVar = TopNY - OTopNY
+  if CHANCE_MUL_LE PT_AGGRESSION 0.10 && immediateTempVar < 20
     XGoto CalcAttackGoal
     //= XReciever
     skipMainInit = mainInitSkip
@@ -159,29 +160,34 @@ endif
 
 // maybe make driftAway based on air mobility?
 #let OXHitDist = var0
-predictAverage OXHitDist man_OXHitDist LevelValue
+predictAverage OXHitDist man_OXHitDist
 OXHitDist += 20
-PredictOMov immediateTempVar mov_attack LevelValue
-if ODistLE OXHitDist && CHANCE_MUL_LE immediateTempVar 4
-  if NumJumps > 0 && CHANCE_MUL_LE PT_BRAVECHANCE 0.1
-    scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
-    CallI JumpScr
-  elif NumJumps > 0 && Rnd < 0.1
-    scriptVariant = calc(sv_jump_away + svp_jump_fullhop)
-    CallI JumpScr
-  elif Equal currGoal cg_attack_inCombo && OTopNY < TopNY
+PredictOMov immediateTempVar mov_attack
+anotherTempVar = TopNY - OTopNY
+// LOGSTR_NL str("OAT")
+// LOGVAL_NL OXHitDist
+if ODistLE OXHitDist || anotherTempVar > 45
+  if Equal currGoal cg_attack_inCombo && OTopNY < TopNY && CHANCE_MUL_LE immediateTempVar 8
     // LOGSTR_NL str("awayWithJump")
     scriptVariant = sv_aerialdrift_away_withJump
     skipMainInit = mainInitSkip
     CallI AerialDrift
-  elif Rnd < 0.75 && YDistFloor > 10
-    // LOGSTR_NL str("away")
-    scriptVariant = sv_aerialdrift_away
-    CallI AerialDrift
+  elif CHANCE_MUL_LE immediateTempVar 4
+    if NumJumps > 0 && CHANCE_MUL_LE PT_BRAVECHANCE 0.1
+      scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
+      CallI JumpScr
+    elif NumJumps > 0 && Rnd < 0.1
+      scriptVariant = calc(sv_jump_away + svp_jump_fullhop)
+      CallI JumpScr
+    elif Rnd < 0.75 && YDistFloor > 10
+      // LOGSTR_NL str("away")
+      scriptVariant = sv_aerialdrift_away
+      CallI AerialDrift
+    endif
   endif
 endif
 
-PredictOMov immediateTempVar mov_grab LevelValue
+PredictOMov immediateTempVar mov_grab
 immediateTempVar *= 2
 if immediateTempVar < 0.30 && Rnd > immediateTempVar && Equal AirGroundState 1
   CallI Shield

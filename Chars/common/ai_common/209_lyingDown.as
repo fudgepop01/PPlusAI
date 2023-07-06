@@ -41,7 +41,7 @@ immediateTempVar = (1 - (LevelValue / 100)) * 12
 immediateTempVar *= PT_REACTION_TIME
 MOD immediateTempVar AnimFrame immediateTempVar
 if Equal immediateTempVar 0
-  predictAverage immediateTempVar man_OXHitDist LevelValue
+  predictAverage immediateTempVar man_OXHitDist
   immediateTempVar += 35
   if XDistLE immediateTempVar
     Goto smartRoll
@@ -60,8 +60,8 @@ label smartRoll
 if XDistLE 35 && Rnd < 0.5
   Button A
 else
-  GetCommitPredictChance immediateTempVar LevelValue
-  PredictOMov anotherTempVar mov_shield LevelValue
+  GetCommitPredictChance immediateTempVar
+  PredictOMov anotherTempVar mov_shield
   if XDistLE 45 && anotherTempVar < 0.28
     if Rnd < 0.5 || immediateTempVar > 0.15
       Button A

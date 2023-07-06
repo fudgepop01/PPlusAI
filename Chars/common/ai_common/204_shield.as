@@ -12,13 +12,13 @@ label setup
 OHasHitShield = 0
 
 willStrike = false
-PredictOMov immediateTempVar mov_grab LevelValue
+PredictOMov immediateTempVar mov_grab
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || immediateTempVar > 0.4
   willStrike = true
 endif
 
 patience = Rnd * 35 + 5
-PredictOMov immediateTempVar mov_attack LevelValue
+PredictOMov immediateTempVar mov_attack
 if Equal currGoal cg_bait_shield || immediateTempVar > 0.36
   immediateTempVar = 30 * Rnd + 10
   patience += immediateTempVar
@@ -56,11 +56,11 @@ else
     endif
     AbsStick immediateTempVar globTempVar
   endif
-  GetCommitPredictChance immediateTempVar LevelValue
-  PredictOMov anotherTempVar mov_grab LevelValue
-  if Rnd < 0.1 && immediateTempVar > 0.125
+  GetCommitPredictChance immediateTempVar
+  PredictOMov anotherTempVar mov_grab
+  if Rnd < 0.1 && immediateTempVar > 0.2
     Goto rollOption
-  elif anotherTempVar > 0.125
+  elif anotherTempVar > 0.2
     Goto rollOption
   endif
 endif
@@ -92,11 +92,11 @@ if Equal globTempVar 0 || patience <= 0
   if Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x11) || Equal CurrAction hex(0x12)
     GetShieldRemain globTempVar
     immediateTempVar = OHasHitShield * 0.05
-    GetCommitPredictChance anotherTempVar LevelValue
+    GetCommitPredictChance anotherTempVar
     if globTempVar < 40 || OEndLag > 6 || !(XDistLE 50)
       Seek pickOption
       Jump
-    elif anotherTempVar > 0.20 && Rnd <= 0.85 && Equal willStrike false
+    elif anotherTempVar > 0.25 && Rnd <= 0.85 && Equal willStrike false
       Return
     elif Equal willStrike true && XDistLE 40 && Rnd < 0.4
       Seek pickOption
@@ -115,7 +115,7 @@ endif
 Return
 label pickOption
 OEndLag += 8
-predictAverage immediateTempVar man_OXHitDist LevelValue
+predictAverage immediateTempVar man_OXHitDist
 immediateTempVar += 10
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
   if OEndLag > 10 && Rnd < 0.85
@@ -131,7 +131,6 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
   
   if !(True)
     label exec_attack
-    GetCommitPredictChance immediateTempVar LevelValue
     if !(Equal currGoal cg_defend_crouchCancel)
       Button X
       Seek jumpExec
@@ -150,7 +149,6 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
     CallI MainHub
   endif
 
-  immediateTempVar -= 10
   if Equal OPos Direction && XDistLE 10
     if OEndLag > 5 && Rnd < 0.75 || Equal willStrike true
       Button A
@@ -170,8 +168,8 @@ if !(Equal currGoal cg_defend_crouchCancel)
   endif
 
   if Rnd < 0.3
-    predictionConfidence immediateTempVar man_ODefendOption LevelValue
-    predictOOption globTempVar man_ODefendOption LevelValue 
+    predictionConfidence immediateTempVar man_ODefendOption
+    predictOOption globTempVar man_ODefendOption 
     if Rnd < immediateTempVar
       if Equal globTempVar op_defend_attack && Rnd < immediateTempVar
         if Rnd < 0.3

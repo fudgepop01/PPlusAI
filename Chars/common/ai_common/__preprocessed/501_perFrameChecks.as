@@ -126,7 +126,7 @@ if !(True)
     if Equal var21 13 || Equal var21 13.1
       var17 = 7
     endif
-    predictAverage var22 10 LevelValue
+    predictAverage var22 10
     var22 += 20
     // var17 = var22 + 15
     if XDistLE var22

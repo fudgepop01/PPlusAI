@@ -104,7 +104,7 @@ $WARIOMAN_MOVE_SNIPPETS()
 label _thing_
 Goto PFC
 $ifLastAttack(sspecial)
-  PredictOMov immediateTempVar mov_jump LevelValue
+  PredictOMov immediateTempVar mov_jump
   if immediateTempVar >= 0.15
     $setLastAttack(sspecial_jump)
   endif
@@ -164,7 +164,7 @@ label PFC
       AbsStick immediateTempVar
     elif True
       if Equal currGoal cg_attack_wall
-        PredictOMov immediateTempVar mov_attack LevelValue
+        PredictOMov immediateTempVar mov_attack
         if immediateTempVar > 0.15
           immediateTempVar = OPos * -1
           AbsStick immediateTempVar

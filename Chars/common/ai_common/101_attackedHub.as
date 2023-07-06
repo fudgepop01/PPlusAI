@@ -80,9 +80,9 @@ elif FramesHitlag > 1
     immediateTempVar = OPos * -1
   endif
 
-  predictionConfidence globTempVar man_ODefendOption LevelValue
+  predictionConfidence globTempVar man_ODefendOption
   globTempVar *= 2
-  predictOOption anotherTempVar man_ODefendOption LevelValue 
+  predictOOption anotherTempVar man_ODefendOption 
   
   if Rnd < 0.25 && Rnd < globTempVar
     AbsStick immediateTempVar (-1)
@@ -307,7 +307,7 @@ CallI MainHub
 Return
 
 label _hitstunEnd
-  // predictionConfidence globTempVar man_ODefendOption LevelValue
+  // predictionConfidence globTempVar man_ODefendOption
   // globTempVar *= 3
   if Equal IsOnStage 0 && YDistBackEdge > -20
     Call RecoveryHub

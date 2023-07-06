@@ -88,8 +88,8 @@ if isORecovering < 0
     endif
   else
     estOYPos = OTopNY
-    PredictOMov immediateTempVar mov_jump LevelValue
-    PredictOMov globTempVar mov_djump LevelValue
+    PredictOMov immediateTempVar mov_jump
+    PredictOMov globTempVar mov_djump
     if globTempVar > 0.65
       if ONumJumps > 0
         GetAttribute immediateTempVar attr_jumpYInitVel 1
@@ -125,20 +125,18 @@ endif
 
 DrawDebugRectOutline goalX goalY 3 3 color(0x00FF00DD)
 
-immediateTempVar = move_xOffset
+$tempVar(move_centerX,immediateTempVar)
+move_centerX = move_xOffset + move_xRange
 $ifAerialAttackNotSpecial()
-  if Equal AirGroundState 2
-    immediateTempVar *= Direction
-  else
-    immediateTempVar *= OPos
-  endif
+  move_centerX *= Direction
 else
-  immediateTempVar *= OPos
+  move_centerX *= OPos
 endif
-goalX -= immediateTempVar
-immediateTempVar = move_xRange - OWidth
-immediateTempVar *= OPos * 0.5
-goalX -= immediateTempVar
+goalX -= move_centerX
+
+$tempVar(OWidthOffset,immediateTempVar)
+OWidthOffset = OPos * 0.5 * OWidth
+goalX += OWidthOffset
 
 goalY -= move_yOffset
 // immediateTempVar = OHurtboxSize + move_yRange
@@ -188,9 +186,9 @@ IF_AERIAL_ATTACK(var3)
 endif
 
 if Equal OCurrAction hex(0x49) && !(CalledFrom ExecuteAttack)
-  predictionConfidence immediateTempVar man_OOutOfHitstun LevelValue
+  predictionConfidence immediateTempVar man_OOutOfHitstun
   if immediateTempVar >= 0.3
-    predictOOption immediateTempVar man_OOutOfHitstun LevelValue
+    predictOOption immediateTempVar man_OOutOfHitstun
     if Equal immediateTempVar op_hitstun_jump && ONumJumps > 0
       immediateTempVar = OHurtboxSize * 3
       goalY += immediateTempVar
@@ -214,8 +212,8 @@ endif
 // shouldOffsetRes = 0
 if !(CalledFrom ExecuteAttack)
   if Equal OCurrAction hex(0x4D)
-    predictOOption globTempVar man_OGetupOption LevelValue
-    predictionConfidence immediateTempVar man_OGetupOption LevelValue
+    predictOOption globTempVar man_OGetupOption
+    predictionConfidence immediateTempVar man_OGetupOption
     if immediateTempVar >= 0.3
       anotherTempVar = OPos * 20
       if Equal globTempVar op_getup_in
@@ -239,8 +237,8 @@ if !(CalledFrom ExecuteAttack)
       endif
     endif
   elif OCurrAction >= hex(0x60) && OCurrAction <= hex(0x61)
-    predictOOption globTempVar man_OTechOption LevelValue
-    predictionConfidence immediateTempVar man_OTechOption LevelValue
+    predictOOption globTempVar man_OTechOption
+    predictionConfidence immediateTempVar man_OTechOption
     if immediateTempVar >= 0.3
       anotherTempVar = OPos * 20
       if Equal globTempVar op_tech_in
@@ -257,12 +255,12 @@ if !(CalledFrom ExecuteAttack)
       endif
     endif
     immediateTempVar *= 0.4 * move_hitFrame * OPos
-    predictOOption globTempVar man_OBaitOption LevelValue
-    predictionConfidence anotherTempVar man_OBaitOption LevelValue  
+    predictOOption globTempVar man_OBaitOption
+    predictionConfidence anotherTempVar man_OBaitOption  
 
     if Equal globTempVar op_bait_move && anotherTempVar >= 0.3
-      predictOOption anotherTempVar man_OBaitDirection LevelValue 
-      predictAverage globTempVar man_OXHitDist LevelValue
+      predictOOption anotherTempVar man_OBaitDirection 
+      predictAverage globTempVar man_OXHitDist
       globTempVar += Width + OWidth
       globTempVar *= OPos
       if Equal currGoal cg_attack_wall

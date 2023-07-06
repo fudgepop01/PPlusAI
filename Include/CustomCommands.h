@@ -89,13 +89,13 @@ cmd trackOAction : 0x50 managertype actiontype
 /// 2 = "grab"
 /// 3 = "defend"
 /// lookamount = value / 100 (for LevelValue support)
-cmd predictOOption : 0x51 variable managertype LevelValue 
+cmd predictOOption : 0x51 variable managertype 
 
 /// returns how confident the prediction is 
-cmd predictionConfidence : 0x52 variable managertype LevelValue
+cmd predictionConfidence : 0x52 variable managertype
 
 /// averages the prediction values
-cmd predictAverage : 0x53 variable managertype LevelValue
+cmd predictAverage : 0x53 variable managertype
 
 /// adds 1 to the current prediction (effectively treats as a counter)
 cmd incrementPrediction : 0x54 managertype
@@ -104,10 +104,10 @@ cmd incrementPrediction : 0x54 managertype
 cmd getCurrentPredictValue : 0x55 variable managerType
 
 /// predicts the chance that a target will attack based on their prior actions
-cmd GetCommitPredictChance : 0x58 variable LevelValue
+cmd GetCommitPredictChance : 0x58 variable
 
 /// predicts the chance that a target will choose X option based on their prior actions
-cmd PredictOMov : 0x59 variable mov LevelValue
+cmd PredictOMov : 0x59 variable mov
 
 // MISSING OPERATOR CODES
 cmd OR : 0x60 variable op1 op2

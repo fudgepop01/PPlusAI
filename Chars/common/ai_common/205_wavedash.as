@@ -75,6 +75,7 @@ label landing
       ClearStick
       AbsStick 0 (-1)
     endif
+    skipMainInit = mainInitSkip
     Call MainHub
   endif
   airTime -= 1

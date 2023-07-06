@@ -12,8 +12,10 @@ XGoto PerFrameChecks
 //= XReciever
 if !(Equal lastAttack -1) 
   STACK_PUSH timer st_function
+  STACK_PUSH scriptVariant st_function
   XGoto SetAttackGoal
   XGoto CheckAttackWillHit
+  scriptVariant = STACK_POP
   timer = STACK_POP
 endif
 Seek execution
@@ -28,7 +30,7 @@ elif Equal scriptVariant sv_aerialdrift_away_withJump
   immediateTempVar = OPos * -1
   AbsStick immediateTempVar
   immediateTempVar = TopNY - OTopNY
-  PredictOMov anotherTempVar mov_attack LevelValue
+  PredictOMov anotherTempVar mov_attack
   if anotherTempVar >= 0.15 && immediateTempVar < 25
     Button X
   endif

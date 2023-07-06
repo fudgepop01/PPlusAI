@@ -20,3 +20,6 @@ req DangerEnabled : 0x1026
 
 /// if the current animation of the target has a throw release that should be teched
 req ShouldTechThrow : 0x1027
+
+/// if the fighter did NOT input jump on the previous frame
+req NoJumpPrevFrame : 0x1028

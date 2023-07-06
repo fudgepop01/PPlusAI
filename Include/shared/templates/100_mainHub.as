@@ -233,9 +233,9 @@ elif CHANCE_MUL_LE PT_AGGRESSION anotherTempVar
 endif
 immediateTempVar = LevelValue * 0.0075
 anotherTempVar = 1 - immediateTempVar
-PredictOMov immediateTempVar mov_attack LevelValue
+PredictOMov immediateTempVar mov_attack
 immediateTempVar *= anotherTempVar
-if immediateTempVar < 0.05
+if immediateTempVar < 0.08
   SeekNoCommit attack_roll
 elif Equal HitboxConnected 1
   if !(True)
@@ -243,13 +243,13 @@ elif Equal HitboxConnected 1
   endif
   immediateTempVar = PT_BAIT_DASHAWAYCHANCE
   DynamicDiceAdd dslot0 cg_bait_dashdance immediateTempVar
-  predictionConfidence immediateTempVar man_OBaitOption LevelValue
+  predictionConfidence immediateTempVar man_OBaitOption
   if immediateTempVar > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
     DynamicDiceAdd dslot0 cg_attack 2
   endif
   immediateTempVar = PT_AGGRESSION * 4
   DynamicDiceAdd dslot0 cg_attack immediateTempVar
-  GetCommitPredictChance immediateTempVar LevelValue
+  GetCommitPredictChance immediateTempVar
   if YDistFloor < 25
     immediateTempVar *= 2.5 * PT_WALL_CHANCE
     DynamicDiceAdd dslot0 cg_attack_wall immediateTempVar
@@ -304,7 +304,7 @@ XGoto PerFrameChecks
 Seek tskillWait
 if Rnd < techSkill
   Seek selectGoal
-  Return
+  Jump
 endif
 Return
 label selectGoal
@@ -341,12 +341,13 @@ if Equal currGoal cg_bait_wait
   timer = STACK_POP
   Seek baitWait
   timer -= 1
-  predictAverage immediateTempVar man_OXHitDist LevelValue
+  predictAverage immediateTempVar man_OXHitDist
   immediateTempVar *= 0.5
   if XDistLE immediateTempVar && Rnd <= 0.02
     CallI DefendHub
   endif
   immediateTempVar *= 3
+  immediateTempVar += 20
   if XDistLE immediateTempVar && CHANCE_MUL_LE PT_AGGRESSION 0.05
     lastAttack = -1
     currGoal = cg_attack_wall

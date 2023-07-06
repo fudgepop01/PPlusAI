@@ -78,9 +78,9 @@ elif FramesHitlag > 1
     var22 = OPos * -1
   endif
 
-  predictionConfidence var17 7 LevelValue
+  predictionConfidence var17 7
   var17 *= 2
-  predictOOption var23 7 LevelValue 
+  predictOOption var23 7 
   
   if Rnd < 0.25 && Rnd < var17
     AbsStick var22 (-1)
@@ -300,7 +300,7 @@ CallI MainHub
 Return
 
 label _hitstunEnd
-  // predictionConfidence var17 7 LevelValue
+  // predictionConfidence var17 7
   // var17 *= 3
   if Equal IsOnStage 0 && YDistBackEdge > -20
     Call RecoveryHub

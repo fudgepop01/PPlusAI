@@ -39,9 +39,12 @@ XGoto PerFrameChecks
 //= XReciever
 if !(Equal var20 -1) 
   NoRepeat
+  STACK_PUSH var16 0
   XGoto SetAttackGoal
   //= XReciever
   XGoto CheckAttackWillHit
+  var16 = STACK_POP
+
   //= XReciever
 endif
 Seek locomotion

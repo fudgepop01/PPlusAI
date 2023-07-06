@@ -74,11 +74,11 @@ move_centerY = move_yRange - move_yOffset
 move_centerY *= -1
 
 // grabs an estimate of the potential move xRange to hit
-if Equal AirGroundState 2
-  $ifAerialAttackNotSpecial()
+$ifAerialAttackNotSpecial()
+  globTempVar = move_hitFrame + move_duration * 0.25
+  if Equal AirGroundState 2
     // get max possilbe air speed
     GetAttribute immediateTempVar attr_airMobilityA 0
-    globTempVar = move_hitFrame + move_duration * 0.25
     anotherTempVar = globTempVar * immediateTempVar
     globTempVar = anotherTempVar
     // max possible speed
@@ -106,6 +106,11 @@ if Equal AirGroundState 2
     move_xRange += globTempVar
     globTempVar *= Direction * 2
     move_centerX += globTempVar
+  else
+    GetAttribute immediateTempVar attr_jumpXInitVel 0
+    immediateTempVar *= globTempVar
+    move_xRange += immediateTempVar
+    move_yRange += OHurtboxSize
   endif
 endif
 
@@ -128,13 +133,13 @@ endif
 //   endif
 // endif
 
-immediateTempVar = OHurtboxSize * 0.5
-move_yRange += immediateTempVar
-immediateTempVar *= 0.5
+immediateTempVar = OHurtboxSize * 0.25
+// move_yRange += immediateTempVar
+// immediateTempVar *= 0.5
 move_centerY += immediateTempVar
 immediateTempVar = OWidth * 0.5
-move_xRange += immediateTempVar
-immediateTempVar *= 0.5
+// move_xRange += immediateTempVar
+// immediateTempVar *= 0.5
 move_centerX -= immediateTempVar
 
 // LOGVAL_NL move_xRange
@@ -300,6 +305,9 @@ estFrame += move_hitFrame
   STACK_PUSH immediateTempVar 0
   STACK_PUSH globTempVar 0
 
+
+$tempVar(trueOHBSize,move_xRange)
+trueOHBSize = OHurtboxSize * 0.5
 // 2. where will defender be at end of frame
   if isORecovering < 0
     $tempVar(estOXPos, anotherTempVar)
@@ -329,6 +337,7 @@ estFrame += move_hitFrame
     //   tempYRange += estOYPos
     // endif
     Goto adjustPosIfInGround
+    estOYPos += trueOHBSize
     STACK_PUSH estOYPos 0
   elif True
     $tempVar(estOXPos, immediateTempVar)
@@ -340,6 +349,7 @@ estFrame += move_hitFrame
 
     STACK_PUSH estOXPos 0
     Goto adjustPosIfInGround
+    estOYPos += trueOHBSize
     STACK_PUSH estOYPos 0
   endif
 
@@ -347,7 +357,7 @@ estFrame += move_hitFrame
   globTempVar = STACK_POP // YPos
   immediateTempVar = STACK_POP // XPos
   anotherTempVar = 255 - estFrame * 5
-  DrawDebugRectOutline immediateTempVar globTempVar OWidth OHurtboxSize 255 0 255 anotherTempVar
+  DrawDebugRectOutline immediateTempVar globTempVar OWidth trueOHBSize 255 0 255 anotherTempVar
   // LOGSTR str("popped")
   // LOGVAL immediateTempVar
   // PRINTLN
@@ -437,7 +447,8 @@ estFrame += move_hitFrame
       STACK_PUSH isORecovering st_function
       STACK_PUSH yDiff 0
       CALC_FASTFALL_DIST(yChange, move_hitFrame + move_duration - counter + 1)
-      yDiff = estOYPos - yChange
+      immediateTempVar = TopNY + yChange
+      yDiff = estOYPos - immediateTempVar
       Abs yDiff
       if yDiff <= tempYRange
         scriptVariant = sv_execute_fastfall
@@ -486,9 +497,9 @@ skipMainInit = 0
 
 #let OEndlag = var0
 GET_CHAR_TRAIT(OEndlag, chr_get_OEndlag)
-PredictOMov immediateTempVar mov_attack LevelValue
+PredictOMov immediateTempVar mov_attack
 if Equal currGoal cg_attack_inCombo || YDistFloor > 35
-elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || immediateTempVar > 0.15 
+elif CHANCE_MUL_LE PT_BAITCHANCE 0.06 || immediateTempVar > 0.35
   if currGoal < cg_edgeguard && OEndlag <= move_hitFrame
     RESET_LTF_STACK_PTR
     globTempVar = LTF_STACK_READ // tempXRange
@@ -497,7 +508,12 @@ elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || immediateTempVar > 0.15
     globTempVar *= 1.5
     
     if !(XDistLE globTempVar)
+      PRINTLN
       LOGSTR_NL str("FORCE DASHDANCE")
+      LOGVAL_NL globTempVar
+      globTempVar = TopNX - OTopNX
+      Abs globTempVar
+      LOGVAL_NL globTempVar
       currGoal = cg_bait_dashdance
       lastAttack = -1
       Return
@@ -515,7 +531,7 @@ elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || immediateTempVar > 0.15
 
     GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
     if LevelValue >= LV6 && Equal immediateTempVar 0 && currGoal < cg_edgeguard && OAnimFrame > 8
-      predictAverage immediateTempVar man_OXHitDist LevelValue
+      predictAverage immediateTempVar man_OXHitDist
       if immediateTempVar < 15
         immediateTempVar = 15
       endif
@@ -523,8 +539,8 @@ elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || immediateTempVar > 0.15
       if XDistLE immediateTempVar
         LOGSTR_NL str("MIXUP?")
         skipMainInit = mainInitSkip
-        GetCommitPredictChance anotherTempVar LevelValue
-        if anotherTempVar > 0.2 && Rnd < 0.15
+        GetCommitPredictChance anotherTempVar
+        if anotherTempVar > 0.27 && Rnd < 0.15
           LOGSTR_NL str("FULLHOP AWAY")
           scriptVariant = sv_jump_away + svp_jump_fullhop
           CallI JumpScr
@@ -553,12 +569,12 @@ elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || immediateTempVar > 0.15
           Return
         endif
 
-        GetCommitPredictChance anotherTempVar LevelValue
+        GetCommitPredictChance anotherTempVar
         LOGVAL anotherTempVar
         if Equal AirGroundState 1 && CHANCE_MUL_LE PT_BAITCHANCE 0.04
           LOGSTR_NL str("CHK BAIT")
-          PredictOMov immediateTempVar mov_shield LevelValue
-          if anotherTempVar >= 0.25 && immediateTempVar < 0.2
+          PredictOMov immediateTempVar mov_shield
+          if anotherTempVar >= 0.28 && immediateTempVar < 0.25
             LOGSTR_NL str("BAIT WAIT")
             scriptVariant = sv_dash_away
             if XDistLE 25
@@ -618,6 +634,7 @@ label checkIfAirViable
     anotherTempVar *= -1
     if Equal AirGroundState 2
       globTempVar = OTopNY + OYDistBackEdge
+      LOGVAL globTempVar
       immediateTempVar = TopNY + yChange
       globTempVar += immediateTempVar
       LOGSTR str("fdist, range")
@@ -629,6 +646,19 @@ label checkIfAirViable
       elif Equal scriptVariant sv_none
         lastAttack = -1
       endif
+    endif
+  elif Equal CurrAction hex(0xA)
+  elif Equal AirGroundState 1
+    $tempVar(moveDir,immediateTempVar)
+    GET_CHAR_TRAIT(moveDir, chr_get_moveDir)
+    if Equal moveDir -1 && Equal Direction OPos
+      ClearStick
+      Stick -1
+    elif Equal moveDir 1 && !(Equal Direction OPos)
+      ClearStick
+      Stick -1
+    elif NoJumpPrevFrame
+      Button X
     endif
   elif !(Equal AirGroundState 3)
     CallI ExecuteAttack

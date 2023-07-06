@@ -11,8 +11,10 @@ XGoto PerFrameChecks
 //= XReciever
 if !(Equal var20 -1) 
   STACK_PUSH var0 0
+  STACK_PUSH var16 0
   XGoto SetAttackGoal
   XGoto CheckAttackWillHit
+  var16 = STACK_POP
   var0 = STACK_POP
 endif
 Seek execution
@@ -27,7 +29,7 @@ elif Equal var16 3
   var22 = OPos * -1
   AbsStick var22
   var22 = TopNY - OTopNY
-  PredictOMov var23 14 LevelValue
+  PredictOMov var23 14
   if var23 >= 0.15 && var22 < 25
     Button X
   endif

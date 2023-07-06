@@ -19,6 +19,7 @@ endif
 #let hitFrame = var3
 #let xRange = var4
 #let yRange = var5
+#let simGoalY = var6
 if !(Equal lastAttack -1)
   GET_MOVE_DATA(globTempVar, globTempVar, globTempVar, xRange, yRange, hitFrame, anotherTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
   anotherTempVar *= 0.5
@@ -27,11 +28,16 @@ if !(Equal lastAttack -1)
   anotherTempVar = OWidth * 0.5
   xRange += anotherTempVar
   yRange *= 0.5
+  EstOYCoord immediateTempVar hitFrame
+  immediateTempVar -= OYCoord
+  simGoalY = goalY + immediateTempVar
 else
   hitFrame = 9
   xRange = 10
   yRange = 0
+  simGoalY = goalY
 endif
+
 
 #let techSkill = var18
 techSkill = LevelValue * 0.01
@@ -40,7 +46,7 @@ if techSkill < 0.1
 endif
 
 immediateTempVar = TopNX - goalX
-anotherTempVar = TopNY - goalY
+anotherTempVar = TopNY - simGoalY
 Norm immediateTempVar immediateTempVar anotherTempVar
 Abs immediateTempVar
 if immediateTempVar <= 8 && Equal AirGroundState 1
@@ -62,7 +68,7 @@ if globTempVar > 0 && currGoal < cg_bait_dashdance
     if Rnd < platChance
       Seek platSkill
       Jump
-    elif globTempVar < goalY && Rnd < platChance
+    elif globTempVar < simGoalY && Rnd < platChance
       Seek platSkill
       Jump
     endif
@@ -98,23 +104,22 @@ GetAttribute globTempVar attr_jumpXVelGroundMult 0
 immediateTempVar = XSpeed * hitFrame * globTempVar + TopNX
 immediateTempVar -= goalX
 Abs immediateTempVar
-if immediateTempVar <= xRange || Equal CurrSubaction JumpSquat && TopNY < goalY
+if immediateTempVar <= xRange || Equal CurrSubaction JumpSquat && TopNY < simGoalY
   #let totalJumpHeight = var1
   #let djumpHeight = var2
   GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
-  immediateTempVar = goalY - TopNY
-  totalJumpHeight = djumpHeight * NumJumps * 1.2 + OHurtboxSize + yRange
+  immediateTempVar = simGoalY - TopNY
+  totalJumpHeight = djumpHeight * NumJumps * 1.2 + yRange + HurtboxSize
   if immediateTempVar < totalJumpHeight
     if Equal AirGroundState 1 
       #let shortHopHeight = var1
       GET_CHAR_TRAIT(shortHopHeight, chr_cs_shortHopHeight)
-      immediateTempVar = goalY
-      globTempVar = shortHopHeight + TopNY + OHurtboxSize + yRange
-      globTempVar += 10
-      if Equal CurrSubaction JumpSquat && goalY > globTempVar
+      globTempVar = shortHopHeight + TopNY + yRange
+      // globTempVar += 10
+      if Equal CurrSubaction JumpSquat && simGoalY > globTempVar
         Button X
         Goto jumpDirHandler
-      elif TopNY < goalY && !(Equal CurrSubaction JumpSquat)
+      elif TopNY < simGoalY && !(Equal CurrSubaction JumpSquat)
         Goto jumpPreCheck
       endif
     elif AnimFrame > 3
@@ -123,8 +128,9 @@ if immediateTempVar <= xRange || Equal CurrSubaction JumpSquat && TopNY < goalY
         immediateTempVar = YSpeed / Gravity
         EstYCoord anotherTempVar immediateTempVar
       endif
-      anotherTempVar += OHurtboxSize + yRange           
-      if anotherTempVar < goalY
+      anotherTempVar -= HurtboxSize
+      anotherTempVar += yRange           
+      if anotherTempVar < simGoalY
         #let isAerialAttack = var0
         Goto isAirAttack
         if Equal isAerialAttack 1 || Equal lastAttack -1
@@ -134,7 +140,7 @@ if immediateTempVar <= xRange || Equal CurrSubaction JumpSquat && TopNY < goalY
       endif
     endif
   endif
-elif immediateTempVar <= 15 && TopNY > goalY && Equal IsOnPassableGround 1
+elif immediateTempVar <= 15 && TopNY > simGoalY && Equal IsOnPassableGround 1
   #let djumpiness = var0
   djumpiness = PT_DJUMPINESS
 
@@ -272,20 +278,20 @@ label stickMovement
           if globTempVar <= 80
             #let djumpHeight = var2
             GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
-            immediateTempVar = goalY - TopNY - OHurtboxSize - yRange
+            immediateTempVar = simGoalY - TopNY - yRange - OHurtboxSize
             // within djump height
             if immediateTempVar < djumpHeight || globTempVar > 60
               if Equal CurrSubaction JumpSquat
                 Goto jumpPreCheck
               else
-                Button X
+                Goto jumpPreCheck
                 Goto jumpDirHandler
               endif
-            // within 30 x units and jumping and O below ledge
-            elif goalY < -15 && Equal CurrSubaction JumpSquat && globTempVar <= 30
+            // within 30 x units and jumping and O more above ledge
+            elif simGoalY < 40 && Equal CurrSubaction JumpSquat && globTempVar <= 35
               Goto jumpPreCheck
-            // within 30 x units and O more below ledge
-            elif goalY < -25 && globTempVar <= 30 
+            // within 30 x units and O slightly above ledge
+            elif simGoalY < 15 && globTempVar <= 30 
             elif True
               Goto stopMoveIfAhead
             endif

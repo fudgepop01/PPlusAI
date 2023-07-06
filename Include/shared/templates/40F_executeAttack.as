@@ -160,8 +160,8 @@ label PFC
       AbsStick immediateTempVar
     elif True
       if Equal currGoal cg_attack_wall
-        PredictOMov immediateTempVar mov_attack LevelValue
-        if immediateTempVar > 0.15
+        PredictOMov immediateTempVar mov_attack
+        if immediateTempVar > 0.25
           immediateTempVar = OPos * -1
           AbsStick immediateTempVar
         endif

@@ -68,7 +68,7 @@ if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through)
     AbsStick immediateTempVar
 
     if Equal scriptVariant sv_dash_outOfRange
-      predictAverage immediateTempVar man_OXHitDist LevelValue
+      predictAverage immediateTempVar man_OXHitDist
       if XDistLE immediateTempVar
         Return
       endif

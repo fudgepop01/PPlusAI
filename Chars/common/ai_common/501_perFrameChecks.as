@@ -126,7 +126,7 @@ if !(True)
     if Equal currGoal cg_defend || Equal currGoal cg_defend_crouchCancel
       globTempVar = man_ODefendOption
     endif
-    predictAverage immediateTempVar man_OXHitDist LevelValue
+    predictAverage immediateTempVar man_OXHitDist
     immediateTempVar += 20
     // globTempVar = immediateTempVar + 15
     if XDistLE immediateTempVar

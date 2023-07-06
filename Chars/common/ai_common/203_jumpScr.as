@@ -37,9 +37,12 @@ XGoto PerFrameChecks
 //= XReciever
 if !(Equal lastAttack -1) 
   NoRepeat
+  STACK_PUSH scriptVariant st_function
   XGoto SetAttackGoal
   //= XReciever
   XGoto CheckAttackWillHit
+  scriptVariant = STACK_POP
+
   //= XReciever
 endif
 Seek locomotion

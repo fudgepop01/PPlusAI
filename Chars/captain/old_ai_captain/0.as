@@ -1,6 +1,6 @@
 #snippet PRE_HOOKS
 
-GetCommitPredictChance var0 LevelValue
+GetCommitPredictChance var0
 LOGVAL var0
 if var0 >= 0.85
   Button R 

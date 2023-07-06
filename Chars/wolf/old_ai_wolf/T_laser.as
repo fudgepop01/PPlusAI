@@ -59,7 +59,7 @@ if shouldDashDance > 0
 
   globTempVar = OXSpeed * 3
   Abs globTempVar
-  predictAverage immediateTempVar man_oXAttackDist LevelValue
+  predictAverage immediateTempVar man_oXAttackDist
   globTempVar += immediateTempVar
   globTempVar += 25
 

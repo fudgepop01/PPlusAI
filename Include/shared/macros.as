@@ -304,7 +304,7 @@
     // el
     if Equal approachType at_threaten
       // LOGSTR str("THREATENING")
-      predictAverage immediateTempVar man_oXHitDist LevelValue
+      predictAverage immediateTempVar man_oXHitDist
       immediateTempVar += 30
       immediateTempVar *= OPos
       anotherTempVar = OXSpeed
@@ -314,7 +314,7 @@
       targetX -= immediateTempVar
     endif
     if Equal approachType at_poke
-      predictAverage immediateTempVar man_oXHitDist LevelValue
+      predictAverage immediateTempVar man_oXHitDist
       immediateTempVar += 15
       immediateTempVar *= OPos
       anotherTempVar = OXSpeed
@@ -324,7 +324,7 @@
       targetX -= immediateTempVar
     endif
     if LevelValue >= LV8 && !(Equal approachType at_combo) && OCurrAction <= hex(0xF) && Equal OIsOnStage 1
-      predictOOption immediateTempVar man_aim LevelValue
+      predictOOption immediateTempVar man_aim
 
       immediateTempVar = 30 * OPos
       if Equal immediateTempVar op_overshoot
@@ -342,8 +342,8 @@
     endif
 
     if LevelValue >= LV6 && CalledAs ApproachHub
-      predictOOption immediateTempVar man_willTech LevelValue
-      predictionConfidence gv man_willTech LevelValue
+      predictOOption immediateTempVar man_willTech
+      predictionConfidence gv man_willTech
       if Equal immediateTempVar op_tech && Rnd < gv
         if lastAttack >= valNAir && lastAttack <= valDSpecialAir
           immediateTempVar = move_hitFrame + jumpSquatFrames + 3
@@ -367,7 +367,7 @@
           else
             gv = -9999.9999
           endif 
-          predictOOption immediateTempVar man_techchase LevelValue
+          predictOOption immediateTempVar man_techchase
           if Equal immediateTempVar op_towards
             LOGSTR str("TOWARDS")
             immediateTempVar = 21
@@ -997,7 +997,7 @@
   endif
 
   if Equal frameCounter move_hitFrame && !(Equal approachType at_undershoot) && Equal lastScript hex(0x8001)
-    predictOOption globTempVar man_aim LevelValue
+    predictOOption globTempVar man_aim
     immediateTempVar = OTopNX - TopNX
     if immediateTempVar < -15 && Equal HitboxConnected 0
       if Equal AirGroundState 2
@@ -1217,12 +1217,12 @@
 
   globTempVar = OXSpeed * 3
   Abs globTempVar
-  predictAverage immediateTempVar man_oXAttackDist LevelValue
+  predictAverage immediateTempVar man_oXAttackDist
   globTempVar += immediateTempVar
   globTempVar += 25
   // DrawDebugRectOutline TopNX TopNY globTempVar 20 color(0xFF880088)
 
-  // predictOOption immediateTempVar man_aim LevelValue
+  // predictOOption immediateTempVar man_aim
   // if Equal immediateTempVar op_overshoot
   //   globTempVar += 10
   // elif Equal immediateTempVar op_undershoot
@@ -1271,9 +1271,9 @@
         amount = 100
       endif
     elif ODistLE globTempVar && CurrAction <= hex(0x03)
-      predictOOption globTempVar man_dashdance LevelValue
-      predictionConfidence immediateTempVar man_dashdance LevelValue
-      predictAverage anotherTempVar man_oXHitDist LevelValue
+      predictOOption globTempVar man_dashdance
+      predictionConfidence immediateTempVar man_dashdance
+      predictAverage anotherTempVar man_oXHitDist
       anotherTempVar += 5
       if Rnd <= 0.03
         if Equal globTempVar op_attack && Rnd < immediateTempVar && XDistLE anotherTempVar
@@ -1439,8 +1439,8 @@
       Return
     endif
   else
-    predictOOption var0 man_dashdance LevelValue
-    predictionConfidence var1 man_dashdance LevelValue
+    predictOOption var0 man_dashdance
+    predictionConfidence var1 man_dashdance
     if Equal var0 op_attack && Rnd < man_dashdance
       Seek def
       Jump
@@ -1539,17 +1539,17 @@ endif
 #endmacro
 
 #macro DEFEND_FROM_O()
-  predictAverage immediateTempVar man_oXAttackDist LevelValue
-  predictAverage globTempVar man_oYAttackDist LevelValue
+  predictAverage immediateTempVar man_oXAttackDist
+  predictAverage globTempVar man_oYAttackDist
   // DrawDebugRectOutline TopNX TopNY immediateTempVar globTempVar color(0xFF000088)
   if Equal AirGroundState 1 && OFramesHitstun < 1 && !(Equal approachType at_combo)
-    predictAverage immediateTempVar man_oXAttackDist LevelValue
+    predictAverage immediateTempVar man_oXAttackDist
     globTempVar = OXSpeed * 5 * OPos * -1
     immediateTempVar += globTempVar
     // LOGSTR str("oXAttackDist")
     // LOGVAL immediateTempVar
     if XDistLE immediateTempVar
-      predictAverage immediateTempVar man_oYAttackDist LevelValue
+      predictAverage immediateTempVar man_oYAttackDist
       globTempVar = OYSpeed * 5
       immediateTempVar += globTempVar
       globTempVar = TopNY - OTopNY
@@ -1565,13 +1565,13 @@ endif
         
         if !(OAttacking) && Rnd <= 0.04
           trackOAction immediateTempVar 0
-          predictAverage globTempVar man_oXAttackDist LevelValue
+          predictAverage globTempVar man_oXAttackDist
           globTempVar *= 0.5
           trackOAction man_oXAttackDist globTempVar
         endif
 
-        predictOOption globTempVar immediateTempVar LevelValue
-        predictionConfidence immediateTempVar immediateTempVar LevelValue
+        predictOOption globTempVar immediateTempVar
+        predictionConfidence immediateTempVar immediateTempVar
         
         immediateTempVar *= 0.1
         if Equal globTempVar op_attack && Rnd <= immediateTempVar

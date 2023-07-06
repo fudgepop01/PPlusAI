@@ -29,15 +29,15 @@ NoRepeat
 //   PAUSE
 // endif
 
-predictOOption immediateTempVar man_OBaitDirection LevelValue 
+predictOOption immediateTempVar man_OBaitDirection 
 anotherTempVar = 0
 if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && !(Equal OCurrAction hex(0x49))
   anotherTempVar = 1
 endif
 if !(Equal immediateTempVar op_baitdir_overshoot) && currGoal < cg_edgeguard && Equal currGoal cg_attack && !(Equal scriptVariant sv_campAttack) && OFramesHitstun <= 0 && Equal anotherTempVar 0 && YDistFloor < 25
-  predictOOption anotherTempVar man_ODefendOption LevelValue 
+  predictOOption anotherTempVar man_ODefendOption 
   GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-  predictionConfidence globTempVar man_ODefendOption LevelValue
+  predictionConfidence globTempVar man_ODefendOption
   globTempVar *= 2
   if Equal immediateTempVar 1
   elif !(Equal anotherTempVar op_defend_shield) && Rnd < globTempVar && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
@@ -46,7 +46,9 @@ if !(Equal immediateTempVar op_baitdir_overshoot) && currGoal < cg_edgeguard && 
   endif
 endif
 
-if Equal currGoal cg_attack_wall && YDistFloor > 25 || YDistFloor < 0
+if Equal currGoal cg_attack_wall && YDistFloor > 25
+  currGoal = cg_attack
+elif Equal currGoal cg_attack_wall && YDistFloor < 0
   currGoal = cg_attack
 elif currGoal >= cg_attack && currGoal <= calc(cg_attack + 1)
 elif Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack || Equal currGoal cg_bait_shield
@@ -91,8 +93,6 @@ endif
 // // universal:
 // // - breakCC
 // // - antiAir
-//   // predict the chance that the opponent will crouch
-//   PredictOMov immediateTempVar mov_crouch LevelValue
 //   if OCurrAction >= hex(0x11) && OCurrAction <= hex(0x15)
 //     immediateTempVar += 1.5
 //   endif
@@ -101,7 +101,7 @@ endif
 //   // if they're in the air and are likely to attack then an anti-air is a good option
 //   immediateTempVar = OTopNY - TopNY - HurtboxSize
 //   if XDistLE globTempVar && immediateTempVar > 10
-//     PredictOMov immediateTempVar mov_attack LevelValue
+//     PredictOMov immediateTempVar mov_attack
 //     if immediateTempVar > 0.4 && CHANCE_MUL_LE PT_AGGRESSION 1.3 && OFramesHitstun < 15
 //       anotherTempVar = PT_AGGRESSION * 0.5
 //       DynamicDiceAdd dslot0 priority_antiAir anotherTempVar
@@ -151,8 +151,8 @@ endif
 
 //     if Equal AirGroundState 1
 //       // if the opponent is unlikely to attack or grab
-//       PredictOMov immediateTempVar mov_attack LevelValue
-//       PredictOMov globTempVar mov_grab LevelValue
+//       PredictOMov immediateTempVar mov_attack
+//       PredictOMov globTempVar mov_grab
 //       anotherTempVar = (PT_AGGRESSION + 1) * (PT_BAITCHANCE + 1) * (1.5 - immediateTempVar) * (1.5 - globTempVar)
 //       if immediateTempVar < 0.2 && globTempVar < 0.2
 //         // then consider crossing them up
@@ -161,7 +161,7 @@ endif
 //       // otherwise if they're high in the air and nearby
 //       $tempVar(OYDist, immediateTempVar)
 //       OYDist = OTopNY - TopNY - HurtboxSize
-//       predictAverage globTempVar man_OXHitDist LevelValue
+//       predictAverage globTempVar man_OXHitDist
 //       globTempVar += 10
 //       if XDistLE globTempVar && OYDist > 25
 //         // then maybe crossing up is still a good option
@@ -171,7 +171,7 @@ endif
 //     endif
 
 //     // if they're close then a launcher (as-in combo starter) is an idea
-//     predictAverage globTempVar man_OXHitDist LevelValue
+//     predictAverage globTempVar man_OXHitDist
 //     globTempVar += Width + OWidth
 //     if ODistLE globTempVar
 //       anotherTempVar = 2 * (0.4 + PT_AGGRESSION) * (0.4 + PT_BRAVECHANCE)
@@ -362,7 +362,7 @@ immediateTempVar -= TopNY
 immediateTempVar -= anotherTempVar
 
 aerialChecks = 1
-PredictOMov anotherTempVar mov_jump LevelValue
+PredictOMov anotherTempVar mov_jump
 anotherTempVar *= 0.2
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
 elif Equal CurrSubaction JumpSquat || CalledFrom Shield
@@ -490,6 +490,13 @@ if !(True)
   elif CurrAction >= hex(0x34) && CurrAction <= hex(0x3A)
     lastAttack = -1
     Return
+  elif Equal OAirGroundState 1
+    // predict the chance that the opponent will crouch
+    PredictOMov immediateTempVar mov_crouch
+    if immediateTempVar > 0.10
+      move_baseKnockback *= 0.67
+      move_knockbackGrowth *= 0.67
+    endif
   endif
   if Equal aerialChecks 1
     if Equal CurrSubaction JumpSquat || Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x1C) || Equal CurrAction hex(0x1D)
@@ -528,8 +535,8 @@ endif
 
 if !(True)
   label __DI_ANGLE__
-  predictOOption immediateTempVar man_ODIAngle LevelValue
-  predictionConfidence anotherTempVar man_ODIAngle LevelValue
+  predictOOption immediateTempVar man_ODIAngle
+  predictionConfidence anotherTempVar man_ODIAngle
   anotherTempVar *= 3
   if Rnd < anotherTempVar
     if Equal immediateTempVar op_DI_in
@@ -692,15 +699,28 @@ label dirCheck
   GET_CHAR_TRAIT(dirY, chr_get_moveDirY)
 
   if !(Equal dirY 0)
-    EstOYCoord immediateTempVar anotherTempVar
-    if OYDistFloor > 0 && OYDistFloor < 5
-      immediateTempVar = OTopNY
-    elif immediateTempVar < OYDistFloor && OYDistFloor > 0
-      immediateTempVar = OTopNY - OYDistFloor
+    immediateTempVar = 0
+    if CurrAction >= hex(0x24)
+      immediateTempVar = AnimFrame - EndFrame
+      if immediateTempVar > 30
+        immediateTempVar = 30
+      endif
     endif
+    anotherTempVar = immediateTempVar
+    EstOYCoord immediateTempVar anotherTempVar
+
+    #let distDiff = var11
+    distDiff = OYCoord - immediateTempVar
+    if OYDistFloor > 0 && OYDistFloor < 5
+      immediateTempVar = OYCoord
+    elif distDiff > OYDistFloor && OYDistFloor > 0
+      immediateTempVar = OYCoord - OYDistFloor
+    endif
+
     EstYCoord anotherTempVar anotherTempVar
-    if anotherTempVar < YDistFloor && YDistFloor > 0
-      anotherTempVar = TopNY - YDistFloor
+    distDiff = YCoord - anotherTempVar
+    if distDiff > YDistFloor && YDistFloor > 0
+      anotherTempVar = YCoord - YDistFloor
     endif
     // OEstPos - EstPos
     // pos = above
@@ -711,7 +731,7 @@ label dirCheck
 
     if anotherTempVar > 0
       if dirY > 0
-        rollWeight *= 1.75
+        rollWeight *= 2.5
       else
         rollWeight *= 0.1
       endif
@@ -722,10 +742,11 @@ label dirCheck
     // O below
     anotherTempVar = immediateTempVar
     anotherTempVar += OHurtboxSize
+
     if anotherTempVar <= 0
       if Equal OIsOnStage 0
       elif dirY < 0
-        rollWeight *= 1.5
+        rollWeight *= 1.85
       else
         rollWeight *= 0.1
       endif
@@ -804,8 +825,8 @@ label dirCheck
     $ifLastOrigin(grab,false)
       if globTempVar < 35
         GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-        PredictOMov globTempVar mov_shield LevelValue
-        if globTempVar > 0.2 && OYDistFloor < 20 && OYDistFloor > -1
+        PredictOMov globTempVar mov_shield
+        if globTempVar > 0.3 && OYDistFloor < 20 && OYDistFloor > -1
           if Equal immediateTempVar 0
             immediateTempVar = globTempVar + 1
             rollWeight *= immediateTempVar
@@ -896,8 +917,8 @@ label dirCheck
   if !(Equal currGoal cg_attack_wall)
     $ifLastAttack(grab)
     $ifLastOrigin(grab,true)
-      PredictOMov anotherTempVar mov_shield LevelValue
-      if anotherTempVar > 0.08 && !(Equal scriptVariant sv_fastAttack)
+      PredictOMov anotherTempVar mov_shield
+      if anotherTempVar > 0.2 && !(Equal scriptVariant sv_fastAttack)
         anotherTempVar = 100 * anotherTempVar
         rollWeight += anotherTempVar
         anotherTempVar *= 0.1
@@ -930,9 +951,6 @@ label dirCheck
 Return
 label getEndlag
   globTempVar = move_hitFrame + move_duration
-  LOGSTR str("itv bef/aft")
-  LOGVAL move_IASA
-  LOGVAL globTempVar
   immediateTempVar = move_IASA
   immediateTempVar -= globTempVar
   IF_AERIAL_ATTACK(var11)
@@ -940,7 +958,6 @@ label getEndlag
       immediateTempVar = move_IASA
     endif
   endif
-  LOGVAL immediateTempVar
 Return
 label getOEndlag
   GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
@@ -958,7 +975,7 @@ label addIfFastHit
     if Equal scriptVariant sv_fastAttack
       immediateTempVar *= 0.65
     else
-      GetCommitPredictChance anotherTempVar LevelValue
+      GetCommitPredictChance anotherTempVar
       if anotherTempVar > 0.25
         immediateTempVar *= 0.8
       else 

@@ -40,7 +40,7 @@ var22 = (1 - (LevelValue / 100)) * 12
 var22 *= PT_REACTION_TIME
 MOD var22 AnimFrame var22
 if Equal var22 0
-  predictAverage var22 10 LevelValue
+  predictAverage var22 10
   var22 += 35
   if XDistLE var22
     Goto smartRoll
@@ -59,8 +59,8 @@ label smartRoll
 if XDistLE 35 && Rnd < 0.5
   Button A
 else
-  GetCommitPredictChance var22 LevelValue
-  PredictOMov var23 10 LevelValue
+  GetCommitPredictChance var22
+  PredictOMov var23 10
   if XDistLE 45 && var23 < 0.28
     if Rnd < 0.5 || var22 > 0.15
       Button A

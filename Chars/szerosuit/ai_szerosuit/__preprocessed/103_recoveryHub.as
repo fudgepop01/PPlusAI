@@ -222,7 +222,7 @@ label handleUSpecial
   if Equal CurrAction 122
     Stick 1
   elif Equal CurrAction 129
-    GetCommitPredictChance var22 LevelValue
+    GetCommitPredictChance var22
     var22 *= 2
     if var22 > 0.75
       var22 = 0.75

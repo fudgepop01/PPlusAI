@@ -116,23 +116,23 @@ elif Equal chr_trait_select chr_get_OEndlag || Equal chr_trait_select chr_get_OE
   endif
 elif Equal chr_trait_select chr_calc_certainty
   anotherTempVar = 0
-  PredictOMov immediateTempVar mov_shield LevelValue
+  PredictOMov immediateTempVar mov_shield
   if immediateTempVar > anotherTempVar
     anotherTempVar = immediateTempVar
   endif
-  PredictOMov immediateTempVar mov_dash LevelValue
+  PredictOMov immediateTempVar mov_dash
   if immediateTempVar > anotherTempVar
     anotherTempVar = immediateTempVar
   endif
-  PredictOMov immediateTempVar mov_jump LevelValue
+  PredictOMov immediateTempVar mov_jump
   if immediateTempVar > anotherTempVar
     anotherTempVar = immediateTempVar
   endif
-  PredictOMov immediateTempVar mov_attack LevelValue
+  PredictOMov immediateTempVar mov_attack
   if immediateTempVar > anotherTempVar
     anotherTempVar = immediateTempVar
   endif
-  PredictOMov immediateTempVar mov_grab LevelValue
+  PredictOMov immediateTempVar mov_grab
   if immediateTempVar > anotherTempVar
     anotherTempVar = immediateTempVar
   endif

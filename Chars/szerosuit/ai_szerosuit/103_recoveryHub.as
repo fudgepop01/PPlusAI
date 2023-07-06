@@ -113,7 +113,7 @@
   if Equal CurrAction hex(0x7a)
     Stick 1
   elif Equal CurrAction hex(0x81)
-    GetCommitPredictChance immediateTempVar LevelValue
+    GetCommitPredictChance immediateTempVar
     immediateTempVar *= 2
     if immediateTempVar > 0.75
       immediateTempVar = 0.75

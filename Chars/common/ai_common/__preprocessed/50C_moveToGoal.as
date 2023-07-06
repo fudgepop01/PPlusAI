@@ -38,11 +38,16 @@ STACK_PUSH 17 0
   var23 = OWidth * 0.5
   var4 += var23
   var5 *= 0.5
+  EstOYCoord var22 var3
+  var22 -= OYCoord
+  var6 = var14 + var22
 else
   var3 = 9
   var4 = 10
   var5 = 0
+  var6 = var14
 endif
+
 
 var18 = LevelValue * 0.01
 if var18 < 0.1
@@ -50,7 +55,7 @@ if var18 < 0.1
 endif
 
 var22 = TopNX - var13
-var23 = TopNY - var14
+var23 = TopNY - var6
 Norm var22 var22 var23
 Abs var22
 if var22 <= 8 && Equal AirGroundState 1
@@ -70,7 +75,7 @@ if var17 > 0 && var21 < 10.5
     if Rnd < var0
       Seek platSkill
       Jump
-    elif var17 < var14 && Rnd < var0
+    elif var17 < var6 && Rnd < var0
       Seek platSkill
       Jump
     endif
@@ -106,26 +111,25 @@ GetAttribute var17 76; 0
 var22 = XSpeed * var3 * var17 + TopNX
 var22 -= var13
 Abs var22
-if var22 <= var4 || Equal CurrSubaction JumpSquat && TopNY < var14
+if var22 <= var4 || Equal CurrSubaction JumpSquat && TopNY < var6
   var22 = 15
   XGoto GetChrSpecific
   //= XReciever
 var2 = var22
-  var22 = var14 - TopNY
-  var1 = var2 * NumJumps * 1.2 + OHurtboxSize + var5
+  var22 = var6 - TopNY
+  var1 = var2 * NumJumps * 1.2 + var5 + HurtboxSize
   if var22 < var1
     if Equal AirGroundState 1 
   var22 = 14
   XGoto GetChrSpecific
   //= XReciever
 var1 = var22
-      var22 = var14
-      var17 = var1 + TopNY + OHurtboxSize + var5
-      var17 += 10
-      if Equal CurrSubaction JumpSquat && var14 > var17
+      var17 = var1 + TopNY + var5
+      // var17 += 10
+      if Equal CurrSubaction JumpSquat && var6 > var17
         Button X
         Goto jumpDirHandler
-      elif TopNY < var14 && !(Equal CurrSubaction JumpSquat)
+      elif TopNY < var6 && !(Equal CurrSubaction JumpSquat)
         Goto jumpPreCheck
       endif
     elif AnimFrame > 3
@@ -134,8 +138,9 @@ var1 = var22
         var22 = YSpeed / Gravity
         EstYCoord var23 var22
       endif
-      var23 += OHurtboxSize + var5           
-      if var23 < var14
+      var23 -= HurtboxSize
+      var23 += var5           
+      if var23 < var6
         Goto isAirAttack
         if Equal var0 1 || Equal var20 -1
           Button X
@@ -144,7 +149,7 @@ var1 = var22
       endif
     endif
   endif
-elif var22 <= 15 && TopNY > var14 && Equal IsOnPassableGround 1
+elif var22 <= 15 && TopNY > var6 && Equal IsOnPassableGround 1
   var0 = PT_DJUMPINESS
 
   var1 = PT_AGGRESSION
@@ -297,20 +302,20 @@ label stickMovement
   XGoto GetChrSpecific
   //= XReciever
 var2 = var22
-            var22 = var14 - TopNY - OHurtboxSize - var5
+            var22 = var6 - TopNY - var5 - OHurtboxSize
             // within djump height
             if var22 < var2 || var17 > 60
               if Equal CurrSubaction JumpSquat
                 Goto jumpPreCheck
               else
-                Button X
+                Goto jumpPreCheck
                 Goto jumpDirHandler
               endif
-            // within 30 x units and jumping and O below ledge
-            elif var14 < -15 && Equal CurrSubaction JumpSquat && var17 <= 30
+            // within 30 x units and jumping and O more above ledge
+            elif var6 < 40 && Equal CurrSubaction JumpSquat && var17 <= 35
               Goto jumpPreCheck
-            // within 30 x units and O more below ledge
-            elif var14 < -25 && var17 <= 30 
+            // within 30 x units and O slightly above ledge
+            elif var6 < 15 && var17 <= 30 
             elif True
               Goto stopMoveIfAhead
             endif

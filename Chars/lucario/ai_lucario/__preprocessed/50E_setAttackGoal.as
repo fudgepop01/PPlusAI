@@ -97,8 +97,8 @@ if var12 < 0
     endif
   else
     var23 = OTopNY
-    PredictOMov var22 7 LevelValue
-    PredictOMov var17 8 LevelValue
+    PredictOMov var22 7
+    PredictOMov var17 8
     if var17 > 0.65
       if ONumJumps > 0
         GetAttribute var22 72; 1
@@ -152,20 +152,18 @@ endif
 
 DrawDebugRectOutline var13 var14 3 3 0 255 0 221
 
-var22 = var11
+
+var22 = var11 + var9
 if !(True) || Equal var20 25|| Equal var20 26|| Equal var20 27|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31
-  if Equal AirGroundState 2
-    var22 *= Direction
-  else
-    var22 *= OPos
-  endif
+  var22 *= Direction
 else
   var22 *= OPos
 endif
 var13 -= var22
-var22 = var9 - OWidth
-var22 *= OPos * 0.5
-var13 -= var22
+
+
+var22 = OPos * 0.5 * OWidth
+var13 += var22
 
 var14 -= var10
 // var22 = OHurtboxSize + var8
@@ -219,9 +217,9 @@ var3 = var22
 endif
 
 if Equal OCurrAction 73 && !(CalledFrom ExecuteAttack)
-  predictionConfidence var22 15 LevelValue
+  predictionConfidence var22 15
   if var22 >= 0.3
-    predictOOption var22 15 LevelValue
+    predictOOption var22 15
     if Equal var22 1 && ONumJumps > 0
       var22 = OHurtboxSize * 3
       var14 += var22
@@ -249,8 +247,8 @@ endif
 // var2 = 0
 if !(CalledFrom ExecuteAttack)
   if Equal OCurrAction 77
-    predictOOption var17 12 LevelValue
-    predictionConfidence var22 12 LevelValue
+    predictOOption var17 12
+    predictionConfidence var22 12
     if var22 >= 0.3
       var23 = OPos * 20
       if Equal var17 1
@@ -278,8 +276,8 @@ var3 = var22
       endif
     endif
   elif OCurrAction >= 96 && OCurrAction <= 97
-    predictOOption var17 13 LevelValue
-    predictionConfidence var22 13 LevelValue
+    predictOOption var17 13
+    predictionConfidence var22 13
     if var22 >= 0.3
       var23 = OPos * 20
       if Equal var17 1
@@ -300,12 +298,12 @@ var3 = var22
       endif
     endif
     var22 *= 0.4 * var7 * OPos
-    predictOOption var17 9 LevelValue
-    predictionConfidence var23 9 LevelValue  
+    predictOOption var17 9
+    predictionConfidence var23 9  
 
     if Equal var17 1 && var23 >= 0.3
-      predictOOption var23 8 LevelValue 
-      predictAverage var17 10 LevelValue
+      predictOOption var23 8 
+      predictAverage var17 10
       var17 += Width + OWidth
       var17 *= OPos
       if Equal var21 16.3

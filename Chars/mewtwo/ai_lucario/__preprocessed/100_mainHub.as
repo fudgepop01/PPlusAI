@@ -250,9 +250,9 @@ elif CHANCE_MUL_LE PT_AGGRESSION var23
 endif
 var22 = LevelValue * 0.0075
 var23 = 1 - var22
-PredictOMov var22 14 LevelValue
+PredictOMov var22 14
 var22 *= var23
-if var22 < 0.05
+if var22 < 0.08
   SeekNoCommit attack_roll
 elif Equal HitboxConnected 1
   if !(True)
@@ -260,13 +260,13 @@ elif Equal HitboxConnected 1
   endif
   var22 = PT_BAIT_DASHAWAYCHANCE
   DynamicDiceAdd 0 10.5 var22
-  predictionConfidence var22 9 LevelValue
+  predictionConfidence var22 9
   if var22 > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
     DynamicDiceAdd 0 16 2
   endif
   var22 = PT_AGGRESSION * 4
   DynamicDiceAdd 0 16 var22
-  GetCommitPredictChance var22 LevelValue
+  GetCommitPredictChance var22
   if YDistFloor < 25
     var22 *= 2.5 * PT_WALL_CHANCE
     DynamicDiceAdd 0 16.3 var22
@@ -322,7 +322,7 @@ XGoto PerFrameChecks
 Seek tskillWait
 if Rnd < var0
   Seek selectGoal
-  Return
+  Jump
 endif
 Return
 label selectGoal
@@ -358,12 +358,13 @@ if Equal var21 10.4
   var4 = STACK_POP
   Seek baitWait
   var4 -= 1
-  predictAverage var22 10 LevelValue
+  predictAverage var22 10
   var22 *= 0.5
   if XDistLE var22 && Rnd <= 0.02
     CallI DefendHub
   endif
   var22 *= 3
+  var22 += 20
   if XDistLE var22 && CHANCE_MUL_LE PT_AGGRESSION 0.05
     var20 = -1
     var21 = 16.3

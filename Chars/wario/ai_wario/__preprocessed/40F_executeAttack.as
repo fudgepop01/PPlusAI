@@ -384,7 +384,7 @@ Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
-  PredictOMov var22 7 LevelValue
+  PredictOMov var22 7
   if Equal CurrSubaction 486 && AnimFrame >= 4 && Rnd <= 0.8 && var22 >= 0.65 && XDistLE 25
     Button X
   endif
@@ -518,8 +518,8 @@ if !(True) || Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|
       AbsStick var22
     elif True
       if Equal var21 16.3
-        PredictOMov var22 14 LevelValue
-        if var22 > 0.15
+        PredictOMov var22 14
+        if var22 > 0.25
           var22 = OPos * -1
           AbsStick var22
         endif

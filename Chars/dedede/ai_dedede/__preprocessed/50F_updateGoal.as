@@ -10,9 +10,9 @@ var16 = 0
 
 // if var21 >= 16 && var21 < 17
 // else 
-//   predictOOption var22 10 LevelValue
+//   predictOOption var22 10
 //   var22 *= 0.25
-//   GetCommitPredictChance var23 LevelValue
+//   GetCommitPredictChance var23
 //   if XDistLE var22
 //     if var23 < 0.1
 //       var21 = 16
@@ -75,7 +75,7 @@ var17 = var22
       endif
     endif
 
-    predictOOption var22 10 LevelValue 
+    predictOOption var22 10 
     var22 += 30
     if CHANCE_MUL_LE PT_AGGRESSION 0.1
       if XDistLE var22 
@@ -100,7 +100,7 @@ var17 = var22
   //   Return
   // endif
 
-  predictAverage var17 10 LevelValue
+  predictAverage var17 10
   Goto getODist
   if var22 <= var17
     Goto forceChangeGoal
@@ -160,7 +160,7 @@ elif var21 >= 10 && var21 < 11
     Return
   endif
 
-  predictAverage var22 10 LevelValue
+  predictAverage var22 10
   if var22 < 8
     var22 = 8
   endif
@@ -229,19 +229,20 @@ var17 = var22
     elif Equal var21 10.5
       if CHANCE_MUL_LE PT_BAITCHANCE 0.25 || CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.5 || CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.5
         Return
-      else
+      elif CHANCE_MUL_LE PT_AGGRESSION 0.025
         LOGSTR_NL 1179603456 1128603648 1095190272 1380909056 0
         var21 = 10.1
         XGoto CalcAttackGoal
       endif
     elif !(Equal var21 10.1)
       if Equal CurrAction 3 || Equal CurrAction 4
-        GetCommitPredictChance var22 LevelValue
-        predictAverage var23 10 LevelValue
+        GetCommitPredictChance var22
+        predictAverage var23 10
         if var23 < 5
           var23 = 5
         endif
-        if var22 > 0.3 && !(XDistLE var23) && CHANCE_MUL_LE PT_BAITCHANCE 0.02
+        var23 += 25
+        if var22 > 0.33 && !(XDistLE var23) && CHANCE_MUL_LE PT_BAITCHANCE 0.02
           var15 = -1
           var21 = 10.4
           if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.1
@@ -254,7 +255,7 @@ var17 = var22
       endif
     endif
 
-    predictAverage var22 10 LevelValue
+    predictAverage var22 10
     if CHANCE_MUL_LE PT_AGGRESSION 0.4 && YDistFloor > -1 && YDistFloor < 15 && !(XDistLE var22)
       if Equal var21 10.1
         XGoto CalcAttackGoal
@@ -266,8 +267,14 @@ var17 = var22
       endif
     endif
 
+    if CHANCE_MUL_LE PT_AGGRESSION 0.2 && CHANCE_MUL_LE PT_BAITCHANCE 0.2
+      var21 = 10.1
+    elif CHANCE_MUL_LE PT_WALL_CHANCE 0.35
+      var21 = 16.3
+    endif
+
     // if !(Equal var21 10.2) && CHANCE_MUL_LE PT_BAITCHANCE 1 && Equal var3 0
-    //   predictAverage var22 10 LevelValue
+    //   predictAverage var22 10
     //   if var22 < 8
     //     var22 = 8
     //   endif
@@ -289,7 +296,7 @@ var17 = var22
     //       endif
     //     endif
     //   elif XDistLE var23 && CHANCE_MUL_LE PT_AGGRESSION 0.7
-    //     GetCommitPredictChance var22 LevelValue
+    //     GetCommitPredictChance var22
     //     if CHANCE_MUL_LE PT_BRAVECHANCE 0.75 && var22 < 0.35
     //       if CHANCE_MUL_LE PT_WALL_CHANCE 0.85
     //         var21 = 16.3
@@ -313,7 +320,7 @@ var17 = var22
   endif
 
   var1 = 1
-  predictAverage var23 10 LevelValue
+  predictAverage var23 10
   if var23 < 8
     var23 = 8
   endif
@@ -328,18 +335,18 @@ var17 = var22
   GetYDistFloorOffset var23 var23 5 1
   if Equal var23 -1 || Equal var3 1 || var22 < var17
     var1 = 0
-    predictAverage var23 10 LevelValue
+    predictAverage var23 10
   endif
 
   Goto getDist
-  GetCommitPredictChance var23 LevelValue
-  if var22 >= 55 || var23 < 0.25
+  GetCommitPredictChance var23
+  if var22 >= 55 || var23 < 0.27
     var1 = 1
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.1
+  elif CHANCE_MUL_LE PT_BAITCHANCE 0.1 || var23 > 0.15
     var1 = -1
   endif 
 
-  predictAverage var17 10 LevelValue
+  predictAverage var17 10
   if var17 < 15
     var17 = 15
   endif
@@ -395,7 +402,7 @@ var17 = var22
       var15 = -1
       CallI AerialDrift
     endif
-    GetCommitPredictChance var22 LevelValue
+    GetCommitPredictChance var22
     var23 = 1 - var22
     var23 *= 2
     if CHANCE_MUL_GE PT_BAITCHANCE var23
@@ -404,9 +411,9 @@ var17 = var22
     Return
   endif
 
-  predictAverage var22 10 LevelValue
+  predictAverage var22 10
   var22 += 5
-  if XDistLE var22 && !(Equal var1 -1)
+  if XDistLE var22
     if Equal var21 10.2 && Equal AirGroundState 1
       label startup
       Stick 1
@@ -434,11 +441,10 @@ var17 = var22
   var22 += 10
 
   if XDistLE var22 && !(Equal var1 -1)
-
     DynamicDiceClear 0
     if Equal AirGroundState 1
 
-      predictAverage var23 10 LevelValue
+      predictAverage var23 10
       var23 += 10
       var23 *= OPos
       GetYDistFloorOffset var23 var23 5 1
@@ -456,7 +462,7 @@ var17 = var22
 
       if Equal var23 -1
       elif Equal var1 1 && CHANCE_MUL_LE PT_AGGRESSION 0.3
-        GetCommitPredictChance var22 LevelValue
+        GetCommitPredictChance var22
         GetAttribute var23 40; 0
         if var22 < 0.1 && var23 > 1.5
           DynamicDiceAdd 0 6 1.25
@@ -647,7 +653,7 @@ elif var21 >= 16 && var21 < 17
 
   // $ifLastOrigin(grab,0)
   // elif Equal var21 16.3
-  //   predictAverage var22 10 LevelValue
+  //   predictAverage var22 10
   //   if var22 < 8
   //     var22 = 8
   //   endif
@@ -667,7 +673,7 @@ elif var21 >= 16 && var21 < 17
   //   endif
   // endif
 
-  // predictAverage var22 10 LevelValue
+  // predictAverage var22 10
   // var22 += 10
   // if Equal var21 16.6 && XDistLE var22
   //   var16 = 1
@@ -697,12 +703,12 @@ elif var21 >= 16 && var21 < 17
   //     endif
   // endif
 
-  predictAverage var23 10 LevelValue
+  predictAverage var23 10
   var23 += 20
   if XDistLE var23 && var21 < 16.4
     if !(Equal var21 16.3)
-      GetCommitPredictChance var22 LevelValue
-      var22 *= 0.1
+      GetCommitPredictChance var22
+      var22 *= 0.075
       if Rnd < var22 
         if CHANCE_MUL_LE PT_WALL_CHANCE 0.45 || CHANCE_MUL_LE PT_BAITCHANCE 0.25
           if CHANCE_MUL_LE PT_BAITCHANCE 0.75
@@ -779,8 +785,8 @@ if !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 
   //   elif var21 >= 16.7
   //   elif True
   //     if var2 <= 1 && Equal AirGroundState 1
-  //       predictOOption var22 man_OXAttackDist LevelValue 
-  //       predictionConfidence var23 man_OXAttackDist LevelValue
+  //       predictOOption var22 man_OXAttackDist 
+  //       predictionConfidence var23 man_OXAttackDist
   //       if Equal var22 1 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.6
   //         var21 = 10.5
   //         Return
@@ -804,12 +810,12 @@ if !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 
   //   endif
   // endif
 
-  predictAverage var22 10 LevelValue
+  predictAverage var22 10
   var22 += 10
   if Equal OCurrAction 73 && var21 < 16.7
     if XDistLE var22 && !(Equal OAirGroundState 1) 
-      predictOOption var22 15 LevelValue
-      predictionConfidence var17 15 LevelValue
+      predictOOption var22 15
+      predictionConfidence var17 15
       if Equal var22 2 && Rnd < var17
         Call Shield
       endif

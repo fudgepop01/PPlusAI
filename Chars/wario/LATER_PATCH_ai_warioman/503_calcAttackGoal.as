@@ -27,15 +27,15 @@ NoRepeat
 //   PAUSE
 // endif
 
-predictOOption immediateTempVar man_OBaitDirection LevelValue 
+predictOOption immediateTempVar man_OBaitDirection 
 anotherTempVar = 0
 if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && !(Equal OCurrAction hex(0x49))
   anotherTempVar = 1
 endif
 if !(Equal immediateTempVar op_baitdir_overshoot) && currGoal < cg_edgeguard && Equal currGoal cg_attack && !(Equal scriptVariant sv_campAttack) && OFramesHitstun <= 0 && Equal anotherTempVar 0
-  predictOOption anotherTempVar man_ODefendOption LevelValue 
+  predictOOption anotherTempVar man_ODefendOption 
   GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-  predictionConfidence globTempVar man_ODefendOption LevelValue
+  predictionConfidence globTempVar man_ODefendOption
   globTempVar *= 2
   if Equal immediateTempVar 1
   elif !(Equal anotherTempVar op_defend_shield) && Rnd < globTempVar && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
@@ -61,7 +61,7 @@ immediateTempVar -= TopNY
 immediateTempVar -= anotherTempVar
 
 aerialChecks = 1
-PredictOMov anotherTempVar mov_jump LevelValue
+PredictOMov anotherTempVar mov_jump
 anotherTempVar *= 0.2
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
 elif Equal CurrSubaction JumpSquat || CalledFrom Shield
@@ -219,8 +219,8 @@ endif
 
 if !(True)
   label __DI_ANGLE__
-  predictOOption immediateTempVar man_ODIAngle LevelValue
-  predictionConfidence anotherTempVar man_ODIAngle LevelValue
+  predictOOption immediateTempVar man_ODIAngle
+  predictionConfidence anotherTempVar man_ODIAngle
   anotherTempVar *= 3
   if Rnd < anotherTempVar
     if Equal immediateTempVar op_DI_in
@@ -436,7 +436,7 @@ label dirCheck
   // $ifLastOrigin(grab,false)
   //   if globTempVar < 35
   //     GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-  //     PredictOMov globTempVar mov_shield LevelValue
+  //     PredictOMov globTempVar mov_shield
   //     if globTempVar > 0.2 && OYDistFloor < 20 && OYDistFloor > -1
   //       if Equal immediateTempVar 0
   //         immediateTempVar = globTempVar + 1
@@ -514,7 +514,7 @@ label dirCheck
     if !(Equal currGoal cg_attack_wall)
       $ifLastAttack(grab)
       $ifLastOrigin(grab,true)
-        PredictOMov anotherTempVar mov_shield LevelValue
+        PredictOMov anotherTempVar mov_shield
         if anotherTempVar > 0.08 && !(Equal scriptVariant sv_fastAttack)
           anotherTempVar = 100 * anotherTempVar
           rollWeight += anotherTempVar
@@ -569,7 +569,7 @@ label addIfFastHit
     if Equal scriptVariant sv_fastAttack
       immediateTempVar *= 0.4
     else
-      GetCommitPredictChance anotherTempVar LevelValue
+      GetCommitPredictChance anotherTempVar
       if anotherTempVar > 0.2
         immediateTempVar *= 0.6
       else 

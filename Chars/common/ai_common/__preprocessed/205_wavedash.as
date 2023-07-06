@@ -81,6 +81,7 @@ var17 = var22
       ClearStick
       AbsStick 0 (-1)
     endif
+    var15 = -1
     Call MainHub
   endif
   var0 -= 1

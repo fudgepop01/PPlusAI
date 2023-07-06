@@ -19,7 +19,7 @@ else
     Stick 0 1
 endif
 if CurrAction <= 32 || FramesHitstun > 0
-    Finish
+    Call MainHub
 endif
 Return
 Return

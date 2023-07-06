@@ -14,17 +14,17 @@ NoRepeat
 //   PAUSE
 // endif
 
-predictOOption var22 8 LevelValue 
+predictOOption var22 8 
 var23 = 0
 if OCurrAction >= 66 && OCurrAction <= 100 && !(Equal OCurrAction 73)
   var23 = 1
 endif
 if !(Equal var22 2) && var21 < 16.7 && Equal var21 16 && !(Equal var16 2) && OFramesHitstun <= 0 && Equal var23 0 && YDistFloor < 25
-  predictOOption var23 7 LevelValue 
+  predictOOption var23 7 
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-  predictionConfidence var17 7 LevelValue
+  predictionConfidence var17 7
   var17 *= 2
   if Equal var22 1
   elif !(Equal var23 3) && Rnd < var17 && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
@@ -33,7 +33,9 @@ if !(Equal var22 2) && var21 < 16.7 && Equal var21 16 && !(Equal var16 2) && OFr
   endif
 endif
 
-if Equal var21 16.3 && YDistFloor > 25 || YDistFloor < 0
+if Equal var21 16.3 && YDistFloor > 25
+  var21 = 16
+elif Equal var21 16.3 && YDistFloor < 0
   var21 = 16
 elif var21 >= 16 && var21 <= 17
 elif Equal var16 2 || Equal var21 10.1 || Equal var21 10.2
@@ -78,8 +80,6 @@ endif
 // // universal:
 // // - breakCC
 // // - antiAir
-//   // predict the chance that the opponent will crouch
-//   PredictOMov var22 6 LevelValue
 //   if OCurrAction >= 17 && OCurrAction <= 21
 //     var22 += 1.5
 //   endif
@@ -88,7 +88,7 @@ endif
 //   // if they're in the air and are likely to attack then an anti-air is a good option
 //   var22 = OTopNY - TopNY - HurtboxSize
 //   if XDistLE var17 && var22 > 10
-//     PredictOMov var22 14 LevelValue
+//     PredictOMov var22 14
 //     if var22 > 0.4 && CHANCE_MUL_LE PT_AGGRESSION 1.3 && OFramesHitstun < 15
 //       var23 = PT_AGGRESSION * 0.5
 //       DynamicDiceAdd 0 priority_antiAir var23
@@ -138,8 +138,8 @@ endif
 
 //     if Equal AirGroundState 1
 //       // if the opponent is unlikely to attack or grab
-//       PredictOMov var22 14 LevelValue
-//       PredictOMov var17 15 LevelValue
+//       PredictOMov var22 14
+//       PredictOMov var17 15
 //       var23 = (PT_AGGRESSION + 1) * (PT_BAITCHANCE + 1) * (1.5 - var22) * (1.5 - var17)
 //       if var22 < 0.2 && var17 < 0.2
 //         // then consider crossing them up
@@ -148,7 +148,7 @@ endif
 //       // otherwise if they're high in the air and nearby
 //       $tempVar(OYDist, var22)
 //       OYDist = OTopNY - TopNY - HurtboxSize
-//       predictAverage var17 10 LevelValue
+//       predictAverage var17 10
 //       var17 += 10
 //       if XDistLE var17 && OYDist > 25
 //         // then maybe crossing up is still a good option
@@ -158,7 +158,7 @@ endif
 //     endif
 
 //     // if they're close then a launcher (as-in combo starter) is an idea
-//     predictAverage var17 10 LevelValue
+//     predictAverage var17 10
 //     var17 += Width + OWidth
 //     if ODistLE var17
 //       var23 = 2 * (0.4 + PT_AGGRESSION) * (0.4 + PT_BRAVECHANCE)
@@ -349,7 +349,7 @@ var22 -= TopNY
 var22 -= var23
 
 var12 = 1
-PredictOMov var23 7 LevelValue
+PredictOMov var23 7
 var23 *= 0.2
 if CurrAction >= 26 && CurrAction <= 29
 elif Equal CurrSubaction JumpSquat || CalledFrom Shield
@@ -520,6 +520,13 @@ if !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 
   elif CurrAction >= 52 && CurrAction <= 58
     var20 = -1
     Return
+  elif Equal OAirGroundState 1
+    // predict the chance that the opponent will crouch
+    PredictOMov var22 6
+    if var22 > 0.10
+      var4 *= 0.67
+      var6 *= 0.67
+    endif
   endif
   if Equal var12 1
     if Equal CurrSubaction JumpSquat || Equal CurrAction 27 || Equal CurrAction 28 || Equal CurrAction 29
@@ -574,8 +581,8 @@ endif
 
 if !(True)
   label __DI_ANGLE__
-  predictOOption var22 5 LevelValue
-  predictionConfidence var23 5 LevelValue
+  predictOOption var22 5
+  predictionConfidence var23 5
   var23 *= 3
   if Rnd < var23
     if Equal var22 1
@@ -774,15 +781,27 @@ label dirCheck
 var17 = var22
 
   if !(Equal var17 0)
-    EstOYCoord var22 var23
-    if OYDistFloor > 0 && OYDistFloor < 5
-      var22 = OTopNY
-    elif var22 < OYDistFloor && OYDistFloor > 0
-      var22 = OTopNY - OYDistFloor
+    var22 = 0
+    if CurrAction >= 36
+      var22 = AnimFrame - EndFrame
+      if var22 > 30
+        var22 = 30
+      endif
     endif
+    var23 = var22
+    EstOYCoord var22 var23
+
+    var11 = OYCoord - var22
+    if OYDistFloor > 0 && OYDistFloor < 5
+      var22 = OYCoord
+    elif var11 > OYDistFloor && OYDistFloor > 0
+      var22 = OYCoord - OYDistFloor
+    endif
+
     EstYCoord var23 var23
-    if var23 < YDistFloor && YDistFloor > 0
-      var23 = TopNY - YDistFloor
+    var11 = YCoord - var23
+    if var11 > YDistFloor && YDistFloor > 0
+      var23 = YCoord - YDistFloor
     endif
     // OEstPos - EstPos
     // pos = above
@@ -793,7 +812,7 @@ var17 = var22
 
     if var23 > 0
       if var17 > 0
-        var15 *= 1.75
+        var15 *= 2.5
       else
         var15 *= 0.1
       endif
@@ -804,10 +823,11 @@ var17 = var22
     // O below
     var23 = var22
     var23 += OHurtboxSize
+
     if var23 <= 0
       if Equal OIsOnStage 0
       elif var17 < 0
-        var15 *= 1.5
+        var15 *= 1.85
       else
         var15 *= 0.1
       endif
@@ -890,8 +910,8 @@ if !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-        PredictOMov var17 10 LevelValue
-        if var17 > 0.2 && OYDistFloor < 20 && OYDistFloor > -1
+        PredictOMov var17 10
+        if var17 > 0.3 && OYDistFloor < 20 && OYDistFloor > -1
           if Equal var22 0
             var22 = var17 + 1
             var15 *= var22
@@ -984,8 +1004,8 @@ if !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 
   if !(Equal var21 16.3)
 if Equal var20 13
 elif !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
-      PredictOMov var23 10 LevelValue
-      if var23 > 0.08 && !(Equal var16 1)
+      PredictOMov var23 10
+      if var23 > 0.2 && !(Equal var16 1)
         var23 = 100 * var23
         var15 += var23
         var23 *= 0.1
@@ -1018,9 +1038,6 @@ elif !(True) || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var2
 Return
 label getEndlag
   var17 = var7 + var8
-  LOGSTR 1769240064 543319296 1714381056 1718878208 0
-  LOGVAL var9
-  LOGVAL var17
   var22 = var9
   var22 -= var17
   var22 = 100
@@ -1032,7 +1049,6 @@ var11 = var22
       var22 = var9
     endif
   endif
-  LOGVAL var22
 Return
 label getOEndlag
   var22 = 0.003
@@ -1056,7 +1072,7 @@ var11 = var22
     if Equal var16 1
       var22 *= 0.65
     else
-      GetCommitPredictChance var23 LevelValue
+      GetCommitPredictChance var23
       if var23 > 0.25
         var22 *= 0.8
       else 

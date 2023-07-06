@@ -538,8 +538,8 @@ if !(True) || Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|
       AbsStick var22
     elif True
       if Equal var21 16.3
-        PredictOMov var22 14 LevelValue
-        if var22 > 0.15
+        PredictOMov var22 14
+        if var22 > 0.25
           var22 = OPos * -1
           AbsStick var22
         endif

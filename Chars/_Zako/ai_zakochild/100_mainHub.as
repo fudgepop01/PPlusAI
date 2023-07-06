@@ -145,13 +145,13 @@ lastAttack = -1
 
 DynamicDiceClear dslot0
 
-predictionConfidence immediateTempVar man_OBaitOption LevelValue
+predictionConfidence immediateTempVar man_OBaitOption
 if immediateTempVar > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
   DynamicDiceAdd dslot0 cg_attack 2
 endif
 immediateTempVar = PT_AGGRESSION * 4
 DynamicDiceAdd dslot0 cg_attack immediateTempVar
-GetCommitPredictChance immediateTempVar LevelValue
+GetCommitPredictChance immediateTempVar
 if YDistFloor < 25
   immediateTempVar *= 2.5 * PT_WALL_CHANCE
   DynamicDiceAdd dslot0 cg_attack_wall immediateTempVar

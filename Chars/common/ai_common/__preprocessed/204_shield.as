@@ -8,13 +8,13 @@ label setup
 var0 = 0
 
 var3 = 0
-PredictOMov var22 15 LevelValue
+PredictOMov var22 15
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || var22 > 0.4
   var3 = 1
 endif
 
 var2 = Rnd * 35 + 5
-PredictOMov var22 14 LevelValue
+PredictOMov var22 14
 if Equal var21 10.2 || var22 > 0.36
   var22 = 30 * Rnd + 10
   var2 += var22
@@ -52,11 +52,11 @@ else
     endif
     AbsStick var22 var17
   endif
-  GetCommitPredictChance var22 LevelValue
-  PredictOMov var23 15 LevelValue
-  if Rnd < 0.1 && var22 > 0.125
+  GetCommitPredictChance var22
+  PredictOMov var23 15
+  if Rnd < 0.1 && var22 > 0.2
     Goto rollOption
-  elif var23 > 0.125
+  elif var23 > 0.2
     Goto rollOption
   endif
 endif
@@ -91,11 +91,11 @@ if Equal var17 0 || var2 <= 0
   if Equal CurrAction 27 || Equal CurrAction 17 || Equal CurrAction 18
     GetShieldRemain var17
     var22 = var0 * 0.05
-    GetCommitPredictChance var23 LevelValue
+    GetCommitPredictChance var23
     if var17 < 40 || var1 > 6 || !(XDistLE 50)
       Seek pickOption
       Jump
-    elif var23 > 0.20 && Rnd <= 0.85 && Equal var3 0
+    elif var23 > 0.25 && Rnd <= 0.85 && Equal var3 0
       Return
     elif Equal var3 1 && XDistLE 40 && Rnd < 0.4
       Seek pickOption
@@ -114,7 +114,7 @@ endif
 Return
 label pickOption
 var1 += 8
-predictAverage var22 10 LevelValue
+predictAverage var22 10
 var22 += 10
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
   if var1 > 10 && Rnd < 0.85
@@ -130,7 +130,6 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
   
   if !(True)
     label exec_attack
-    GetCommitPredictChance var22 LevelValue
     if !(Equal var21 13.1)
       Button X
       Seek jumpExec
@@ -149,7 +148,6 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
     CallI MainHub
   endif
 
-  var22 -= 10
   if Equal OPos Direction && XDistLE 10
     if var1 > 5 && Rnd < 0.75 || Equal var3 1
       Button A
@@ -169,8 +167,8 @@ if !(Equal var21 13.1)
   endif
 
   if Rnd < 0.3
-    predictionConfidence var22 7 LevelValue
-    predictOOption var17 7 LevelValue 
+    predictionConfidence var22 7
+    predictOOption var17 7 
     if Rnd < var22
       if Equal var17 1 && Rnd < var22
         if Rnd < 0.3

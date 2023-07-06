@@ -728,7 +728,7 @@ elif Equal var22 20000
   var22 = 21
   XGoto GetChrSpecific
   //= XReciever
-      PredictOMov var22 14 LevelValue
+      PredictOMov var22 14
       if var22 > 0.2
         ADJUST_PERSONALITY 0 -0.025 var22
         ADJUST_PERSONALITY 10 0.025 var22
@@ -737,8 +737,8 @@ elif Equal var22 20000
         ADJUST_PERSONALITY 7 0.01 var22
         ADJUST_PERSONALITY 6 0.01 var22
       endif
-      PredictOMov var22 4 LevelValue
-      PredictOMov var23 1 LevelValue
+      PredictOMov var22 4
+      PredictOMov var23 1
       if var23 > var22
         var22 = var23
       endif
@@ -748,7 +748,7 @@ elif Equal var22 20000
         ADJUST_PERSONALITY 1 0.005 var22
         ADJUST_PERSONALITY 4 0.01 var22
       endif
-      PredictOMov var23 10 LevelValue
+      PredictOMov var23 10
       if var22 >= 0.2
         ADJUST_PERSONALITY 3 -0.025 var22
         ADJUST_PERSONALITY 10 -0.025 var22
@@ -757,7 +757,7 @@ elif Equal var22 20000
         ADJUST_PERSONALITY 6 0.01 var22
       endif
     endif
-    PredictOMov var23 10 LevelValue
+    PredictOMov var23 10
     if Rnd <= 0.02
   var22 = 200
   XGoto GetChrSpecific
@@ -805,12 +805,12 @@ elif Equal var22 40000
       elif Equal var21 16.3 || Equal var21 10.2 || Equal var21 10.6
       elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
         if OCurrAction < 66 || OCurrAction >= 72
-          predictAverage var22 10 LevelValue
+          predictAverage var22 10
           var22 += 15
           var17 = OPos * var22
           GetYDistFloorOffset var17 var17 10 1
           if XDistLE var22 && var17 > 0
-            GetCommitPredictChance var17 LevelValue
+            GetCommitPredictChance var17
             // if Equal var21 10.5
             //   var17 *= 0.06 * PT_BAITCHANCE
             // endif
@@ -828,7 +828,7 @@ elif Equal var22 40000
     if !(Equal var21 16.41) && !(Equal var21 13)
       var22 = (1 - (LevelValue / 100)) * 60 + 10
       var22 *= PT_REACTION_TIME
-      GetCommitPredictChance var23 LevelValue
+      GetCommitPredictChance var23
       var23 = 1.1 - var23
       var23 *= 0.5
       var22 *= var23
@@ -854,7 +854,7 @@ var23 = var22
               endif
             endif
           else
-            predictAverage var22 10 LevelValue
+            predictAverage var22 10
             var22 *= 1
             var22 += var23 + 5
             var17 = var22 * 0.3
@@ -958,23 +958,23 @@ elif Equal var22 0.003 || Equal var22 0.004
   endif
 elif Equal var22 21
   var23 = 0
-  PredictOMov var22 10 LevelValue
+  PredictOMov var22 10
   if var22 > var23
     var23 = var22
   endif
-  PredictOMov var22 4 LevelValue
+  PredictOMov var22 4
   if var22 > var23
     var23 = var22
   endif
-  PredictOMov var22 7 LevelValue
+  PredictOMov var22 7
   if var22 > var23
     var23 = var22
   endif
-  PredictOMov var22 14 LevelValue
+  PredictOMov var22 14
   if var22 > var23
     var23 = var22
   endif
-  PredictOMov var22 15 LevelValue
+  PredictOMov var22 15
   if var22 > var23
     var23 = var22
   endif

@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": "../../../../Documents/Syriinge"
+		},
+		{
 			"name": "PPlusAi",
 			"path": "."
 		},
@@ -58,11 +61,15 @@
 		},
 		{
 			"path": "../../../../Documents/AIScriptCLA"
+		},
+		{
+			"path": "../../../Documents/RevE-Brawl-FighterPac"
 		}
 	],
 	"settings": {
 		"files.associations": {
 			"*.ksy": "yaml",
+			"*.asm": "gctrm",
 			"vector": "cpp",
 			"algorithm": "cpp",
 			"chrono": "cpp",
@@ -91,9 +98,10 @@
 			"thread": "cpp",
 			"xlocmes": "cpp",
 			"xloctime": "cpp",
-			"compare": "cpp"
+			"compare": "cpp",
+			"cstddef": "cpp"
 		},
-		"liveServer.settings.multiRootWorkspaceName": "Project-Plus-Stream-Tool-main",
+		"liveServer.settings.multiRootWorkspaceName": null,
 		"lldb.displayFormat": "auto",
 		"lldb.showDisassembly": "auto",
 		"lldb.dereferencePointers": true,
@@ -101,9 +109,11 @@
 		"cmake.additionalCompilerSearchDirs": [
 			"C:\\Program Files\\mingw-w64\\x86_64-8.1.0-release-posix-seh-rt_v6-rev0\\mingw64\\bin"
 		],
-		"cmake.cmakePath": "cmake",
+		"cmake.cmakePath": "C:\\Program Files\\CMake\\bin\\cmake.exe",
 		"cmake.configureEnvironment": {
 			"CMAKE_MAKE_PROGRAM": "C:\\Program Files\\mingw-w64\\x86_64-8.1.0-release-posix-seh-rt_v6-rev0\\mingw64\\bin\\mingw32-make.exe"
-		}
+		},
+		"editor.formatOnSave": false,
+		"makefile.makefilePath": "C:\\Users\\dareb\\Documents\\Syriinge\\Syriinge\\Makefile"
 	}
 }

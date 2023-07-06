@@ -70,7 +70,7 @@ if var1 < var3 && !(Equal var16 5)
     AbsStick var22
 
     if Equal var16 6
-      predictAverage var22 10 LevelValue
+      predictAverage var22 10
       if XDistLE var22
         Return
       endif

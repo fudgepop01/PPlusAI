@@ -80,11 +80,11 @@ var12 = var9 - var1
 var12 *= -1
 
 // grabs an estimate of the potential move xRange to hit
-if Equal AirGroundState 2
 if !(True) || Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|| Equal var20 25|| Equal var20 26|| Equal var20 27
+  var17 = var15 + var7 * 0.25
+  if Equal AirGroundState 2
     // get max possilbe air speed
     GetAttribute var22 128; 0
-    var17 = var15 + var7 * 0.25
     var23 = var17 * var22
     var17 = var23
     // max possible speed
@@ -112,6 +112,11 @@ if !(True) || Equal var20 21|| Equal var20 22|| Equal var20 23|| Equal var20 24|
     var10 += var17
     var17 *= Direction * 2
     var11 += var17
+  else
+    GetAttribute var22 68; 0
+    var22 *= var17
+    var10 += var22
+    var9 += OHurtboxSize
   endif
 endif
 
@@ -134,13 +139,13 @@ endif
 //   endif
 // endif
 
-var22 = OHurtboxSize * 0.5
-var9 += var22
-var22 *= 0.5
+var22 = OHurtboxSize * 0.25
+// var9 += var22
+// var22 *= 0.5
 var12 += var22
 var22 = OWidth * 0.5
-var10 += var22
-var22 *= 0.5
+// var10 += var22
+// var22 *= 0.5
 var11 -= var22
 
 // LOGVAL_NL var10
@@ -338,6 +343,9 @@ if !(True) || Equal var20 13|| Equal var20 21|| Equal var20 22|| Equal var20 23|
   STACK_PUSH var22 0
   STACK_PUSH var17 0
 
+
+
+var10 = OHurtboxSize * 0.5
 // 2. where will defender be at end of frame
   if var16 < 0
 
@@ -367,6 +375,7 @@ if !(True) || Equal var20 13|| Equal var20 21|| Equal var20 22|| Equal var20 23|
     //   var5 += var23
     // endif
     Goto adjustPosIfInGround
+    var23 += var10
     STACK_PUSH var23 0
   elif True
 
@@ -396,6 +405,7 @@ STACK_PUSH 22 0
 
     STACK_PUSH var22 0
     Goto adjustPosIfInGround
+    var23 += var10
     STACK_PUSH var23 0
   endif
 
@@ -403,7 +413,7 @@ STACK_PUSH 22 0
   var17 = STACK_POP // YPos
   var22 = STACK_POP // XPos
   var23 = 255 - var2 * 5
-  DrawDebugRectOutline var22 var17 OWidth OHurtboxSize 255 0 255 var23
+  DrawDebugRectOutline var22 var17 OWidth var10 255 0 255 var23
   // LOGSTR 1886351360 1885692928 0 0 0
   // LOGVAL var22
   // PRINTLN
@@ -499,7 +509,8 @@ var3 = var22
     var22 = YSpeed
   endif
   CalcYChange var10 var17 var22 Gravity MaxFallSpeed FastFallSpeed 1
-      var11 = var9 - var10
+      var22 = TopNY + var10
+      var11 = var9 - var22
       Abs var11
       if var11 <= var5
         var16 = 1
@@ -550,9 +561,9 @@ var15 = 0
   XGoto GetChrSpecific
   //= XReciever
 var0 = var22
-PredictOMov var22 14 LevelValue
+PredictOMov var22 14
 if Equal var21 16.41 || YDistFloor > 35
-elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || var22 > 0.15 
+elif CHANCE_MUL_LE PT_BAITCHANCE 0.06 || var22 > 0.35
   if var21 < 16.7 && var0 <= var15
     RESET_LTF_STACK_PTR
     var17 = LTF_STACK_READ // var4
@@ -561,7 +572,12 @@ elif CHANCE_MUL_LE PT_BAITCHANCE 0.04 || var22 > 0.15
     var17 *= 1.5
     
     if !(XDistLE var17)
+      PRINTLN
       LOGSTR_NL 1179603456 1128603648 1145131776 1212432640 1313031424
+      LOGVAL_NL var17
+      var17 = TopNX - OTopNX
+      Abs var17
+      LOGVAL_NL var17
       var21 = 10.5
       var20 = -1
       Return
@@ -585,7 +601,7 @@ var3 = var22
   XGoto GetChrSpecific
   //= XReciever
     if LevelValue >= 48 && Equal var22 0 && var21 < 16.7 && OAnimFrame > 8
-      predictAverage var22 10 LevelValue
+      predictAverage var22 10
       if var22 < 15
         var22 = 15
       endif
@@ -593,8 +609,8 @@ var3 = var22
       if XDistLE var22
         LOGSTR_NL 1296652288 1431322368 0 0 0
         var15 = -1
-        GetCommitPredictChance var23 LevelValue
-        if var23 > 0.2 && Rnd < 0.15
+        GetCommitPredictChance var23
+        if var23 > 0.27 && Rnd < 0.15
           LOGSTR_NL 1179995136 1279807232 1344291072 1463900416 0
           var16 = 3 + 0.1
           CallI JumpScr
@@ -623,12 +639,12 @@ var3 = var22
           Return
         endif
 
-        GetCommitPredictChance var23 LevelValue
+        GetCommitPredictChance var23
         LOGVAL var23
         if Equal AirGroundState 1 && CHANCE_MUL_LE PT_BAITCHANCE 0.04
           LOGSTR_NL 1128811264 541212928 1230241792 0 0
-          PredictOMov var22 10 LevelValue
-          if var23 >= 0.25 && var22 < 0.2
+          PredictOMov var22 10
+          if var23 >= 0.28 && var22 < 0.25
             LOGSTR_NL 1111574784 1411405568 1095324672 0 0
             var16 = 2
             if XDistLE 25
@@ -691,6 +707,7 @@ var23 = var22
     var23 *= -1
     if Equal AirGroundState 2
       var17 = OTopNY + OYDistBackEdge
+      LOGVAL var17
       var22 = TopNY + var10
       var17 += var22
       LOGSTR 1717856512 1936993280 544366848 1852269824 0
@@ -702,6 +719,21 @@ var23 = var22
       elif Equal var16 0
         var20 = -1
       endif
+    endif
+  elif Equal CurrAction 10
+  elif Equal AirGroundState 1
+
+  var22 = 0.001
+  XGoto GetChrSpecific
+  //= XReciever
+    if Equal var22 -1 && Equal Direction OPos
+      ClearStick
+      Stick -1
+    elif Equal var22 1 && !(Equal Direction OPos)
+      ClearStick
+      Stick -1
+    elif NoJumpPrevFrame
+      Button X
     endif
   elif !(Equal AirGroundState 3)
     CallI ExecuteAttack
