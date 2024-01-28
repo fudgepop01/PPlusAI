@@ -60,6 +60,7 @@
     #const endDist = 6
     #const time = 20
     #let timer = var0
+    #let distFromTarget = var1
     timer = 20
     label exec_uspecial
     XGoto PerFrameChecks
@@ -78,13 +79,15 @@
       // immediateTempVar = 1
       // EstOXCoord targetPosX immediateTempVar
       // EstOYCoord targetPosY immediateTempVar 
-      targetPosX = TopNX - OTopNX
-      targetPosY = TopNY - OTopNY
+      targetPosX = CenterX - OCenterX
+      targetPosY = CenterY - OCenterY
 
       globTempVar = timer / time
       globTempVar *= calc(startDist - endDist)
       globTempVar += endDist
       Norm immediateTempVar targetPosX targetPosY
+      Abs immediateTempVar
+      distFromTarget = immediateTempVar
 
       targetPosX = targetPosX / immediateTempVar
       targetPosX *= globTempVar
@@ -92,8 +95,8 @@
       targetPosY = targetPosY / immediateTempVar
       targetPosY *= globTempVar * 1.2
 
-      targetPosX = TopNX + targetPosX
-      targetPosY = TopNY + targetPosY
+      targetPosX = CenterX + targetPosX
+      targetPosY = CenterY + targetPosY
 
       DrawDebugRectOutline targetPosX targetPosY 5 5 color(0xFF8800DD)
     endif
@@ -107,9 +110,11 @@
     GetArticleOfTypeAtTargetSpeed PKTXSpd PKTYSpd art_ness_uspecial 0
 
     if Equal moveVariant 0
-      immediateTempVar = PKTXPos - OTopNX
-      anotherTempVar = PKTYPos - OTopNY
+      immediateTempVar = PKTXPos - OCenterX
+      anotherTempVar = PKTYPos - OCenterY
       Norm immediateTempVar immediateTempVar anotherTempVar
+      Abs immediateTempVar
+      distFromTarget = immediateTempVar
       immediateTempVar *= 0.25
 
       EstOXCoord targetPosX immediateTempVar
@@ -127,6 +132,7 @@
 
     if !(Equal PKTXPos 0) && !(Equal PKTYPos 0)
       Norm anotherTempVar PKTXSpd PKTYSpd
+      Abs anotherTempVar
       // LOGSTR str("totalVel")
       // LOGVAL anotherTempVar
       immediateTempVar = PKTXSpd / anotherTempVar
@@ -140,14 +146,15 @@
       // LOGSTR str("XVel, YVel")
       // LOGVAL immediateTempVar
       // LOGVAL globTempVar
-      immediateTempVar *= 10
-      globTempVar *= 10 
+      immediateTempVar *= distFromTarget
+      globTempVar *= distFromTarget 
       immediateTempVar = immediateTempVar + PKTXPos - targetPosX
       globTempVar = globTempVar + PKTYPos - targetPosY
       // LOGSTR str("xdist ydist")
       // LOGVAL immediateTempVar
       // LOGVAL globTempVar
       Norm anotherTempVar immediateTempVar globTempVar
+      Abs anotherTempVar
       if timer > 0 && anotherTempVar <= 25
         timer -= 1
       endif

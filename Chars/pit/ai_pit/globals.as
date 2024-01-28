@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 10.31
 #const cs_jumpHeight = 35.57
 #const cs_djumpHeight = 35.57
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 32
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15
@@ -22,14 +22,14 @@
 
 #const cs_dashForceTurnFrame = 10
 #const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 80
-#const cs_recoveryDistY = -60
+#const cs_recoveryDistX = 110
+#const cs_recoveryDistY = -30
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
+// #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+// #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+// #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
+// #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+// #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
 
 /// recovery
 #const recovery_moves = uspecial|sspecial
@@ -39,6 +39,8 @@
 
 #const sspecial_subaction_check = !(Equal CurrSubaction hex(0x1D4)) && !(Equal CurrSubaction hex(0x1D5))
 #const sspecial_recovery_info = custom
+
+#const art_pit_nspecial = 2
 
 // jab123
 #const jab123_IASA = 19
@@ -160,14 +162,23 @@
 #const dsmash_hit2_damage_info = DSmash|13|20|94|361
 
 // noochB
-// TODO
-// #const nspecial_IASA = 9999.9999
-// #const nspecial_xOffset = 9999.9999
-// #const nspecial_yOffset = 9999.9999
-// #const nspecial_xRange = 9999.9999
-// #const nspecial_yRange = 9999.9999
-// #const nspecial_hitFrame = 9999.9999
-// #const nspecial_lastHitFrame = 9999.9999
+#const nspecial_IASA = 45
+#const nspecial_xOffset = -500
+#const nspecial_yOffset = 200
+#const nspecial_xRange = 1000
+#const nspecial_yRange = 1000
+#const nspecial_hitFrame = 14
+#const nspecial_lastHitFrame = 35
+#const nspecial_damage_info = NSpecial|-3|5|65|361
+
+#const nspecialair_IASA = 45
+#const nspecialair_xOffset = -500
+#const nspecialair_yOffset = 200
+#const nspecialair_xRange = 1000
+#const nspecialair_yRange = 1000
+#const nspecialair_hitFrame = 14
+#const nspecialair_lastHitFrame = 35
+#const nspecialair_damage_info = NSpecialAir|-3|5|65|361
 
 // upB
 #const uspecial_IASA = 49
@@ -192,7 +203,24 @@
 // TODO
 
 // sideB
-// TODO
+#const sspecial_IASA = 17
+#const sspecial_xOffset = 3.381
+#const sspecial_yOffset = 13.795
+#const sspecial_xRange = 17.708
+#const sspecial_yRange = 16.180
+#const sspecial_hitFrame = 20
+#const sspecial_lastHitFrame = 25
+#const sspecial_damage_info = SSpecial|0|0|0|0
+
+#const sspecialair_IASA = 17
+#const sspecialair_xOffset = 3.381
+#const sspecialair_yOffset = 13.795
+#const sspecialair_xRange = 17.708
+#const sspecialair_yRange = 16.180
+#const sspecialair_hitFrame = 20
+#const sspecialair_lastHitFrame = 25
+#const sspecialair_damage_info = SSpecialAir|0|0|0|0
+
 
 // grab
 #const grab_IASA = 32

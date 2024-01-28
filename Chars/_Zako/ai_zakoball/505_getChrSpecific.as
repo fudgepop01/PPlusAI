@@ -1,5 +1,5 @@
 #snippet FETCH_MOVE_DATA
-  $generateFetchMoveData(1)
+  $generateFetchMoveData(0)
 #endsnippet
 
 #snippet EVT_GOT_HIT 

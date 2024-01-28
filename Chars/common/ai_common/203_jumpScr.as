@@ -11,7 +11,7 @@ Seek setup
 
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
 elif True
-  ACTIONABLE_ON_GROUND
+  ACTIONABLE_ON_GROUND(setup)
 endif
 
 #let savedOPos = var0
@@ -28,7 +28,7 @@ else
   shouldFullHop = 0
 endif
 label jumpCommand
-MOD globTempVar AnimFrame 4
+MOD globTempVar GameTimer 4
 if Equal AirGroundState 2 || globTempVar <= 2 || Equal CurrSubaction JumpSquat
   Button X
 endif
@@ -38,9 +38,13 @@ XGoto PerFrameChecks
 if !(Equal lastAttack -1) 
   NoRepeat
   STACK_PUSH scriptVariant st_function
+  STACK_PUSH savedOPos st_function
+  STACK_PUSH shouldFullHop st_function
   XGoto SetAttackGoal
   //= XReciever
   XGoto CheckAttackWillHit
+  shouldFullHop = STACK_POP
+  savedOPos = STACK_POP
   scriptVariant = STACK_POP
 
   //= XReciever
@@ -66,11 +70,7 @@ if Equal scriptVariant sv_jump_over
     Return
   endif
   AbsStick savedOPos
-  if !(Equal savedOPos OPos) || YSpeed < 0
-    Seek
-    Jump
-  elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
-    label
+  if currGoal >= cg_attack && currGoal < calc(cg_attack + 1) || !(Equal savedOPos OPos) || YSpeed < 0
     if currGoal < cg_attack
       scriptVariant = sv_aerialdrift_away
       CallI AerialDrift

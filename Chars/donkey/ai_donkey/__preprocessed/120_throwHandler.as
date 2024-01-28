@@ -60,7 +60,7 @@ elif Equal CurrSubaction 115
 elif CurrAction < 52 || CurrAction > 60
   XGoto CalcAttackGoal
   //= XReciever
-  var15 = -1
+  var15 = -10
   var21 = 16.4
   CallI MainHub
 elif Equal CurrAction 57 && AnimFrame > 8

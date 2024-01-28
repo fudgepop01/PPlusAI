@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 18
 #const cs_jumpHeight = 39.01
 #const cs_djumpHeight = 39.01
-#const cs_wavedashDist = 30
+#const cs_wavedashDist = 35
 
 #const pt_jumpiness = 0.1
 #const pt_djumpiness = 0.1
@@ -23,7 +23,7 @@
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3
 #const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistY = -45
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -126,15 +126,15 @@
 #const usmash_lastHitFrame = 31
 #const usmash_damage_info = USmash|6|45|145|83
 
-#const mv_usmash_ice = 1
-#const usmash_ice_IASA = 49
-#const usmash_ice_xOffset = -12.8
-#const usmash_ice_yOffset = -3.21
-#const usmash_ice_xRange = 15.21
-#const usmash_ice_yRange = 18.21
-#const usmash_ice_hitFrame = 12
-#const usmash_ice_lastHitFrame = 22
-#const usmash_ice_damage_info = USmash|17|45|90|80
+// #const mv_usmash_ice = 1
+// #const usmash_ice_IASA = 49
+// #const usmash_ice_xOffset = -12.8
+// #const usmash_ice_yOffset = -3.21
+// #const usmash_ice_xRange = 15.21
+// #const usmash_ice_yRange = 18.21
+// #const usmash_ice_hitFrame = 12
+// #const usmash_ice_lastHitFrame = 22
+// #const usmash_ice_damage_info = USmash|17|45|90|80
 
 // dsmash
 #const dsmash_IASA = 44
@@ -148,13 +148,33 @@
 
 // noochB
 // TODO - projectile thingy
-// #const nspecial_IASA = 9999.9999
-// #const nspecial_xOffset = 9999.9999
-// #const nspecial_yOffset = 9999.9999
-// #const nspecial_xRange = 9999.9999
-// #const nspecial_yRange = 9999.9999
-// #const nspecial_hitFrame = 9999.9999
-// #const nspecial_lastHitFrame = 9999.9999
+#const nspecial_IASA = 45
+#const nspecial_xOffset = -2.972
+#const nspecial_yOffset = -3.326
+#const nspecial_xRange = 118.200
+#const nspecial_yRange = 6.000
+#const nspecial_hitFrame = 15
+#const nspecial_lastHitFrame = 35
+#const nspecial_damage_info = NSpecial|-8|20|50|361
+
+#const mv_nspecial_full = 1
+#const nspecial_full_IASA = 45
+#const nspecial_full_xOffset = -2.972
+#const nspecial_full_yOffset = -3.326
+#const nspecial_full_xRange = 118.200
+#const nspecial_full_yRange = 6.000
+#const nspecial_full_hitFrame = 15
+#const nspecial_full_lastHitFrame = 35
+#const nspecial_full_damage_info = NSpecial|-25|32|70|361
+
+#const nspecialair_IASA = 45
+#const nspecialair_xOffset = -2.972
+#const nspecialair_yOffset = -3.326
+#const nspecialair_xRange = 118.200
+#const nspecialair_yRange = 6.000
+#const nspecialair_hitFrame = 15
+#const nspecialair_lastHitFrame = 35
+#const nspecialair_damage_info = NSpecialAir|-25|32|70|361
 
 // upB
 #const uspecial_IASA = 90
@@ -167,35 +187,49 @@
 #const uspecial_damage_info = USpecial|2|128|40|95
 
 // downB
-// TODO - bomb thingies
-// #const dspecial_IASA = 37
-// #const dspecial_xOffset = 4.16
-// #const dspecial_yOffset = -0.33
-// #const dspecial_xRange = 15.51
-// #const dspecial_yRange = 4.43
-// #const dspecial_hitFrame = 11
-// #const dspecial_lastHitFrame = 25
-// #const dspecial_damage_info = DSpecial|3|w80|100|360
+#const dspecial_IASA = 54
+#const dspecial_xOffset = -7.380
+#const dspecial_yOffset = 4.292
+#const dspecial_xRange = 7.380
+#const dspecial_yRange = 10.186
+#const dspecial_hitFrame = 11
+#const dspecial_lastHitFrame = 25
+#const dspecial_damage_info = DSpecial|-8|10|30|361
 
-// #const dspecialair_IASA = 51
-// #const dspecialair_xOffset = 3.49
-// #const dspecialair_yOffset = 3.37
-// #const dspecialair_xRange = 10.35
-// #const dspecialair_yRange = 10.34
-// #const dspecialair_hitFrame = 11
-// #const dspecialair_lastHitFrame = 22
-// #const dspecialair_damage_info = DSpecialAir|3|20|100|35
+#const dspecialair_IASA = 54
+#const dspecialair_xOffset = -7.380
+#const dspecialair_yOffset = 37.764
+#const dspecialair_xRange = 7.380
+#const dspecialair_yRange = 25.990
+#const dspecialair_hitFrame = 11
+#const dspecialair_lastHitFrame = 25
+#const dspecialair_damage_info = DSpecial|-8|10|30|361
 
 // sideB
 // TODO - bullet thingies
-// #const sspecial_IASA = 88
-// #const sspecial_xOffset = -2.73
-// #const sspecial_yOffset = -0.59
-// #const sspecial_xRange = 2.72
-// #const sspecial_yRange = 2.75
-// #const sspecial_hitFrame = 5
-// #const sspecial_lastHitFrame = 7
-// #const sspecial_damage_info = SSpecial|15|40|110|80
+#const sspecial_IASA = 49
+#const sspecial_xOffset = 8.554
+#const sspecial_yOffset = -8.929
+#const sspecial_xRange = 76.300
+#const sspecial_yRange = 2.500
+#const sspecial_hitFrame = 22
+#const sspecial_lastHitFrame = 49
+#const sspecial_damage_info = SSpecial|-15|40|110|80
+
+// #const mv_sspecial_smissile = 1
+// #const sspecial_IASA = 59
+// #const sspecial_xOffset = 15.380
+// #const sspecial_yOffset = -12.649
+// #const sspecial_xRange = 56.362
+// #const sspecial_yRange = 2.400
+// #const sspecial_hitFrame = 22
+// #const sspecial_lastHitFrame = 49
+
+// ice
+// 10:00:699 Core\HW\EXI\EXI_DeviceIPL.cpp:343 N[OSREPORT]: xOffset = 8.554
+// 10:00:699 Core\HW\EXI\EXI_DeviceIPL.cpp:343 N[OSREPORT]: yOffset = -8.929
+// 10:00:699 Core\HW\EXI\EXI_DeviceIPL.cpp:343 N[OSREPORT]: xRange = 61.930
+// 10:00:699 Core\HW\EXI\EXI_DeviceIPL.cpp:343 N[OSREPORT]: yRange = 2.500
 
 // grab
 #const grab_IASA = 74

@@ -19,7 +19,9 @@ SetDisabledMd -1
 label initHitPredictValues
 getCurrentPredictValue immediateTempVar man_OXHitDist
 if Equal immediateTempVar 0
-  trackOAction man_OXHitDist 15
+  trackOAction man_OXHitDist 20
+  trackOAction man_OXSwingDist 40
+  trackOAction man_OFramesPostHitstun 250
   Seek initHitPredictValues
   Jump
 endif
@@ -55,6 +57,8 @@ if Equal skipMainInit mainInitSkip
     XGoto SetAttackGoal
     //= XReciever
     IF_AERIAL_ATTACK(var0)
+    $ifLastOrigin(usmash,true)
+    $ifLastOrigin(uspecial,true)
     elif Equal CurrSubaction JumpSquat
       scriptVariant = sv_wavedash_in
       Call Wavedash      
@@ -86,7 +90,7 @@ elif Equal skipMainInit sm_execAttack
   skipMainInit = -100
 
   CallI ExecuteAttack
-elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25) 
+elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45
   if YDistFloor > 25
     currGoal = cg_nothing
     lastAttack = -1
@@ -123,7 +127,7 @@ elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDi
     Call MainHub
     Return
   endif
-  timer *= 0.35
+  timer *= 0.4 * Rnd
   label wallDelay
   XGoto PerFrameChecks 
   //= XReciever
@@ -153,7 +157,7 @@ immediateTempVar = PT_AGGRESSION * 4
 DynamicDiceAdd dslot0 cg_attack immediateTempVar
 GetCommitPredictChance immediateTempVar
 if YDistFloor < 25
-  immediateTempVar *= 2.5 * PT_WALL_CHANCE
+  immediateTempVar *= 8 * PT_WALL_CHANCE
   DynamicDiceAdd dslot0 cg_attack_wall immediateTempVar
 endif
 immediateTempVar = 5 - immediateTempVar
@@ -195,7 +199,7 @@ XGoto PerFrameChecks
 Seek tskillWait
 if Rnd < techSkill
   Seek selectGoal
-  Return
+  Jump
 endif
 Return
 label selectGoal
@@ -203,14 +207,20 @@ XGoto PerFrameChecks
 Cmd30
 XGoto UpdateGoal
 
-if Equal goalY BBoundary
-  Seek selectGoal
+elif Equal goalY BBoundary
   Return
 elif Equal currGoal cg_attack && Equal lastAttack -1
-  Seek selectGoal
   Return
 endif
-label navigateToGoal
+if !(True)
+  label navigateToGoal
+endif
+Seek selectGoal
+{NAVIGATION_OVERRIDE}
+if Equal scriptVariant sv_noNavigation
+  scriptVariant = 0
+  Return
+endif
 XGoto PerFrameChecks
 Goto isActionable
 Seek selectGoal
@@ -222,8 +232,22 @@ XGoto MoveToGoal
 Seek selectGoal
 Return
 label isActionable
+{ISACTIONABLE_OVERRIDE}
 immediateTempVar = 0
-ACTIONABLE_ON_GROUND
+
+if Equal CanCancelAttack 1
+elif Equal HitboxConnected 1 && HasCurry
+elif CurrAction >= hex(0x67) && CurrAction <= hex(0x6D)
+elif Equal CurrAction hex(0x16) 
+  if Equal PrevAction hex(0x21)
+    Return
+  elif AnimFrame <= 3
+    Return
+  endif
+elif CurrAction >= hex(0x18) && !(Equal CurrAction hex(0x49)) && !(Equal CurrAction hex(0x67)) && !(Equal CurrAction hex(0x6C))
+  Return
+endif
+
 immediateTempVar = 1
 Return
 Return

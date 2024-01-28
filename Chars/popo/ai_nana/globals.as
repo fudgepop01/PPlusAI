@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 11.25
 #const cs_jumpHeight = 36.45
 #const cs_djumpHeight = 33.8
-#const cs_wavedashDist = 55
+#const cs_wavedashDist = 58
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15

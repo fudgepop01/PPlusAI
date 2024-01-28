@@ -31,7 +31,9 @@ SetDisabledMd -1
 label initHitPredictValues
 getCurrentPredictValue var22 10
 if Equal var22 0
-  trackOAction 10 15
+  trackOAction 10 20
+  trackOAction 11 40
+  trackOAction 4 250
   Seek initHitPredictValues
   Jump
 endif
@@ -56,7 +58,7 @@ if Equal var3 1
   var15 = -100
 endif
 
-if Equal var15 -1
+if Equal var15 -10
   var15 = -100
   var22 = 200
   XGoto GetChrSpecific
@@ -67,11 +69,15 @@ if Equal var15 -1
   if !(Equal var20 -1)
     XGoto SetAttackGoal
     //= XReciever
+  STACK_PUSH var22 0
   var22 = 100
   XGoto GetChrSpecific
   //= XReciever
 var0 = var22
+  var22 = STACK_POP
   if Equal var0 1
+elif Equal var20 6
+elif !(True)
     elif Equal CurrSubaction JumpSquat
       var16 = 1
       Call Wavedash      
@@ -79,14 +85,14 @@ var0 = var22
   endif
   Seek initial
   Jump
-elif Equal var15 -2
+elif Equal var15 -20
   label empty_0
   XGoto PerFrameChecks
   //= XReciever
   Seek empty_0
 
   if Equal CurrAction 3 || Equal CurrAction 4
-if !(True) || Equal var20 1
+if Equal var20 1
     elif True
       if Equal var21 13
         var16 = 2
@@ -103,7 +109,7 @@ if !(True) || Equal var20 1
   var15 = -100
 
   CallI ExecuteAttack
-elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25) 
+elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45
   if YDistFloor > 25
     var21 = 0
     var20 = -1
@@ -139,7 +145,7 @@ elif Equal var21 16.3 && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25)
     Call MainHub
     Return
   endif
-  var0 *= 0.35
+  var0 *= 0.4 * Rnd
   label wallDelay
   XGoto PerFrameChecks 
   //= XReciever
@@ -161,15 +167,15 @@ var20 = -1
 
 DynamicDiceClear 0
 
-predictionConfidence var22 9 LevelValue
+predictionConfidence var22 9
 if var22 > 0.4 || CHANCE_MUL_LE PT_AGGRESSION 0.35
   DynamicDiceAdd 0 16 2
 endif
 var22 = PT_AGGRESSION * 4
 DynamicDiceAdd 0 16 var22
-GetCommitPredictChance var22 LevelValue
+GetCommitPredictChance var22
 if YDistFloor < 25
-  var22 *= 2.5 * PT_WALL_CHANCE
+  var22 *= 8 * PT_WALL_CHANCE
   DynamicDiceAdd 0 16.3 var22
 endif
 var22 = 5 - var22
@@ -212,7 +218,7 @@ XGoto PerFrameChecks
 Seek tskillWait
 if Rnd < var0
   Seek selectGoal
-  Return
+  Jump
 endif
 Return
 label selectGoal
@@ -220,14 +226,20 @@ XGoto PerFrameChecks
 Cmd30
 XGoto UpdateGoal
 
-if Equal var14 BBoundary
-  Seek selectGoal
+elif Equal var14 BBoundary
   Return
 elif Equal var21 16 && Equal var20 -1
-  Seek selectGoal
   Return
 endif
-label navigateToGoal
+if !(True)
+  label navigateToGoal
+endif
+Seek selectGoal
+{NAVIGATION_OVERRIDE}
+if Equal var16 -99
+  var16 = 0
+  Return
+endif
 XGoto PerFrameChecks
 Goto isActionable
 Seek selectGoal
@@ -239,12 +251,22 @@ XGoto MoveToGoal
 Seek selectGoal
 Return
 label isActionable
+{ISACTIONABLE_OVERRIDE}
 var22 = 0
-  var22 = 300
-  XGoto GetChrSpecific
-  if Equal var22 0 
+
+if Equal CanCancelAttack 1
+elif Equal HitboxConnected 1 && HasCurry
+elif CurrAction >= 103 && CurrAction <= 109
+elif Equal CurrAction 22 
+  if Equal PrevAction 33
+    Return
+  elif AnimFrame <= 3
     Return
   endif
+elif CurrAction >= 24 && !(Equal CurrAction 73) && !(Equal CurrAction 103) && !(Equal CurrAction 108)
+  Return
+endif
+
 var22 = 1
 Return
 Return

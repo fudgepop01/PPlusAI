@@ -12,6 +12,14 @@ label reroll
 {CLIFF_DIST_MACRO}
 Abs cliffDistX
 {INITIALIZATION}
+
+#let recOption = var5
+#let shouldGoHigh = var6
+recOption = 0
+shouldGoHigh = false
+if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+  shouldGoHigh = HurtboxSize + 45 * Rnd
+endif
 label begin
 currGoal = cg_recover
 SetDebugOverlayColor color(0xFF8800DD)
@@ -22,6 +30,7 @@ XGoto PerFrameChecks
 Seek begin
 
 #let isBelowStage = var16
+#const AWAY_FROM_STAGE = var16 < 1
 
 // detects if below stage
 #let rawCX = var0
@@ -31,6 +40,8 @@ Seek begin
 
 GetNearestCliff rawCX
 GetReturnGoal rawReturnX
+
+{CLIFF_OFFSET}
 
 #const NCXOffs = 7
 #const NCXOffsNear = 5
@@ -66,45 +77,53 @@ endif
 {CLIFF_DIST_MACRO}
 
 globTempVar = 0
-if SFALL_ACTIONS
-  globTempVar = 1
+if CurrAction >= hex(0x62) && CurrAction <= hex(0x6C) && AnimFrame < 8
+  Return
+elif SFALL_ACTIONS
   Goto handleSFall
+  globTempVar = 1
 elif USPECIAL_ACTIONS
-  globTempVar = 1
   Goto handleUSpecial
+  globTempVar = 1
 elif NSPECIAL_ACTIONS
-  globTempVar = 1
   Goto handleNSpecial
+  globTempVar = 1
 elif SSPECIAL_ACTIONS
-  globTempVar = 1
   Goto handleSSpecial
-elif DSPECIAL_ACTIONS
   globTempVar = 1
+elif DSPECIAL_ACTIONS
   Goto handleDSpecial
+  globTempVar = 1
 elif CurrAction >= hex(0xB) && CurrAction <= hex(0xD)
-  if YDistBackEdge < -10
-    currGoal = cg_nothing
-    lastAttack = -1
-    Call MainHub 
-  elif YSpeed > 0 || AnimFrame < 8
-    globTempVar = 1
-    Goto handleJumpToStage
-    Return
-  endif
-endif
-
-if YDistFloor > -1 
-  if Equal AirGroundState 1 || Equal CurrAction hex(0xBE)
+  if YDistFloor > -1
     currGoal = cg_nothing
     lastAttack = -1
     goalY = BBoundary
     goalX = 0
     Call MainHub
-  elif !(Equal globTempVar 0)
+  elif CharYSpeed > 0 || AnimFrame < 2
+    globTempVar = 1
+    Goto handleJumpToStage
+    Seek begin
+    if AnimFrame < 10
+      Return
+    endif
+  endif
+endif
+Seek begin
+
+if YDistFloor > -1
+  if !(Equal globTempVar 0)
     ClearStick
     globTempVar = TopNX * -1
     AbsStick globTempVar
     Return
+  elif CurrAction <= hex(0x19) || Equal CurrAction hex(0xBE)
+    currGoal = cg_nothing
+    lastAttack = -1
+    goalY = BBoundary
+    goalX = 0
+    Call MainHub
   endif
 elif HasCurry && Equal HitboxConnected 1
   currGoal = cg_nothing

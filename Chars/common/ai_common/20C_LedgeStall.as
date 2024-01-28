@@ -7,13 +7,14 @@ label prep
 XGoto PerFrameChecks
 //= XReciever
 Stick 0 (-1)
-Seek
+Seek start
 Return
 label start
 XGoto PerFrameChecks
 //= XReciever
 
 GET_CHAR_TRAIT(immediateTempVar, chr_cs_djumpHeight)
+Seek start
 if YDistBackEdge >= immediateTempVar
   Button X
 endif

@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 80
-  #const UpBYDist = 80
+  #const UpBXDist = 70
+  #const UpBYDist = 60
   #const tolerence = 40
 
   #const jumpChance = 0.7
@@ -51,7 +51,8 @@
     AbsStick 0 (0.7)
     Return
   endif
-  if immediateTempVar <= UpBXDist && anotherTempVar > calc(UpBYDist - tolerence) && globTempVar <= 0
+  immediateTempVar = UpBYDist - tolerence + HurtboxSize
+  if immediateTempVar <= UpBXDist && anotherTempVar > immediateTempVar && globTempVar <= 0
     OR hasUsedMove hasUsedMove bf_USpecial
     Button B
     ClearStick
@@ -73,12 +74,14 @@
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     endif
   elif anotherTempVar > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     else
       OR hasUsedMove hasUsedMove bf_USpecial

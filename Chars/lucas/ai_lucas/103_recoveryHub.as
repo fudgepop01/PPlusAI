@@ -20,6 +20,9 @@
   #let trickAngleValue = var10
   hasTriedToUpB = 0
   jumpValue = Rnd
+  if cliffDistY < UpBYDist || cliffDistX > UpBXDist
+    jumpValue = 0
+  endif
   highUpBValue = Rnd
   highHighUpBValue = Rnd
   downBValue = Rnd
@@ -36,6 +39,20 @@
   #let nearCliffX = var0
   #let nearCliffY = var1
   #let absNCX = var2
+  
+  GetColDistPosRel globTempVar globTempVar TopNX TopNY 3 0 0
+  if globTempVar > 0
+    ClearStick
+    AbsStick -1
+    Return
+  endif
+  GetColDistPosRel globTempVar globTempVar TopNX TopNY -3 0 0
+  if globTempVar > 0
+    ClearStick
+    AbsStick 1
+    Return
+  endif
+
   NEAREST_CLIFF(nearCliffX, nearCliffY)
   
   // drift towards goal
@@ -43,32 +60,34 @@
   ClearStick
   AbsStick globTempVar
 
+
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
 
   {PRE_CONDITIONS}
-  if downBValue <= downBChance && YDistBackEdge > -downBHeight && YDistBackEdge < downBHeight && absNCX <= downBRange
+  if downBValue <= downBChance && YDistBackEdge < downBHeight && YDistBackEdge < downBHeight && absNCX <= downBRange
     Button B
     ClearStick
     Stick 0 (-1)
     Return
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+  if highUpBValue <= highUpBChance && YDistBackEdge < calc(UpBYDist - 40) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if highHighUpBValue <= highHighUpBChance && YDistBackEdge > calc(UpBYDist - 100) && Equal hasTriedToUpB 0
+  if highHighUpBValue <= highHighUpBChance && YDistBackEdge < calc(UpBYDist - 100) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+  immediateTempVar = UpBYDist - tolerence + HurtboxSize
+  if absNCX <= UpBXDist && YDistBackEdge < immediateTempVar && YSpeed < 0 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
@@ -79,12 +98,14 @@
     if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     else
       hasTriedToUpB = 1
@@ -97,6 +118,25 @@
 #endsnippet
 
 #snippet USPECIAL
+  if ActionTimer < 10 || Equal CurrAction hex(0x114)
+    immediateTempVar = 0
+
+    anotherTempVar = HurtboxSize + 8 * Scale
+    globTempVar = TopNY - 20
+    GetColDistPosRel immediateTempVar globTempVar TopNX globTempVar 50 anotherTempVar false
+    if immediateTempVar > 0
+      AbsStick -1 (-1)
+    endif
+    globTempVar = TopNY - 20
+    GetColDistPosRel globTempVar anotherTempVar TopNX globTempVar -50 anotherTempVar false
+    if globTempVar > 0
+      AbsStick 1 (-1)
+    endif
+    if immediateTempVar > 0 || globTempVar > 0
+      Return
+    endif
+  endif
+
   #const startDist = 40
   #const endDist = 6
   #const time = 30

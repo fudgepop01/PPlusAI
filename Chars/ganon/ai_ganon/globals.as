@@ -7,7 +7,10 @@
 #const cs_shortHopHeight = 17.44
 #const cs_jumpHeight = 28.66
 #const cs_djumpHeight = 23.46
-#const cs_wavedashDist = 15
+#const cs_wavedashDist = 29
+
+#const cs_recoveryDistX = 90
+#const cs_recoveryDistY = -40
 
 #const dashForceTurnFrame = 10
 #const dashDanceMinFrames = 2

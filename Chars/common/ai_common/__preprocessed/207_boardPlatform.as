@@ -61,14 +61,19 @@ if var22 <= 5 && CurrAction >= 1
   Seek execute
 endif
 AbsStick var17
-DrawDebugRectOutline var2 TopNY 5 5 255 136 0 85
+if Equal CurrAction 1
+  ClearStick
+endif
+// DrawDebugRectOutline midGoal TopNY 5 5 color(0xFF880055)
 Return
 label execute
-DrawDebugRectOutline var0 var1 5 5 255 136 0 153
-MOD var22 AnimFrame 3
+Seek execute
+// DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880099)
+MOD var22 GameTimer 3
 if Equal AirGroundState 1 && var22 <= 1
   var22 = 300
   XGoto GetChrSpecific
+  Seek execute
   if Equal var22 0 
     Return
   endif
@@ -82,6 +87,7 @@ if Equal AirGroundState 1 && var22 <= 1
     Seek adrift
     Jump
   endif
+  Seek ground_jump
   Return
 elif Equal AirGroundState 2
   label air_jump
@@ -90,19 +96,21 @@ elif Equal AirGroundState 2
     var22 = var0 - TopNX
     var22 /= 15
   endif
-  Seek
+  Seek adrift
   Return 
 endif
 
 label adrift
 XGoto PerFrameChecks
+if !(Equal var20 -1) 
+  XGoto SetAttackGoal
+  XGoto CheckAttackWillHit
+endif
 //= XReciever
 Seek adrift
-DrawDebugRectOutline var0 var1 5 5 255 136 0 136
-if TopNY > var1 || YSpeed < -0.1 || !(Equal AirGroundState 2)
-  if var21 >= 16
-    var15 = -1
-  endif
+// DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880088)
+if TopNY > var1 || YSpeed < -0.1 || YDistFloor < 2 && AnimFrame > 4 
+  var15 = -10
   CallI MainHub
 endif
 var22 = var0 - TopNX + XSpeed * 11

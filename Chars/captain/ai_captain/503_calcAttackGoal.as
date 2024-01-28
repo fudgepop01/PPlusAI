@@ -1,6 +1,7 @@
 #snippet FILTER_CHECKS
   $ifLastAttack(dair_spike)
     if Equal OIsOnStage 1 && OYDistBackEdge > -20 
+      lastAttack = -1
       Return
     endif
   endif

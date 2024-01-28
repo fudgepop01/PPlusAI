@@ -1,24 +1,27 @@
+#snippet CLIFF_DIST_MACRO
+  {CD_NEW}
+#endsnippet
+#snippet JUMP_TO_STAGE
+  {JUMP_TO_STAGE_NEW}
+#endsnippet
+
 #snippet INITIALIZATION
-  #const UpBXDist = 25
+  $genActions(SFALL, 10)
+  $genActions(NSPECIAL, 112|117|118)
+  $genActions(SSPECIAL, 113|11a|11b|11c)
+  $genActions(USPECIAL, 114)
+  $genActions(DSPECIAL, 115)
+
+  #const UpBXDist = 48
   #const UpBYDist = 40
   #const sideBHeight = 80
   #const sideBRange = 50
-  #const tolerence = 6
 
-  #const jumpChance = 0.3
-  #const highUpBChance = 0.1
-  #const sideBChance = 0.8
-  #let hasTriedToUpB = var4
-  #let jumpValue = var5
-  #let highUpBValue = var6
-  #let sideBValue = var7
-  hasTriedToUpB = 0
-  jumpValue = Rnd
-  if nearCliffY > UpBYDist
-    jumpValue = 0
-  endif
-  highUpBValue = Rnd
-  sideBValue = Rnd
+  #const optNone = 0
+  #const optJump = 10
+  #const optUpB = 20
+  #const optSideB = 30
+  #const optDownB = 40
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -27,84 +30,81 @@
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
-  #let nearCliffX = var0
-  #let nearCliffY = var1
-  #let absNCX = var2
-  NEAREST_CLIFF(nearCliffX, nearCliffY)
+  {STANDARD_CLIFF_DATA}
   
-  // drift towards goal
-  globTempVar = nearCliffX * -1
-  ClearStick
-  AbsStick globTempVar
+  DynamicDiceClear dslot0
+  DynamicDiceAdd dslot0 optNone 1
 
-  absNCX = nearCliffX
-  Abs absNCX
-  globTempVar = TopNY - BBoundary
-  {PRE_CONDITIONS}
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
+  if NumJumps > 0
+    $if_recoveryRect(x_abs,0,300,y_rangeBelow,highCliffY,15,150)
+      DynamicDiceAdd dslot0 optJump 6
     endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
+  endif
+
+  if AWAY_FROM_STAGE
+    anotherTempVar = XSpeed
+    Abs anotherTempVar
+    if anotherTempVar > 0.65
+      $if_recoveryRect(x_abs,2,sideBRange,y_rangeAbove,nearCliffY,30,100)
+        DynamicDiceAdd dslot0 optSideB 100
+      endif
+    endif
+    $if_recoveryRect(x_abs,2,30,y_rangeAbove,nearCliffY,-10,30)
+      DynamicDiceAdd dslot0 optUpB 3
+    endif
+  endif
+
+  DynamicDiceSize dslot0 immediateTempVar
+  if immediateTempVar < 2
+    $if_recoveryRect(x_abs,0,UpBXDist,y_rangeAbove,nearCliffY,UpBYDist,10)
+      DynamicDiceAdd dslot0 optUpB 50
+    endif
+  endif
+
+  anotherTempVar = TopNY - BBoundary
+  if anotherTempVar > 20 && nearCliffY < calc(UpBYDist + 40)
+  else
+    DynamicDiceClear dslot0
+    DynamicDiceAdd dslot0 optNone 1
     if NumJumps > 0
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
+      DynamicDiceAdd dslot0 optJump 100
+    endif
+    DynamicDiceSize dslot0 anotherTempVar
+    if anotherTempVar < 2
+      DynamicDiceAdd dslot0 optUpB 100
     endif
   endif
-  if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange && AnimFrame >= 30
-    Button B
+
+  DynamicDiceRoll dslot0 recOption 0
+  if recOption > optJump
     ClearStick
-    Stick 1
-    Return
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 10) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
+  if recOption >= optDownB
     Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
+    AbsStick 0 -1
+  elif recOption >= optSideB
+    Button B
+    AbsStick nearCliffX
+  elif recOption >= optUpB
+    Button B
+    AbsStick 0 1
+  elif recOption >= optJump
+    Button X
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
 #endsnippet
 
 #snippet USPECIAL
   ClearStick
-  if AnimFrame > 2 && AnimFrame < 5
-    immediateTempVar = TopNX * -1
-    AbsStick immediateTempVar
-  elif Equal isBelowStage 1
-    globTempVar = nearCliffX * -1
-    AbsStick globTempVar
-  elif nearCliffX > 6 || nearCliffX < -6
-    globTempVar = nearCliffX * -1
-    AbsStick globTempVar
-    immediateTempVar = HurtboxSize - 5
-    if NoOneHanging && YDistBackEdge < immediateTempVar && highUpBValue < highUpBChance
-      AbsStick 0 (-1)
-    endif
-  else
-    globTempVar = nearCliffX * -1
-    AbsStick globTempVar
+  {BREVERSE}
+  elif Equal isBelowStage 1 || nearCliffX > 6 || nearCliffX < -6
+    nearCliffX *= 0.05
+    AbsStick nearCliffX
   endif
 #endsnippet
 
 #snippet SSPECIAL
-  if AnimFrame > 2 && AnimFrame < 5
+  anotherTempVar = XSpeed * cliffDistX
+  if AnimFrame < 5 && ActionTimer < 5 && anotherTempVar < 0
     immediateTempVar = TopNX * -1
     AbsStick immediateTempVar
   else
@@ -116,22 +116,4 @@
 #endsnippet
 
 #snippet NSPECIAL
-#endsnippet
-
-#snippet JUMP_TO_STAGE
-  ClearStick
-  if Equal isBelowStage 1
-    globTempVar = nearCliffX * -1
-    AbsStick globTempVar
-  elif Equal IsOnStage 1
-    globTempVar = TopNX * -1
-    AbsStick globTempVar
-  elif nearCliffX > 6 || nearCliffX < -6
-    globTempVar = nearCliffX * -1
-    AbsStick globTempVar
-  endif
-  immediateTempVar = nearCliffX * Direction
-  if immediateTempVar < 0
-    Stick -1
-  endif
 #endsnippet

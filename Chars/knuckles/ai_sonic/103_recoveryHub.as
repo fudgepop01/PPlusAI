@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 45
-  #const UpBYDist = 55
+  #const UpBXDist = 34
+  #const UpBYDist = 40
   #const sideBHeight = 50
   #const sideBRange = 80
   #const tolerence = 10
@@ -17,8 +17,7 @@
   #let sideBValue = var7
   #let highSideBValue = var9
   #let sideBClimbValue = var10
-  hasTriedToUpB = 0
-  jumpValue = Rnd
+  jumpValue = 0
   highUpBValue = Rnd
   sideBValue = Rnd
   highSideBValue = Rnd
@@ -37,6 +36,8 @@
 
   GetNearestCliff nearCliffX
   DrawDebugRectOutline nearCliffX nearCliffY 10 10 color(0x00FF00DD)
+
+  GetLaBit hasTriedToUpB hex(0x3D) fromSelf
   
   NEAREST_CLIFF(nearCliffX, nearCliffY)
 
@@ -51,30 +52,29 @@
   {PRE_CONDITIONS}
   immediateTempVar = Direction * -1 * 5
   GetYDistFloorOffset immediateTempVar immediateTempVar 80 0
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 50) && Equal hasTriedToUpB 0 && Equal immediateTempVar -1 
-    hasTriedToUpB = 1
+  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 50) && Equal hasTriedToUpB 1 && Equal immediateTempVar -1 
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
-    hasTriedToUpB = 1
+  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist + tolerence) && Equal hasTriedToUpB 1 && Equal isBelowStage 0 && Equal immediateTempVar -1 
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
+  GetLaBit hasTriedToUpB hex(0x3D) fromSelf
 
   GetLaBasic immediateTempVar 89 0
-  if Equal immediateTempVar 0 
-    if YDistBackEdge > -40 && YDistBackEdge < -10 && sideBValue < sideBChance
+  if !(Equal immediateTempVar 0) 
+    if YDistBackEdge > -30 && YDistBackEdge < -10 && sideBValue < sideBChance
       Button B
       ClearStick
       Stick 1 0
       Return
     endif
-    if YDistBackEdge > -100 && YDistBackEdge < -10 && highSideBValue < highSideBChance
+    if YDistBackEdge > -50 && YDistBackEdge < -10 && highSideBValue < highSideBChance
       Button B
       ClearStick
       Stick 1 0
@@ -103,9 +103,10 @@
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     else
       hasTriedToUpB = 1
@@ -118,6 +119,9 @@
 #endsnippet
 
 #snippet DSPECIAL
+  anotherTempVar = TopNX * -1
+  AbsStick anotherTempVar
+  Button X
 #endsnippet
 
 #snippet NSPECIAL
@@ -140,18 +144,7 @@
     endif
   else
     globTempVar = nearCliffX * -1
-    AbsStick globTempVar
-
-    if YDistBackEdge < 15 && YSpeed > 2
-      currGoal = cg_recover_reversal
-      XGoto CalcAttackGoal
-      //= XReciever
-      scriptVariant = sv_none
-      XGoto SetAttackGoal
-      //= XReciever
-      skipMainInit = mainInitSkip
-      Call MainHub
-    endif
+    AbsStick globTempVar  
   endif
 #endsnippet
 
@@ -175,6 +168,17 @@
   elif YDistBackEdge > 10
     Button B
     Stick 0 1
+
+    if YDistBackEdge < 15 && YSpeed > 2
+      currGoal = cg_recover_reversal
+      XGoto CalcAttackGoal
+      //= XReciever
+      scriptVariant = sv_none
+      XGoto SetAttackGoal
+      //= XReciever
+      skipMainInit = mainInitSkip
+      Call MainHub
+    endif
   endif
 #endsnippet
 

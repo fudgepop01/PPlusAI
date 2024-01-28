@@ -13,6 +13,7 @@ if CurrAction >= 26 && CurrAction <= 29
 elif True
   var22 = 300
   XGoto GetChrSpecific
+  Seek setup
   if Equal var22 0 
     Return
   endif
@@ -30,7 +31,7 @@ else
   var1 = 0
 endif
 label jumpCommand
-MOD var17 AnimFrame 4
+MOD var17 GameTimer 4
 if Equal AirGroundState 2 || var17 <= 2 || Equal CurrSubaction JumpSquat
   Button X
 endif
@@ -40,9 +41,13 @@ XGoto PerFrameChecks
 if !(Equal var20 -1) 
   NoRepeat
   STACK_PUSH var16 0
+  STACK_PUSH var0 0
+  STACK_PUSH var1 0
   XGoto SetAttackGoal
   //= XReciever
   XGoto CheckAttackWillHit
+  var1 = STACK_POP
+  var0 = STACK_POP
   var16 = STACK_POP
 
   //= XReciever
@@ -68,11 +73,7 @@ if Equal var16 1
     Return
   endif
   AbsStick var0
-  if !(Equal var0 OPos) || YSpeed < 0
-    Seek
-    Jump
-  elif var21 >= 16 && var21 < 17
-    label
+  if var21 >= 16 && var21 < 17 || !(Equal var0 OPos) || YSpeed < 0
     if var21 < 16
       var16 = 2
       CallI AerialDrift

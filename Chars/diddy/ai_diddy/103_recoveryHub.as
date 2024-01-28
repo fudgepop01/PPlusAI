@@ -1,9 +1,18 @@
+#snippet CLIFF_DIST_MACRO
+  {CD_NEW}
+#endsnippet
+#snippet JUMP_TO_STAGE
+  {JUMP_TO_STAGE_NEW}
+#endsnippet
+
 #snippet INITIALIZATION
   $genActions(SFALL, 10)
   $genActions(NSPECIAL, 112|117|118|119|11a)
-  $genActions(SSPECIAL, 113|11b|11c)
+  $genActions(SSPECIAL, 113|11b|11c|124)
   $genActions(USPECIAL, 114|125|127)
   $genActions(DSPECIAL, 115)
+
+  #const DiddySideB_LABit = hex(0x71)
 
   #const UpBMaxChargeTime = 45
 
@@ -15,9 +24,9 @@
   #const UpBXMaxLean = 105
 
   // no charge ==> no direction
-  #const UpBYMin = -60
+  #const UpBYMin = -55
   // max charge ==> no direction
-  #const UpBYMax = -63
+  #const UpBYMax = -58
   // max charge w/ lean ==> full direction
   #const UpBYMaxLean = 15
 
@@ -26,22 +35,15 @@
   #const sideBHitOffense = 55
   #const sideBGrabOffense = 35
 
-  #const jumpChance = 0.3
-  #const highUpBChance = 0.2
-  #const sideBChance = 0.55
-  #let hasTriedToUpB = var4
-  #let jumpValue = var5
-  #let highUpBValue = var6
   #let upBEdgeAimOffset = var7
-  #let sideBValue = var8
-  #let tolerence = var9
-  tolerence = 10
-  hasTriedToUpB = 0
 
-  jumpValue = Rnd
-  highUpBValue = Rnd
-  sideBValue = Rnd
   upBEdgeAimOffset = Rnd * 60
+
+  #const optNone = 0
+  #const optJump = 10
+  #const optUpB = 20
+  #const optSideB = 30
+  #const optDownB = 40
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -50,43 +52,65 @@
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
-  #let cliffDistX = var0
-  #let cliffDistY = var1
-  #let absNCX = var2
-  DIST_TO_CLIFF(cliffDistX, cliffDistY)
+  {STANDARD_CLIFF_DATA}
   
-  // drift towards goal
-  ClearStick
-  AbsStick cliffDistX
+  DynamicDiceClear dslot0
+  DynamicDiceAdd dslot0 optNone 1
 
-  absNCX = cliffDistX
-  Abs absNCX
-  globTempVar = TopNY - BBoundary
-  {PRE_CONDITIONS}
-  if sideBValue <= sideBChance && cliffDistY >= sideBHeight && cliffDistY < calc(sideBHeight + 8) && absNCX <= sideBRange
-    $recover(side)
-  endif
-  if highUpBValue <= highUpBChance && cliffDistY < calc(UpBYMin + 40) && Equal hasTriedToUpB 0
-    $recoverVar(up)
-  endif
-  anotherTempVar = UpBYMin + tolerence
-  if absNCX <= UpBXMaxLean && cliffDistY < anotherTempVar && Equal hasTriedToUpB 0
-    $recoverVar(up)
-  endif
-
-  if globTempVar < 18 && TotalYSpeed < -0.1
-    globTempVar = -1
-  endif
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if cliffDistY < calc(rec_jumpHeight + 6) && Rnd < 0.5
-      $recover(jump)
+  if NumJumps > 0
+    $if_recoveryRect(x_abs,0,300,y_rangeBelow,highCliffY,15,150)
+      DynamicDiceAdd dslot0 optJump 0.2
     endif
-  elif cliffDistY > calc(rec_jumpHeight + UpBYMin + 20) || globTempVar < 18
+  endif
+
+  if AWAY_FROM_STAGE
+    GetLaBit anotherTempVar DiddySideB_LABit fromSelf
+    if anotherTempVar <= false
+      $if_recoveryRect(x_abs,10,150,y_rangeAbove,highCliffY,-30,100)
+        DynamicDiceAdd dslot0 optSideB 6
+      endif
+    endif
+  endif
+
+  DynamicDiceSize dslot0 immediateTempVar
+  if immediateTempVar < 2
+    $if_recoveryRect(x_abs,0,50,y_rangeAbove,highCliffY,55,30)
+      DynamicDiceAdd dslot0 optUpB 6
+    endif
+    $if_recoveryRect(x_abs,10,UpBXMaxLean,y_rangeAbove,highCliffY,UpBYMaxLean,30)
+      DynamicDiceAdd dslot0 optUpB 6
+    endif
+  endif
+  
+  anotherTempVar = TopNY - BBoundary
+  if anotherTempVar > 20 && nearCliffY < calc(55 + 40)
+  else
+    DynamicDiceClear dslot0
+    DynamicDiceAdd dslot0 optNone 1
     if NumJumps > 0
-      $recover(jump)
-    else
-      $recoverVar(up)
+      DynamicDiceAdd dslot0 optJump 100
     endif
+    DynamicDiceSize dslot0 anotherTempVar
+    if anotherTempVar < 2
+      DynamicDiceAdd dslot0 optUpB 100
+    endif
+  endif
+
+  DynamicDiceRoll dslot0 recOption 0
+  if recOption > optJump
+    ClearStick
+  endif
+  if recOption >= optDownB
+    Button B
+    AbsStick 0 -1
+  elif recOption >= optSideB
+    Button B
+    AbsStick nearCliffX
+  elif recOption >= optUpB
+    Button B
+    AbsStick 0 1
+  elif recOption >= optJump
+    Button X
   endif
 #endsnippet
 
@@ -176,14 +200,10 @@
   else
     Stick 1
   endif
+  if Equal CurrAction hex(0x124)
+    Button X
+  endif
 #endsnippet
 
 #snippet NSPECIAL
-#endsnippet
-
-#snippet CLIFF_DIST_MACRO
-  {CD_NEW}
-#endsnippet
-#snippet JUMP_TO_STAGE
-  {JUMP_TO_STAGE_NEW}
 #endsnippet

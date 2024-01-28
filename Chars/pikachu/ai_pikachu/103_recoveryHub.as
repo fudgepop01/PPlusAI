@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
-  #const UpBRadius = 80
-  #const sideBHeight = 4
+  #const UpBRadius = 90
+  #const sideBHeight = 0
   #const sideBRange = 80
   #const tolerence = 10
 
@@ -54,7 +54,6 @@
   immediateTempVar = Direction * -1 * 5
   GetYDistFloorOffset immediateTempVar immediateTempVar 80 0
   if distFromEdge < UpBRadius && Equal hasTriedToUpB 0 && Equal isBelowStage 0 && Equal immediateTempVar -1 
-    hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
@@ -88,7 +87,6 @@
     endif
   endif
   if highUpBValue <= highUpBChance && distFromEdge < UpBRadius && YDistBackEdge < 20 && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)

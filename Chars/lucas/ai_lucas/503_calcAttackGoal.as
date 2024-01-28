@@ -1,6 +1,6 @@
 #snippet ADDITIONAL_FILTERS
-  GetRaBit immediateTempVar hex(0x6B) 0
-  if Equal immediateTempVar 0
+  GetLaFloat immediateTempVar hex(0x78) fromSelf
+  if immediateTempVar < 120
     $ifLastAttack(fsmash_strong)
       lastAttack = -1
     $elifLastAttack(dsmash_strong)
@@ -15,15 +15,15 @@
       lastAttack = -1
     endif
   elif True
-      $ifLastAttack(fsmash)
-        lastAttack = -1
-      $elifLastAttack(dsmash)
-        lastAttack = -1
-      $elifLastAttack(dsmash2)
-        lastAttack = -1
-      $elifLastAttack(usmash)
-        lastAttack = -1
-      endif
+    $ifLastAttack(fsmash)
+      lastAttack = -1
+    $elifLastAttack(dsmash)
+      lastAttack = -1
+    $elifLastAttack(dsmash2)
+      lastAttack = -1
+    $elifLastAttack(usmash)
+      lastAttack = -1
+    endif
     // if !(Equal priority priority_kill)
     //   $ifLastAttack(fsmash_strong)
     //     lastAttack = -1

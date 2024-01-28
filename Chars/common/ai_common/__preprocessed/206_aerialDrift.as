@@ -18,7 +18,7 @@ if !(Equal var20 -1)
   var0 = STACK_POP
 endif
 Seek execution
-// LOGSTR_NL 1702388992 1660944384 0 0 0
+// LOGSTR_NL str("exec")
 
 if Equal var16 1
   AbsStick OPos

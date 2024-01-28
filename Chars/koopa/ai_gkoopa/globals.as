@@ -21,20 +21,9 @@
 #const cs_shortHopHeight = 22.5
 #const cs_jumpHeight = 44.1
 #const cs_djumpHeight = 53.36
-#const cs_wavedashDist = 40
+#const cs_wavedashDist = 34
 #const cs_recoveryDistX = 100
-#const cs_recoveryDistY = -50
-
-#const recovery_moves = uspecial
-
-#const uspecial_subaction_check = !(True)
-#const uspecial_recovery_info = common|0
-
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x11c) || Equal CurrAction hex(0x11d)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x119) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x11b)
+#const cs_recoveryDistY = -44
 
 // jab123
 #const jab123_IASA = 19

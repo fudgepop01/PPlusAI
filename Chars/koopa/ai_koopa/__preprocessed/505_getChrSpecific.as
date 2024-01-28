@@ -4,726 +4,296 @@ unk 0x0
 
 //= XReciever
 if Equal var22 19 || Equal var22 19.1
+  // chr cs moveData
 if Equal var22 19.1
-if var20 >= 0 && var20 < 35
-GotoByValue var20
-Return
-if !(True)
-label _jab123Str
-LOGSTR 1784766976 825373440 0 0 0
-Return
-label _jab123_2Str
-LOGSTR 1784766976 825373440 1597112320 0 0
-Return
-label _dashattackStr
-LOGSTR 1684108032 1751217152 1952539392 1795162112 0
-Return
-label _ftiltStr
-LOGSTR 1718905088 1819541504 0 0 0
-Return
-label _ftilt_weakStr
-LOGSTR 1718905088 1819565824 2003132672 1795162112 0
-Return
-label _utiltStr
-LOGSTR 1970563328 1819541504 0 0 0
-Return
-label _utilt_lateStr
-LOGSTR 1970563328 1819565824 1818326016 1694498816 0
-Return
-label _dtiltStr
-LOGSTR 1685350656 1819541504 0 0 0
-Return
-label _dtilt_2Str
-LOGSTR 1685350656 1819565824 838860800 0 0
-Return
-label _fsmashStr
-LOGSTR 1718840576 1634953216 0 0 0
-Return
-label _usmashStr
-LOGSTR 1970498816 1634953216 0 0 0
-Return
-label _usmash_landStr
-LOGSTR 1970498816 1634953216 1600938240 1852047360 0
-Return
-label _dsmashStr
-LOGSTR 1685286144 1634953216 0 0 0
-Return
-label _nspecialStr
-LOGSTR 1853059072 1701013760 1634467840 0 0
-Return
-label _nspecialairStr
-LOGSTR 1853059072 1701013760 1634492672 1769078784 0
-Return
-label _uspecialStr
-LOGSTR 1970499584 1701013760 1634467840 0 0
-Return
-label _dspecialStr
-LOGSTR 1685286912 1701013760 1634467840 0 0
-Return
-label _dspecialairStr
-LOGSTR 1685286912 1701013760 1634492672 1769078784 0
-Return
-label _sspecialStr
-LOGSTR 1936945152 1701013760 1634467840 0 0
-Return
-label _sspecial_hitStr
-LOGSTR 1936945152 1701013760 1634492160 1751741440 0
-Return
-label _sspecial_throwbStr
-LOGSTR 1936945152 1701013760 1634492160 1953001984 1870094848
-Return
-label _sspecial_throwfStr
-LOGSTR 1936945152 1701013760 1634492160 1953001984 1870095872
-Return
-label _sspecial_throwlwStr
-LOGSTR 1936945152 1701013760 1634492160 1953001984 1870097408
-Return
-label _grabStr
-LOGSTR 1735549184 1644167168 0 0 0
-Return
-label _fthrowStr
-LOGSTR 1718904832 1919907584 0 0 0
-Return
-label _dthrowStr
-LOGSTR 1685350400 1919907584 0 0 0
-Return
-label _bthrowStr
-LOGSTR 1651795968 1919907584 0 0 0
-Return
-label _uthrowStr
-LOGSTR 1970563072 1919907584 0 0 0
-Return
-label _nairStr
-LOGSTR 1851877632 1912602624 0 0 0
-Return
-label _fairStr
-LOGSTR 1717659904 1912602624 0 0 0
-Return
-label _bairStr
-LOGSTR 1650551040 1912602624 0 0 0
-Return
-label _bair_weakStr
-LOGSTR 1650551040 1918859008 1700883200 0 0
-Return
-label _uairStr
-LOGSTR 1969318144 1912602624 0 0 0
-Return
-label _dairStr
-LOGSTR 1684105472 1912602624 0 0 0
-Return
-label _dair_landStr
-LOGSTR 1684105472 1918856192 1634624512 0 0
 Return
 endif
+if var20 >= 0 && var20 < 37
+  GotoByValue var20
+  Goto __ANGLE_FIX__
+  Return
 else
-LOGSTR 1313808384 1297044992 1157627904 0 0
-Return
-endif
-endif
-if var20 >= 0 && var20 < 35
-var22 = var20 + 35
-GotoByValue var22
-Goto __ANGLE_FIX__
-else
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-SetVarByNum STACK_POP -1
-var23 = -1
+  SetVarAttackData -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  var23 = -1
+  Return
 endif
 if !(True)
-// jab123
+// jab123; 0
 label jab123
-SetVarByNum STACK_POP 3.35
-SetVarByNum STACK_POP -2.64
-SetVarByNum STACK_POP 11.94
-SetVarByNum STACK_POP 6.03
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 19
-SetVarByNum STACK_POP 6
-SetVarByNum STACK_POP 1
-SetVarByNum STACK_POP 45
-SetVarByNum STACK_POP 91
-var22 = 75
-Return
-// jab123_2
+  SetVarAttackData 3.35 -2.64 11.94 6.03 5 2 19 6 1 45 91
+  var22 = 75
+  Return
+// jab123_2; 1
 label jab123_2
-SetVarByNum STACK_POP 8.67
-SetVarByNum STACK_POP 0.42
-SetVarByNum STACK_POP 9.72
-SetVarByNum STACK_POP 9
-SetVarByNum STACK_POP 6
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 23
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 50
-SetVarByNum STACK_POP 100
-var22 = 361
-Return
-// dashattack
+  SetVarAttackData 8.67 0.42 9.72 9 6 2 23 5 0 50 100
+  var22 = 361
+  Return
+// dashattack; 2
 label dashattack
-SetVarByNum STACK_POP 12.59
-SetVarByNum STACK_POP -2.12
-SetVarByNum STACK_POP 14.94
-SetVarByNum STACK_POP 8.21
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 53
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 120
-SetVarByNum STACK_POP 30
-var22 = 70
-Return
-// ftilt
+  SetVarAttackData 12.59 -2.12 14.94 8.21 10 2 53 12 0 120 30
+  var22 = 70
+  Return
+// ftilt; 3
 label ftilt
-SetVarByNum STACK_POP 3.55
-SetVarByNum STACK_POP -5.51
-SetVarByNum STACK_POP 13.5
-SetVarByNum STACK_POP 6.1
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 1
-SetVarByNum STACK_POP 34
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 92
-var22 = 361
-Return
-// ftilt_weak
+  SetVarAttackData 3.55 -5.51 13.5 6.1 10 1 34 16 0 10 92
+  var22 = 361
+  Return
+// ftilt_weak; 4
 label ftilt_weak
-SetVarByNum STACK_POP 2.87
-SetVarByNum STACK_POP -5.25
-SetVarByNum STACK_POP 13.42
-SetVarByNum STACK_POP 6.22
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 34
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 100
-var22 = 361
-Return
-// utilt
+  SetVarAttackData 2.87 -5.25 13.42 6.22 12 5 34 10 0 0 100
+  var22 = 361
+  Return
+// utilt; 5
 label utilt
-SetVarByNum STACK_POP -1.25
-SetVarByNum STACK_POP -2.6
-SetVarByNum STACK_POP 12.04
-SetVarByNum STACK_POP 14.27
-SetVarByNum STACK_POP 7
-SetVarByNum STACK_POP 1
-SetVarByNum STACK_POP 35
-SetVarByNum STACK_POP 13
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 50
-SetVarByNum STACK_POP 112
-var22 = 100
-Return
-// utilt_late
+  SetVarAttackData -1.25 -2.6 12.04 14.27 7 1 35 13 0 50 112
+  var22 = 100
+  Return
+// utilt_late; 6
 label utilt_late
-SetVarByNum STACK_POP -20.38
-SetVarByNum STACK_POP -6.62
-SetVarByNum STACK_POP 19.17
-SetVarByNum STACK_POP 14.16
-SetVarByNum STACK_POP 9
-SetVarByNum STACK_POP 4
-SetVarByNum STACK_POP 35
-SetVarByNum STACK_POP 8
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 50
-SetVarByNum STACK_POP 90
-var22 = 60
-Return
-// dtilt
+  SetVarAttackData -20.38 -6.62 19.17 14.16 9 4 35 8 0 50 90
+  var22 = 60
+  Return
+// dtilt; 7
 label dtilt
-SetVarByNum STACK_POP -0.24
-SetVarByNum STACK_POP 4.52
-SetVarByNum STACK_POP 13.9
-SetVarByNum STACK_POP 7.72
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 3
-SetVarByNum STACK_POP 34
-SetVarByNum STACK_POP 13
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 15
-SetVarByNum STACK_POP 100
-var22 = 361
-Return
-// dtilt_2
+  SetVarAttackData -0.24 4.52 13.9 7.72 10 3 34 13 0 15 100
+  var22 = 361
+  Return
+// dtilt_2; 8
 label dtilt_2
-SetVarByNum STACK_POP -0.18
-SetVarByNum STACK_POP 2.85
-SetVarByNum STACK_POP 14.28
-SetVarByNum STACK_POP 7.19
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 3
-SetVarByNum STACK_POP 23
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 100
-var22 = 361
-Return
-// fsmash
+  SetVarAttackData -0.18 2.85 14.28 7.19 21 3 32 12 0 12 100
+  var22 = 361
+  Return
+// fsmash; 9
 label fsmash
-SetVarByNum STACK_POP -0.96
-SetVarByNum STACK_POP 1.94
-SetVarByNum STACK_POP 14.09
-SetVarByNum STACK_POP 11.36
-SetVarByNum STACK_POP 32
-SetVarByNum STACK_POP 3
-SetVarByNum STACK_POP 67
-SetVarByNum STACK_POP 26
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 60
-SetVarByNum STACK_POP 80
-var22 = 361
-Return
-// usmash
+  SetVarAttackData -0.96 1.94 14.09 11.36 32 3 67 26 0 60 80
+  var22 = 361
+  Return
+// usmash; 10
 label usmash
-SetVarByNum STACK_POP -12.07
-SetVarByNum STACK_POP -0.07
-SetVarByNum STACK_POP 13.75
-SetVarByNum STACK_POP 19.38
-SetVarByNum STACK_POP 13
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 47
-SetVarByNum STACK_POP 20
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 40
-SetVarByNum STACK_POP 86
-var22 = 90
-Return
-// usmash_land
+  SetVarAttackData -12.07 -0.07 13.75 19.38 13 5 47 20 0 40 86
+  var22 = 90
+  Return
+// usmash_land; 11
 label usmash_land
-SetVarByNum STACK_POP -13.63
-SetVarByNum STACK_POP 3.87
-SetVarByNum STACK_POP 15.1
-SetVarByNum STACK_POP 10.45
-SetVarByNum STACK_POP 28
-SetVarByNum STACK_POP 1
-SetVarByNum STACK_POP 47
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 54
-SetVarByNum STACK_POP 85
-var22 = 280
-Return
-// dsmash
+  SetVarAttackData -13.63 3.87 15.1 10.45 28 1 47 12 0 54 85
+  var22 = 280
+  Return
+// dsmash; 12
 label dsmash
-SetVarByNum STACK_POP -15.48
-SetVarByNum STACK_POP 3.77
-SetVarByNum STACK_POP 18.48
-SetVarByNum STACK_POP 12.5
-SetVarByNum STACK_POP 9
-SetVarByNum STACK_POP 18
-SetVarByNum STACK_POP 57
-SetVarByNum STACK_POP 6
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 75
-SetVarByNum STACK_POP 150
-var22 = 125
-Return
-// nspecial
+  SetVarAttackData -15.48 3.77 18.48 12.5 9 18 57 6 0 75 150
+  var22 = 125
+  Return
+// nspecial; 13
 label nspecial
-SetVarByNum STACK_POP 9.83
-SetVarByNum STACK_POP -2
-SetVarByNum STACK_POP 200
-SetVarByNum STACK_POP 8
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 64
-SetVarByNum STACK_POP 69
-SetVarByNum STACK_POP 15
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 53
-SetVarByNum STACK_POP 70
-var22 = 55
-Return
-// nspecialair
+  SetVarAttackData 9.83 -2 200 8 16 64 69 -15 0 53 70
+  var22 = 55
+  Return
+// nspecialair; 14
 label nspecialair
-SetVarByNum STACK_POP 9.83
-SetVarByNum STACK_POP -2
-SetVarByNum STACK_POP 200
-SetVarByNum STACK_POP 8
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 64
-SetVarByNum STACK_POP 69
-SetVarByNum STACK_POP 15
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 53
-SetVarByNum STACK_POP 70
-var22 = 55
-Return
-// uspecial
+  SetVarAttackData 9.83 -2 200 8 16 64 69 -15 0 53 70
+  var22 = 55
+  Return
+// uspecial; 15
 label uspecial
-SetVarByNum STACK_POP -7.5
-SetVarByNum STACK_POP 0.94
-SetVarByNum STACK_POP 8.5
-SetVarByNum STACK_POP 8.5
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 81
-SetVarByNum STACK_POP 13
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 70
-SetVarByNum STACK_POP 80
-var22 = 80
-Return
-// dspecial
+  SetVarAttackData -7.5 0.94 8.5 8.5 5 2 81 13 0 70 80
+  var22 = 80
+  Return
+// dspecial; 16
 label dspecial
-SetVarByNum STACK_POP 12.63
-SetVarByNum STACK_POP -26.93
-SetVarByNum STACK_POP 7.83
-SetVarByNum STACK_POP 14.48
-SetVarByNum STACK_POP 38
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 172
-SetVarByNum STACK_POP 25
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 60
-SetVarByNum STACK_POP 81
-var22 = 80
-Return
-// dspecialair
+  SetVarAttackData 12.63 -26.93 7.83 14.48 38 2 172 25 0 60 81
+  var22 = 80
+  Return
+// dspecialair; 17
 label dspecialair
-SetVarByNum STACK_POP -8.2
-SetVarByNum STACK_POP 3
-SetVarByNum STACK_POP 8.2
-SetVarByNum STACK_POP 8.2
-SetVarByNum STACK_POP 32
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 142
-SetVarByNum STACK_POP 25
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 100
-var22 = 80
-Return
-// sspecial
+  SetVarAttackData -8.2 3 8.2 8.2 32 0 142 25 0 0 100
+  var22 = 80
+  Return
+// sspecial; 18
 label sspecial
-SetVarByNum STACK_POP 9.97
-SetVarByNum STACK_POP -1.08
-SetVarByNum STACK_POP 7.56
-SetVarByNum STACK_POP 5.29
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-var22 = 0
-Return
-// sspecial_hit
+  SetVarAttackData 9.97 -1.08 7.56 5.29 16 0 49 0 0 0 0
+  var22 = 0
+  Return
+// sspecial_hit; 19
 label sspecial_hit
-SetVarByNum STACK_POP 13.46
-SetVarByNum STACK_POP -0.88
-SetVarByNum STACK_POP 12.13
-SetVarByNum STACK_POP 5.47
-SetVarByNum STACK_POP 17
-SetVarByNum STACK_POP 1
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 55
-SetVarByNum STACK_POP 90
-var22 = 65
-Return
-// sspecial_throwb
+  SetVarAttackData 13.46 -0.88 12.13 5.47 17 1 49 10 0 55 90
+  var22 = 65
+  Return
+// sspecial_throwb; 20
 label sspecial_throwb
-SetVarByNum STACK_POP 9.97
-SetVarByNum STACK_POP -1.08
-SetVarByNum STACK_POP 7.56
-SetVarByNum STACK_POP 5.29
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 15
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 60
-SetVarByNum STACK_POP 75
-var22 = -361
-Return
-// sspecial_throwf
+  SetVarAttackData 9.97 -1.08 7.56 5.29 16 0 49 15 0 60 75
+  var22 = 361
+  Return
+// sspecial_throwf; 21
 label sspecial_throwf
-SetVarByNum STACK_POP 9.97
-SetVarByNum STACK_POP -1.08
-SetVarByNum STACK_POP 7.56
-SetVarByNum STACK_POP 5.29
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 15
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 60
-SetVarByNum STACK_POP 75
-var22 = 361
-Return
-// sspecial_throwlw
+  SetVarAttackData 9.97 -1.08 7.56 5.29 16 0 49 15 0 60 75
+  var22 = 361
+  Return
+// sspecial_throwlw; 22
 label sspecial_throwlw
-SetVarByNum STACK_POP 9.97
-SetVarByNum STACK_POP -1.08
-SetVarByNum STACK_POP 7.56
-SetVarByNum STACK_POP 5.29
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 15
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 80
-SetVarByNum STACK_POP 20
-var22 = 280
-Return
-// grab
+  SetVarAttackData 9.97 -1.08 7.56 5.29 16 0 49 15 0 80 20
+  var22 = 280
+  Return
+// sspecialair; 23
+label sspecialair
+  SetVarAttackData 9.97 -1.08 7.56 5.29 16 0 49 0 0 0 0
+  var22 = 0
+  Return
+// sspecialair_throwlw; 24
+label sspecialair_throwlw
+  SetVarAttackData 9.97 -1.08 7.56 5.29 16 0 49 15 0 20 66
+  var22 = 290
+  Return
+// grab; 25
 label grab
-SetVarByNum STACK_POP 2.97
-SetVarByNum STACK_POP -2.96
-SetVarByNum STACK_POP 8.76
-SetVarByNum STACK_POP 4.69
-SetVarByNum STACK_POP 7
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 31
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-var22 = 0
-Return
-// fthrow
+  SetVarAttackData 2.97 -2.96 8.76 4.69 7 0 31 0 0 0 0
+  var22 = 0
+  Return
+// fthrow; 26
 label fthrow
-SetVarByNum STACK_POP 2.97
-SetVarByNum STACK_POP -2.96
-SetVarByNum STACK_POP 8.76
-SetVarByNum STACK_POP 4.69
-SetVarByNum STACK_POP 7
-SetVarByNum STACK_POP 34
-SetVarByNum STACK_POP 61
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 100
-SetVarByNum STACK_POP 50
-var22 = 45
-Return
-// dthrow
+  SetVarAttackData 2.97 -2.96 8.76 4.69 7 20.5 61 10 0 100 50
+  var22 = 45
+  Return
+// dthrow; 27
 label dthrow
-SetVarByNum STACK_POP 2.97
-SetVarByNum STACK_POP -2.96
-SetVarByNum STACK_POP 8.76
-SetVarByNum STACK_POP 4.69
-SetVarByNum STACK_POP 7
-SetVarByNum STACK_POP 32
-SetVarByNum STACK_POP 80
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 75
-SetVarByNum STACK_POP 30
-var22 = 50
-Return
-// bthrow
+  SetVarAttackData 2.97 -2.96 8.76 4.69 7 31 80 0 0 75 30
+  var22 = 50
+  Return
+// bthrow; 28
 label bthrow
-SetVarByNum STACK_POP 2.97
-SetVarByNum STACK_POP -2.96
-SetVarByNum STACK_POP 8.76
-SetVarByNum STACK_POP 4.69
-SetVarByNum STACK_POP 7
-SetVarByNum STACK_POP 31
-SetVarByNum STACK_POP 41
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 70
-SetVarByNum STACK_POP 75
-var22 = 45
-Return
-// uthrow
+  SetVarAttackData 2.97 -2.96 8.76 4.69 7 12 41 10 0 70 75
+  var22 = 45
+  Return
+// uthrow; 29
 label uthrow
-SetVarByNum STACK_POP 2.97
-SetVarByNum STACK_POP -2.96
-SetVarByNum STACK_POP 8.76
-SetVarByNum STACK_POP 4.69
-SetVarByNum STACK_POP 7
-SetVarByNum STACK_POP 27
-SetVarByNum STACK_POP 71
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 62
-SetVarByNum STACK_POP 118
-var22 = 70
-Return
-// nair
+  SetVarAttackData 2.97 -2.96 8.76 4.69 7 29 71 2 0 62 118
+  var22 = 70
+  Return
+// nair; 30
 label nair
-SetVarByNum STACK_POP -13.14
-SetVarByNum STACK_POP 1.14
-SetVarByNum STACK_POP 13.32
-SetVarByNum STACK_POP 10.77
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 23
-SetVarByNum STACK_POP 44
-SetVarByNum STACK_POP 13
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 30
-SetVarByNum STACK_POP 80
-var22 = 361
-Return
-// fair
+  SetVarAttackData -13.14 1.14 13.32 10.77 5 23 44 13 0 30 80
+  var22 = 361
+  Return
+// fair; 31
 label fair
-SetVarByNum STACK_POP -5.94
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 16.67
-SetVarByNum STACK_POP 18.08
-SetVarByNum STACK_POP 8
-SetVarByNum STACK_POP 3
-SetVarByNum STACK_POP 35
-SetVarByNum STACK_POP 16
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 50
-SetVarByNum STACK_POP 75
-var22 = 361
-Return
-// bair
+  SetVarAttackData -5.94 2 16.67 18.08 8 3 35 16 0 50 75
+  var22 = 361
+  Return
+// bair; 32
 label bair
-SetVarByNum STACK_POP -23.54
-SetVarByNum STACK_POP -0.28
-SetVarByNum STACK_POP 11.43
-SetVarByNum STACK_POP 10.85
-SetVarByNum STACK_POP 9
-SetVarByNum STACK_POP 21
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 17
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 25
-SetVarByNum STACK_POP 65
-var22 = 156
-Return
-// bair_weak
+  SetVarAttackData -23.54 -0.28 11.43 10.85 9 21 49 17 0 25 65
+  var22 = 156
+  Return
+// bair_weak; 33
 label bair_weak
-SetVarByNum STACK_POP -21.51
-SetVarByNum STACK_POP -0.43
-SetVarByNum STACK_POP 10.41
-SetVarByNum STACK_POP 10.78
-SetVarByNum STACK_POP 12
-SetVarByNum STACK_POP 18
-SetVarByNum STACK_POP 49
-SetVarByNum STACK_POP 10
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 20
-SetVarByNum STACK_POP 90
-var22 = -361
-Return
-// uair
+  SetVarAttackData -21.51 -0.43 10.41 10.78 12 18 49 10 0 20 90
+  var22 = -361
+  Return
+// uair; 34
 label uair
-SetVarByNum STACK_POP -18.09
-SetVarByNum STACK_POP -6.35
-SetVarByNum STACK_POP 18.81
-SetVarByNum STACK_POP 14.04
-SetVarByNum STACK_POP 18
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 44
-SetVarByNum STACK_POP 22
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 25
-SetVarByNum STACK_POP 88
-var22 = 80
-Return
-// dair
+  SetVarAttackData -18.09 -6.35 18.81 14.04 18 5 44 22 0 25 88
+  var22 = 80
+  Return
+// dair; 35
 label dair
-SetVarByNum STACK_POP -11.7
-SetVarByNum STACK_POP 8.03
-SetVarByNum STACK_POP 11.7
-SetVarByNum STACK_POP 9.87
-SetVarByNum STACK_POP 11
-SetVarByNum STACK_POP 31
-SetVarByNum STACK_POP 58
-SetVarByNum STACK_POP 3
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 30
-SetVarByNum STACK_POP 60
-var22 = 270
-Return
-// dair_land
+  SetVarAttackData -11.7 8.03 11.7 9.87 11 31 58 3 0 30 60
+  var22 = 270
+  Return
+// dair_land; 36
 label dair_land
-SetVarByNum STACK_POP -16.58
-SetVarByNum STACK_POP 5.78
-SetVarByNum STACK_POP 16.58
-SetVarByNum STACK_POP 9.38
-SetVarByNum STACK_POP 1
-SetVarByNum STACK_POP 2
-SetVarByNum STACK_POP 58
-SetVarByNum STACK_POP 5
-SetVarByNum STACK_POP 0
-SetVarByNum STACK_POP 60
-SetVarByNum STACK_POP 30
-var22 = 25
-Return
+  SetVarAttackData -16.58 5.78 16.58 9.38 1 2 58 5 0 60 30
+  var22 = 25
+  Return
 endif
 Return
 elif Equal var22 12
+  // chr cs dashForceTurnFrame
   var22 = 11
 elif Equal var22 13
+  // chr cs dashDanceMinFrames
   var22 = 4
 elif Equal var22 14
+  // chr cs shortHopHeight
   var22 = 11.51
 elif Equal var22 15
+  // chr cs djumpHeight
   var22 = 36.48
 elif Equal var22 16
-  var22 = 18
+  // chr cs wavedashDist
+  var22 = 33
 elif Equal var22 17
+  // chr cs recoveryDistX
   var22 = 70
 elif Equal var22 18
+  // chr cs recoveryDistY
   STACK_PUSH var23 0
-  var22 = 30
-  var22 -= 10
-  if NumJumps > 0
-    var22 += 36.48
+  if var21 >= 16.7
+    var22 = 30
+    var22 -= 10
+    var22 *= 0.9
+  else
+    var22 = 0
   endif
+  var22 += HurtboxSize
+  if NumJumps > 0
+    var23 = NumJumps - 1
+    var23 *= 36.48 * 0.7
+    var23 += 36.48
+    var22 += var23
+  endif
+//   {RECOVERY_ADDITIONS}
   var23 = BBoundary * -1
-  var23 += 15
+  var23 -= 25
+  // LOGSTR str("ret recdist")
+  // LOGVAL chr_trait_return
+  // LOGVAL anotherTempVar
+  // PRINTLN
   if var22 > var23
     var22 = var23
   endif
+  // chr_trait_return -= 20
   var23 = STACK_POP
 elif Equal var22 100
+  // chr chk_isAerialAttack
   var22 = 0
-if !(True) || Equal var20 14|| Equal var20 17|| Equal var20 28|| Equal var20 29|| Equal var20 30|| Equal var20 31|| Equal var20 32|| Equal var20 33|| Equal var20 34
+if  Equal var20 14 || Equal var20 17 || var20 >= 23 && var20 <= 24 || var20 >= 30 && var20 <= 36
     var22 = 1
   endif
 elif Equal var22 200
-  if XDistLE 70
+  // chr chk_OInCombo
+  Goto saveTempRegs
+  if XDistLE 60 || OFramesHitstun > 0
     getCurrentPredictValue var17 4
-    var23 = PT_AGGRESSION * 15 + 10
-    // LOGVAL_NL var17
+    var23 = PT_AGGRESSION * 5 + 10
+    // LOGSTR_NL str("posthitstun")
+    // LOGVAL_NL globTempVar
     if var17 > 200
       var22 = 0
+      Goto restoreTempRegs
       Return
     elif var17 <= var23 || OFramesHitstun > 0
       var22 = 1
-      // LOGSTR_NL 1230184448 1129270528 1112481792 674310400 0
+      // LOGSTR_NL str("IS COMBO (1)")
+      Goto restoreTempRegs
       Return
     endif
     if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
     elif Equal OCurrAction 73 && OYDistFloor > 15
     elif Equal HitboxConnected 1 || Equal PrevAction 60
     else
-      // LOGSTR_NL 1313821696 541282048 1296191232 1229866752 0
+      // LOGSTR_NL str("NOT COMBOING")
       var22 = 0
+      Goto restoreTempRegs
       Return
     endif
-    // LOGSTR_NL 1230184448 1129270528 1112481792 674375936 0
+    // LOGSTR_NL str("IS COMBO (2)")
     var22 = 1
+    Goto restoreTempRegs
     Return
   endif
   var22 = 0
+  Goto restoreTempRegs
 elif Equal var22 300
+  // chr chk_actionableOnGround
   var22 = 0
   if Equal CanCancelAttack 1
   elif Equal HitboxConnected 1 && HasCurry
@@ -739,91 +309,84 @@ elif Equal var22 300
   endif
   var22 = 1
 elif Equal var22 0.001
-if !(True) || Equal var20 6 || Equal var20 30 || Equal var20 31
+  // chr get_moveDir
+if Equal var20 6 || Equal var20 32 || Equal var20 33
   var22 = -1
-elif !(True) || Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 15 || Equal var20 17 || Equal var20 28 || Equal var20 32 || Equal var20 33 || Equal var20 34
-  var22 = 0
-elif !(True) || Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 7 || Equal var20 8 || Equal var20 9 || Equal var20 13 || Equal var20 14 || Equal var20 16 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26 || Equal var20 27 || Equal var20 29
+elif Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 7 || Equal var20 8 || Equal var20 9 || Equal var20 13 || Equal var20 14 || Equal var20 16 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26 || Equal var20 27 || Equal var20 28 || Equal var20 29 || Equal var20 31
   var22 = 1
+else
+  var22 = 0
 endif
 elif Equal var22 0.002
-if !(True) || Equal var20 33
+  // chr get_moveDirY
+if Equal var20 35
   var22 = -1
-elif !(True) || Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 7 || Equal var20 8 || Equal var20 9 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26 || Equal var20 27 || Equal var20 28 || Equal var20 30 || Equal var20 31 || Equal var20 34
-  var22 = 0
-elif !(True) || Equal var20 5 || Equal var20 6 || Equal var20 10 || Equal var20 16 || Equal var20 29 || Equal var20 32
+elif Equal var20 16
   var22 = 1
+else
+  var22 = 0
 endif
 elif Equal var22 30000
+  // evt gotHit
   if Equal TRAINING_MODE_OPTION -1
-    Goto shuffle_AI
+    if Rnd < 0.02
+      Goto shuffle_AI
+    endif
     if !(True)
       label shuffle_AI
         var22 = LevelValue * 0.005
         if Rnd < var22
-          var23 = PT_AGGRESSION * -1
-          ADJUST_PERSONALITY 0 var23 Rnd
-          var22 = LevelValue * 0.02
+          ADJUST_PERSONALITY 0 -1 PT_AGGRESSION
+          var22 = LevelValue * 0.005
           ADJUST_PERSONALITY 0 var22 Rnd
-          ADJUST_PERSONALITY 3 -11 1
-          ADJUST_PERSONALITY 3 1.5 1
-          ADJUST_PERSONALITY 10 -11 1
-          ADJUST_PERSONALITY 10 1.5 1
-          ADJUST_PERSONALITY 4 -11 1
-          ADJUST_PERSONALITY 4 1.5 1
-          ADJUST_PERSONALITY 5 -11 1
-          ADJUST_PERSONALITY 0 3 Rnd
-          ADJUST_PERSONALITY 3 2.5 Rnd
-          ADJUST_PERSONALITY 10 2 Rnd
-          ADJUST_PERSONALITY 4 2 Rnd
-          ADJUST_PERSONALITY 5 4 Rnd
+          ADJUST_PERSONALITY 3 -1 PT_BAITCHANCE
+          ADJUST_PERSONALITY 10 -1 PT_WALL_CHANCE
+          ADJUST_PERSONALITY 4 -1 PT_BRAVECHANCE
+          ADJUST_PERSONALITY 5 -1 PT_CIRCLECAMPCHANCE
+          ADJUST_PERSONALITY 0 3.75 Rnd
+          ADJUST_PERSONALITY 3 1.8 Rnd
+          ADJUST_PERSONALITY 10 1.6 Rnd
+          ADJUST_PERSONALITY 4 1.7 Rnd
+          ADJUST_PERSONALITY 5 1.1 Rnd
           if Rnd < 0.25
-            ADJUST_PERSONALITY 1 -3 1
-            var22 = 0.6 * 3
-            ADJUST_PERSONALITY 1 1 1
-            ADJUST_PERSONALITY 1 var22 Rnd
+            ADJUST_PERSONALITY 1 -1 PT_BAIT_DASHAWAYCHANCE
+            ADJUST_PERSONALITY 1 1.2 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 2 -3 1
-            var22 = 0.15 * 3
-            ADJUST_PERSONALITY 2 1 1
-            ADJUST_PERSONALITY 2 var22 Rnd
+            ADJUST_PERSONALITY 2 -1 PT_BAIT_WDASHAWAYCHANCE
+            ADJUST_PERSONALITY 2 0.3 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 7 -3 1
-            var22 = 0.1 * 4
-            ADJUST_PERSONALITY 7 1 1
-            ADJUST_PERSONALITY 7 var22 Rnd
+            ADJUST_PERSONALITY 7 -1 PT_JUMPINESS
+            ADJUST_PERSONALITY 7 0.30000000000000004 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 6 -3 1
-            var22 = 0.04 * 4
-            ADJUST_PERSONALITY 6 1 1
-            ADJUST_PERSONALITY 6 var22 Rnd
+            ADJUST_PERSONALITY 6 -1 PT_DJUMPINESS
+            ADJUST_PERSONALITY 6 0.12 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 8 -3 1
-            var22 = 0.1 * 4
-            ADJUST_PERSONALITY 8 1 1
-            ADJUST_PERSONALITY 8 var22 Rnd
+            ADJUST_PERSONALITY 8 -1 PT_PLATCHANCE
+            ADJUST_PERSONALITY 8 0.30000000000000004 Rnd
           endif
         endif
       Return
     endif
   endif
 elif Equal var22 20000
+  // evt chrChecks
   if Equal TRAINING_MODE_OPTION -1
-    var22 = (LevelValue / 35) * 0.05
-    if Rnd < var22
-  var22 = 21
-  XGoto GetChrSpecific
-  //= XReciever
+    var17 = (LevelValue / 35) * 0.05
+    ADJUST_PERSONALITY 0 0.003 var17
+    if Rnd < var17
       PredictOMov var22 14
-      if var22 > 0.2
-        if PT_AGGRESSION > 1.5
-          ADJUST_PERSONALITY 0 -0.025 var22
-        endif
-        ADJUST_PERSONALITY 10 0.025 var22
+      PredictOMov var23 10
+      var22 -= var23
+      if var22 > 0.1
+        var22 *= 5
+        // if PT_AGGRESSION > 1.5
+        //   ADJUST_PERSONALITY idx_aggression -0.025 immediateTempVar
+        // endif
+        ADJUST_PERSONALITY 10 0.045 var22
         ADJUST_PERSONALITY 1 0.001 var22
         ADJUST_PERSONALITY 2 0.005 var22
         ADJUST_PERSONALITY 7 0.01 var22
@@ -834,23 +397,25 @@ elif Equal var22 20000
       if var23 > var22
         var22 = var23
       endif
-      if var22 >= 0.2
+      if var22 >= 0.35
         ADJUST_PERSONALITY 0 0.025 var22
         ADJUST_PERSONALITY 10 -0.025 var22
         ADJUST_PERSONALITY 3 0.025 var22
         ADJUST_PERSONALITY 1 0.005 var22
         ADJUST_PERSONALITY 4 0.01 var22
       endif
+      PredictOMov var22 14
       PredictOMov var23 10
-      if var22 >= 0.2
-        ADJUST_PERSONALITY 3 -0.025 var22
-        ADJUST_PERSONALITY 10 -0.025 var22
-        ADJUST_PERSONALITY 0 0.025 var22
-        ADJUST_PERSONALITY 4 0.025 var22
-        ADJUST_PERSONALITY 6 0.01 var22
+      var23 -= var22
+      if var23 >= 0.075
+        var23 *= 5
+        ADJUST_PERSONALITY 3 0.05 var23
+        ADJUST_PERSONALITY 10 -0.05 var23
+        ADJUST_PERSONALITY 0 0.05 var23
+        ADJUST_PERSONALITY 4 0.05 var23
+        ADJUST_PERSONALITY 6 0.02 var23
       endif
     endif
-    PredictOMov var23 10
     if Rnd <= 0.02
   var22 = 200
   XGoto GetChrSpecific
@@ -865,109 +430,177 @@ elif Equal var22 20000
       endif
     elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= 60 && var22 < 0.3
       ADJUST_PERSONALITY 0 -11 1
-      ADJUST_PERSONALITY 0 2 1
+      ADJUST_PERSONALITY 0 1.65 1
       ADJUST_PERSONALITY 3 0.4 1
       ADJUST_PERSONALITY 10 1.2 1
     elif Rnd < 0.04000000000000001
       var22 = (LevelValue / 35) * 0.4
-      ADJUST_PERSONALITY 0 0.005 var22
       ADJUST_PERSONALITY 10 0.015 var22
     elif Rnd < 0.04000000000000001 && FramesHitstun > 0
       Goto shuffle_AI
     endif
   endif
 elif Equal var22 10000
-  ADJUST_PERSONALITY 5 0.5 Rnd
+  // evt rangedHit
+  ADJUST_PERSONALITY 5 0.025 Rnd
 elif Equal var22 40000
-  if var21 < 16.7 && TRAINING_MODE_OPTION <= 1 && !(CalledFrom ExecuteAttack)
-  // if var21 < 16.7 && TRAINING_MODE_OPTION <= 1 && !(CalledFrom ExecuteAttack)
-    
-    
+  // evt checkDefend
+  var23 = LevelValue + 2
+  var22 = Rnd * var23
+  if var21 < 16.7 && TRAINING_MODE_OPTION <= 1 && !(CalledFrom RecoveryHub) && !(Equal var15 -20) && var22 > 1
+  var22 = 0.004
+  XGoto GetChrSpecific
+  //= XReciever
+var17 = var22
+    if var17 < 3
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-    if Equal var22 0 && !(Equal var21 12)
-      // react to/read the opponent's attack patterns
-      var22 = (1 - (LevelValue / 100)) * 30 + 4
-      var22 *= PT_REACTION_TIME
-      var23 = AnimFrame + 10
-      MOD var17 var23 var22
-      var23 = OAnimFrame + 10
-      MOD var23 var23 var22
-      if var17 > 1 && var23 > 1
-      elif Equal OCurrAction 77 && OAnimFrame > 25
-      // elif Equal AirGroundState 2 && var21 > 16
-      elif Equal var21 16.3 || Equal var21 10.2 || Equal var21 10.6
-      elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
-        if OCurrAction < 66 || OCurrAction >= 72
-          predictAverage var22 10
-          var22 += 20
-          var17 = OPos * var22
-          GetYDistFloorOffset var17 var17 10 1
-          if XDistLE var22 && var17 > 0
+      if Equal var22 0 && !(Equal var21 12)
+        // react to/read the opponent's attack patterns
+        var22 = (1 - (LevelValue / 100)) * 30 + 10
+        var22 *= PT_REACTION_TIME
+        MOD var17 GameTimer var22
+        var23 = OAnimFrame + 2
+        MOD var23 var23 var22
+        // LOGSTR str("atv;gtv")
+        // LOGVAL globTempVar
+        // LOGVAL anotherTempVar
+        // PRINTLN
+        if var17 > 1 && var23 >= 1
+        elif Equal OCurrAction 77 && OAnimFrame > 25
+        elif Equal var21 16.5 || Equal var21 10.2
+        elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
+          // LOGSTR_NL str("defending")
+          if OCurrAction >= 3 && OCurrAction <= 15 && OAnimFrame > 5
             GetCommitPredictChance var17
-            // if Equal var21 10.5
-            //   var17 *= 0.06 * PT_BAITCHANCE
-            // endif
-            var22 = 0.3
-            if Equal var21 16.4
-              var22 = 0.45
+            if var17 >= 0.15
+              // LOGSTR_NL str("wall prio")
+              predictAverage var22 10
+              var22 -= 10
+              var23 = var22
+              var23 += 20
+              var17 = TopNX - OTopNX
+              Abs var17
+              if var17 > var22 && var17 < var23
+                var21 = 16.3
+                Return
+              endif
             endif
-            if var17 > var22 && Rnd < 0.7
-              CallI DefendHub
+          elif !(Equal var21 10.6)
+            if OCurrAction < 66 || OCurrAction >= 72
+              // LOGSTR_NL str("defendChance")
+              predictAverage var22 10
+              // LOGSTR str("hitDist")
+              // LOGVAL immediateTempVar
+              var22 += 35
+              var17 = OPos * var22
+              GetYDistFloorOffset var17 var17 10 1
+              var23 = OTopNX - TopNX
+              Abs var23
+              var23 -= 40
+              if var23 > 0 && var23 < var22 && var17 > 0
+                // LOGSTR_NL str("defendChance")
+                GetCommitPredictChance var17
+                var17 *= 1.75
+                // if Equal currGoal cg_bait_dashdance
+                //   globTempVar *= 0.06 * PT_BAITCHANCE
+                // endif
+                var22 = 0.13
+                if var21 >= 16
+                  var22 = 0.15
+                endif
+                PredictOMov var23 10
+                var23 *= 0.5
+                var17 -= var23
+                PredictOMov var23 4
+                var23 *= 0.5
+                var17 -= var23
+                if var17 > var22 && Rnd < 0.7
+                  // LOGSTR_NL str("defNorm")
+                  CallI DefendHub
+                endif
+                if Equal AirGroundState 1
+                  // LOGSTR_NL str("defGrnd")
+                  PredictOMov var22 14
+                  PredictOMov var23 15
+                  PredictOMov var17 10
+                  var22 -= var23
+                  var17 -= var23
+                  var22 -= var17
+                  Abs var22
+                  if var22 < 0.1 && Rnd < 0.5
+                    var21 = 10.2
+                  endif
+                  PredictOMov var22 14
+                  PredictOMov var23 15
+                  PredictOMov var17 4
+                  var23 -= var22
+                  var17 -= var22
+                  if var23 < -0.1 && var17 < 0.1
+                    var21 = 10.5
+                  endif
+                endif
+              endif
             endif
           endif
         endif
       endif
     endif
-    if !(Equal var21 16.41) && !(Equal var21 13)
-      var22 = (1 - (LevelValue / 100)) * 60 + 10
-      var22 *= PT_REACTION_TIME
-      GetCommitPredictChance var23
-      var23 = 1.1 - var23
-      var23 *= 0.25
-      var22 *= var23
-      var23 = AnimFrame
-      MOD var22 var23 var22
-      // LOGSTR 1768779008 1414930432 1195594496 0 0
-      // LOGVAL var22
-      // PRINTLN
-      if var22 <= 1 || Equal var21 10.4
+    var23 = LevelValue + 2
+    var22 = Rnd * var23
+    if var22 > 1
+      if !(Equal var21 16.5) && !(Equal var21 16.41) && !(Equal var21 13) && !(Equal var21 10.2)
+        var22 = (1 - (LevelValue / 100)) * 60 + 10
+        var22 *= PT_REACTION_TIME
+        GetCommitPredictChance var23
+        var23 = 1.1 - var23
+        var23 *= 0.25
+        var22 *= var23
+        MOD var22 GameTimer var22
+        // LOGSTR str("immTV GCS")
+        // LOGVAL immediateTempVar
+        // PRINTLN
+        if var22 <= 1 || Equal var21 10.4
   var22 = 0.004
   XGoto GetChrSpecific
   //= XReciever
-var23 = var22
-        if !(Equal var20 -1)
-        elif var23 >= 4
-          GetAttribute var23 40; 0
-          var22 = var23 * var23 * 0.5
-          if OCurrAction >= 74 && OCurrAction <= 101
-          elif !(XDistLE var22) && OAttacking && var23 <= 7
-            if CHANCE_MUL_LE PT_BAITCHANCE 0.2
-              var21 = 10
-              if CHANCE_MUL_LE PT_AGGRESSION 0.3 && CHANCE_MUL_LE PT_BRAVECHANCE 0.4
-                var21 = 10.2
-                if CHANCE_MUL_LE PT_AGGRESSION 0.25
-                  var21 = 16
+var17 = var22
+          // LOGSTR str("OEndL")
+          // LOGVAL OEndLag
+          // PRINTLN
+          if !(Equal var20 -1) && !(Equal var21 16.3)
+          elif var17 >= 3
+            GetAttribute var23 40 0
+            var22 = var17 * var23 * 0.6
+            if OCurrAction >= 74 && OCurrAction <= 101
+            elif !(XDistLE var22) && OAttacking && var17 <= 13
+              if CHANCE_MUL_LE PT_BAITCHANCE 0.2
+                var21 = 10
+                if CHANCE_MUL_LE PT_AGGRESSION 0.3 && CHANCE_MUL_LE PT_BRAVECHANCE 0.4
+                  var21 = 10.2
+                  if CHANCE_MUL_LE PT_AGGRESSION 0.25
+                    var21 = 16
+                  endif
                 endif
               endif
-            endif
-          else
-            predictAverage var22 10
-            var22 *= 1
-            var22 += var23 + 5
-            var17 = var22 * 0.3
-            if OAttacking
-              var17 += 5
-            endif
-            var23 = OTopNY + 5
-            DrawDebugRectOutline OTopNX var23 var17 1 255 0 0 221
-            var23 += 5
-            DrawDebugRectOutline OTopNX var23 var22 1 255 255 0 221
-            if XDistLE var17
-              var21 = 16.4
-            elif XDistLE var22
-              var21 = 16
+            else
+              predictAverage var22 10
+              var22 *= 1
+              var22 += var17 + 5
+              var17 = var22 * 0.3
+              if OAttacking
+                var17 += 5
+              endif
+              var23 = OTopNY + 5
+              DrawDebugRectOutline OTopNX var23 var17 1 255 0 0 221
+              var23 += 5
+              DrawDebugRectOutline OTopNX var23 var22 1 255 255 0 221
+              if XDistLE var17
+                var21 = 16.4
+              elif XDistLE var22
+                var21 = 16
+              endif
             endif
           endif
         endif
@@ -975,6 +608,8 @@ var23 = var22
     endif
   endif
 elif Equal var22 0.003 || Equal var22 0.004
+  // chr get_OEndlag
+  Goto saveTempRegs
   STACK_PUSH var22 0
   var22 = -1
   RetrieveFullATKD var22 var17 var23 var23 var23 var23 var23 OCurrSubaction 1
@@ -983,21 +618,20 @@ elif Equal var22 0.003 || Equal var22 0.004
   endif 
   if Equal OCurrAction 51 && OYDistFloor < 25
     if Equal OCurrSubaction AttackAirN
-      GetAttribute var17 300; 1
+      GetAttribute var17 300 1
     elif Equal OCurrSubaction AttackAirF
-      GetAttribute var17 304; 1
+      GetAttribute var17 304 1
     elif Equal OCurrSubaction AttackAirB
-      GetAttribute var17 308; 1
+      GetAttribute var17 308 1
     elif Equal OCurrSubaction AttackAirHi
-      GetAttribute var17 312; 1
+      GetAttribute var17 312 1
     elif Equal OCurrSubaction AttackAirLw
-      GetAttribute var17 316; 1
+      GetAttribute var17 316 1
     endif
     var23 = OYDistFloor * 0.7
     var22 = var22 - OEndFrame
     var22 *= 1.25
     var22 += var17 + var23
-    
   elif Equal OCurrAction 24
     var22 = OEndFrame - OAnimFrame
     var22 *= 0.65
@@ -1005,10 +639,16 @@ elif Equal var22 0.003 || Equal var22 0.004
     var22 = OEndFrame - OAnimFrame
   elif Equal OCurrAction 33 && OYDistFloor > 15
     var22 = 35
-  elif Equal OCurrAction 16 && OYDistFloor > 0
-    var22 = OYDistFloor * 0.5
+  elif Equal OCurrAction 16
+    if OYDistFloor > 0
+      var22 = OYDistFloor * 0.8
+    else
+      var22 = OYDistBackEdge * 0.9
+      Abs var22
+      var22 = var22 + OXDistBackEdge
+    endif
   elif Equal OCurrAction 26 || Equal OCurrAction 27 || Equal OCurrAction 28
-    GetAttribute var22 940; 1
+    GetAttribute var22 940 1
     var22 = 10 + var22
   elif Equal OCurrAction 29
     GetRaBasic var17 5 1
@@ -1020,6 +660,9 @@ elif Equal var22 0.003 || Equal var22 0.004
     var22 = var22 - OAnimFrame
   elif OCurrAction >= 74 && OCurrAction <= 101
     var22 = OEndFrame - OAnimFrame
+    if OCurrAction >= 90 && OCurrAction <= 95
+      var22 = 80
+    endif
   elif OCurrAction >= 119 && OCurrAction <= 120
     var22 = OEndFrame - OAnimFrame
   elif OFramesHitstun > 0
@@ -1030,61 +673,148 @@ elif Equal var22 0.003 || Equal var22 0.004
     endif
   endif
   if var22 > -1
-    var22 += 5
+    var22 += 4
   endif
-  if Equal STACK_POP 0.004
+  if Equal STACK_POP 0.004 && !(Equal CurrAction 29)
     if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274
       STACK_PUSH var22 0
 
       RetrieveFullATKD var22 -1 var17 -1 var23 -1 -1 OCurrSubaction 1
+      var23 += Width
+      var23 += OWidth
       if Equal var22 0
         var22 = OEndFrame
       endif 
       if OAnimFrame >= var17 || Equal OHitboxConnected 1
         var22 = var22 - OAnimFrame
         STACK_TOSS 1
+        Goto restoreTempRegs
         Return
       elif !(XDistLE var23)
         var22 = STACK_POP
+        Goto restoreTempRegs
         Return
       else
-        var22 = -1
+        var22 = -500
         STACK_TOSS 1
+        Goto restoreTempRegs
         Return
       endif
-      var22 = STACK_POP
+      // chr_trait_return = STACK_POP
+      // Goto restoreTempRegs
     endif
+  else
+    Goto restoreTempRegs
   endif
+elif Equal var22 23
+  Goto saveTempRegs
+  if !(CalledFrom ExecuteAttack)
+  var22 = 200
+  XGoto GetChrSpecific
+  //= XReciever
+    var23 = 0
+    if Equal var22 1
+      var22 = 0
+      Goto restoreTempRegs
+      Return
+    elif OYDistBackEdge < -10
+    elif !(Equal var21 16.4) && var21 < 16.7
+      var22 = OTopNY - TopNY
+      if var22 <= 30
+        var23 = 1
+      endif
+    endif
+    if !(Equal var23 0) 
+  var22 = 0.003
+  XGoto GetChrSpecific
+  //= XReciever
+      if var22 <= 10
+        var23 = 1
+      else
+        var23 = 0
+      endif
+    endif
+
+    if OCurrAction >= 96 && OCurrAction <= 97
+      predictOOption var17 13
+      predictionConfidence var22 13
+      if var22 >= 0.3
+        var22 = 0
+        var23 = OPos * 20
+        if Equal var17 1
+          var22 -= var23
+        elif Equal var17 3
+          var22 += var23
+        endif
+      endif
+    elif Equal var23 1
+      GetAttribute var22 40 1
+      // $ifAerialAttack()
+      //   if move_hitFrame > 10
+      //     move_hitFrame = 10
+      //   endif
+      // endif
+      var22 *= 0.4 * var7 * OPos
+      predictOOption var17 9
+      predictionConfidence var23 9  
+
+      if Equal var17 1 && var23 >= 0.3
+        predictOOption var23 8 
+        predictAverage var17 10
+        var17 *= OPos
+        if Equal var21 16.3
+        elif Equal var23 3
+          // LOGSTR_NL str("UNDERSHOOT")
+          var23 = OXSpeed
+          var23 *= OPos
+          if OCurrAction >= 2 && OCurrAction <= 25 && var23 >= 0
+          else
+            var22 *= 5
+          endif
+          var22 = var17 * -1
+          var22 -= var22
+        elif Equal var23 2
+          // LOGSTR_NL str("OVERSHOOT")
+          var22 = OPos * 15
+          GetYDistFloorOffset var22 var22 5 1
+          if !(Equal var22 -1)
+            // immediateTempVar *= 5
+            var22 = var17
+            var22 += var22
+          endif
+        endif
+      endif
+    else 
+      var22 = 0
+    endif
+  else 
+    var22 = 0
+  endif
+
+  Goto restoreTempRegs
 elif Equal var22 21
-  var23 = 0
-  PredictOMov var22 10
-  if var22 > var23
-    var23 = var22
+  // chr calc_certainty
+  Goto saveTempRegs
+
+  GetCommitPredictChance var23
+  PredictOMov var22 12
+  var23 += var22
+
+  if var23 < 0.5
+    var23 -= 1
+    var23 *= -1
   endif
-  PredictOMov var22 4
-  if var22 > var23
-    var23 = var22
-  endif
-  PredictOMov var22 7
-  if var22 > var23
-    var23 = var22
-  endif
-  PredictOMov var22 14
-  if var22 > var23
-    var23 = var22
-  endif
-  PredictOMov var22 15
-  if var22 > var23
-    var23 = var22
-  endif
+
   var22 = var23
+  Goto restoreTempRegs
 elif Equal var22 22
+  // chr calc_ORecoverPos
   // STACK = [framesAhead, xVarTarget, yVarTarget]
 
   var2 = STACK_POP
+    
+  // up to var6 is free
   if OCurrAction >= 256
-
-
     var22 = OCurrAction + 256
     RetrieveFullATKD var3 var4 var5 var6 var22 var22 var22 var22 1
     if Equal var3 -1
@@ -1095,30 +825,19 @@ elif Equal var22 22
     var1 = OTopNY
     if Equal var3 0
     elif Equal var3 3
-
-
-
-
       var22 = var4 - var2
-      if XDistLE var5 || OActionTimer < var22 || OActionTimer > var4
+      if XDistLE var5 || OActionTimer > var4
       else
         var6 *= ODirection
         var0 += var6
       endif
     elif Equal var3 2
-
-
-
-
       var22 = var4 - var2
-      if XDistLE var5 || OActionTimer < var22 || OActionTimer > var4
+      if XDistLE var5 || OActionTimer > var4
       else
         var1 += var6
       endif
     elif Equal var3 1
-
-
-
       
       Norm var22 OXSpeed OYSpeed
       Abs var22
@@ -1129,18 +848,17 @@ elif Equal var22 22
       var22 = 1 / var23
       var17 = OXSpeed * var22
       var22 = OYSpeed * var22
-
       var17 *= var6
       var22 *= var6
       
       var23 = var2 + OActionTimer
       if var23 > var4
-        // mult totalDist by (OActionTimer + var2) / totalTime
+        // mult totalDist by (OActionTimer + framesAhead) / totalTime
         var5 -= var4
         if var23 > var5
           var23 = var5
         endif
-        // var23 = var5 - var23
+        // anotherTempVar = movementEnd - anotherTempVar
         var23 -= OActionTimer
         var23 /= var5
         var17 *= var23
@@ -1152,18 +870,20 @@ elif Equal var22 22
   else
     SeekNoCommit esc_recovery
   endif
-  SetVarByNum STACK_POP var0
-  SetVarByNum STACK_POP var1
   if !(True)
     label esc_recovery
-    STACK_TOSS 2
+    EstOXCoord var0 var2
+    EstOYCoord var1 var2
   endif
+
+  SetVarByNum STACK_POP var0
+  SetVarByNum STACK_POP var1
 endif
 Return
 label __ANGLE_FIX__
 // if CalledFrom CheckAttackWillHit
-//   LOGSTR 1634625280 1818558464 0 0 0
-//   LOGVAL var22
+//   LOGSTR str("angle")
+//   LOGVAL immediateTempVar
 // endif
 if Equal OAirGroundState 1
   if Equal var22 361
@@ -1186,10 +906,18 @@ elif Equal var22 -361
 endif
 var23 = STACK_POP
 // if CalledFrom CheckAttackWillHit
-//   LOGSTR 1886351360 1885692928 1449226752 0 0
-//   LOGVAL var23
+//   LOGSTR str("poppedVar")
+//   LOGVAL anotherTempVar
 //   PRINTLN
 // endif
 SetVarByNum var23 var22
+Return
+label saveTempRegs
+STACK_PUSH var17 0
+STACK_PUSH var23 0
+Return
+label restoreTempRegs
+var23 = STACK_POP
+var17 = STACK_POP
 Return
 Return

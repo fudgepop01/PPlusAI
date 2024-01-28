@@ -9,8 +9,24 @@
     endif
   $elifLastAttack(nspecial)
     if Rnd < 0.9
+      $setLastAttack(nspecialair)
+    endif
+  endif
+  $ifLastAttack(nspecialair)
+    if Equal AirGroundState 2
       lastAttack = -1
     endif
+  endif
+  if currGoal >= cg_edgeguard
+    $ifLastList(uspecial;uspecialair;nspecial;nspecialair;sspecialair,if)
+      lastAttack = -1
+    endif
+  endif
+#endsnippet
+
+#snippet FILTER_CHECKS
+  $ifLastOrigin(sspecialair,false)
+    move_IASA += OYDistFloor
   endif
 #endsnippet
 

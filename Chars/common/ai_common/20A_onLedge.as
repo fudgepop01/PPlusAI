@@ -22,14 +22,14 @@ Seek begin
 
 if AnimFrame > 2
   if Equal currGoal cg_ledge_edgeguard
-    // LOGSTR_NL str("LEDGE_EDGEGD")
+    LOGSTR_NL str("LEDGE_EDGEGD")
     #let oCloseness = var0
     #let absOCloseness = var1
     oCloseness = OTopNX - TopNX
     absOCloseness = oCloseness
     Abs absOCloseness
 
-    if XDistLE 40 && CHANCE_MUL_LE PT_AGGRESSION 0.25
+    if absOCloseness <= 45 && CHANCE_MUL_LE PT_AGGRESSION 0.25
       if OCurrAction >= hex(0x110) && AnimFrame > 20
         Button R
         Call MainHub
@@ -39,7 +39,7 @@ if AnimFrame > 2
         else
           Stick -1
         endif
-        currGoal = cg_edgeguard
+        currGoal = cg_ledge_edgeguard
         XGoto CalcAttackGoal
         //= XReciever
         skipMainInit = mainInitSkip
@@ -55,7 +55,7 @@ if AnimFrame > 2
     elif OYDistBackEdge < 25 && absOCloseness < 50
       Button R
       Call MainHub
-    elif !(XDistLE 70)
+    elif absOCloseness > 70 && Equal OAirGroundState 2
       if Rnd < 0.2
         Seek exec_wait
         Jump
@@ -103,7 +103,7 @@ if AnimFrame > 2
       XGoto CalcAttackGoal
       //= XReciever
       Stick -1
-      Seek
+      Seek _jAttack
       Return
       label _jAttack
       XGoto PerFrameChecks

@@ -21,11 +21,11 @@
 #const cs_shortHopHeight = 14.28
 #const cs_jumpHeight = 35.43
 #const cs_djumpHeight = 35.43
-#const cs_wavedashDist = 32
-#const cs_recoveryDistX = 90
-#const cs_recoveryDistY = -60
+#const cs_wavedashDist = 30
+#const cs_recoveryDistX = 250
+#const cs_recoveryDistY = -50
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrAction hex(0xe)
+#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x125) || Equal CurrAction hex(0x19) 
 #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x117)
 #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x11d) || Equal CurrAction hex(0x123)

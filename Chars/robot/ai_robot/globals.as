@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 18
 #const cs_jumpHeight = 39.01
 #const cs_djumpHeight = 39.01
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 36
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15
@@ -22,8 +22,8 @@
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistX = 110
+#const cs_recoveryDistY = -150
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -129,13 +129,34 @@
 
 // noochB
 // TODO - laser
-// #const nspecial_IASA = 9999.9999
-// #const nspecial_xOffset = 9999.9999
-// #const nspecial_yOffset = 9999.9999
-// #const nspecial_xRange = 9999.9999
-// #const nspecial_yRange = 9999.9999
-// #const nspecial_hitFrame = 9999.9999
-// #const nspecial_lastHitFrame = 9999.9999
+#const nspecial_IASA = 38
+#const nspecial_xOffset = 7.732
+#const nspecial_yOffset = -3.218
+#const nspecial_xRange = 5.997
+#const nspecial_yRange = 5.815
+#const nspecial_hitFrame = 24
+#const nspecial_lastHitFrame = 26
+#const nspecial_damageInfo = NSpecial|7|40|100|361
+
+#const mv_nspecialair_laser = 1
+#const nspecialair_laser_IASA = 38
+#const nspecialair_laser_xOffset = 7.472
+#const nspecialair_laser_yOffset = 38.110
+#const nspecialair_laser_xRange = 162.022
+#const nspecialair_laser_yRange = 60.459
+#const nspecialair_laser_hitFrame = 24
+#const nspecialair_laser_lastHitFrame = 26
+#const nspecialair_laser_damageInfo = NSpecialAir|5|30|30|361
+
+#const mv_nspecialair_lasermax = 1
+#const nspecialair_lasermax_IASA = 38
+#const nspecialair_lasermax_xOffset = 7.472
+#const nspecialair_lasermax_yOffset = 38.110
+#const nspecialair_lasermax_xRange = 162.022
+#const nspecialair_lasermax_yRange = 60.459
+#const nspecialair_lasermax_hitFrame = 24
+#const nspecialair_lasermax_lastHitFrame = 26
+#const nspecialair_lasermax_damageInfo = NSpecialAir|13|50|52|361
 
 // upB
 // TODO - boost thingy
@@ -148,14 +169,14 @@
 // #const uspecial_lastHitFrame = 32
 // #const uspecial_damage_info = USpecial|9|60|103|83
 
-// #const uspecialair_IASA = 117
-// #const uspecialair_xOffset = 23.26
-// #const uspecialair_yOffset = -57.15
-// #const uspecialair_xRange = 10.82
-// #const uspecialair_yRange = 11.64
-// #const uspecialair_hitFrame = 35
-// #const uspecialair_lastHitFrame = 37
-// #const uspecialair_damage_info = USpecialAir|9|60|103|83
+#const uspecialair_IASA = 4
+#const uspecialair_xOffset = -17.338
+#const uspecialair_yOffset = 1.960
+#const uspecialair_xRange = 17.374
+#const uspecialair_yRange = 29.523
+#const uspecialair_hitFrame = 10
+#const uspecialair_lastHitFrame = 20
+#const uspecialair_damage_info = USpecialAir|0|0|0|0
 
 // downB
 // TODO - top thingy
@@ -186,6 +207,15 @@
 #const sspecial_hitFrame = 14
 #const sspecial_lastHitFrame = 29
 #const sspecial_damage_info = SSpecial|10|30|90|361
+
+#const sspecialair_IASA = 4
+#const sspecialair_xOffset = 32.594
+#const sspecialair_yOffset = 34.152
+#const sspecialair_xRange = 28.315
+#const sspecialair_yRange = 21.145
+#const sspecialair_hitFrame = 10
+#const sspecialair_lastHitFrame = 20
+#const sspecialair_damage_info = SSpecialAir|0|0|0|0
 
 // grab
 #const grab_IASA = 32

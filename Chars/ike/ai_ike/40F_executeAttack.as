@@ -33,10 +33,15 @@
     elif True
       if immediateTempVar <= 25
         Button X
-        Seek
+        Seek _sspecial_part
         Return
-        label
+        label _sspecial_part
         XGoto CalcAttackGoal
+        Seek finish
+        Jump
+      endif
+      if YDistFloor < 0
+        Button X
         Seek finish
         Jump
       endif
@@ -46,7 +51,7 @@
         scriptVariant = sv_wavedash_awayFromLedge
         Button X
         CallI Wavedash
-      endif 
+      endif
     endif
   endif
 #endsnippet

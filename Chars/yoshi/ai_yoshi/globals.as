@@ -7,7 +7,13 @@
 #const cs_shortHopHeight = 19.26
 #const cs_jumpHeight = 36.14
 #const cs_djumpHeight = 56.78
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 36
+
+#const cs_recoveryDistY = 0
+#const cs_recoveryDistX = 50
+
+#const cs_dashForceTurnFrame = 9
+#const cs_dashDanceMinFrames = 3
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15
@@ -20,22 +26,18 @@
 #const pt_braveChance = 0.45
 #const pt_circleCampChance = 0.25
 
-#const cs_dashForceTurnFrame = 9
-#const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
+// #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+// #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+// #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
+// #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+// #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
 
 /// recovery
-#const recovery_moves = uspecial
+// #const recovery_moves = uspecial
 
-#const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
-#const uspecial_recovery_info = common|60
+// #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
+// #const uspecial_recovery_info = common|60
 
 // jab123
 #const jab123_IASA = 17
@@ -148,6 +150,14 @@
 
 // upB
 // TODO - egg throw
+#const uspecial_IASA = 50
+#const uspecial_xOffset = 1.200
+#const uspecial_yOffset = 142.220
+#const uspecial_xRange = 90.174
+#const uspecial_yRange = 104.960
+#const uspecial_hitFrame = 19
+#const uspecial_lastHitFrame = 35
+#const uspecial_damage_info = USpecial|-5|0|0|0
 
 // downB
 #const dspecial_IASA = 27

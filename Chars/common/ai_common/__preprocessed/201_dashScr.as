@@ -47,7 +47,7 @@ if Equal CurrAction 1 || Equal CurrAction 6
   Return
 endif
 
-if XDistBackEdge > -25 && Equal Direction OPos && !(Equal var16 5)
+if XDistBackEdge > -20 && Equal Direction OPos && !(Equal var16 5)
   var16 = 1
 endif
 
@@ -57,7 +57,14 @@ if var17 < 0 && !(Equal var16 4)
   var16 = 4
 endif
 
-if var1 < var3 && !(Equal var16 5)
+// LOGSTR str("timer")
+// LOGVAL timePassed
+// LOGVAL timeLimit
+// LOGVAL scriptVariant
+// PRINTLN
+
+if AnimFrame < 3 && Equal CurrAction 3
+elif var1 < var3 && !(Equal var16 5)
   if Equal var16 1
     AbsStick OPos
   elif Equal var16 2 || Equal var16 3 || Equal var16 6
@@ -81,7 +88,7 @@ if var1 < var3 && !(Equal var16 5)
       Seek execution
       if var22 >= 10
         var21 = 16.4
-        var15 = -1
+        var15 = -10
         if Equal CurrAction 4
           var16 = 5
           CallI Wavedash
@@ -98,7 +105,7 @@ elif Equal var16 5
   if !(Equal var2 OPos)
     if CHANCE_MUL_LE PT_AGGRESSION 0.7
       var21 = 16.4
-      var15 = -1
+      var15 = -10
     endif
     Call MainHub
   endif

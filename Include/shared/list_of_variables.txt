@@ -1,0 +1,79 @@
+
+# | kind | value      |
+# |------|------------|
+# | IC   | 0x00000000 |
+# | LA   | 0x10000000 |
+# | RA   | 0x20000000 |
+
+# | type  | AKA   | value      |
+# |-------|-------|------------|
+# | Basic | int   | 0x00000000 |
+# | Float | float | 0x01000000 |
+# | Bool  | flag  | 0x02000000 |
+
+ftCommonDataAccesser
+ftYoshiStatusUniqProcessSpecialSUtility
+  RA-Basic[0]
+    getInt(0x20000000)
+
+workManageModule
+  checkDamage
+    ftLucarioStatusUniqProcessSpecialSThrow
+      isFlag(0x22000011)
+    ftSheikStatusUniqProcessSpecialN
+      getInt(0x10000040)
+      onFlag(0x22000012)
+      setInt(0x10000040) // 0
+      offFlag(0x1200003d)
+    ftSheikStatusUniqProcessSpecialNShoot
+      getInt(0x10000040)
+      onFlag(0x22000012)
+      setInt(0x10000040) // 0
+  checkItemInhale
+    ftDededeStatusUniqProcessSpecialN
+      getInt(0x20000008)
+  checkLife
+    ftYoshiStatusUniqProcessSpecialSUtility
+      getInt(0x20000000)
+      setInt(0x20000000) // -= 1
+  checkSeChange
+    ftDededeStatusUniqProcessSpecialJetHammer
+      isFlag(0x22000012)
+      isFlag(0x22000016)
+      setInt(0x20000005) // sound effect ID?
+      onFlag(0x22000016)
+  checkStartTurn
+    ftPurinStatusUniqProcessSpecialNStart
+      getInt(0x2000000d)
+      getFloat(0x21000011)
+      onFlag(0x22000014)
+      setFloat(0x21000011) // facing direction
+      setInt(0x2000000d) // -= 1
+  controlBurner
+    ftRobotStatusUniqProcessSpecialBurner
+      isFlag(0x22000012)
+      getFloat(0x11000015)
+      offFlag(0x22000015)
+      isFlag(0x22000016)
+      getInt(0x20000003)
+      offFlag(0x22000016)
+      addFloat(0x11000015) // -1 dvar9 (soValueAccesser/constantFloat/0xfcd OR soValueAccesser/constantFloat/0xfce)
+      onFlag(0x22000015)
+      isFlag(0x22000016)
+      setInt(0x20000003) // sound effect ID?
+      onFlag(0x22000016)
+  controlEffect
+    ftRobotStatusUniqProcessSpecialBurner
+      isFlag(0x22000015)
+      isFlag(0x22000014)
+      getInt(0x20000002)
+      offFlag(0x22000014)
+      isFlag(0x22000014)
+      setInt(0x20000002) // effect ID 2
+      onFlag(0x22000014) // 
+      getFloat(0x11000015) // if below 0
+        isFlag(0x22000013) // should kill effect 1?
+          getInt(0x20000001) // kill effect ID 1
+        isFlag(0x22000014) // should kill effect 2?
+          getInt(0x20000002) // kill effect ID 2
+      

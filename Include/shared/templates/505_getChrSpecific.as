@@ -4,48 +4,77 @@ unk 0x0
 
 //= XReciever
 if Equal chr_trait_select chr_cs_moveData || Equal chr_trait_select chr_cs_moveName
+  // chr cs moveData
   {FETCH_MOVE_DATA}
 elif Equal chr_trait_select chr_cs_dashForceTurnFrame
+  // chr cs dashForceTurnFrame
   chr_trait_return = cs_dashForceTurnFrame
 elif Equal chr_trait_select chr_cs_dashDanceMinFrames
+  // chr cs dashDanceMinFrames
   chr_trait_return = cs_dashDanceMinFrames
 elif Equal chr_trait_select chr_cs_shortHopHeight
+  // chr cs shortHopHeight
   chr_trait_return = cs_shortHopHeight
 elif Equal chr_trait_select chr_cs_djumpHeight
+  // chr cs djumpHeight
   chr_trait_return = cs_djumpHeight
 elif Equal chr_trait_select chr_cs_wavedashDist
+  // chr cs wavedashDist
   chr_trait_return = cs_wavedashDist
 elif Equal chr_trait_select chr_cs_recoveryDistX
+  // chr cs recoveryDistX
   chr_trait_return = cs_recoveryDistX
 elif Equal chr_trait_select chr_cs_recoveryDistY
+  // chr cs recoveryDistY
   STACK_PUSH anotherTempVar 0
-  chr_trait_return = calc(-1 * cs_recoveryDistY)
-  chr_trait_return -= 10
-  if NumJumps > 0
-    chr_trait_return += cs_djumpHeight
+  if currGoal >= cg_edgeguard
+    chr_trait_return = calc(-1 * cs_recoveryDistY)
+    chr_trait_return -= 10
+    chr_trait_return *= 0.9
+  else
+    chr_trait_return = 0
   endif
+  chr_trait_return += HurtboxSize
+  if NumJumps > 0
+    anotherTempVar = NumJumps - 1
+    anotherTempVar *= cs_djumpHeight * 0.7
+    anotherTempVar += cs_djumpHeight
+    chr_trait_return += anotherTempVar
+  endif
+  {RECOVERY_ADDITIONS}
   anotherTempVar = BBoundary * -1
-  anotherTempVar += 15
+  anotherTempVar -= 25
+  // LOGSTR str("ret recdist")
+  // LOGVAL chr_trait_return
+  // LOGVAL anotherTempVar
+  // PRINTLN
   if chr_trait_return > anotherTempVar
     chr_trait_return = anotherTempVar
   endif
+  // chr_trait_return -= 20
   anotherTempVar = STACK_POP
 elif Equal chr_trait_select chr_chk_isAerialAttack
+  // chr chk_isAerialAttack
   chr_trait_return = 0
   $ifAerialAttack()
     chr_trait_return = 1
   endif
 elif Equal chr_trait_select chr_chk_OInCombo
-  if XDistLE 70
+  // chr chk_OInCombo
+  Goto saveTempRegs
+  if XDistLE 60 || OFramesHitstun > 0
     getCurrentPredictValue globTempVar man_OFramesPostHitstun
-    anotherTempVar = PT_AGGRESSION * 15 + 10
+    anotherTempVar = PT_AGGRESSION * 5 + 10
+    // LOGSTR_NL str("posthitstun")
     // LOGVAL_NL globTempVar
     if globTempVar > 200
       chr_trait_return = 0
+      Goto restoreTempRegs
       Return
     elif globTempVar <= anotherTempVar || OFramesHitstun > 0
       chr_trait_return = 1
       // LOGSTR_NL str("IS COMBO (1)")
+      Goto restoreTempRegs
       Return
     endif
     if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x59) && !(Equal OCurrAction hex(0x49))
@@ -54,14 +83,18 @@ elif Equal chr_trait_select chr_chk_OInCombo
     else
       // LOGSTR_NL str("NOT COMBOING")
       chr_trait_return = 0
+      Goto restoreTempRegs
       Return
     endif
     // LOGSTR_NL str("IS COMBO (2)")
     chr_trait_return = 1
+    Goto restoreTempRegs
     Return
   endif
   chr_trait_return = 0
+  Goto restoreTempRegs
 elif Equal chr_trait_select chr_chk_actionableOnGround
+  // chr chk_actionableOnGround
   chr_trait_return = 0
   if Equal CanCancelAttack 1
   elif Equal HitboxConnected 1 && HasCurry
@@ -77,153 +110,170 @@ elif Equal chr_trait_select chr_chk_actionableOnGround
   endif
   chr_trait_return = 1
 elif Equal chr_trait_select chr_get_moveDir
+  // chr get_moveDir
   $genLastAttackDir()
 elif Equal chr_trait_select chr_get_moveDirY
+  // chr get_moveDirY
   $genLastAttackDirY()
 elif Equal chr_trait_select evt_gotHit
+  // evt gotHit
   {EVT_GOT_HIT}
 elif Equal chr_trait_select evt_chrChecks
+  // evt chrChecks
   {EVT_CHR_CHECKS}
 elif Equal chr_trait_select evt_rangedHit
+  // evt rangedHit
   {EVT_RANGED_HIT}
 elif Equal chr_trait_select evt_checkDefend
+  // evt checkDefend
   {EVT_CHECK_DEFEND}
 elif Equal chr_trait_select chr_get_OEndlag || Equal chr_trait_select chr_get_OEndlagSafe
+  // chr get_OEndlag
+  Goto saveTempRegs
   STACK_PUSH chr_trait_select 0
   CALC_ENDLAG(chr_trait_return)
-  if Equal STACK_POP chr_get_OEndlagSafe
+  if Equal STACK_POP chr_get_OEndlagSafe && !(Equal CurrAction hex(0x1D))
     if OAttackCond
       STACK_PUSH chr_trait_return 0
       $tempVar(xmax, anotherTempVar)
       RetrieveFullATKD immediateTempVar noVar globTempVar noVar xmax noVar noVar OCurrSubaction 1
+      xmax += Width
+      xmax += OWidth
       if Equal immediateTempVar 0
         immediateTempVar = OEndFrame
       endif 
       if OAnimFrame >= globTempVar || Equal OHitboxConnected 1
         chr_trait_return = immediateTempVar - OAnimFrame
         STACK_TOSS 1
+        Goto restoreTempRegs
         Return
       elif !(XDistLE xmax)
         chr_trait_return = STACK_POP
+        Goto restoreTempRegs
         Return
       else
-        chr_trait_return = -1
+        chr_trait_return = -500
         STACK_TOSS 1
+        Goto restoreTempRegs
         Return
       endif
-      chr_trait_return = STACK_POP
-    endif
-  endif
-elif Equal chr_trait_select chr_calc_certainty
-  anotherTempVar = 0
-  PredictOMov immediateTempVar mov_shield
-  if immediateTempVar > anotherTempVar
-    anotherTempVar = immediateTempVar
-  endif
-  PredictOMov immediateTempVar mov_dash
-  if immediateTempVar > anotherTempVar
-    anotherTempVar = immediateTempVar
-  endif
-  PredictOMov immediateTempVar mov_jump
-  if immediateTempVar > anotherTempVar
-    anotherTempVar = immediateTempVar
-  endif
-  PredictOMov immediateTempVar mov_attack
-  if immediateTempVar > anotherTempVar
-    anotherTempVar = immediateTempVar
-  endif
-  PredictOMov immediateTempVar mov_grab
-  if immediateTempVar > anotherTempVar
-    anotherTempVar = immediateTempVar
-  endif
-  chr_trait_return = anotherTempVar
-elif Equal chr_trait_select chr_calc_ORecoverPos
-  // STACK = [framesAhead, xVarTarget, yVarTarget]
-
-  #let goalX = var0
-  #let goalY = var1
-  #let framesAhead = var2
-  framesAhead = STACK_POP
-  if OCurrAction >= hex(0x100)
-    #let REC_KIND = var3
-    #let REC_ARG1 = var4
-    #let REC_ARG2 = var5
-    #let REC_ARG3 = var6
-
-    $tempVar(REC_ACTION, immediateTempVar)
-    immediateTempVar = OCurrAction + hex(0x100)
-    RetrieveFullATKD REC_KIND REC_ARG1 REC_ARG2 REC_ARG3 immediateTempVar immediateTempVar immediateTempVar REC_ACTION 1
-    if Equal REC_KIND -1
-      SeekNoCommit esc_recovery
-    endif
-    // move_lastHitFrame += 6
-    goalX = OTopNX
-    goalY = OTopNY
-    if Equal REC_KIND RECOVERY_IDLE
-    elif Equal REC_KIND RECOVERY_HORIZONTAL
-      $tempVar(punish_frame, REC_ARG1)
-      $tempVar(distTolerence, REC_ARG2)
-      $tempVar(punishDist, REC_ARG3)
-
-      immediateTempVar = punish_frame - framesAhead
-      if XDistLE distTolerence || OActionTimer < immediateTempVar || OActionTimer > punish_frame
-      else
-        punishDist *= ODirection
-        goalX += punishDist
-      endif
-    elif Equal REC_KIND RECOVERY_VERTICAL
-      $tempVar(punish_frame, REC_ARG1)
-      $tempVar(distTolerence, REC_ARG2)
-      $tempVar(punishDist, REC_ARG3)
-
-      immediateTempVar = punish_frame - framesAhead
-      if XDistLE distTolerence || OActionTimer < immediateTempVar || OActionTimer > punish_frame
-      else
-        goalY += punishDist
-      endif
-    elif Equal REC_KIND RECOVERY_AIM
-      $tempVar(movementStart, REC_ARG1)
-      $tempVar(movementEnd, REC_ARG2)
-      $tempVar(totalDistance, REC_ARG3)
-      
-      Norm immediateTempVar OXSpeed OYSpeed
-      Abs immediateTempVar
-      if Equal immediateTempVar 0
-        SeekNoCommit esc_recovery
-      endif 
-      anotherTempVar = immediateTempVar
-      immediateTempVar = 1 / anotherTempVar
-      globTempVar = OXSpeed * immediateTempVar
-      immediateTempVar = OYSpeed * immediateTempVar
-
-      globTempVar *= totalDistance
-      immediateTempVar *= totalDistance
-      
-      anotherTempVar = framesAhead + OActionTimer
-      if anotherTempVar > movementStart
-        // mult totalDist by (OActionTimer + framesAhead) / totalTime
-        movementEnd -= movementStart
-        if anotherTempVar > movementEnd
-          anotherTempVar = movementEnd
-        endif
-        // anotherTempVar = movementEnd - anotherTempVar
-        anotherTempVar -= OActionTimer
-        anotherTempVar /= movementEnd
-        globTempVar *= anotherTempVar
-        immediateTempVar *= anotherTempVar
-        goalX += globTempVar
-        goalY += immediateTempVar
-      endif
+      // chr_trait_return = STACK_POP
+      // Goto restoreTempRegs
     endif
   else
-    SeekNoCommit esc_recovery
+    Goto restoreTempRegs
   endif
-  SetVarByNum STACK_POP goalX
-  SetVarByNum STACK_POP goalY
-  if !(True)
-    label esc_recovery
-    STACK_TOSS 2
+elif Equal chr_trait_select chr_calc_moveOffset
+  #let move_hitFrame = var7
+  Goto saveTempRegs
+  if !(CalledFrom ExecuteAttack)
+    GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+    anotherTempVar = 0
+    if Equal immediateTempVar 1
+      chr_trait_return = 0
+      Goto restoreTempRegs
+      Return
+    elif OYDistBackEdge < -10
+    elif !(Equal currGoal cg_attack_reversal) && currGoal < cg_edgeguard
+      immediateTempVar = OTopNY - TopNY
+      if immediateTempVar <= 30
+        anotherTempVar = 1
+      endif
+    endif
+    if !(Equal anotherTempVar 0) 
+      GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
+      if immediateTempVar <= 10
+        anotherTempVar = 1
+      else
+        anotherTempVar = 0
+      endif
+    endif
+
+    if OCurrAction >= hex(0x60) && OCurrAction <= hex(0x61)
+      predictOOption globTempVar man_OTechOption
+      predictionConfidence immediateTempVar man_OTechOption
+      if immediateTempVar >= 0.3
+        chr_trait_return = 0
+        anotherTempVar = OPos * 20
+        if Equal globTempVar op_tech_in
+          chr_trait_return -= anotherTempVar
+        elif Equal globTempVar op_tech_out
+          chr_trait_return += anotherTempVar
+        endif
+      endif
+    elif Equal anotherTempVar 1
+      GetAttribute immediateTempVar attr_dashInitVel 1
+      // $ifAerialAttack()
+      //   if move_hitFrame > 10
+      //     move_hitFrame = 10
+      //   endif
+      // endif
+      immediateTempVar *= 0.4 * move_hitFrame * OPos
+      predictOOption globTempVar man_OBaitOption
+      predictionConfidence anotherTempVar man_OBaitOption  
+
+      if Equal globTempVar op_bait_move && anotherTempVar >= 0.3
+        predictOOption anotherTempVar man_OBaitDirection 
+        predictAverage globTempVar man_OXHitDist
+        globTempVar *= OPos
+        if Equal currGoal cg_attack_wall
+        elif Equal anotherTempVar op_baitdir_undershoot
+          // LOGSTR_NL str("UNDERSHOOT")
+          anotherTempVar = OXSpeed
+          anotherTempVar *= OPos
+          if OCurrAction >= hex(0x2) && OCurrAction <= hex(0x19) && anotherTempVar >= 0
+          else
+            immediateTempVar *= 5
+          endif
+          chr_trait_return = globTempVar * -1
+          chr_trait_return -= immediateTempVar
+        elif Equal anotherTempVar op_baitdir_overshoot
+          // LOGSTR_NL str("OVERSHOOT")
+          immediateTempVar = OPos * 15
+          GetYDistFloorOffset immediateTempVar immediateTempVar 5 1
+          if !(Equal immediateTempVar -1)
+            // immediateTempVar *= 5
+            chr_trait_return = globTempVar
+            chr_trait_return += immediateTempVar
+          endif
+        endif
+      endif
+    else 
+      chr_trait_return = 0
+    endif
+  else 
+    chr_trait_return = 0
   endif
+
+  Goto restoreTempRegs
+elif Equal chr_trait_select chr_calc_certainty
+  // chr calc_certainty
+  Goto saveTempRegs
+
+  GetCommitPredictChance anotherTempVar
+  PredictOMov immediateTempVar mov_roll
+  anotherTempVar += immediateTempVar
+
+  if anotherTempVar < 0.5
+    anotherTempVar -= 1
+    anotherTempVar *= -1
+  endif
+
+  chr_trait_return = anotherTempVar
+  Goto restoreTempRegs
+elif Equal chr_trait_select chr_calc_ORecoverPos
+  // chr calc_ORecoverPos
+  // STACK = [framesAhead, xVarTarget, yVarTarget]
+
+  #let GX = var0
+  #let GY = var1
+  #let framesAhead = var2
+  framesAhead = STACK_POP
+    
+  {EST_OWN_RECOVERY}
+
+  SetVarByNum STACK_POP GX
+  SetVarByNum STACK_POP GY
 endif
 Return
 label __ANGLE_FIX__
@@ -257,5 +307,13 @@ anotherTempVar = STACK_POP
 //   PRINTLN
 // endif
 SetVarByNum anotherTempVar immediateTempVar
+Return
+label saveTempRegs
+STACK_PUSH globTempVar st_function
+STACK_PUSH anotherTempVar st_function
+Return
+label restoreTempRegs
+anotherTempVar = STACK_POP
+globTempVar = STACK_POP
 Return
 Return

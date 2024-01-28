@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 12.89
 #const cs_jumpHeight = 29.87
 #const cs_djumpHeight = 29.87
-#const cs_wavedashDist = 15
+#const cs_wavedashDist = 25
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15
@@ -22,20 +22,20 @@
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistX = 105
+#const cs_recoveryDistY = -69
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
 #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+// #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
 #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
 
 /// recovery
-#const recovery_moves = uspecial
+// #const recovery_moves = uspecial
 
-#const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
-#const uspecial_recovery_info = common|60
+// #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
+// #const uspecial_recovery_info = common|60
 
 // jab123
 #const jab123_IASA = 15
@@ -148,43 +148,54 @@
 
 // usmash
 #const usmash_IASA = 54
-#const usmash_xOffset = -8.440
+#const usmash_xOffset = -31.756
 #const usmash_yOffset = 10.000
-#const usmash_xRange = 11.189
-#const usmash_yRange = 6.5
+#const usmash_xRange = 31.900
+#const usmash_yRange = 13.000
 #const usmash_hitFrame = 38
 #const usmash_lastHitFrame = 42
 #const usmash_damage_info = USmash|14|50|102|90
 
 // dsmash
 #const dsmash_IASA = 34
-#const dsmash_xOffset = -14.250
+#const dsmash_xOffset = -7.125
 #const dsmash_yOffset = 8.500
-#const dsmash_xRange = 7.125
+#const dsmash_xRange = 14.250
 #const dsmash_yRange = 5.25
 #const dsmash_hitFrame = 17
 #const dsmash_lastHitFrame = 36
 #const dsmash_damage_info = DSmash|13|35|80|40
 
 // noochB
-// TODO - watergun
-// #const nspecial_IASA = 9999.9999
-// #const nspecial_xOffset = 9999.9999
-// #const nspecial_yOffset = 9999.9999
-// #const nspecial_xRange = 9999.9999
-// #const nspecial_yRange = 9999.9999
-// #const nspecial_hitFrame = 9999.9999
-// #const nspecial_lastHitFrame = 9999.9999
+#const nspecial_IASA = 33
+#const nspecial_xOffset = 12.757
+#const nspecial_yOffset = 1.080
+#const nspecial_xRange = 40.345
+#const nspecial_yRange = 13.937
+#const nspecial_hitFrame = 26
+#const nspecial_lastHitFrame = 30
+#const nspecial_damage_info = NSpecial|-14|90|75|88
+
+#const nspecialair_IASA = 33
+#const nspecialair_xOffset = 8.375
+#const nspecialair_yOffset = 14.271
+#const nspecialair_xRange = 42.655
+#const nspecialair_yRange = 34.300
+#const nspecialair_hitFrame = 26
+#const nspecialair_lastHitFrame = 30
+#const nspecialair_damage_info = NSpecialAir|-14|90|75|88
+
+
 
 // upB
-// #const uspecial_IASA = 52
-// #const uspecial_xOffset = 23.1
-// #const uspecial_yOffset = -54.27
-// #const uspecial_xRange = 10.85
-// #const uspecial_yRange = 11.64
-// #const uspecial_hitFrame = 30
-// #const uspecial_lastHitFrame = 32
-// #const uspecial_damage_info = USpecial|9|60|103|83
+#const uspecial_IASA = 13
+#const uspecial_xOffset = -7.500
+#const uspecial_yOffset = 0.195
+#const uspecial_xRange = 7.500
+#const uspecial_yRange = 10.633
+#const uspecial_hitFrame = 5
+#const uspecial_lastHitFrame = 12
+#const uspecial_damage_info = USpecial|6|43|37|169
 
 // #const uspecialair_IASA = 117
 // #const uspecialair_xOffset = 23.26
@@ -199,15 +210,14 @@
 // TODONOT - absolutely do not
 
 // sideB
-// TODO - chain go brr lmao
-// #const sspecial_IASA = 88
-// #const sspecial_xOffset = -2.73
-// #const sspecial_yOffset = -0.59
-// #const sspecial_xRange = 2.72
-// #const sspecial_yRange = 2.75
-// #const sspecial_hitFrame = 5
-// #const sspecial_lastHitFrame = 7
-// #const sspecial_damage_info = SSpecial|15|40|110|80
+#const sspecial_IASA = 53
+#const sspecial_xOffset = 9.611
+#const sspecial_yOffset = -7.954
+#const sspecial_xRange = 39.000
+#const sspecial_yRange = 3.000
+#const sspecial_hitFrame = 17
+#const sspecial_lastHitFrame = 37
+#const sspecial_damage_info = SSpecial|0|0|0|0
 
 // grab
 #const grab_IASA = 32

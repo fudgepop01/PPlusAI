@@ -29,3 +29,8 @@
     immediateTempVar = 1000
   endif
 #endsnippet
+
+#snippet UNAFFECTED_Y_MOVES
+  $ifLastOrigin(sspecial,false)
+  $ifLastOrigin(sspecialair,true)
+#endsnippet

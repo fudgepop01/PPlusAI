@@ -5,6 +5,15 @@
     elif Equal AirGroundState 1 && !(Equal CurrSubaction JumpSquat)
       $setLastAttack(dspecial)
     endif
+  $elifLastAttack(nspecialair)
+    if Equal AirGroundState 2
+      lastAttack = -1
+    endif
+  endif
+  if currGoal >= cg_edgeguard
+    $ifLastList(uspecial;uspecialair;nspecial;nspecialair;sspecialair,if)
+      lastAttack = -1
+    endif
   endif
 #endsnippet
 

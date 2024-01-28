@@ -1,4 +1,13 @@
-#macro ACTIONABLE_ON_GROUND()
+#macro ACTIONABLE_ON_GROUND(lbName)
+  chr_trait_select = chr_chk_actionableOnGround
+  XGoto GetChrSpecific
+  Seek {lbName}
+  if Equal chr_trait_return 0 
+    Return
+  endif
+#endmacro
+
+#macro NOSEEK_ACTIONABLE_ON_GROUND()
   chr_trait_select = chr_chk_actionableOnGround
   XGoto GetChrSpecific
   if Equal chr_trait_return 0 
@@ -21,9 +30,21 @@
   $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
 #endmacro
 
+#macro GET_O_TRAIT(targetVar, targetTrait, default)
+  chr_trait_select = {targetTrait}
+  OXGoto GetChrSpecific
+  //= XReciever
+  if Equal chr_trait_return chr_trait_NOT_IMPLEMENTED
+    chr_trait_return = default
+  endif
+  $ifNEQThen({targetVar}, chr_trait_return, {targetVar} = chr_trait_return)
+#endmacro
+
 #macro IF_AERIAL_ATTACK(targetVar)
   #let isAerialAttack = {targetVar}
+  STACK_PUSH immediateTempVar st_function
   GET_CHAR_TRAIT(isAerialAttack, chr_chk_isAerialAttack)
+  immediateTempVar = STACK_POP
   if Equal isAerialAttack 1
 #endmacro
 
@@ -40,7 +61,12 @@
   $pushVarAsValue({targetXVar})
   STACK_PUSH {framesAhead} 0
   chr_trait_select = chr_calc_ORecoverPos
-  XGoto GetChrSpecific
+  OXGoto GetChrSpecific
+  if Equal chr_trait_return chr_trait_NOT_IMPLEMENTED
+    STACK_TOSS 3
+    EstOXCoord {targetXVar} {framesAhead}
+    EstOYCoord {targetYVar} {framesAhead}
+  endif
 
   var6 = STACK_POP
   var5 = STACK_POP
@@ -65,14 +91,14 @@
   // if left of ledge, xVar is positive
   // if right, xVar is negative
   GetNearestCliff {xVar}
-  {xVar} = TopNX - {xVar}
+  {xVar} = CenterX - {xVar}
   {yVar} *= -1
-  {yVar} += TopNY
+  {yVar} += CenterY
 #endmacro
 
 #macro NEAREST_CLIFF(xVar, yVar)
   GetNearestCliff {xVar}
-  {xVar} = TopNX - {xVar}
+  {xVar} = CenterX - {xVar}
   {xVar} *= -1
   {yVar} *= -1
   {yVar} += TopNY
@@ -104,7 +130,7 @@
 #endmacro
 
 #macro CALC_ENDLAG(targetVar)
-  #const imperfection = 5
+  #const imperfection = 4
   {targetVar} = -1
   RetrieveFullATKD immediateTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
   if Equal immediateTempVar 0
@@ -126,7 +152,6 @@
     {targetVar} = immediateTempVar - OEndFrame
     {targetVar} *= 1.25
     {targetVar} += globTempVar + anotherTempVar
-    
   elif Equal OCurrAction hex(0x18)
     {targetVar} = OEndFrame - OAnimFrame
     {targetVar} *= 0.65
@@ -134,8 +159,14 @@
     {targetVar} = OEndFrame - OAnimFrame
   elif Equal OCurrAction hex(0x21) && OYDistFloor > 15
     {targetVar} = 35
-  elif Equal OCurrAction hex(0x10) && OYDistFloor > 0
-    {targetVar} = OYDistFloor * 0.5
+  elif Equal OCurrAction hex(0x10)
+    if OYDistFloor > 0
+      {targetVar} = OYDistFloor * 0.8
+    else
+      immediateTempVar = OYDistBackEdge * 0.9
+      Abs immediateTempVar
+      {targetVar} = immediateTempVar + OXDistBackEdge
+    endif
   elif Equal OCurrAction hex(0x1A) || Equal OCurrAction hex(0x1B) || Equal OCurrAction hex(0x1C)
     GetAttribute immediateTempVar attr_jumpSquatFrames 1
     {targetVar} = 10 + immediateTempVar
@@ -149,6 +180,9 @@
     {targetVar} = immediateTempVar - OAnimFrame
   elif OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
     {targetVar} = OEndFrame - OAnimFrame
+    if OCurrAction >= hex(0x5A) && OCurrAction <= hex(0x5F)
+      {targetVar} = 80
+    endif
   elif OCurrAction >= hex(0x77) && OCurrAction <= hex(0x78)
     {targetVar} = OEndFrame - OAnimFrame
   elif OFramesHitstun > 0
@@ -795,10 +829,12 @@
 
 #macro CALC_FASTFALL_DIST(outVar, frameCount)
   globTempVar = {frameCount}
-  if Equal CurrSubaction JumpSquat
+  if Equal CurrSubaction JumpSquat || Equal AirGroundState 1 || Equal CurrAction hex(0xB) && Equal AnimFrame 0
+    GetAttribute immediateTempVar attr_jumpSquatFrames 0
+    globTempVar -= immediateTempVar
     GetAttribute immediateTempVar attr_jumpYInitVelShort 0
   else
-    immediateTempVar = YSpeed
+    immediateTempVar = TotalYSpeed
   endif
   CalcYChange {outVar} globTempVar immediateTempVar Gravity MaxFallSpeed FastFallSpeed 1
 #endmacro

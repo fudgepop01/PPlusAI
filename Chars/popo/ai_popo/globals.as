@@ -7,7 +7,10 @@
 #const cs_shortHopHeight = 11.25
 #const cs_jumpHeight = 36.45
 #const cs_djumpHeight = 33.8
-#const cs_wavedashDist = 55
+#const cs_wavedashDist = 58
+#const cs_recoveryDistX = 70
+#const cs_recoveryDistY = -50
+
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15
@@ -22,8 +25,6 @@
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)

@@ -7,7 +7,7 @@ label prep
 XGoto PerFrameChecks
 //= XReciever
 Stick 0 (-1)
-Seek
+Seek start
 Return
 label start
 XGoto PerFrameChecks
@@ -16,6 +16,7 @@ XGoto PerFrameChecks
   var22 = 15
   XGoto GetChrSpecific
   //= XReciever
+Seek start
 if YDistBackEdge >= var22
   Button X
 endif

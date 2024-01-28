@@ -11,6 +11,7 @@ endif
 label begin
 XGoto PerFrameChecks
 //= XReciever
+skipMainInit = mainInitSkip
 
 #let aggression = var0
 aggression = PT_AGGRESSION
@@ -34,6 +35,10 @@ baitChance = pt_baitChance
 if Equal AirGroundState 1
   // LOGSTR_NL str("AGS 1??")
 
+  #let OXHitDist = var2
+  predictAverage OXHitDist man_OXHitDist
+  OXHitDist += OWidth
+
   predictOOption immediateTempVar man_ODefendOption
   predictionConfidence globTempVar man_ODefendOption
   globTempVar *= 3.5
@@ -41,7 +46,12 @@ if Equal AirGroundState 1
     PredictOMov immediateTempVar mov_grab
     immediateTempVar *= 2.5
     if immediateTempVar < 0.25 || Equal OAirGroundState 2
-      CallI Shield
+      if XDistLE OXHitDist
+        CallI Shield
+      else
+        currGoal = cg_bait_shield
+        Call MainHub
+      endif
     endif
   endif
 
@@ -51,8 +61,7 @@ if Equal AirGroundState 1
     CallI Shield
   endif
 
-  #let OXHitDist = var2
-  predictAverage OXHitDist man_OXHitDist
+  
 
   immediateTempVar = TopNX
   globTempVar = OTopNX
@@ -100,10 +109,8 @@ if Equal AirGroundState 1
   else
     currGoal = cg_bait_dashdance
   endif
-  skipMainInit = mainInitSkip
   if Rnd < immediateTempVar && Rnd < immediateTempVar
     currGoal = cg_attack_reversal
-    skipMainInit = mainInitSkip
   endif
 
   anotherTempVar = OXHitDist + 15
@@ -152,8 +159,6 @@ if Equal currGoal cg_attack_inCombo
   immediateTempVar = TopNY - OTopNY
   if CHANCE_MUL_LE PT_AGGRESSION 0.10 && immediateTempVar < 20
     XGoto CalcAttackGoal
-    //= XReciever
-    skipMainInit = mainInitSkip
     CallI MainHub
   endif
 endif 
@@ -170,7 +175,6 @@ if ODistLE OXHitDist || anotherTempVar > 45
   if Equal currGoal cg_attack_inCombo && OTopNY < TopNY && CHANCE_MUL_LE immediateTempVar 8
     // LOGSTR_NL str("awayWithJump")
     scriptVariant = sv_aerialdrift_away_withJump
-    skipMainInit = mainInitSkip
     CallI AerialDrift
   elif CHANCE_MUL_LE immediateTempVar 4
     if NumJumps > 0 && CHANCE_MUL_LE PT_BRAVECHANCE 0.1
@@ -189,17 +193,15 @@ endif
 
 PredictOMov immediateTempVar mov_grab
 immediateTempVar *= 2
-if immediateTempVar < 0.30 && Rnd > immediateTempVar && Equal AirGroundState 1
+if immediateTempVar < 0.20 && Rnd > immediateTempVar && Equal AirGroundState 1
   CallI Shield
 endif
 currGoal = cg_attack_reversal
 if !(Equal lastAttack -1)
-  skipMainInit = mainInitSkip
   CallI MainHub
 else
   XGoto CalcAttackGoal
   //= XReciever
-  skipMainInit = mainInitSkip
   CallI MainHub
 endif 
 Return

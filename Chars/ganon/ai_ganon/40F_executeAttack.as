@@ -14,4 +14,9 @@
     endif
     Return
   endif
+
+  if Equal CurrAction hex(0x112) && Equal AirGroundState 2
+    Seek execGeneral
+    Jump
+  endif
 #endsnippet

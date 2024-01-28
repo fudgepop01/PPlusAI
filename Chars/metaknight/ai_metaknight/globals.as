@@ -7,7 +7,9 @@
 #const cs_shortHopHeight = 14.24
 #const cs_jumpHeight = 33.13
 #const cs_djumpHeight = 8.28
-#const cs_wavedashDist = 25
+#const cs_wavedashDist = 24
+#const cs_recoveryDistX = 170
+#const cs_recoveryDistY = -60
 
 #const pt_jumpiness = 0.1
 #const pt_djumpiness = 0.07
@@ -186,22 +188,22 @@
 
 // downB
 #const dspecial_IASA = 77
-#const dspecial_xOffset = -15.11
-#const dspecial_yOffset = 1.43
-#const dspecial_xRange = 9.61
-#const dspecial_yRange = 6.5
+#const dspecial_xOffset = -40
+#const dspecial_yOffset = 40
+#const dspecial_xRange = 40
+#const dspecial_yRange = 40
 #const dspecial_hitFrame = 26
 #const dspecial_lastHitFrame = 27
-#const dspecial_damage_info = dspecial|14|35|114|361
+#const dspecial_damage_info = DSpecial|14|35|114|361
 
 #const dspecialair_IASA = 77
-#const dspecialair_xOffset = -15.11
-#const dspecialair_yOffset = 1.43
-#const dspecialair_xRange = 9.61
-#const dspecialair_yRange = 6.5
+#const dspecialair_xOffset = -40
+#const dspecialair_yOffset = 40
+#const dspecialair_xRange = 40
+#const dspecialair_yRange = 40
 #const dspecialair_hitFrame = 26
 #const dspecialair_lastHitFrame = 27
-#const dspecialair_damage_info = dspecial|14|35|114|361
+#const dspecialair_damage_info = DSpecialAir|14|35|114|361
 
 // sideB
 // #const sspecial_IASA = 29

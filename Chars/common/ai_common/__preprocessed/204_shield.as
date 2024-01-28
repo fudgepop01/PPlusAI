@@ -20,12 +20,24 @@ if Equal var21 10.2 || var22 > 0.36
   var2 += var22
 endif
 if Equal var21 13.1
-  var2 *= 0.5
+  var2 *= 1.5
 endif
 label shield
 XGoto PerFrameChecks
 //= XReciever
 Seek shield
+
+  var22 = 0.004
+  XGoto GetChrSpecific
+  //= XReciever
+var1 = var22
+Seek shield
+if CurrAction >= 30 && CurrAction <= 32
+  Return
+elif CurrAction <= 16 && PrevAction >= 30 && PrevAction <= 32
+  var21 = 0
+  CallI MainHub
+endif
 
 if Equal CurrAction 57
   var21 = 16.4
@@ -42,33 +54,37 @@ if Equal var21 13.1
   endif
 else
   Button R
-  if Equal LevelValue 100
-    var22 = OPos * 0.5
-    var17 = OTopNY - TopNY
-    if var17 > 0.5
-      var17 = 0.5
-    else
-      var17 = -0.5
+  predictAverage var17 10
+  if XDistLE var17
+    if Equal LevelValue 100
+      var22 = OPos * 0.5
+      var17 = OTopNY - TopNY
+      if var17 > 0.5
+        var17 = 0.5
+      else
+        var17 = -0.5
+      endif
+      AbsStick var22 var17
     endif
-    AbsStick var22 var17
-  endif
-  GetCommitPredictChance var22
-  PredictOMov var23 15
-  if Rnd < 0.1 && var22 > 0.2
-    Goto rollOption
-  elif var23 > 0.2
-    Goto rollOption
+    if !(Equal var21 10.2)
+      GetCommitPredictChance var22
+      PredictOMov var23 15
+      if Rnd < 0.3 && var22 > 0.21
+        Goto rollOption
+      elif var23 > 0.12
+        Goto rollOption
+      endif
+    endif
   endif
 endif
 
 Seek shield
-// LOGSTR_NL 1701733376 1811939328 0 0 0
-// LOGVAL_NL var1
-
+// LOGSTR_NL str("endl")
+// LOGVAL_NL OEndLag
 if Equal CurrAction 29
-  MOD var17 var2 14
+  MOD var17 GameTimer 14
   if Equal var17 0
-    if var1 >= 25
+    if var1 >= 17
       AbsStick OPos
     else
       var22 = OPos * -1
@@ -77,16 +93,12 @@ if Equal CurrAction 29
   endif 
   var0 += 1
 endif
-  var22 = 0.004
-  XGoto GetChrSpecific
-  //= XReciever
-var1 = var22
-if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal var1 -1
+if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal var1 -1 && CurrAction <= 30
   var2 += 1
   Return
 endif
 
-MOD var17 var2 3
+MOD var17 GameTimer 3
 if Equal var17 0 || var2 <= 0
   if Equal CurrAction 27 || Equal CurrAction 17 || Equal CurrAction 18
     GetShieldRemain var17
@@ -133,18 +145,18 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
     if !(Equal var21 13.1)
       Button X
       Seek jumpExec
-      // LOGSTR_NL 1786080512 1885957632 1728053248 0 0
+      // LOGSTR_NL str("jumping")
       Return
     endif
     label jumpExec
-    // LOGSTR_NL 1702388992 1667853824 1728053248 0 0
+    // LOGSTR_NL str("execing")
     XGoto CalcAttackGoal
     //= XReciever
     var16 = 0
     XGoto SetAttackGoal
     //= XReciever
-    var15 = -1
-    var21 = 16.4
+    var15 = -10
+    var21 = 16.5
     CallI MainHub
   endif
 
@@ -157,7 +169,7 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
 endif
 
 if !(Equal var21 13.1)
-  // LOGSTR_NL 2003062784 1818321664 1694498816 0 0
+  // LOGSTR_NL str("wdPlace")
   if var1 > 15 && Rnd < 0.75
     Goto wdPunish
   elif var1 > 4 && Rnd < 0.4
@@ -190,20 +202,27 @@ Seek shield
 Return
 label wdPunish
 var16 = 1
-if XDistBackEdge > -10 && XDistFrontEdge < 10
+if XDistBackEdge > -10 || XDistFrontEdge < 10
   var16 = 4
 endif
-var15 = -1
-var21 = 16.4
+var15 = -10
+var21 = 16.5
 CallI Wavedash
 label rollOption
-if Rnd < 0.03333333333333333
+Seek RO_Exec
+ClearStick
+Return
+label RO_Exec
+Button R
+var22 = Rnd
+if var22 < 0.2
   AbsStick OPos
-elif Rnd < 0.06666666666666667
+elif var22 < 0.4
   var22 = OPos * -1
   AbsStick var22
-elif Rnd < 0.1
+else
   AbsStick 0 (-1)
 endif
+Seek shield
 Return
 Return

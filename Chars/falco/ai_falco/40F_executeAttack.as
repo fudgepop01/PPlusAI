@@ -19,6 +19,7 @@
 #snippet DSPECIAL
   if ActionTimer >= 6
     Button X
+    AbsStick OPos
     Seek finish
     Jump
   endif
@@ -26,8 +27,10 @@
 
 #snippet DSPECIALAIR
   if ActionTimer >= 6
+    AbsStick OPos
     Button X
-    CallI MainHub
+    Seek finish
+    Jump
   endif
 #endsnippet
 
@@ -55,7 +58,7 @@
     endif
     Return
   elif True
-    if AnimFrame >= 5 && Rnd <= techSkill && Equal IsOnStage 1 && Equal AirGroundState 2
+    if ActionTimer >= 6 && Rnd <= techSkill && Equal IsOnStage 1 && Equal AirGroundState 2
       scriptVariant = sv_execute_fastfall
     endif
   endif

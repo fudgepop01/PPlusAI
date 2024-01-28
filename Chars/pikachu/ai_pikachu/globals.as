@@ -7,12 +7,12 @@
 #const cs_shortHopHeight = 11.76
 #const cs_jumpHeight = 30.18
 #const cs_djumpHeight = 27.84
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 25
 
 #const dashForceTurnFrame = 10
 #const dashDanceMinFrames = 2
 #const cs_recoveryDistX = 90
-#const cs_recoveryDistY = -90
+#const cs_recoveryDistY = -95
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.02
@@ -113,22 +113,22 @@
 
 // noochB
 #const nspecial_IASA = 44
-#const nspecial_xOffset = 0
+#const nspecial_xOffset = 40
 #const nspecial_yOffset = 0
-#const nspecial_xRange = 40
+#const nspecial_xRange = 60
 #const nspecial_yRange = 5
 #const nspecial_hitFrame = 18
-#const nspecial_lastHitFrame = 118
-#const nspecial_damage_info = NSpecial|0|0|0|0
+#const nspecial_lastHitFrame = 19
+#const nspecial_damage_info = NSpecial|-10|30|60|361
 
 #const nspecialair_IASA = 50
-#const nspecialair_xOffset = 0
+#const nspecialair_xOffset = 40
 #const nspecialair_yOffset = 40
-#const nspecialair_xRange = 40
+#const nspecialair_xRange = 60
 #const nspecialair_yRange = 45
 #const nspecialair_hitFrame = 18
-#const nspecialair_lastHitFrame = 118
-#const nspecialair_damage_info = NSpecialAir|0|0|0|0
+#const nspecialair_lastHitFrame = 19
+#const nspecialair_damage_info = NSpecialAir|-10|30|60|361
 
 // upB
 // TODO: pikachu offensive UpB

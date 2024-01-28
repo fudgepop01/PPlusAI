@@ -21,7 +21,9 @@
 #const cs_shortHopHeight = 14.04
 #const cs_jumpHeight = 37.26
 #const cs_djumpHeight = 25.08
-#const cs_wavedashDist = 25
+#const cs_wavedashDist = 21
+#const cs_recoveryDistX = 90
+#const cs_recoveryDistY = -80
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -151,7 +153,7 @@
 #const nspecial_yRange = 15
 #const nspecial_hitFrame = 76
 #const nspecial_lastHitFrame = 86
-#const nspecial_damage_info = NSpecial|12|100|64|70
+#const nspecial_damage_info = NSpecial|-12|100|64|70
 
 #const nspecialair_IASA = 87
 #const nspecialair_xOffset = -20
@@ -160,7 +162,7 @@
 #const nspecialair_yRange = 15
 #const nspecialair_hitFrame = 76
 #const nspecialair_lastHitFrame = 86
-#const nspecialair_damage_info = NSpecialAir|12|100|64|70
+#const nspecialair_damage_info = NSpecialAir|-12|100|64|70
 
 // upB
 #const uspecial_IASA = 100
@@ -170,7 +172,7 @@
 #const uspecial_yRange = 50
 #const uspecial_hitFrame = 20
 #const uspecial_lastHitFrame = 80
-#const uspecial_damage_info = USpecial|14|60|60|80
+#const uspecial_damage_info = USpecial|-14|60|60|80
 
 #const uspecialair_IASA = 100
 #const uspecialair_xOffset = -50
@@ -179,7 +181,7 @@
 #const uspecialair_yRange = 50
 #const uspecialair_hitFrame = 20
 #const uspecialair_lastHitFrame = 80
-#const uspecialair_damage_info = USpecialAir|14|60|60|80
+#const uspecialair_damage_info = USpecialAir|-14|60|60|80
 
 #const mv_uspecial_pkt2 = 1
 #const uspecial_pkt2_IASA = 170
@@ -189,7 +191,7 @@
 #const uspecial_pkt2_yRange = 20
 #const uspecial_pkt2_hitFrame = 80
 #const uspecial_pkt2_lastHitFrame = 120
-#const uspecial_pkt2_damage_info = USpecial|25|60|80|361
+#const uspecial_pkt2_damage_info = USpecial|-25|60|80|361
 
 #const mv_uspecialair_pkt2 = 1
 #const uspecialair_pkt2_IASA = 170
@@ -199,7 +201,7 @@
 #const uspecialair_pkt2_yRange = 20
 #const uspecialair_pkt2_hitFrame = 80
 #const uspecialair_pkt2_lastHitFrame = 120
-#const uspecialair_pkt2_damage_info = USpecialAir|25|60|80|361
+#const uspecialair_pkt2_damage_info = USpecialAir|-25|60|80|361
 
 // downB
 #const dspecial_IASA = 22
@@ -229,7 +231,7 @@
 #const sspecial_yRange = 8
 #const sspecial_hitFrame = 25
 #const sspecial_lastHitFrame = 44
-#const sspecial_damage_info = SSpecial|0|0|0|0
+#const sspecial_damage_info = SSpecial|-8|15|0|97
 
 #const sspecialair_IASA = 54
 #const sspecialair_xOffset = 0
@@ -238,7 +240,7 @@
 #const sspecialair_yRange = 15
 #const sspecialair_hitFrame = 20
 #const sspecialair_lastHitFrame = 44
-#const sspecialair_damage_info = SSpecialAir|0|0|0|0
+#const sspecialair_damage_info = SSpecialAir|-8|15|0|97
 
 // grab
 #const grab_IASA = 32

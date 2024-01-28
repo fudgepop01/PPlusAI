@@ -64,13 +64,17 @@ if immediateTempVar <= 5 && CurrAction >= hex(0x1)
   Seek execute
 endif
 AbsStick globTempVar
-DrawDebugRectOutline midGoal TopNY 5 5 color(0xFF880055)
+if Equal CurrAction hex(0x1)
+  ClearStick
+endif
+// DrawDebugRectOutline midGoal TopNY 5 5 color(0xFF880055)
 Return
 label execute
-DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880099)
-MOD immediateTempVar AnimFrame 3
+Seek execute
+// DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880099)
+MOD immediateTempVar GameTimer 3
 if Equal AirGroundState 1 && immediateTempVar <= 1
-  ACTIONABLE_ON_GROUND
+  ACTIONABLE_ON_GROUND(execute)
   label ground_jump
   Button X
   ClearStick
@@ -81,6 +85,7 @@ if Equal AirGroundState 1 && immediateTempVar <= 1
     Seek adrift
     Jump
   endif
+  Seek ground_jump
   Return
 elif Equal AirGroundState 2
   label air_jump
@@ -89,19 +94,21 @@ elif Equal AirGroundState 2
     immediateTempVar = xGoal - TopNX
     immediateTempVar /= 15
   endif
-  Seek
+  Seek adrift
   Return 
 endif
 
 label adrift
 XGoto PerFrameChecks
+if !(Equal lastAttack -1) 
+  XGoto SetAttackGoal
+  XGoto CheckAttackWillHit
+endif
 //= XReciever
 Seek adrift
-DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880088)
-if TopNY > yGoal || YSpeed < -0.1 || !(Equal AirGroundState 2)
-  if currGoal >= cg_attack
-    skipMainInit = mainInitSkip
-  endif
+// DrawDebugRectOutline xGoal yGoal 5 5 color(0xFF880088)
+if TopNY > yGoal || YSpeed < -0.1 || YDistFloor < 2 && AnimFrame > 4 
+  skipMainInit = mainInitSkip
   CallI MainHub
 endif
 immediateTempVar = xGoal - TopNX + XSpeed * 11

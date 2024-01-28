@@ -20,6 +20,9 @@
   #let trickAngleValue = var10
   hasTriedToUpB = 0
   jumpValue = Rnd
+  if cliffDistY < UpBYDist || cliffDistX > UpBXDist
+    jumpValue = 0
+  endif
   highUpBValue = Rnd
   highHighUpBValue = Rnd
   downBValue = Rnd
@@ -36,8 +39,21 @@
   #let nearCliffX = var0
   #let nearCliffY = var1
   #let absNCX = var2
-  NEAREST_CLIFF(nearCliffX, nearCliffY)
   
+  GetColDistPosRel globTempVar globTempVar TopNX TopNY 3 0 0
+  if globTempVar > 0
+    ClearStick
+    AbsStick -1
+    Return
+  endif
+  GetColDistPosRel globTempVar globTempVar TopNX TopNY -3 0 0
+  if globTempVar > 0
+    ClearStick
+    AbsStick 1
+    Return
+  endif
+
+  NEAREST_CLIFF(nearCliffX, nearCliffY)
   // drift towards goal
   globTempVar = nearCliffX * -1
   ClearStick
@@ -48,27 +64,28 @@
   globTempVar = TopNY - BBoundary
 
   {PRE_CONDITIONS}
-  if downBValue <= downBChance && YDistBackEdge > -downBHeight && YDistBackEdge < downBHeight && absNCX <= downBRange
+  if downBValue <= downBChance && YDistBackEdge < downBHeight && YDistBackEdge < downBHeight && absNCX <= downBRange
     Button B
     ClearStick
     Stick 0 (-1)
     Return
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
+  if highUpBValue <= highUpBChance && YDistBackEdge < calc(UpBYDist - 40) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if highHighUpBValue <= highHighUpBChance && YDistBackEdge > calc(UpBYDist - 100) && Equal hasTriedToUpB 0
+  if highHighUpBValue <= highHighUpBChance && YDistBackEdge < calc(UpBYDist - 100) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+  immediateTempVar = UpBYDist - tolerence + HurtboxSize
+  if absNCX <= UpBXDist && YDistBackEdge < immediateTempVar && YSpeed < 0 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
@@ -79,12 +96,14 @@
     if YDistBackEdge > calc(cs_djumpHeight - 12) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 30) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     else
       hasTriedToUpB = 1
@@ -97,6 +116,25 @@
 #endsnippet
 
 #snippet USPECIAL
+  if ActionTimer < 5 || Equal CurrAction hex(0x114)
+    immediateTempVar = 0
+
+    anotherTempVar = HurtboxSize + 8 * Scale
+    globTempVar = TopNY - 20
+    GetColDistPosRel immediateTempVar globTempVar TopNX globTempVar 50 anotherTempVar false
+    if immediateTempVar > 0
+      AbsStick -1 (-1)
+    endif
+    globTempVar = TopNY - 20
+    GetColDistPosRel globTempVar anotherTempVar TopNX globTempVar -50 anotherTempVar false
+    if globTempVar > 0
+      AbsStick 1 (-1)
+    endif
+    if immediateTempVar > 0 || globTempVar > 0
+      Return
+    endif
+  endif
+
   #const startDist = 60
   #const endDist = 6
   #const time = 20
@@ -133,20 +171,22 @@
 
   #let targetPosX = var3
   #let targetPosY = var4
+  #let distFromSelf = var2
 
   globTempVar = timer / time
   globTempVar *= calc(startDist - endDist)
   globTempVar += endDist
   Norm immediateTempVar nearCliffX nearCliffY
+  Abs immediateTempVar
 
   targetPosX = nearCliffX / immediateTempVar
   targetPosX *= globTempVar
   
   targetPosY = nearCliffY / immediateTempVar
-  targetPosY *= globTempVar * 1.2
+  targetPosY *= globTempVar * 1.5
 
-  targetPosX = TopNX + targetPosX
-  targetPosY = TopNY + targetPosY
+  targetPosX = CenterX + targetPosX
+  targetPosY = CenterY + targetPosY
 
   DrawDebugRectOutline targetPosX targetPosY 5 5 color(0xFF8800DD)
 
@@ -169,6 +209,8 @@
 
   if !(Equal PKTXPos 0) && !(Equal PKTYPos 0)
     Norm anotherTempVar PKTXSpd PKTYSpd
+    Abs anotherTempVar
+    distFromSelf = anotherTempVar * 5
     // LOGSTR str("totalVel")
     // LOGVAL anotherTempVar
     immediateTempVar = PKTXSpd / anotherTempVar
@@ -182,14 +224,15 @@
     // LOGSTR str("XVel, YVel")
     // LOGVAL immediateTempVar
     // LOGVAL globTempVar
-    immediateTempVar *= 10
-    globTempVar *= 10 
+    immediateTempVar *= distFromSelf
+    globTempVar *= distFromSelf 
     immediateTempVar = immediateTempVar + PKTXPos - targetPosX
     globTempVar = globTempVar + PKTYPos - targetPosY
     // LOGSTR str("xdist ydist")
     // LOGVAL immediateTempVar
     // LOGVAL globTempVar
     Norm anotherTempVar immediateTempVar globTempVar
+    Abs anotherTempVar
     if timer > 0 && anotherTempVar <= 25
       timer -= 1
     endif

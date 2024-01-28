@@ -23,7 +23,7 @@
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3
 #const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistY = -60
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -147,14 +147,14 @@
 #const dsmash_damage_info = DSmash|6|55|125|110
 
 // noochB
-// TODO - watergun
-// #const nspecial_IASA = 9999.9999
-// #const nspecial_xOffset = 9999.9999
-// #const nspecial_yOffset = 9999.9999
-// #const nspecial_xRange = 9999.9999
-// #const nspecial_yRange = 9999.9999
-// #const nspecial_hitFrame = 9999.9999
-// #const nspecial_lastHitFrame = 9999.9999
+#const nspecialair_IASA = 34
+#const nspecialair_xOffset = 6.626
+#const nspecialair_yOffset = 2.948
+#const nspecialair_xRange = 35.254
+#const nspecialair_yRange = 9.997
+#const nspecialair_hitFrame = 18
+#const nspecialair_lastHitFrame = 26
+#const nspecialair_damage_info = NSpecialair|-2|0|100|20
 
 // upB
 #const uspecial_IASA = 52
@@ -196,8 +196,7 @@
 #const dspecialair_damage_info = DSpecialAir|3|20|100|35
 
 // sideB
-// TODO - risk/reward?
-#const sspecial_IASA = 88
+#const sspecial_IASA = 44
 #const sspecial_xOffset = -2.73
 #const sspecial_yOffset = -0.59
 #const sspecial_xRange = 2.72
@@ -205,6 +204,15 @@
 #const sspecial_hitFrame = 5
 #const sspecial_lastHitFrame = 7
 #const sspecial_damage_info = SSpecial|15|40|110|80
+
+#const sspecialair_IASA = 44
+#const sspecialair_xOffset = -2.73
+#const sspecialair_yOffset = -0.59
+#const sspecialair_xRange = 2.72
+#const sspecialair_yRange = 2.75
+#const sspecialair_hitFrame = 5
+#const sspecialair_lastHitFrame = 7
+#const sspecialair_damage_info = SSpecialAir|15|40|110|80
 
 // grab
 #const grab_IASA = 32

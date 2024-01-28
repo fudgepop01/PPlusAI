@@ -147,8 +147,11 @@ cmd DynamicDiceAdd : 0x84 ds val weightVal
 cmd DynamicDiceRoll : 0x85 ds variable shouldRemove
 cmd DynamicDiceClear : 0x86 ds
 cmd DynamicDiceSize : 0x87 ds variable
+cmd OXGoto : 0x88 @AIID
 
 cmd ADJUST_PERSONALITY : 0x90 pt_index amount multiplier
+
+cmd SetVarAttackData : 0x91 xOffset yOffset xRange yRange hitFrame duration IASA dmg isWeightDependent bkb kbg
 
 //DEBUGGING CODES
 
@@ -194,6 +197,7 @@ cmd SAFE_INJECT_F : 0xCF variable
 cmd DrawDebugPoint : 0xD0 x y red green blue alpha
 cmd DrawDebugLine : 0xD1 x1 y1 x2 y2 red green blue alpha
 cmd DrawDebugRectOutline : 0xD2 cx cy width height red green blue alpha
+cmd DrawDebugCircle : 0xD3 cx cy radius red green blue alpha
 
 // changes the overlay color for a character
 cmd EnableDebugOverlay : 0xE0

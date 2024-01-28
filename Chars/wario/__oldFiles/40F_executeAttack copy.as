@@ -57,7 +57,7 @@ if Equal CurrSubaction JumpSquat
   endif
 endif
 
-ACTIONABLE_ON_GROUND
+ACTIONABLE_ON_GROUND(start)
 
 IF_AERIAL_ATTACK(var0)
   if Equal AirGroundState 1

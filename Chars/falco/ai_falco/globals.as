@@ -12,7 +12,7 @@
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 6
 #const cs_recoveryDistX = 90
-#const cs_recoveryDistY = -60
+#const cs_recoveryDistY = -55
 
 #const pt_aggression = 1.25
 #const pt_bait_dashAwayChance = 0.35

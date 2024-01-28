@@ -22,12 +22,12 @@ Seek begin
 
 if AnimFrame > 2
   if Equal var21 16.71
-    // LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
+    LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
     var0 = OTopNX - TopNX
     var1 = var0
     Abs var1
 
-    if XDistLE 40 && CHANCE_MUL_LE PT_AGGRESSION 0.25
+    if var1 <= 45 && CHANCE_MUL_LE PT_AGGRESSION 0.25
       if OCurrAction >= 272 && AnimFrame > 20
         Button R
         Call MainHub
@@ -37,10 +37,10 @@ if AnimFrame > 2
         else
           Stick -1
         endif
-        var21 = 16.7
+        var21 = 16.71
         XGoto CalcAttackGoal
         //= XReciever
-        var15 = -1
+        var15 = -10
         Call MainHub
         Return
       endif
@@ -53,7 +53,7 @@ if AnimFrame > 2
     elif OYDistBackEdge < 25 && var1 < 50
       Button R
       Call MainHub
-    elif !(XDistLE 70)
+    elif var1 > 70 && Equal OAirGroundState 2
       if Rnd < 0.2
         Seek exec_wait
         Jump
@@ -77,7 +77,7 @@ if AnimFrame > 2
       Button X
       if CHANCE_MUL_LE PT_AGGRESSION 0.75
         var21 = 16
-        var15 = -1
+        var15 = -10
       endif
       Call MainHub
     elif Equal var22 3
@@ -95,7 +95,7 @@ if AnimFrame > 2
       XGoto CalcAttackGoal
       //= XReciever
       Stick -1
-      Seek
+      Seek _jAttack
       Return
       label _jAttack
       XGoto PerFrameChecks
@@ -103,7 +103,7 @@ if AnimFrame > 2
       Seek _jAttack
 
       if YDistBackEdge <= 0
-        var15 = -2
+        var15 = -20
         var21 = 16
         Call MainHub
       elif YDistBackEdge > 5

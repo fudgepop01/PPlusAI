@@ -17,7 +17,7 @@ Seek drop
 Button R
 if timer >= 2
   immediateTempVar = timer - 1
-  MOD immediateTempVar immediateTempVar 8
+  MOD immediateTempVar GameTimer 8
   immediateTempVar *= -0.125
   // LOGVAL immediateTempVar
   Stick 0 immediateTempVar

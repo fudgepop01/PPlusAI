@@ -12,10 +12,10 @@ Return
 label start
 XGoto PerFrameChecks
 //= XReciever
-Seek start
 
 #let HSize = var0
 GET_CHAR_TRAIT(immediateTempVar, chr_cs_djumpHeight)
+Seek start
 immediateTempVar -= 10
 if YDistBackEdge >= immediateTempVar
   Button X

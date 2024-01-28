@@ -7,17 +7,12 @@
 #const cs_shortHopHeight = 14.59
 #const cs_jumpHeight = 37.35
 #const cs_djumpHeight = 37.35
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 27
 
 #const dashForceTurnFrame = 13
 #const dashDanceMinFrames = 2
-#const cs_recoveryDistX = 150
-#const cs_recoveryDistY = -80
-
-// #const recovery_moves = uspecial|sspecial
-
-// #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1F1))
-// #const uspecial_recovery_info = common|60
+#const cs_recoveryDistX = 40
+#const cs_recoveryDistY = -69
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.02
@@ -149,8 +144,16 @@
 #const nspecial_lastHitFrame = 10
 #const nspecial_damage_info = NSpecial|8|15|120|72
 
+#const nspecialair_IASA = 40
+#const nspecialair_xOffset = -3.82
+#const nspecialair_yOffset = -0.54
+#const nspecialair_xRange = 3.83
+#const nspecialair_yRange = 3.83
+#const nspecialair_hitFrame = 6
+#const nspecialair_lastHitFrame = 10
+#const nspecialair_damage_info = NSpecialAir|8|15|120|72
+
 // upB
-// TODO: pikachu offensive UpB
 // #const uspecial_IASA = 29
 // #const uspecial_xOffset = -4.69
 // #const uspecial_yOffset = 1.5
@@ -161,7 +164,7 @@
 // #const uspecial_damage_info = USpecial|6|60|80|80
 
 // downB
-#const dspecial_IASA = 79
+#const dspecial_IASA = 50
 #const dspecial_xOffset = -11.72
 #const dspecial_yOffset = 2.72
 #const dspecial_xRange = 11.72
@@ -170,24 +173,24 @@
 #const dspecial_lastHitFrame = 44
 #const dspecial_damage_info = DSpecial|17|100|60|361
 
-#const dspecial_IASA = 79
-#const dspecial_xOffset = -3.5
-#const dspecial_yOffset = 3.5
-#const dspecial_xRange = 7
-#const dspecial_yRange = 212
-#const dspecial_hitFrame = 15
-#const dspecial_lastHitFrame = 41
-#const dspecial_damage_info = DSpecial|14|100|38|70
+#const dspecialair_IASA = 50
+#const dspecialair_xOffset = -3.5
+#const dspecialair_yOffset = 180
+#const dspecialair_xRange = 7
+#const dspecialair_yRange = 212
+#const dspecialair_hitFrame = 15
+#const dspecialair_lastHitFrame = 41
+#const dspecialair_damage_info = DSpecialAir|14|100|38|70
 
 // sideB
-// #const sspecial_IASA = 51
-// #const sspecial_xOffset = 3.86
-// #const sspecial_yOffset = -5.07
-// #const sspecial_xRange = 4.76
-// #const sspecial_yRange = 4.86
-// #const sspecial_hitFrame = 16
-// #const sspecial_lastHitFrame = 29
-// #const sspecial_damage_info = SSpecial|0|0|0|0
+#const sspecial_IASA = 51
+#const sspecial_xOffset = 3.86
+#const sspecial_yOffset = -5.07
+#const sspecial_xRange = 4.76
+#const sspecial_yRange = 4.86
+#const sspecial_hitFrame = 16
+#const sspecial_lastHitFrame = 29
+#const sspecial_damage_info = SSpecial|8|40|75|30
 
 // grab
 #const grab_IASA = 32

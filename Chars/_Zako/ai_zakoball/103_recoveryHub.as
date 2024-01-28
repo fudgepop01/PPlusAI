@@ -45,9 +45,10 @@
       immediateTempVar -= 20
     endif
     if YDistBackEdge > immediateTempVar || globTempVar < 18
-      if NumJumps > 0 && Rnd < 0.5
+      if NumJumps > 0
         Button X
         Goto handleJumpToStage
+        Seek begin
         Return
       else
         Button B

@@ -6,12 +6,29 @@ unk 0x0
 // because some things might rely on these being unset
 label reroll
   GetNearestCliff var0
-  var0 = TopNX - var0
+  var0 = CenterX - var0
   var0 *= -1
   var1 *= -1
   var1 += TopNY
+  if var1 > 0
+    var22 = Direction * var0
+    if var22 > 0
+      var22 = Width * 2 
+      if var0 > 0
+        var0 -= var22
+      else
+        var0 += var22
+      endif
+    endif
+  endif
 Abs var0
   var5 = Rnd
+
+var5 = 0
+var6 = 0
+if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+  var6 = HurtboxSize + 45 * Rnd
+endif
 label begin
 var21 = 3
 SetDebugOverlayColor 255 136 0 221
@@ -26,6 +43,8 @@ Seek begin
 
 GetNearestCliff var0
 GetReturnGoal var1
+
+// {CLIFF_OFFSET}
 
 
 
@@ -54,51 +73,70 @@ if !(Equal var17 -1) || !(Equal var22 -1)
 endif
 
   GetNearestCliff var0
-  var0 = TopNX - var0
+  var0 = CenterX - var0
   var0 *= -1
   var1 *= -1
   var1 += TopNY
+  if var1 > 0
+    var22 = Direction * var0
+    if var22 > 0
+      var22 = Width * 2 
+      if var0 > 0
+        var0 -= var22
+      else
+        var0 += var22
+      endif
+    endif
+  endif
 
 var17 = 0
-if Equal CurrAction 16
-  var17 = 1
+if CurrAction >= 98 && CurrAction <= 108 && AnimFrame < 8
+  Return
+elif Equal CurrAction 16
   Goto handleSFall
+  var17 = 1
 elif Equal CurrAction 276
-  var17 = 1
   Goto handleUSpecial
+  var17 = 1
 elif Equal CurrAction 274
-  var17 = 1
   Goto handleNSpecial
+  var17 = 1
 elif Equal CurrAction 275
-  var17 = 1
   Goto handleSSpecial
-elif Equal CurrAction 277
   var17 = 1
+elif Equal CurrAction 277
   Goto handleDSpecial
+  var17 = 1
 elif CurrAction >= 11 && CurrAction <= 13
-  if YDistBackEdge < -10
-    var21 = 0
-    var20 = -1
-    Call MainHub 
-  elif YSpeed > 0 || AnimFrame < 8
-    var17 = 1
-    Goto handleJumpToStage
-    Return
-  endif
-endif
-
-if YDistFloor > -1 
-  if Equal AirGroundState 1 || Equal CurrAction 190
+  if YDistFloor > -1
     var21 = 0
     var20 = -1
     var14 = BBoundary
     var13 = 0
     Call MainHub
-  elif !(Equal var17 0)
+  elif CharYSpeed > 0 || AnimFrame < 2
+    var17 = 1
+    Goto handleJumpToStage
+    Seek begin
+    if AnimFrame < 10
+      Return
+    endif
+  endif
+endif
+Seek begin
+
+if YDistFloor > -1
+  if !(Equal var17 0)
     ClearStick
     var17 = TopNX * -1
     AbsStick var17
     Return
+  elif CurrAction <= 25 || Equal CurrAction 190
+    var21 = 0
+    var20 = -1
+    var14 = BBoundary
+    var13 = 0
+    Call MainHub
   endif
 elif HasCurry && Equal HitboxConnected 1
   var21 = 0
@@ -127,7 +165,7 @@ endif
   endif
 
   GetNearestCliff var0
-  var0 = TopNX - var0
+  var0 = CenterX - var0
   var0 *= -1
   var1 *= -1
   var1 += TopNY
@@ -141,13 +179,14 @@ endif
   var17 = TopNY - BBoundary
   var1 -= TotalYSpeed
   var1 += HurtboxSize
-  if !(NoOneHanging) && !(Equal var16 1)
-    // LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
-    // 6 += 25
-  endif
+  // if !(NoOneHanging) && !(Equal var16 1)
+  //   LOGSTR_NL 1936682240 1701801472 1696622592 1634625280 1768843008
+  //   6 += 25
+  // endif
   if YDistBackEdge < 31.57 && var2 <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
+    Seek begin
     Return
   endif
   if var5 <= 1 && NumJumps > 0
@@ -168,9 +207,10 @@ endif
       var22 -= 20
     endif
     if YDistBackEdge > var22 || var17 < 18
-      if NumJumps > 0 && Rnd < 0.5
+      if NumJumps > 0
         Button X
         Goto handleJumpToStage
+        Seek begin
         Return
       else
         Button B

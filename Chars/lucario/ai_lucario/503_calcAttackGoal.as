@@ -13,6 +13,15 @@
       lastAttack = -1
     endif
   endif
+  $ifLastOrigin(nspecial,false)
+    lastAttack = -1
+  $ifLastOrigin(nspecialair,true)
+    lastAttack = -1
+  $ifLastOrigin(dspecial,true)
+    lastAttack = -1
+  $ifLastOrigin(dspecialair,true)
+    lastAttack = -1
+  endif
 #endsnippet
 
 #snippet POST_CHOICE_FILTER
@@ -34,7 +43,7 @@
       if Equal AirGroundState 1
         immediateTempVar -= 1
       endif
-      if immediateTempVar > 1.8
+      if immediateTempVar > 2.5
         Button B
         AbsStick 0 (-1)
         $setLastAttack(dspecial)

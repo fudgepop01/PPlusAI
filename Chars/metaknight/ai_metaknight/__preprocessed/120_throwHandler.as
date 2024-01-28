@@ -15,7 +15,7 @@ Return
 // framesAfterHitlag = 0
 
 // #let moveAngle = var1
-// GET_MOVE_DATA(moveAngle, var17, var17, var17, var17, var17, var17, var17, var17, var17, var17, var17)
+// GET_MOVE_DATA(moveAngle, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
 
 // label start
 
@@ -32,37 +32,37 @@ Return
 //       endif
 //     endif
 
-//     var22 = moveAngle + 3
-//     var23 = moveAngle - 3
-//     if OKBAngle > var22
-//       trackOAction 5 1
-//     elif OKBAngle < var23
-//       trackOAction 5 3
+//     immediateTempVar = moveAngle + 3
+//     anotherTempVar = moveAngle - 3
+//     if OKBAngle > immediateTempVar
+//       trackOAction man_ODIAngle op_DI_in
+//     elif OKBAngle < anotherTempVar
+//       trackOAction man_ODIAngle op_DI_out
 //     elif Rnd < 0.5
-//       trackOAction 5 2
+//       trackOAction man_ODIAngle op_DI_neutral
 //     endif
 //   endif
 // endif
 
-// if CurrAction < 52 || CurrAction > 60
+// if CurrAction < hex(0x34) || CurrAction > hex(0x3C)
 //   XGoto CalcAttackGoal
 //   //= XReciever
 //   if OFramesHitstun <= 1
-//     var21 = 16.3
+//     currGoal = cg_attack_wall
 //   else
-//     var15 = -1
-//     var21 = 16.4
+//     skipMainInit = mainInitSkip
+//     currGoal = cg_attack_reversal
 //   endif
 //   CallI MainHub
-// elif Equal CurrAction 57 && AnimFrame > 8
+// elif Equal CurrAction hex(0x39) && AnimFrame > 8
 //   if Rnd < 0.7
-//     GetYDistFloorOffset var22 20 10 0
-//     if Equal var22 -1
+//     GetYDistFloorOffset immediateTempVar 20 10 0
+//     if Equal immediateTempVar -1
 //       AbsStick 1 0
 //       Return
 //     endif
-//     GetYDistFloorOffset var22 -20 10 0
-//     if Equal var22 -1
+//     GetYDistFloorOffset immediateTempVar -20 10 0
+//     if Equal immediateTempVar -1
 //       AbsStick -1 0
 //       Return
 //     endif

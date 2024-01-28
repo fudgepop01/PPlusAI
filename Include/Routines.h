@@ -378,6 +378,7 @@ act LedgeDash : 0x820D
 act FastAerial : 0x8401
 act ExecuteAttack : 0x840F
 
+act CalcORecPos : 0x8600
 
 act DashAttack : 0x603E
 

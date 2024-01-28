@@ -7,7 +7,9 @@
 #const cs_shortHopHeight = 13.39
 #const cs_jumpHeight = 34.59
 #const cs_djumpHeight = 34.59
-#const cs_wavedashDist = 35
+#const cs_wavedashDist = 52
+#const cs_recoveryDistX = 80
+#const cs_recoveryDistY = -53
 
 #const cs_dashForceTurnFrame = 17
 #const cs_dashDanceMinFrames = 8
@@ -41,6 +43,17 @@
 
 #const sspecial_subaction_check = !(Equal CurrSubaction hex(0x1D4)) && !(Equal CurrSubaction hex(0x1D5))
 #const sspecial_recovery_info = custom
+
+// hover
+#const mv_hover = 1
+#const hover_IASA = 4
+#const hover_xOffset = -50
+#const hover_yOffset = 50
+#const hover_xRange = 100
+#const hover_yRange = 75
+#const hover_hitFrame = 10
+#const hover_lastHitFrame = 40
+#const hover_damage_info = NAir|0|0|0|0
 
 // jab123
 #const jab123_IASA = 17

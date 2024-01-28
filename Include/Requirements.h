@@ -45,11 +45,11 @@ req OutOfStage : 0x100D
 ///Not sure but used in some files
 req InAirOnSaved : 0x100E
 
-///We haven't figured out what action 0x1E and 0x1D mean.
+///IsTargetingSelf
 req Act1EOr1D : 0x100F
 
 ///Still being Researched
-req Act1EOr1D : 0x100F zeroToTwo
+req Action1EOr1D : 0x100F zeroToTwo
 
 ///If any character is within certain range, returns true.
 req CharDistLE : 0x1010

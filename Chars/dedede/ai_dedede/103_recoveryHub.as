@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 50
-  #const UpBYDist = -115
+  #const UpBXDist = 53
+  #const UpBYDist = 90
 
   #const jumpChance = 0.35
   #const highUpBChance = 0.45
@@ -14,7 +14,7 @@
   #let tolerence = var8
   tolerence = 10
   hasTriedToUpB = 0
-  jumpValue = Rnd
+  jumpValue = 0
   if cliffDistY < UpBYDist || cliffDistX > UpBXDist
     jumpValue = 0
   endif
@@ -33,7 +33,8 @@
   #let absNCX = var2
   
   DIST_TO_CLIFF(cliffDistX, cliffDistY)
-  
+  cliffDistY += HurtboxSize
+  hasTriedToUpB = 0
   // drift towards goal
   ClearStick
   AbsStick cliffDistX
@@ -45,7 +46,7 @@
   if highUpBValue <= highUpBChance && cliffDistY <= calc(UpBYDist + 70) && Equal hasTriedToUpB 0
     $recoverVar(up)
   endif
-  anotherTempVar = UpBYDist + tolerence
+  anotherTempVar = UpBYDist - tolerence
   if absNCX <= UpBXDist && cliffDistY < anotherTempVar && Equal hasTriedToUpB 0 && Equal isBelowStage 0
     $recoverVar(up)
   endif 
@@ -128,7 +129,9 @@
     immediateTempVar = HurtboxSize - 6
     if NoOneHanging && cliffDistY > immediateTempVar
       Abs cliffDistX
-      if highUpBChance > highUpBValue || OYDistFloor < 0 && cliffDistX < Width
+      cliffDistX -= 25
+      if YDistFloor > 0 || cliffDistY > 24
+      elif highUpBChance > highUpBValue || OYDistFloor < 0 && cliffDistX < Width
         ClearStick
         AbsStick 0 (-1)
       endif

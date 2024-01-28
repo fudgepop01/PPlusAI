@@ -4,13 +4,21 @@ unk 0x0
 
 //= XReciever
 NoRepeat
+RESET_LTF_STACK_PTR
+
+if !(Equal DEBUG_VALUE 0)
+  if currGoal < cg_edgeguard
+    currGoal = cg_attack_shieldPunish
+  endif
+  SeekNoCommit debug_value_latk
+endif
 
 // FIXME debug thing maybe
 // SetDebugMode false
 // yep, move choice is COOOOOMPLICATED lmao
 #let result = var0
 #let move_angle = var1
-#let move_hitFrame = var2
+// #let move_hitFrame = var2
 #let move_xRange = var3
 #let move_baseKnockback = var4
 #let move_xOffset = var5
@@ -34,17 +42,17 @@ anotherTempVar = 0
 if OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && !(Equal OCurrAction hex(0x49))
   anotherTempVar = 1
 endif
-if !(Equal immediateTempVar op_baitdir_overshoot) && currGoal < cg_edgeguard && Equal currGoal cg_attack && !(Equal scriptVariant sv_campAttack) && OFramesHitstun <= 0 && Equal anotherTempVar 0 && YDistFloor < 25
-  predictOOption anotherTempVar man_ODefendOption 
-  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-  predictionConfidence globTempVar man_ODefendOption
-  globTempVar *= 2
-  if Equal immediateTempVar 1
-  elif !(Equal anotherTempVar op_defend_shield) && Rnd < globTempVar && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
-    lastAttack = -1
-    currGoal = cg_attack_wall
-  endif
-endif
+// if !(Equal immediateTempVar op_baitdir_overshoot) && currGoal < cg_edgeguard && Equal currGoal cg_attack && !(Equal scriptVariant sv_campAttack) && OFramesHitstun <= 0 && Equal anotherTempVar 0 && YDistFloor < 25
+//   predictOOption anotherTempVar man_ODefendOption 
+//   Goto checkOInCombo
+//   predictionConfidence globTempVar man_ODefendOption
+//   globTempVar *= 2
+//   if Equal immediateTempVar 1
+//   elif !(Equal anotherTempVar op_defend_shield) && Rnd < globTempVar && CHANCE_MUL_LE PT_WALL_CHANCE 1.2 && SamePlane
+//     lastAttack = -1
+//     currGoal = cg_attack_wall
+//   endif
+// endif
 
 if Equal currGoal cg_attack_wall && YDistFloor > 25
   currGoal = cg_attack
@@ -357,19 +365,20 @@ DynamicDiceClear dslot0
 // ///////////////////////////////////////////////////////////////
 immediateTempVar = OFramesHitstun * 0.75
 EstOYCoord immediateTempVar immediateTempVar
-anotherTempVar = OHurtboxSize * 2
+anotherTempVar = OHurtboxSize
 immediateTempVar -= TopNY 
 immediateTempVar -= anotherTempVar
 
 aerialChecks = 1
-PredictOMov anotherTempVar mov_jump
-anotherTempVar *= 0.2
+// PredictOMov anotherTempVar mov_jump
+// anotherTempVar *= 0.2
 if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
 elif Equal CurrSubaction JumpSquat || CalledFrom Shield
-elif YDistFloor > 20 || OYDistFloor > 45
+elif YDistFloor > 5 && YSpeed > -0.25 && CurrAction <= hex(0x20) || OYDistFloor > 45
 elif immediateTempVar > 5
 elif YDistFloor > 8 && XDistLE 15
 elif OCurrAction >= hex(0x42) && OCurrAction <= hex(0x64) && immediateTempVar > 20
+elif CurrAction >= hex(0x73) && CurrAction <= hex(0x7B)
 else
   aerialChecks = 0
 endif
@@ -394,56 +403,66 @@ endif
 {COMBO_ROUTINES}
 
 // perform these expensive calculations once for efficiency
-if LevelValue >= LV7
-  // EstOYDistFloor
-  EstOYCoord globTempVar 10 
-  globTempVar -= OTopNY
-  globTempVar += OYDistFloor
-  if globTempVar < 0
-    globTempVar = 0
-  endif
-  STACK_PUSH globTempVar 1 
 
-  GetAttribute immediateTempVar attr_dashInitVel 0
-  GetAttribute globTempVar attr_airXTermVel 0
-  // XTerminalVelocity
-  if globTempVar > immediateTempVar
-    STACK_PUSH globTempVar 1
-  else
-    STACK_PUSH immediateTempVar 1
-  endif
+// EstOTopNY
+immediateTempVar = OTotalYSpeed / OGravity
+if OTotalYSpeed < 0
+  immediateTempVar = 10
+endif
+EstOYCoord globTempVar immediateTempVar
+STACK_PUSH globTempVar 1
 
-  // jumpVelocity
-  GetAttribute immediateTempVar attr_jumpYInitVel 0
+// EstOYDistFloor
+globTempVar -= OTopNY
+globTempVar += OYDistFloor
+if globTempVar < 0
+  globTempVar = 0
+endif
+Goto checkOInCombo
+if immediateTempVar > 0
+  globTempVar += 7
+endif
+anotherTempVar = globTempVar
+STACK_PUSH globTempVar 1
+
+GetAttribute immediateTempVar attr_dashInitVel 0
+GetAttribute globTempVar attr_airXTermVel 0
+// XTerminalVelocity
+if globTempVar > immediateTempVar
+  STACK_PUSH globTempVar 1
+else
   STACK_PUSH immediateTempVar 1
-
-  // OEndLag
-  Goto getOEndlag
-  STACK_PUSH immediateTempVar 1
-  
-  immediateTempVar = OTopNX
-  anotherTempVar = OTopNY
-  // OTopNY
-  STACK_PUSH anotherTempVar 1 
-  // OTopNX
-  STACK_PUSH immediateTempVar 1 
-  // ESTOYDISTFLOOR AT START
-  // TopNX
-  STACK_PUSH TopNX 1
-  // TopBZ
-  STACK_PUSH TBoundary 1
-  // nearXBZ
-  if immediateTempVar > 0
-    STACK_PUSH RBoundary 1
-  else
-    STACK_PUSH LBoundary 1
-  endif
-  // stageWidth
-  Goto approxStageWidth
-  STACK_PUSH globTempVar 1 // stageWidth
 endif
 
-loopCounter = 60 * ((6 - PlayerCount) * 0.25)
+// jumpVelocity
+GetAttribute immediateTempVar attr_jumpYInitVel 0
+anotherTempVar -= OHurtboxSize
+if anotherTempVar > cs_djumpHeight && !(HasCurry)
+  immediateTempVar = 0
+endif
+STACK_PUSH immediateTempVar 1
+
+// OEndLag
+Goto getOEndlag
+STACK_PUSH immediateTempVar 1
+
+// EstOTopNX
+GetAttribute immediateTempVar attr_airFrictionX 1
+anotherTempVar = OTotalXSpeed
+Abs anotherTempVar
+anotherTempVar /= immediateTempVar
+anotherTempVar *= OTotalXSpeed
+if Equal OAirGroundState 1
+  anotherTempVar = OTotalXSpeed * 4
+endif
+anotherTempVar += OTopNX
+STACK_PUSH anotherTempVar 1 
+// stageWidth
+Goto approxStageWidth
+STACK_PUSH globTempVar 1 // stageWidth
+
+
+loopCounter = 30 * ((6 - PlayerCount) * 0.25)
 SeekNoCommit __DICE_LOOP__
 LOGSTR_NL str("dice loop")
 if !(True)
@@ -480,10 +499,10 @@ endif
 if !(True)
   label __ADDITIONAL_FILTERS__
   $ifLastOrigin(grab,false)
-    if CurrAction >= hex(0x34) && CurrAction <= hex(0x3A)
+    if Equal CurrAction hex(0x3C) 
       Return
     endif
-    if Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack || Equal currGoal cg_attack_wall 
+    if Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack || Equal currGoal cg_attack_wall || OIsCharOf GigaBowser
       lastAttack = -1
       Return
     endif
@@ -493,7 +512,7 @@ if !(True)
   elif Equal OAirGroundState 1
     // predict the chance that the opponent will crouch
     PredictOMov immediateTempVar mov_crouch
-    if immediateTempVar > 0.10
+    if immediateTempVar > 0.07
       move_baseKnockback *= 0.67
       move_knockbackGrowth *= 0.67
     endif
@@ -512,16 +531,17 @@ if !(True)
       Return
     endif
   endif
-  if Equal scriptVariant sv_campAttack
+
+  if Equal scriptVariant sv_campAttack && move_IASA > 60
     if move_damage > 0
       lastAttack = -1
     endif
-  elif Equal move_damage 0
-    if Equal currGoal cg_bait_attack || Equal currGoal cg_attack_wall
-    else
-      lastAttack = -1
-      Return
-    endif
+  // elif Equal move_damage 0
+  //   if Equal currGoal cg_bait_attack || Equal currGoal cg_attack_wall
+  //   elif XDistLE 15
+  //     lastAttack = -1
+  //     Return
+  //   endif
   elif Equal currGoal cg_attack_wall && move_IASA > 120
     lastAttack = -1
     Return
@@ -565,14 +585,23 @@ DynamicDiceRoll dslot1 lastAttack 0
 {POST_CHOICE_FILTER}
 
 SetDebugMode TEMP_DEBUG_TOGGLE
+// SETTER
+// $setLastAttack(uair)
+// fixme
+if !(True)
+  label debug_value_latk
+  lastAttack = DEBUG_VALUE - 1
+endif
 
 LOGVAL lastAttack
 LOGSTR str("CHOSEN ATTACK")
 CALL_EVENT(chr_cs_moveName)
 PRINTLN
 
-// SETTER
-// $setLastAttack(fsmash)
+// Goto getOEndlag
+// LOGSTR str("OENDL")
+// LOGVAL immediateTempVar
+// PRINTLN
 
 DynamicDiceClear dslot0
 DynamicDiceClear dslot1
@@ -610,11 +639,14 @@ label check_hub
         immediateTempVar *= 0.5
       else
         GetAttribute anotherTempVar attr_jumpSquatFrames 0
-        move_hitFrame += anotherTempVar + 1
+        move_hitFrame += anotherTempVar + 2
         GetAttribute anotherTempVar attr_gravity 0
         if anotherTempVar > 0.06
           immediateTempVar *= 0.5
         endif
+        immediateTempVar += move_hitFrame
+        anotherTempVar = move_IASA * 0.4
+        immediateTempVar += anotherTempVar
       endif
 
       if immediateTempVar <= move_IASA
@@ -629,19 +661,43 @@ label check_hub
   // if Equal currGoal cg_bait_attack
   //   SetDebugMode true
   // endif
+  LOGVAL lastAttack
   CALL_EVENT(chr_cs_moveName)
   // PRINTLN
 
   // if Equal priority priority_jabReset
   //   Goto jabreset_check
   if move_damage <= 0
-    move_damage *= -1
-    anotherTempVar = TopNX - OTopNX
-    Abs anotherTempVar
-    rollWeight = anotherTempVar * 2
-    if Equal move_damage 0
-      rollWeight *= 2.25
+    immediateTempVar = TopNX - OTopNX
+    Abs immediateTempVar
+    immediateTempVar += 1
+    rollWeight = immediateTempVar * move_xRange * 0.05
+    // if anotherTempVar > 100
+    //   anotherTempVar = 100
+    // endif
+    // rollWeight += anotherTempVar
+    GetAttribute anotherTempVar attr_dashInitVel fromOpponent 
+    anotherTempVar *= 0.25
+    anotherTempVar *= move_IASA
+    predictAverage globTempVar man_OXHitDist
+    // LOGSTR str("distChk")
+    // LOGVAL globTempVar
+    // LOGVAL immediateTempVar
+    if Equal currGoal cg_camp_attack
+      rollWeight *= 2
+    endif
+    if YDistFloor < 0
+      PRINTLN
+      Return
+    elif Equal move_damage 0
+      if move_IASA <= 10
+        rollWeight *= 3
+      endif
+      rollWeight *= 15
       Goto addMove
+      PRINTLN
+      Return
+    elif immediateTempVar < anotherTempVar || immediateTempVar < globTempVar 
       PRINTLN
       Return
     endif
@@ -649,27 +705,33 @@ label check_hub
     PRINTLN
     Return 
   elif !(Equal currGoal cg_camp_attack) 
-    $ifLastOrigin(grab,false)
-      if move_angle > 180
-        rollWeight = ODamage * 0.5 * Rnd
-        Goto dirCheck
-        PRINTLN
-        Return
-      endif
-    endif    
+    // $ifLastOrigin(grab,false)
+    //   if move_angle > 180
+    //     rollWeight = ODamage * 0.5 * Rnd
+    //     Goto dirCheck
+    //     PRINTLN
+    //     Return
+    //   endif
+    // endif    
     if !(Equal currGoal cg_attack_wall) && !(Equal currGoal cg_attack_inCombo)
       // "lol" said the programmer, "lmao"
       RESET_LTF_STACK_PTR
       
+      // EstOTopNY
+      anotherTempVar = LTF_STACK_READ
+      // EstOYDistFloor
       immediateTempVar = LTF_STACK_READ
       IF_AERIAL_ATTACK(var11)
+      $ifLastOrigin(grab,true)
+        immediateTempVar = 1
       elif OYDistFloor < 0
-        immediateTempVar = TopNY - YDistFloor
+        anotherTempVar = TopNY - YDistFloor
+        immediateTempVar = 0
       else 
-        immediateTempVar = OTopNY - OYDistFloor
+        anotherTempVar = OTopNY - OYDistFloor
       endif
-      // rollWeightVariable ODamage OWeight moveAngle moveBaseKnockback moveKnockbackGrowth moveHitFrame moveDuration moveIASA moveDamage moveIsWeightDependent XTerminalVelocity jumpVelocity OEndLag OTopNY OTopNX EstOYDistFloor TopNX TopBZ NearXBZ stageWidth
-      CalcMoveWeight rollWeight ODamage OWeight move_angle move_baseKnockback move_knockbackGrowth move_hitFrame move_duration move_IASA move_damage move_isWeightDependent LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ immediateTempVar LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ
+      // rollWeightVariable ODamage OWeight moveAngle moveBaseKnockback moveKnockbackGrowth moveHitFrame moveDuration moveIASA moveDamage moveIsWeightDependent          XTerminalVelocity jumpVelocity   OEndLag        EstOTopNX      TopNX TopBZ     xBZ       stageWidth     EstOTopNY      EstOYDistFloor
+      CalcMoveWeight rollWeight ODamage OWeight move_angle move_baseKnockback move_knockbackGrowth move_hitFrame move_duration move_IASA move_damage move_isWeightDependent LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ TopNX TBoundary RBoundary LTF_STACK_READ anotherTempVar immediateTempVar
     $ifLastOrigin(grab,true)
       Return
     else
@@ -681,79 +743,16 @@ label check_hub
 
   PRINTLN
 Return
-label jabreset_check
-  // I know, it's supposed to be moves that deal < 7% but at this
-  // point i'm out of variables lmao
-  if move_damage <= 7
-    rollWeight += 1000
-  endif
-Return
+// label jabreset_check
+//   if move_damage <= 7
+//     rollWeight += 50
+//   endif
+// Return
 label dirCheck
   LOGSTR str("BASE")
   LOGVAL rollWeight
 
   {MOVE_CALC_MODIFIERS}
-
-  // O above
-  $tempVar(dirY, globTempVar)
-  GET_CHAR_TRAIT(dirY, chr_get_moveDirY)
-
-  if !(Equal dirY 0)
-    immediateTempVar = 0
-    if CurrAction >= hex(0x24)
-      immediateTempVar = AnimFrame - EndFrame
-      if immediateTempVar > 30
-        immediateTempVar = 30
-      endif
-    endif
-    anotherTempVar = immediateTempVar
-    EstOYCoord immediateTempVar anotherTempVar
-
-    #let distDiff = var11
-    distDiff = OYCoord - immediateTempVar
-    if OYDistFloor > 0 && OYDistFloor < 5
-      immediateTempVar = OYCoord
-    elif distDiff > OYDistFloor && OYDistFloor > 0
-      immediateTempVar = OYCoord - OYDistFloor
-    endif
-
-    EstYCoord anotherTempVar anotherTempVar
-    distDiff = YCoord - anotherTempVar
-    if distDiff > YDistFloor && YDistFloor > 0
-      anotherTempVar = YCoord - YDistFloor
-    endif
-    // OEstPos - EstPos
-    // pos = above
-    // neg = below
-    immediateTempVar -= anotherTempVar
-    anotherTempVar = immediateTempVar
-    anotherTempVar -= HurtboxSize
-
-    if anotherTempVar > 0
-      if dirY > 0
-        rollWeight *= 2.5
-      else
-        rollWeight *= 0.1
-      endif
-    elif dirY > 0
-      rollWeight *= 0.1
-    endif
-
-    // O below
-    anotherTempVar = immediateTempVar
-    anotherTempVar += OHurtboxSize
-
-    if anotherTempVar <= 0
-      if Equal OIsOnStage 0
-      elif dirY < 0
-        rollWeight *= 1.85
-      else
-        rollWeight *= 0.1
-      endif
-    endif
-    LOGSTR str("YDIRS")
-    LOGVAL rollWeight
-  endif
 
   // O mid
   // globTempVar = TopNY - OTopNY
@@ -770,19 +769,35 @@ label dirCheck
 
   anotherTempVar = TopNY - OTopNY
   globTempVar = TopNX - OTopNX
+  Abs anotherTempVar
+  anotherTempVar *= 0.5
   Abs globTempVar
   if globTempVar > anotherTempVar
-    $tempVar(dirX, immediateTempVar)
-    GET_CHAR_TRAIT(dirX, chr_get_moveDir)
-    anotherTempVar = TopNX - OTopNX
-    globTempVar = move_hitFrame * XSpeed
-    globTempVar -= anotherTempVar
-    Abs globTempVar
+    GetAttribute immediateTempVar attr_dashRunTermVel fromSelf
+    GetAttribute anotherTempVar attr_dashInitVel fromSelf
+    if anotherTempVar < immediateTempVar
+      immediateTempVar = anotherTempVar
+    endif
+    if immediateTempVar > 0
+      immediateTempVar *= 1.5
+    else
+      immediateTempVar *= 0.5
+    endif
+    move_xRange /= immediateTempVar
+    move_xOffset /= immediateTempVar
+
+    $ifAerialAttack()
+      anotherTempVar = immediateTempVar * 1.5
+      anotherTempVar += 1
+      move_xRange *= anotherTempVar
+    endif
+    
     if OFramesHitstun < 5
-      anotherTempVar = move_xOffset
-      Abs anotherTempVar
-      anotherTempVar += move_xRange
-      anotherTempVar += move_xRange
+      anotherTempVar = TopNX - OTopNX
+      globTempVar = move_hitFrame * XSpeed
+      globTempVar -= anotherTempVar
+      Abs globTempVar
+      Goto getMaxXDist
       if globTempVar >= anotherTempVar
         anotherTempVar = move_xRange + move_xOffset
         immediateTempVar = move_xOffset
@@ -790,9 +805,10 @@ label dirCheck
         if immediateTempVar > anotherTempVar
           anotherTempVar = immediateTempVar
         endif
-        if anotherTempVar > 30
-          anotherTempVar = 20
-        endif
+        // if anotherTempVar > 50
+        //   anotherTempVar = 25
+        // endif
+
         anotherTempVar *= 0.75
         rollWeight += anotherTempVar
         rollWeight += anotherTempVar
@@ -806,119 +822,181 @@ label dirCheck
         anotherTempVar += 1
         rollWeight *= anotherTempVar
 
-
-        if Equal IsOnStage 1
-          if Equal AirGroundState 1 || YDistFloor < OFramesHitstun
+        $tempVar(dirX, immediateTempVar)
+        GET_CHAR_TRAIT(dirX, chr_get_moveDir)
+        if currGoal < cg_edgeguard
+          anotherTempVar = TopNX - OTopNX
+          Abs anotherTempVar
+          if var11 > 0 && Equal AirGroundState 2 || YDistFloor < OFramesHitstun && YDistFloor > -1 && anotherTempVar < 35
             if Equal Direction OPos && dirX >= 0 
               rollWeight *= 1.75
             elif !(Equal Direction OPos) && dirX < 0 
               rollWeight *= 1.75
-            elif !(Equal dirX 0)
+            elif !(Equal dirX 0) && anotherTempVar < 30
               rollWeight *= 0.05
             endif
           endif
         endif
       else
-        rollWeight *= 5
+        rollWeight *= 2.5
+      endif
+    else
+      immediateTempVar = OTopNX + OTotalXSpeed * move_hitFrame
+      anotherTempVar = TopNX + TotalXSpeed * move_hitFrame
+      immediateTempVar -= anotherTempVar
+      Abs immediateTempVar
+      Goto getMaxXDist
+      if immediateTempVar < anotherTempVar
+        immediateTempVar *= 0.15
+        rollWeight += immediateTempVar
+        rollWeight *= 2
       endif
     endif
-    $ifLastOrigin(grab,false)
-      if globTempVar < 35
-        GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-        PredictOMov globTempVar mov_shield
-        if globTempVar > 0.3 && OYDistFloor < 20 && OYDistFloor > -1
-          if Equal immediateTempVar 0
-            immediateTempVar = globTempVar + 1
-            rollWeight *= immediateTempVar
-          endif
-          rollWeight *= 2.25
-        endif
-      endif
+    if !(True)
+      label getMaxXDist
+      anotherTempVar = move_xOffset
+      Abs anotherTempVar
+      anotherTempVar += move_xRange
+      anotherTempVar += move_xRange
+      Return
     endif
 
     LOGSTR str("XDIR")
     LOGVAL rollWeight
   endif
+  $ifLastOrigin(grab,false)
+    PredictOMov globTempVar mov_shield
+    if globTempVar > 0.15 && OYDistFloor < 20 && OYDistFloor > -1
+      rollWeight *= 2
+    endif
+    globTempVar *= 3
+    globTempVar += 0.8
+    rollWeight *= globTempVar
+  endif
   if !(True)
     label aftDirs
   endif
-  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-  if !(Equal currGoal cg_attack_wall) && Equal immediateTempVar 0
+  Goto checkOInCombo
+  anotherTempVar = immediateTempVar
+  Goto getOEndlag
+  if !(Equal currGoal cg_attack_wall) && Equal anotherTempVar 0 && immediateTempVar < 10
+    anotherTempVar = immediateTempVar
     Goto addIfFastHit
     LOGSTR str("FHIT")
     LOGVAL rollWeight
-  endif
-  Goto getOEndlag
-  immediateTempVar += 5
-  anotherTempVar = immediateTempVar
-  if move_hitFrame <= immediateTempVar 
-    immediateTempVar -= move_hitFrame
-    immediateTempVar *= 0.1
-    immediateTempVar += 1
-    rollWeight *= immediateTempVar
-  endif
-  LOGSTR str("OENDL")
-  LOGVAL rollWeight
-    
-  if Equal currGoal cg_attack_wall
-    if move_duration <= 3
-      immediateTempVar = move_duration + 1
-      immediateTempVar = rollWeight / immediateTempVar
-      rollWeight *= immediateTempVar
-    elif True
-      immediateTempVar = move_duration - 3
-      immediateTempVar *= 0.15
-      rollWeight *= immediateTempVar
-    endif
-    // LOGSTR str("INTERM")
-    // LOGVAL rollWeight
-    // PAUSE
-  endif
+  else 
+    // anotherTempVar = TopNX - OTopNX
+    // Abs anotherTempVar
+    // globTempVar = move_xRange * 3
+    // if anotherTempVar < globTempVar
+      anotherTempVar = immediateTempVar
+      if immediateTempVar < 5
+        immediateTempVar = 5
+      endif
+      // predictAverage globTempVar man_OXHitDist
+      immediateTempVar -= move_hitFrame
+      immediateTempVar *= 0.05
+      // if immediateTempVar < 0
+      //   immediateTempVar *= 0.15
+      // else
+      // endif
+      // itv = advantage * 0.05
+      immediateTempVar += 3
 
-  Goto getEndlag
-  immediateTempVar -= anotherTempVar
-  GetAttribute anotherTempVar attr_dashInitVel 1
-  // LOGSTR str("[[ O dashInitVel")
-  // LOGVAL anotherTempVar
-  anotherTempVar *= 1.15
-  immediateTempVar *= anotherTempVar
-  anotherTempVar *= move_IASA
-  // LOGSTR str("no-range val")
-  // LOGVAL anotherTempVar
-  // STACK_PUSH anotherTempVar st_function
-  // anotherTempVar = TopNX - OTopNX
-  // Abs anotherTempVar
-  // LOGSTR str("distance ]]")
-  // LOGVAL anotherTempVar
-  // anotherTempVar = STACK_POP
-  // if Equal scriptVariant sv_campAttack
-  //   anotherTempVar *= 0.75
+      if immediateTempVar > 4
+        immediateTempVar = 4
+      elif immediateTempVar < 0
+        immediateTempVar = 0
+      endif
+
+      if immediateTempVar > 1 || move_damage > 0
+        rollWeight *= immediateTempVar
+      endif
+
+      LOGSTR str("OENDL")
+      LOGVAL rollWeight
+    // endif
+  endif
+    
+  // if Equal currGoal cg_attack_wall
+  //   if move_duration <= 3
+  //     immediateTempVar = move_duration + 1
+  //     immediateTempVar = rollWeight / immediateTempVar
+  //     rollWeight *= immediateTempVar
+  //   elif True
+  //     immediateTempVar = move_duration - 3
+  //     immediateTempVar *= 0.15
+  //     rollWeight *= immediateTempVar
+  //   endif
+  //   // LOGSTR str("INTERM")
+  //   // LOGVAL rollWeight
+  //   // PAUSE
   // endif
-  if Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack || Equal scriptVariant sv_campAttack
-    if XDistLE anotherTempVar
+
+  if anotherTempVar < move_hitFrame && currGoal < cg_edgeguard && !(Equal currGoal cg_inHitstun)
+    Goto getEndlag
+    // LOGVAL immediateTempVar
+    // endlag - (OEndLag + 5)
+    // immediateTempVar -= anotherTempVar
+    GetAttribute anotherTempVar attr_dashInitVel 1
+    anotherTempVar *= 0.5
+    // ... *= OInitDashVel * 1.15
+    immediateTempVar *= anotherTempVar
+    // OInitDashVel * 1.15 * move_IASA
+    anotherTempVar *= move_IASA
+    predictAverage globTempVar man_OXHitDist
+    globTempVar *= 0.5
+    anotherTempVar += globTempVar
+
+    if Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack
+      if XDistLE anotherTempVar
+        Return
+      endif
+    endif
+    if move_damage < 0 && XDistLE anotherTempVar
       Return
     endif
-  endif
-  if Equal move_baseKnockback -1 && XDistLE anotherTempVar
-    Return
-  endif
-  if immediateTempVar > 25 || Equal currGoal cg_attack_wall
+
+
+    $tempVar(mEndlag,globTempVar)
+    mEndlag = immediateTempVar
+
+    // mEndlag = dist covered by opponent during endlag
+    // anotherTempVar = dist between self and opponent
+    anotherTempVar = move_xRange + move_xOffset
+    immediateTempVar = OTopNX - TopNX
+    Abs immediateTempVar
     if Equal currGoal cg_attack_wall
-      immediateTempVar *= 0.25
-      rollWeight -= immediateTempVar
-      immediateTempVar *= 0.05
-    else
-      immediateTempVar -= 20
-      immediateTempVar *= 0.025
+      immediateTempVar -= 10
+      anotherTempVar += move_xRange
+      anotherTempVar += OWidth
     endif
-    immediateTempVar += 1
-    rollWeight /= immediateTempVar
+    if immediateTempVar < anotherTempVar
+      anotherTempVar = immediateTempVar
+    endif
+    GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+
+    // LOGSTR str("mel;atv")
+    // LOGVAL mEndlag
+    // LOGVAL anotherTempVar
+    // LOGVAL move_xRange
+    // LOGVAL move_xOffset
+    if anotherTempVar < mEndlag && Equal immediateTempVar 0
+      mEndlag -= anotherTempVar
+      mEndlag *= 0.005
+      mEndlag += 1
+      rollWeight /= mEndlag
+    endif
+
+    LOGSTR str("S_ENDL")
+    LOGVAL rollWeight
   endif
+
   if !(Equal currGoal cg_attack_wall)
     $ifLastAttack(grab)
     $ifLastOrigin(grab,true)
       PredictOMov anotherTempVar mov_shield
-      if anotherTempVar > 0.2 && !(Equal scriptVariant sv_fastAttack)
+      if anotherTempVar > 0.18 && !(Equal scriptVariant sv_fastAttack)
         anotherTempVar = 100 * anotherTempVar
         rollWeight += anotherTempVar
         anotherTempVar *= 0.1
@@ -929,20 +1007,30 @@ label dirCheck
         rollWeight *= 3
       endif
     endif
+    LOGSTR str("GRAB_MOD")
+    LOGVAL rollWeight
   endif
-
-  LOGSTR str("S_ENDL")
-  LOGVAL rollWeight
   
   if !(True)
     label addMove
+  endif
+
+  
+  if move_damage <= 0
+    rollWeight *= 5
   endif
   immediateTempVar = LevelValue / 100
   anotherTempVar = Rnd
   if anotherTempVar < immediateTempVar
     anotherTempVar = immediateTempVar
   endif
+  if rollWeight < 0
+    LOGSTR str("NEGATIVE")
+    Return
+  endif
   rollWeight *= anotherTempVar
+  rollWeight *= 0.01
+  rollWeight *= rollWeight
   LOGSTR str("FINAL")
   LOGVAL rollWeight
   if rollWeight > 0
@@ -957,6 +1045,11 @@ label getEndlag
     if Equal IsOnStage 1
       immediateTempVar = move_IASA
     endif
+  endif
+  GetCommitPredictChance anotherTempVar
+  $ifLastOrigin(grab,false)
+  elif anotherTempVar < 0.13 && OFramesHitstun < move_hitFrame
+    immediateTempVar *= 5
   endif
 Return
 label getOEndlag
@@ -973,13 +1066,13 @@ label addIfFastHit
   if immediateTempVar < 0
     immediateTempVar = 15 - move_hitFrame
     if Equal scriptVariant sv_fastAttack
-      immediateTempVar *= 0.65
+      immediateTempVar *= 0.5
     else
       GetCommitPredictChance anotherTempVar
-      if anotherTempVar > 0.25
-        immediateTempVar *= 0.8
+      if anotherTempVar > 0.18
+        immediateTempVar *= 0.3
       else 
-        immediateTempVar *= 0.4
+        immediateTempVar *= 0.15
       endif
     endif
     immediateTempVar += 1
@@ -990,5 +1083,8 @@ label approxStageWidth
   GetColDistPosAbs immediateTempVar anotherTempVar 0 -5 -10000 -5 0
   GetColDistPosAbs globTempVar anotherTempVar immediateTempVar -5 10000 -5 0
   globTempVar -= immediateTempVar
+Return
+label checkOInCombo
+  GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
 Return
 Return

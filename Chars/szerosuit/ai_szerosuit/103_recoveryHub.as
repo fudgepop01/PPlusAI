@@ -1,7 +1,7 @@
 #snippet INITIALIZATION
   #const UpBXDist = 50
-  #const UpBYDist = 80
-  #const sideBHeight = 40
+  #const UpBYDist = 30
+  #const sideBHeight = 10
   #const sideBRange = 50
   #const tolerence = 8
 
@@ -22,7 +22,7 @@
     downBValue = 0
   endif
   sideBValue = Rnd
-  if YDistBackEdge < 0
+  if YDistBackEdge < -20
     sideBValue = 0
   endif
 #endsnippet
@@ -51,12 +51,14 @@
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     endif
   elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
     if NumJumps > 0
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     else
       hasTriedToUpB = 1
@@ -79,7 +81,7 @@
     AbsStick 0 (-0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > 15 && Equal hasTriedToUpB 0
+  if absNCX <= UpBXDist && YDistBackEdge < 15 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick

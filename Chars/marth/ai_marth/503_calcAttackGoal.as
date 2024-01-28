@@ -1,3 +1,11 @@
+#snippet ADDITIONAL_FILTERS
+  if currGoal >= cg_edgeguard
+    $ifLastList(uspecial;uspecialair,if)
+      lastAttack = -1
+    endif
+  endif
+#endsnippet
+
 // #snippet KILL_MOVES
 //   DynamicDiceClear dslot0
 //   $addOriginToDice(0, usmash, 1)

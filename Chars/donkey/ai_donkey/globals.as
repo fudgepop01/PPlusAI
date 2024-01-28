@@ -7,8 +7,8 @@
 #const cs_shortHopHeight = 14.44
 #const cs_jumpHeight = 39.19
 #const cs_djumpHeight = 30.18
-#const cs_wavedashDist = 20
-#const cs_recoveryDistX = 80
+#const cs_wavedashDist = 27
+#const cs_recoveryDistX = 115
 #const cs_recoveryDistY = -30
 
 #const dashForceTurnFrame = 14
@@ -276,7 +276,7 @@
 #const bair_yRange = 6.22
 #const bair_hitFrame = 7
 #const bair_lastHitFrame = 8
-#const bair_damage_info = BAir|13|20|100|-361
+#const bair_damage_info = BAir|13|20|100|361
 
 #const mv_bair_late = 1
 #const bair_late_xOffset = -23.86

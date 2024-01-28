@@ -56,8 +56,8 @@ func DistFrontEdge : 0x10
 ///Level9=100 Level1=0
 func LevelValue : 0x11
 
-///Unknown
-func Func12 : 0x12
+///Random X offset for attacks (only within 603X and 604X)
+func RandXOffset : 0x12
 
 ///Unknown
 func Func13 : 0x13
@@ -98,13 +98,23 @@ func Damage : 0x1E
 ///Returns the damage of the opponent.
 func ODamage : 0x1F
 
-func Func20 : 0x20
+///9 = 30
+///8 = 27.5
+///7 = 20
+///6 = 14
+///5 = 11
+///4 = 5.5
+///3 = 0.5
+///2 = 0
+///1 = 0
+///0 = 0
+func Rank : 0x20
 
 func GetJumpHeight : 0x21
 func GetJumpLength : 0x22
 
-func OGetAirHigh : 0x23
-func OGetAirLength : 0x24
+func GetAirHigh : 0x23
+func GetAirLength : 0x24
 
 ///Returns opponent's direction.
 ///If the opponent is facing left,-1,otherwise,1
@@ -118,6 +128,7 @@ func HurtboxSize : 0x27
 
 ///Returns the opponent's hurtbox size.
 func OHurtboxSize : 0x28
+// 0x8091e430
 
 ///Returns the distance between the character and the edge behind the character.
 func DistBackEdge : 0x29

@@ -1,21 +1,40 @@
+#snippet CLIFF_DIST_MACRO
+  {CD_NEW}
+#endsnippet
+#snippet JUMP_TO_STAGE
+  if recOption > optFloat
+    Button X
+    ClearStick
+    AbsStick 0 -1
+  endif
+
+  {JUMP_TO_STAGE_NEW}
+#endsnippet
+
 #snippet INITIALIZATION
-  #const UpBXDist = 60
-  #const UpBYDist = 60
+  $genActions(SFALL, 10|11E)
+  $genActions(NSPECIAL, 112|117|118|119)
+  $genActions(SSPECIAL, 113)
+  $genActions(USPECIAL, 114|11b|11c)
+  $genActions(DSPECIAL, 115|120)
+
+  #const MewtwoFloatAction = hex(0x120)
+  #const MewtwoFloat_LABit = hex(0x73)
+
+  #const UpBXDist = 69
+  #const UpBYDist = 55
   #const sideBHeight = 4
   #const sideBRange = 90
   #const tolerence = 6
+  #const floatXDist = 70
+  #const floatYDist = 70
 
-  #const jumpChance = 0.3
-  #const highUpBChance = 0.15
-  #const sideBChance = 0.4
-  #let hasTriedToUpB = var4
-  #let jumpValue = var5
-  #let highUpBValue = var6
-  #let sideBValue = var7
-  hasTriedToUpB = 0
-  jumpValue = Rnd
-  highUpBValue = Rnd
-  sideBValue = Rnd
+  #const optNone = 0
+  #const optJump = 10
+  #const optFloat = 11
+  #const optUpB = 20
+  #const optSideB = 30
+  #const optDownB = 40
 #endsnippet
 
 #snippet NCXOFFS_REDEFINE
@@ -24,59 +43,77 @@
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
-  #let nearCliffX = var0
-  #let nearCliffY = var1
-  #let absNCX = var2
-  NEAREST_CLIFF(nearCliffX, nearCliffY)
+   {STANDARD_CLIFF_DATA}
   
-  // drift towards goal
-  globTempVar = nearCliffX * -1
-  ClearStick
-  AbsStick globTempVar
+  DynamicDiceClear dslot0
+  DynamicDiceAdd dslot0 optNone 5
 
-  absNCX = nearCliffX
-  Abs absNCX
-  globTempVar = TopNY - BBoundary
-  {PRE_CONDITIONS}
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
-    if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    endif
-  elif YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
-      Button X
-      Goto handleJumpToStage
-      Return
-    else
-      hasTriedToUpB = 1
-      Button B
-      ClearStick
-      AbsStick 0 (0.7)
-      Return
+  if NumJumps > 0
+    $if_recoveryRect(x_abs,0,300,y_rangeBelow,highCliffY,15,150)
+      DynamicDiceAdd dslot0 optJump 6
     endif
   endif
-  if sideBValue <= sideBChance && YDistBackEdge > -sideBHeight && YDistBackEdge < sideBHeight && absNCX <= sideBRange
-    Button B
-    ClearStick
-    Stick 1
-    Return
+
+  if AWAY_FROM_STAGE
+    immediateTempVar = XSpeed
+    Abs immediateTempVar
+    if immediateTempVar > 1
+      $if_recoveryRect(x_abs,0,sideBRange,y_rangeAbove,highCliffY,sideBHeight,100)
+        DynamicDiceAdd dslot0 optSideB 50
+      endif
+    endif
   endif
-  if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
-    ClearStick
-    AbsStick 0 (0.7)
-    Return
+  
+  GetLaBit immediateTempVar MewtwoFloat_LABit fromSelf
+  if Equal immediateTempVar false && NumJumps > 0
+    $if_recoveryRect(x_abs,0,floatXDist,y_rangeAbove,highCliffY,70,100)
+      DynamicDiceAdd dslot0 optFloat 50
+    endif
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
-    hasTriedToUpB = 1
-    Button B
+  
+  DynamicDiceSize dslot0 immediateTempVar
+  if immediateTempVar < 3
+    $if_recoveryRect(x_abs,0,UpBXDist,y_rangeAbove,nearCliffY,UpBYDist,20)
+      DynamicDiceAdd dslot0 optUpB 5
+    endif
+  endif
+
+  anotherTempVar = TopNY - BBoundary
+  if anotherTempVar > 20 && nearCliffY < calc(UpBYDist + 40)
+  else
+    DynamicDiceClear dslot0
+    DynamicDiceAdd dslot0 optNone 1
+    GetLaBit immediateTempVar MewtwoFloat_LABit fromSelf
+    if Equal immediateTempVar false && NumJumps > 0
+      DynamicDiceAdd dslot0 optFloat 100
+    elif NumJumps > 0
+      DynamicDiceAdd dslot0 optJump 100
+    endif
+    DynamicDiceSize dslot0 anotherTempVar
+    if anotherTempVar < 2
+      DynamicDiceAdd dslot0 optUpB 100
+    endif
+  endif
+
+  DynamicDiceRoll dslot0 recOption 0
+  if recOption > optJump
     ClearStick
-    AbsStick 0 (0.7)
-    Return
-  endif 
+  endif
+  if recOption >= optDownB
+    Button B
+    AbsStick 0 -1
+  elif recOption >= optSideB
+    Button B
+    AbsStick nearCliffX
+  elif recOption >= optUpB
+    Button B
+    AbsStick 0 1
+  elif recOption >= optJump
+    Button X
+    if Equal recOption optFloat
+      AbsStick 0 -1
+    endif
+  endif
 #endsnippet
 
 #snippet USPECIAL
@@ -106,7 +143,6 @@
     Norm globTempVar nearCliffX nearCliffY
     nearCliffX /= globTempVar
     nearCliffY /= globTempVar
-    nearCliffX *= -1
     nearCliffY *= -1
 
     if 0.1 < nearCliffX && nearCliffX < 0.25
@@ -123,13 +159,48 @@
 #endsnippet
 
 #snippet SSPECIAL
-  if AnimFrame > 2 && AnimFrame < 5
-    immediateTempVar = TopNX * -1
-    AbsStick immediateTempVar
+  {BREVERSE}
   else
     Stick 1
   endif
 #endsnippet
 
 #snippet NSPECIAL
+#endsnippet
+
+// float
+#snippet DSPECIAL
+  Button X
+  if !(NoOneHanging) && !(Equal isBelowStage 1)
+    nearCliffY -= 25
+    if nearCliffX > 0
+      nearCliffX += 15
+    else
+      nearCliffX -= 15
+    endif
+  endif
+
+  #let absNCX = var4
+  #let NCY = var3
+  absNCX = nearCliffX
+  NCY = nearCliffY
+
+  Norm globTempVar nearCliffX nearCliffY
+  if globTempVar < 10 || YDistFloor > 0
+    currGoal = cg_attack
+    skipMainInit = mainInitSkip
+    CallI MainHub
+  endif
+  
+  nearCliffX /= globTempVar
+  nearCliffY /= globTempVar
+  nearCliffY *= -1
+
+  if 0.1 < nearCliffX && nearCliffX < 0.25
+    AbsStick 0.3 nearCliffY
+  elif -0.25 < nearCliffX && nearCliffX < -0.1
+    AbsStick -0.3 nearCliffY
+  else
+    AbsStick nearCliffX nearCliffY
+  endif
 #endsnippet

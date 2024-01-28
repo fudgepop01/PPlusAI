@@ -8,21 +8,12 @@ NoRepeat
 SetTimeout 999
 
 // SetDebugMode 1
-// LOGSTR 1836016640 1694498816 0 0 0
-// LOGVAL var21
+// LOGSTR str("mode")
+// LOGVAL currGoal
 // PRINTLN
 //--- visualize stuffs
-if Equal PlayerNum 0
-  DrawDebugRectOutline var13 var14 5 5 255 0 0 221
-elif Equal PlayerNum 1
-  DrawDebugRectOutline var13 var14 5 5 0 0 255 221
-elif Equal PlayerNum 2
-  DrawDebugRectOutline var13 var14 5 5 0 255 0 221
-elif Equal PlayerNum 3
-  DrawDebugRectOutline var13 var14 5 5 255 255 0 221
-else
-  DrawDebugRectOutline var13 var14 5 5 34 34 34 221
-endif
+DrawDebugRectOutline var13 var14 5 5 0 0 255 221
+
 // SetDebugMode 0
 //--- prevent auto-attack
 Cmd30
@@ -57,15 +48,7 @@ else
   endif
 endif
 // O OOS Option
-if Equal OAnimFrame 0 && OFramesSinceShield < 20
-  if Equal OCurrAction 33
-    trackOAction 14 1
-  elif OAttacking && !(Equal OCurrAction 52)
-    trackOAction 14 2
-  elif Equal OCurrAction 52
-    trackOAction 14 3
-  endif
-elif OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnimFrame 0
+if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnimFrame 0 && Equal OActionTimer 0
   RetrieveFullATKD var23 var23 var23 var17 var22 var23 var23 OCurrSubaction 1
   if var23 >= 0
     Abs var17
@@ -73,14 +56,29 @@ elif OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnim
     if var17 < var22
       var17 = var22
     endif
-    GetAttribute var22 40; 1
-    var22 *= 5
-    var17 += var22
-        
+    var17 *= 1.5
+    var23 = Width + OWidth
+    var17 += var23
+
     trackOAction 10 var17
-    // RetrieveFullATKD var23 var23 var23 var23 var23 var17 var22 OCurrSubaction 1
-    // Goto getMax
-    // trackOAction 11 var17    
+    var23 = OCenterX - CenterX
+    Abs var23
+    var17 *= 1.5
+    trackOAction 11 var23 
+    RetrieveFullATKD var17 var23 var22 var23 var23 var23 var23 OCurrSubaction 1
+    if Equal var17 0
+      var17 = OEndFrame
+    endif 
+    var23 = var17 - var22
+    trackOAction 3 var23
+  endif
+elif Equal OAnimFrame 0 && OFramesSinceShield < 20
+  if Equal OCurrAction 33
+    trackOAction 14 1
+  elif OAttacking && !(Equal OCurrAction 52)
+    trackOAction 14 2
+  elif Equal OCurrAction 52
+    trackOAction 14 3
   endif
 endif
 // O Tech Option
@@ -120,7 +118,7 @@ endif
 if !(True)
   label baitDefendOption
   var22 = (1 - (LevelValue / 100)) * 10 + 5
-  MOD var22 AnimFrame var22
+  MOD var22 GameTimer var22
   if var22 < 1
     var17 = 9
     if Equal var21 13 || Equal var21 13.1
@@ -128,7 +126,7 @@ if !(True)
     endif
     predictAverage var22 10
     var22 += 20
-    // var17 = var22 + 15
+    // globTempVar = immediateTempVar + 15
     if XDistLE var22
       if 4 <= OCurrAction && OCurrAction <= 5 && Rnd < 0.65 && !(Equal var17 7)
         trackOAction 9 1
@@ -161,12 +159,25 @@ endif
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
   Stick -0.78
-elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
-  CallI Unk1120
-elif CurrAction >= 61 && CurrAction <= 63
+elif CurrAction >= 179 && CurrAction <= 188 && NoJumpPrevFrame || Equal CurrAction 186 || CurrAction >= 146 && CurrAction <= 148
+  Button X
+elif CurrAction >= 152 && CurrAction <= 154 || CurrAction >= 169 && CurrAction <= 174
+  Button A
   var22 = Rnd * 2 - 1
   var23 = Rnd * 2 - 1
   AbsStick var22 var23
+  if CurrAction >= 169 && CurrAction <= 174
+    Button R
+  endif
+elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
+  CallI ExecuteAttack
+elif CurrAction >= 61 && CurrAction <= 63 || CurrAction >= 90 && CurrAction <= 95 || CurrAction >= 199 && CurrAction <= 218 || Equal CurrAction 236
+  MOD var22 GameTimer 5
+  if var22 >= 4
+    var22 = Rnd * 2 - 1
+    var23 = Rnd * 2 - 1
+    AbsStick var22 var23
+  endif
 elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 elif !(CalledFrom LyingDown)
@@ -178,14 +189,15 @@ elif !(CalledFrom LyingDown)
 endif
 
 //--- switch tactic if conditions are met
-if CurrAction >= 66 && CurrAction <= 69 && !(Equal OCurrAction 73) && !(CalledFrom AttackedHub)
-  var22 = LevelValue * 0.01 - 0.15
-  if FramesHitlag > 0
-    Goto OnGotHitAdjustments
-    CallI AttackedHub
-  elif Equal CurrAction 66
-    // Goto OnGotHitAdjustments
-    CallI AttackedHub
+if !(CalledFrom AttackedHub)
+  if CurrAction >= 66 && CurrAction <= 69 && !(Equal OCurrAction 73) || GettingThrown
+    var22 = LevelValue * 0.01 - 0.15
+    if FramesHitlag > 0 || FramesHitstun > 0
+      Goto OnGotHitAdjustments
+      CallI AttackedHub
+    elif GettingThrown || Equal CurrAction 238
+      CallI AttackedHub
+    endif
   endif
 endif
 
@@ -217,7 +229,7 @@ endif
     Return
   endif
 
-if !(CalledFrom RecoveryHub) && DangerEnabled && Equal IsOnStage 0
+if !(CalledFrom RecoveryHub) && Equal IsOnStage 0
   if Equal PlayerNum OPlayerNum
     CallI RecoveryHub
   endif
@@ -226,14 +238,13 @@ if !(CalledFrom RecoveryHub) && DangerEnabled && Equal IsOnStage 0
   //= XReciever
 var17 = var22
   if Equal IsOnStage 0 && var21 < 16.7
-    var17 *= 0.5
     GetYDistFloorOffset var22 var17 15 0
     var17 *= -1
     GetYDistFloorOffset var23 var17 15 0
     if Equal var22 -1 && Equal var23 -1
       CallI RecoveryHub
     endif
-    var17 *= -2
+    var17 *= -1
   endif
   var22 = 18
   XGoto GetChrSpecific
@@ -255,9 +266,9 @@ var17 = var22
   // if left of ledge, xVar is positive
   // if right, xVar is negative
   GetNearestCliff var22
-  var22 = TopNX - var22
+  var22 = CenterX - var22
   var23 *= -1
-  var23 += TopNY
+  var23 += CenterY
 
   Abs var22
   var17 *= var22
@@ -265,28 +276,27 @@ var17 = var22
   XGoto GetChrSpecific
   //= XReciever
   var17 -= var22
+  // globTempVar += 30
   if var23 < var17 && TotalYSpeed < -0.2 && AnimFrame > 2 && Equal IsOnStage 0
     CallI RecoveryHub
   endif
-  // var22 = OTopNY - TopNY
-  // var17 += var22
-  // if var23 < var17 && TotalYSpeed < -1 && AnimFrame > 2 && Equal IsOnStage 0
+  // immediateTempVar = OTopNY - TopNY
+  // globTempVar += immediateTempVar
+  // if anotherTempVar < globTempVar && TotalYSpeed < -1 && AnimFrame > 2 && Equal IsOnStage 0
   //   CallI RecoveryHub
   // endif
 
-  // DrawDebugRectOutline TopNX var17 3 3 255 0 0 221
+  DrawDebugRectOutline TopNX var17 3 3 255 0 0 221
 endif
 if !(CalledFrom ExecuteAttack) && !(CalledFrom RecoveryHub)
   if var21 >= 16.7 && Equal OIsOnStage 0
   elif !(Equal var21 15) && !(Equal var21 16.71) && Equal FramesHitstun 0
-    if Equal OIsOnStage 0 && var21 < 16.7
-      GetYDistFloorOffset var22 10 15 1
-      GetYDistFloorOffset var17 -10 15 1
-      if Equal var22 -1 && Equal var17 -1
-        var21 = 16.7
-        var15 = -1
-        CallI MainHub
-      endif
+    GetYDistFloorOffset var22 10 15 1
+    GetYDistFloorOffset var17 -10 15 1
+    if Equal var22 -1 && Equal var17 -1
+      var21 = 16.7
+      var15 = -10
+      CallI MainHub
     endif
   endif
 endif
@@ -295,7 +305,8 @@ if Equal CurrAction 29 && !(CalledFrom Shield)
   CallI Shield
 endif
 
-if !(CalledFrom ExecuteAttack) && !(Equal var21 16.41)
+if Equal var21 16.41
+elif CalledFrom MainHub || CalledFrom UpdateGoal
   var22 = 40000
   XGoto GetChrSpecific
   //= XReciever

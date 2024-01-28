@@ -9,7 +9,7 @@ unk 0x130000
 str "#hi_base"
 
 SetVec var0 Zero
-var2=OGetAirHigh*(-1)
+var2=GetAirHigh*(-1)
 if NoOneHanging && LevelValue > 55
     var2+=-15
 endif

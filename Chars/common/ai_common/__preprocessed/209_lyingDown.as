@@ -18,7 +18,7 @@ if CurrAction <= 32 || Equal CanCancelAttack 1
   CallI MainHub
 endif
 
-if !(Equal CurrAction 77)
+if !(Equal CurrAction 77) && CurrAction < 137
   Return
 endif
 
@@ -38,8 +38,8 @@ endif
 // react to/read the opponent's attack patterns
 var22 = (1 - (LevelValue / 100)) * 12
 var22 *= PT_REACTION_TIME
-MOD var22 AnimFrame var22
-if Equal var22 0
+MOD var22 GameTimer var22
+if var22 <= 1
   predictAverage var22 10
   var22 += 35
   if XDistLE var22
@@ -48,21 +48,23 @@ if Equal var22 0
   endif
 endif
 
-if var0 >= 1 && Rnd <= 0.1 && Equal CurrAction 77
-  Goto smartRoll
-  Seek begin
-  Return
+if var0 >= 1 && Rnd <= 0.1
+  if CurrAction >= 137 || Equal CurrAction 77 
+    Goto smartRoll
+    Seek begin
+    Return
+  endif
 endif
 var0 += 1
 Return
 label smartRoll
-if XDistLE 35 && Rnd < 0.5
+if XDistLE 30 && Rnd < 0.2
   Button A
 else
   GetCommitPredictChance var22
   PredictOMov var23 10
-  if XDistLE 45 && var23 < 0.28
-    if Rnd < 0.5 || var22 > 0.15
+  if XDistLE 25 && var23 < 0.12 && Rnd < 0.3
+    if Rnd < 0.5 || var22 > 0.25 && Rnd < 0.2
       Button A
     endif
     Button R

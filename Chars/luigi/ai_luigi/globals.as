@@ -21,20 +21,10 @@
 #const cs_shortHopHeight = 15.63
 #const cs_jumpHeight = 44.17
 #const cs_djumpHeight = 33.8
-#const cs_wavedashDist = 80
-#const cs_recoveryDistX = 40
-#const cs_recoveryDistY = -40
+#const cs_wavedashDist = 84
 
-#const recovery_moves = uspecial
-
-#const uspecial_subaction_check = !(True)
-#const uspecial_recovery_info = common|0
-
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) || Equal CurrAction hex(0x119)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+#const cs_recoveryDistX = 125
+#const cs_recoveryDistY = -42
 
 #const sv_execute_hardfall = -100
 #const sv_execute_rising = -101
@@ -156,10 +146,10 @@
 #const nspecialair_yRange = 8
 #const nspecialair_hitFrame = 25
 #const nspecialair_lastHitFrame = 45
-#const nspecialair_damage_info = NSpecialAir|0|0|0|0
+#const nspecialair_damage_info = NSpecialAir|-7|25|25|361
 
 // upB
-#const uspecial_IASA = 120
+#const uspecial_IASA = 110
 #const uspecial_xOffset = 2.9
 #const uspecial_yOffset = -4.79
 #const uspecial_xRange = 1.96
@@ -168,16 +158,16 @@
 #const uspecial_lastHitFrame = 6
 #const uspecial_damage_info = USpecial|25|70|73|90
 
-#const mv_uspecialLate = 1
-#const uspecialLate_xOffset = -1.29
-#const uspecialLate_yOffset = 2.81
-#const uspecialLate_xRange = 7.46
-#const uspecialLate_yRange = 32.75
-#const uspecialLate_hitFrame = 7
-#const uspecialLate_lastHitFrame = 22
-#const uspecialLate_damage_info = USpecial|1|1|1|80
+// #const mv_uspecialLate = 1
+// #const uspecialLate_xOffset = -1.29
+// #const uspecialLate_yOffset = 2.81
+// #const uspecialLate_xRange = 7.46
+// #const uspecialLate_yRange = 32.75
+// #const uspecialLate_hitFrame = 7
+// #const uspecialLate_lastHitFrame = 22
+// #const uspecialLate_damage_info = USpecial|1|1|1|80
 
-#const uspecialair_IASA = 200
+#const uspecialair_IASA = 110
 #const uspecialair_xOffset = 2.9
 #const uspecialair_yOffset = -4.79
 #const uspecialair_xRange = 1.96

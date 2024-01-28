@@ -3,10 +3,10 @@
   LOGSTR str("REC NOT IN YET")
   SetDebugMode TEMP_DEBUG_TOGGLE
   
-  #const UpBXDist = 15
+  #const UpBXDist = 23
   #const UpBYDist = 45
-  #const horizUpBHeight = 4
-  #const horizUpBRange = 60
+  #const horizUpBHeight = 0
+  #const horizUpBRange = 0
   #const tolerence = 6
 
   #const jumpChance = 0.8
@@ -17,7 +17,7 @@
   #let highUpBValue = var6
   #let horizUpBValue = var7
   hasTriedToUpB = 0
-  jumpValue = Rnd
+  jumpValue = 0
   highUpBValue = Rnd
   horizUpBValue = Rnd
 #endsnippet
@@ -37,18 +37,13 @@
   globTempVar = nearCliffX * -1
   ClearStick
   AbsStick globTempVar
+  hasTriedToUpB = 0
 
   absNCX = nearCliffX
   Abs absNCX
   globTempVar = TopNY - BBoundary
   {PRE_CONDITIONS}
-  if horizUpBValue <= horizUpBChance && YDistBackEdge > -horizUpBHeight && YDistBackEdge < horizUpBHeight && absNCX <= horizUpBRange && absNCX >= UpBXDist
-    Button B
-    ClearStick
-    Stick 0 1
-    horizUpBValue = -1
-    Return
-  endif
+  
   if highUpBValue <= highUpBChance && YDistBackEdge > calc(UpBYDist - 40) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
@@ -56,7 +51,8 @@
     AbsStick 0 (0.7)
     Return
   endif
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+  immediateTempVar = UpBYDist - tolerence + HurtboxSize
+  if absNCX <= UpBXDist && YDistBackEdge < immediateTempVar && YSpeed < 0 && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick
@@ -82,9 +78,10 @@
       immediateTempVar -= 20
     endif
     if YDistBackEdge > immediateTempVar || globTempVar < 18
-      if NumJumps > 0 && Rnd < 0.5
+      if NumJumps > 0
         Button X
         Goto handleJumpToStage
+        Seek begin
         Return
       else
         hasTriedToUpB = 1

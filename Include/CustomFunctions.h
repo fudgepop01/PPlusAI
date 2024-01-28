@@ -255,6 +255,14 @@ func LTF_STACK_READ : 0x5F
 /// 0xFFFF = default
 func ShieldStunRemaining : 0x60
 
+func Scale : 0x61
+func OScale : 0x161
+
+func GameTimer : 0x62
+
+func ActionCategory : 0x63
+func OActionCategory : 0x63
+
 func ActionTimer : 0x70
 func OActionTimer : 0x170
 
@@ -274,6 +282,9 @@ func PT_PLATCHANCE : 0x88
 func PT_SDICHANCE : 0x89
 func PT_WALL_CHANCE : 0x8A
 func PT_REACTION_TIME : 0x8B
+
+/// FETCH DEBUG VALUE
+func DEBUG_VALUE : 0xFD
 
 /// OBTAINS THE TRAINING MODE OPTION, OR -1 IF NOT IN TRAINING MODE
 func TRAINING_MODE_OPTION : 0xFE

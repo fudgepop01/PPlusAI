@@ -1,4 +1,12 @@
 #snippet ADDITIONAL_FILTERS
+  $ifLastAttack(sspecial)
+    globTempVar = TopNX - OTopNX
+    Abs globTempVar
+    if globTempVar < 35
+      lastAttack = -1
+    endif
+  endif
+
 #endsnippet
 
 #snippet COMBO_MOVES

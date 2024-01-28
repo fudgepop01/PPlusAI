@@ -11,3 +11,7 @@
     {FASTFALL_CHECK_INNER}
   endif
 #endsnippet
+
+#snippet UNAFFECTED_Y_MOVES
+  $ifLastOrigin(dair,false)
+#endsnippet

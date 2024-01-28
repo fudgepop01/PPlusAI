@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 15.6
 #const cs_jumpHeight = 27.04
 #const cs_djumpHeight = 27.04
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 18
 
 #const pt_jumpiness = 0.15
 #const pt_djumpiness = 0.15
@@ -22,14 +22,14 @@
 
 #const cs_dashForceTurnFrame = 10
 #const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 90
-#const cs_recoveryDistY = -100
+#const cs_recoveryDistX = 170
+#const cs_recoveryDistY = -37
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x129)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
+// #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+// #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+// #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
+// #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x129) || Equal CurrAction hex(0x12b) 
+// #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115) || Equal CurrAction hex(0x12c)
 
 // 0 through 21 if defensive things were consistent
 #const minBaseReactionTime = 0

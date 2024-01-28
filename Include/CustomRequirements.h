@@ -23,3 +23,6 @@ req ShouldTechThrow : 0x1027
 
 /// if the fighter did NOT input jump on the previous frame
 req NoJumpPrevFrame : 0x1028
+
+/// if the fighter is currently being thrown
+req GettingThrown : 0x1029

@@ -1,3 +1,21 @@
+#snippet SKIP_CHECKS
+  $ifLastOrigin(sspecial,false)
+    Goto sspecialCheck 
+  $ifLastOrigin(sspecialAir,true)
+    Goto sspecialCheck 
+  endif
+  if !(True)
+    label sspecialCheck
+    anotherTempVar = OPos * 30
+    GetYDistFloorOffset immediateTempVar anotherTempVar 5 0
+    if immediateTempVar < 0 && OFramesHitstun <= 15
+      Seek finish
+      Jump
+    endif
+    Return
+  endif
+#endsnippet
+
 #snippet DSPECIAL
   if AnimFrame >= 6
     Button X

@@ -10,6 +10,7 @@ var16 = 0
 if var21 >= 16 && var21 < 17
   if CalledFrom ExecuteAttack
     XGoto SetAttackGoal
+    //= XReciever
     Return
   endif
   
@@ -34,28 +35,107 @@ if var21 >= 16 && var21 < 17
     elif Equal var22 -1 && OFramesHitstun > 0 
       var21 = 16.7
     endif
+
+    SetDebugOverlayColor 255 0 0 136
   elif Equal var21 16.72
+    SetDebugOverlayColor 0 255 255 255
+    Return
   elif Equal var21 16.71
-    if Equal AirGroundState 1
+    SetDebugOverlayColor 0 255 136 255
+    if Equal CanCancelAttack 1 && Equal AirGroundState 1
       var21 = 16
     endif
-  elif True
-    if Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0
+  else
+    SetDebugOverlayColor 0 255 255 136
+
+    if Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0 && YDistFloor > 0
       if CHANCE_MUL_LE PT_BAITCHANCE 0.15 || CHANCE_MUL_LE PT_AGGRESSION 0.1
         var21 = 16.72
         Return
       endif
     endif
-    if Equal OAirGroundState 1
-      var21 = 16.4
-    endif
+    // if Equal OAirGroundState 1 
+    //   var21 = 16.4
+    // endif
   endif
+  EnableDebugOverlay
 
-  if Equal var20 -1
+  MOD var22 AnimFrame 4
+  if Equal var20 -1 && var22 >= 3
     Goto OPosGoal
     Goto changeGoal
     Return
+  else 
+    MOD var22 AnimFrame 20
+    if var22 >= 19
+      Goto OPosGoal
+      Goto changeGoal
+      Return
+    endif
   endif
+
+  // $ifLastOrigin(grab,0)
+  //   if CHANCE_MUL_LE PT_AGGRESSION 0.65
+  //     if Equal var21 16.3
+  //       Goto changeGoal
+  //       Return
+  //     elif Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
+  //       Goto changeGoal
+  //       Return
+  //     elif OCurrAction >= 68 && OCurrAction <= 73 || Equal OCurrAction 66
+  //       if OYDistBackEdge > -12 && OYSpeed < 0
+  //         Goto changeGoal
+  //         Return
+  //       endif
+  //     endif 
+  //   endif
+  // endif
+
+  // $ifLastOrigin(grab,0)
+  // elif Equal var21 16.3
+  //   predictAverage var22 10
+  //   if var22 < 8
+  //     var22 = 8
+  //   endif
+  //   var22 += 60
+  //   var23 = var22 - 70
+  //   if XDistLE var22 && !(XDistLE var23) && CHANCE_MUL_LE PT_AGGRESSION 0.05
+  //     Call ExecuteAttack
+  //   endif
+  // endif
+
+  EstOYCoord var22 20
+  var22 -= TopNY - YDistFloor
+
+  // predictAverage var22 10
+  // var22 += 10
+  // if Equal var21 16.6 && XDistLE var22
+  //   var16 = 1
+  //   var16 += 0.1
+  //   var15 = -10
+  //   var21 = 16.4
+  //   CallI JumpScr 
+  // endif
+
+  // var17 = TopNX
+  // var22 = OTopNX
+  // Abs var17
+  // Abs var22
+  // if Equal var21 16.3
+  //   $ifAerialAttack()
+  //     if var17 < var22
+  //       Call ExecuteAttack
+  //     elif Rnd < 0.2
+  //       Call ExecuteAttack
+  //     endif
+  //   elif Equal AirGroundState 1
+  //     if var17 < var22
+  //       Call ExecuteAttack
+  //     elif Rnd < 0.2
+  //       Call ExecuteAttack
+  //   endif
+  //     endif
+  // endif
 
   // LOGSTR 1027424512 1414807808 1129003520 0 0
   // $printMoveName()
@@ -100,15 +180,69 @@ var23 = var22
   //   DrawDebugRectOutline 0 10 var2 2 255 0 0 238
   // endif
 
-if !(True)
-  elif OCurrAction >= 26 && OCurrAction <= 29 && var2 < 1 && Rnd < 0.2
-    var20 = -1
-    Return      
+  // GET_CHAR_TRAIT(var22, 200)
+  // var17 = OTopNY - TopNY
+  // if Equal var22 0
+  //   if var17 > 30 || OYDistBackEdge < -35 && Equal AirGroundState 1
+  //   elif !(Equal var21 16.4) && OYDistFloor < 45
+  //   elif var21 >= 16.7
+  //   elif True
+  //     if var2 <= 1 && Equal AirGroundState 1
+  //       predictOOption var22 man_OXAttackDist 
+  //       predictionConfidence var23 man_OXAttackDist
+  //       if Equal var22 1 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.6
+  //         var21 = 10.5
+  //         Return
+  //       elif Equal var22 2 && CHANCE_MUL_GE PT_BRAVECHANCE 0.35
+  //         var21 = 10
+  //         Return
+  //       elif Equal var22 3 && Rnd < var23
+  //         var21 = 7
+  //         Return
+  //       endif
+  //     endif
+  //     if var2 <= 1 && Equal shouldApproach 0 && Equal AirGroundState 1 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.5
+  //       var21 = 10.5
+  //       Return
+  //     endif
+  //     var22 += 30
+  //     if !(XDistLE var22) && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1 && CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 1 && OFramesHitstun <= 0
+  //       var21 = 7
+  //       Return
+  //     endif
+  //   endif
+  // endif
+
+  predictAverage var22 10
+  var22 += 10
+  if Equal OCurrAction 73 && var21 < 16.7
+    if XDistLE var22 && !(Equal OAirGroundState 1) 
+      predictOOption var22 15
+      predictionConfidence var17 15
+      if Equal var22 2 && Rnd < var17
+        Call Shield
+      endif
+    endif
   endif
+
+  // if Equal var23 var17 && var22 > 55
+  //   XGoto GoalChoiceHub
+  //   //= XReciever
+  //   Return
+  // endif
+
+  // prevents truly unreactable adjustements
+  Goto getDist
+  //= XReciever
 
   var23 = XSpeed
   Abs var23
   var23 = 8 + var23
+
+  // LOGSTR 1397247744 1431061504 542461952 1145132032 1161756672
+  // LOGVAL var2
+  // LOGVAL OCurrAction
+  // PRINTLN
 
   if var21 >= 16.7
     var16 = 0
@@ -120,37 +254,17 @@ if !(True)
       //= XReciever
     endif
 
-    if var21 <= 16.4 && !(Equal var21 16.3)
-      var23 = OPos * -15
-      GetYDistFloorOffset var22 var23 0 0
-      var23 *= -2
-      GetYDistFloorOffset var23 var23 0 1
-      if Equal var22 -1
-        var23 = -1
-      endif
-      if Equal var23 -1
-  var22 = 100
-  XGoto GetChrSpecific
-  //= XReciever
-var0 = var22
-  if Equal var0 1
-          var21 = 16.3      
-          Return
-        endif
-      endif
-    endif
   // otherwise carry on as normal
   elif var2 <= 1 || Equal CurrAction 10 || Equal OCurrAction 73 || OFramesHitstun > 1 || Equal HitboxConnected 1
     
     if OAnimFrame <= 9 || Equal CurrAction 10 || Equal OCurrAction 73 || OFramesHitstun > 1 || Equal HitboxConnected 1
-      if var22 > var23
+      if var22 > var23 || OAnimFrame > 10
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
         if Equal var22 1
         elif var21 >= 16.7
-        elif !(SamePlane) && CHANCE_MUL_LE PT_BAITCHANCE 1 && Rnd < 0.2 && var2 <= 1 && OFramesHitstun <= 0
-          var21 = 16
+        elif !(SamePlane) && CHANCE_MUL_LE PT_BAITCHANCE 0.15 && Rnd < 0.2 && OFramesHitstun <= 0
           Return
         endif
 
@@ -161,10 +275,18 @@ var0 = var22
     endif
   endif
 
+  // Goto getDist
+  // if var22 > 35 && var2 <= 1 && XDistLE 35 && !(Equal var21 16.7)
+  //   Goto changeGoal
+  //   Return
+  // endif
+
   if var16 < 10
     var16 = 0
   endif
-  XGoto CheckAttackWillHit
+  if var20 > -1
+    XGoto CheckAttackWillHit
+  endif
 else
   var21 = 16
 endif
@@ -195,10 +317,10 @@ Norm var22 var22 var23
 Abs var22
 Return
 label changeGoal
-MOD var22 AnimFrame 8
-if Equal var22 0
+// MOD var22 AnimFrame 8
+// if Equal var22 0
   XGoto CalcAttackGoal
   //= XReciever
-endif
+// endif
 Return
 Return

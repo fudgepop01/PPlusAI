@@ -2,299 +2,190 @@
 //Attack dice roll table
 //_____On ground_____
 slot0 {
-    JabAttack 100,100
-    FTiltAttack 30,30
-    UTiltAttack 5,5
-    DTiltAttack 5,5
-    FSmashAttack 10,2
-    DSmashAttack 1,1
-    NBGroundAttack 10,10
-    FBGroundAttack 100,100
-    DBGroundAttack 20,20
-    GrabAttack 100,100
-    NoAttack 0,40
+    NoAttack 30,30
 }
 
 slot1 {
-    JabAttack 20,20
-    FTiltAttack 100,100
-    DTiltAttack 100,100
-    FSmashAttack 30,6
-    DSmashAttack 5,1
-    NBGroundAttack 50,50
-    FBGroundAttack 100,100
-    DBGroundAttack 5,5
     NoAttack 0,30
 }
 
+slot2 {
+    NoAttack 0,50
+}
+
 slot3 {
-    DTiltAttack 20,20
-    FSmashAttack 100,20
-    NBGroundAttack 10,10
-    FBGroundAttack 50,50
-    NoAttack 0,20
+    NoAttack 30,30
 }
 
 slot4 {
-    UTiltAttack 100,100
-    DTiltAttack 20,20
-    USmashAttack 5,1
-    FBGroundAttack 50,50
     NoAttack 0,20
 }
 
 slot5 {
-    UTiltAttack 70,70
-    USmashAttack 100,20
     NoAttack 0,30
 }
 
 slot6 {
-    UTiltAttack 100,100
-    DSmashAttack 100,20
-    NoAttack 0,50
-}
-
-slot7 {
-    JabAttack 100,100
-    UBGroundAttack 20,20
-    DBGroundAttack 40,40
     NoAttack 0,50
 }
 
 slot8 {
-    JabAttack 100,50
-    USmashAttack 50,5
-    NBGroundAttack 10,10
-    FBGroundAttack 50,10
-    GrabAttack 100,10
-    NoAttack 0,100
-    NAirAttack 10,0
-    FAirAttack 10,0
-    BAirAttack 5,0
-    UAirAttack 100,0
+    NoAttack 30,30
 }
 
 slot9 {
-    FTiltAttack 30,30
-    DTiltAttack 30,30
-    FSmashAttack 100,20
-    DSmashAttack 100,20
+    NoAttack 30,30
 }
 
 slot10 {
-    FTiltAttack 10,10
-    FSmashAttack 100,20
-    NBGroundAttack 100,100
+    NoAttack 30,30
 }
 
 //_____In air_____
 slot11 {
-    NAirAttack 100,100
-    FAirAttack 30,30
-    DSpecialAirAttack 10,10
+    NoAttack 30,30
 }
 
 slot12 {
-    NAirAttack 100,100
-    FAirAttack 100,100
-    NSpecialAirAttack 20,20
-    SSpecialAirAttack 50,50
-    DSpecialAirAttack 10,10
+    NoAttack 30,30
 }
 
 slot13 {
-    BAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot14 {
-    NAirAttack 40,40
-    FAirAttack 30,30
-    UAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot15 {
-    NAirAttack 10,10
-    FAirAttack 40,40
-    DAirAttack 100,100
+    NoAttack 30,30
 }
 
 slot17 {
-    NAirAttack 10,10
-    FAirAttack 50,50
-    BAirAttack 100,100
-    DAirAttack 20,20
-    SSpecialAirAttack 20,20
+    NoAttack 30,30
 }
 
 slot18 {
-    NAirAttack 30,30
-    FAirAttack 10,10
-    UAirAttack 100,100
-    DAirAttack 5,5
-    SSpecialAirAttack 20,20
+    NoAttack 30,30
 }
 
 slot19 {
-    NAirAttack 20,20
-    FAirAttack 10,10
-    DAirAttack 100,100
-}
-
-slot20 {
-    NAirAttack 80,80
-    FAirAttack 80,80
-    USpecialAirAttack 20,20
-    DSpecialAirAttack 40,40
+    NoAttack 30,30
 }
 
 slot21 {
-    USpecialAirAttack 100,100
+    NoAttack 30,30
+}
+
+slot22 {
+    NoAttack 30,30
 }
 
 slot23 {
-    SSpecialAirAttack 100,100
-    USpecialAirAttack 20,20
-    DSpecialAirAttack 30,30
+    NoAttack 30,30
 }
 
 
-//Routine call table
+//Routine Call table
 //_____Section1 starts_____
 //Entry number : 0x0
 JumpRecoverRange&&CanJump {
-    EdgeRecover 10,20,100,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1
 CanJump {
-    JumpOnStage 100,100,0,0
-    JumpOnStage1 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x2
 True {
-    EdgeRecover 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //_____Section1 ends_____
 //_____Section2 starts_____
 //Entry number : 0x3
 MeteoChance {
-    BlockRecovery 100,0,70,20
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x4
 Lying&&SamePlane {
-    routine0x8007 100,100,0,0
-    routine0x8008 100,100,0,0
-    routine0x8009 100,100,0,0
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x5
 Not1_4_9_12And2 {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x6
 OInHigh&&XVeryClose {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x7
 Back&&OInHigh {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x8
 OInHigh&&!fVeryClose {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x9
 InAir {
-    routine0x8000 100,100,0,0
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xA
 ev3 {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xB
 Back {
-    ATKBack0 100,100,0,0
-    ATKBack1 100,100,0,0
-    ATKBack2 100,100,0,0
-    ATKBack3 100,100,0,0
-    ATKBack4 100,100,0,0
-    ATKBack5 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xC
 fXFar&&!FullCharge {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xD
 fXFar {
-    ATKFar0 100,100,0,0
-    ATKFar1 100,100,0,0
-    ATKFar2 100,100,0,0
-    ATKFar3 100,100,0,0
-    ATKFar4 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xE
 fXMiddle {
-    ATKMid0 100,100,0,0
-    ATKMid1 100,100,0,0
-    ATKMid2 100,100,0,0
-    ATKMid3 100,100,0,0
-    ATKMid4 100,100,0,0
-    ATKMid5 100,100,0,0
-    ATKMid6 100,100,0,0
-    ATKMid7 100,100,0,0
-    ATKMid8 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0xF
 fVeryClose {
-    ATKVClose0 100,100,0,0
-    ATKVClose1 100,100,0,0
-    ATKVClose2 100,100,0,0
-    ATKVClose3 100,100,0,0
-    ATKVClose4 100,100,0,0
-    ATKVClose5 100,100,0,0
-    ATKVClose6 100,100,0,0
-    ATKVClose7 100,100,0,0
-    ATKVClose8 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x10
 fXClose {
-    ATKClose0 100,100,0,0
-    ATKClose1 100,100,0,0
-    ATKClose2 100,100,0,0
-    ATKClose3 100,100,0,0
-    ATKClose4 100,100,0,0
-    ATKClose5 100,100,0,0
-    ATKClose6 100,100,0,0
-    ATKClose7 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //_____Section2 ends_____
 //_____Section3 starts_____
 //Entry number : 0x11
 InAir {
-    OnGotDamaged 100,40,60,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x12
 MeteoChance {
-    BlockRecovery 100,0,70,20
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x13
@@ -302,32 +193,32 @@ if !SamePlane
 
 //Entry number : 0x14
 fXClose&&ev3 {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x15
 fXClose&&OInHigh {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x16
 fXClose {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x17
 !FullCharge {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x18
 Far {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x19
 True {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1A
@@ -335,36 +226,34 @@ endif
 
 //Entry number : 0x1B
 Back {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1C
 fVeryClose {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1D
 fXClose {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1E
 fXMiddle {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x1F
 !FullCharge {
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
 //Entry number : 0x20
 True {
-    routine0x8005 100,100,0,0
-    Nothing 100,100,0,0
+    MainHub 0,0,0,0
 }
 
-//_____Section3 ends_____
 //Threshold values
 defmax.float1=65.00
 defmax.float2=40.00
@@ -376,8 +265,8 @@ defmax.byte5=0x2
 defmax.byte6=0x8
 defmax.byte7=0x0
 defmax.byte8=0x0
-defmax.float3=57.30
-defmax.float4=70.30
+defmax.float3=64.10
+defmax.float4=65.90
 defmax.byte9=0x3
 defmax.byte10=0x5
 defmax.byte11=0x32
@@ -394,7 +283,7 @@ defmax.byte16=0x0
 defmax.float8=60.00
 defmax.float9=100.00
 defmax.float10=40.00
-defmax.float11=108.30
+defmax.float11=119.80
 defmax.int1=0x0
 defmax.int2=0x0
 defmax.int3=0x0
@@ -409,6 +298,7 @@ defmax.byte21=0x1E
 defmax.byte22=0x1
 defmax.byte23=0xA
 defmax.byte24=0x0
+
 defmin.float1=65.00
 defmin.float2=40.00
 defmin.byte1=0x14
@@ -419,8 +309,8 @@ defmin.byte5=0xC
 defmin.byte6=0x10
 defmin.byte7=0x0
 defmin.byte8=0x0
-defmin.float3=57.30
-defmin.float4=70.30
+defmin.float3=64.10
+defmin.float4=65.90
 defmin.byte9=0x8
 defmin.byte10=0x18
 defmin.byte11=0x32
@@ -437,7 +327,7 @@ defmin.byte16=0x0
 defmin.float8=60.00
 defmin.float9=100.00
 defmin.float10=40.00
-defmin.float11=108.30
+defmin.float11=119.80
 defmin.int1=0x0
 defmin.int2=0x0
 defmin.int3=0x0
@@ -452,6 +342,7 @@ defmin.byte21=0x0
 defmin.byte22=0x1
 defmin.byte23=0xA
 defmin.byte24=0x0
+
 submax.byte1=0xA
 submax.byte2=0x3C
 submax.byte3=0x0
@@ -481,6 +372,7 @@ submax.pad1=0x0
 submax.pad2=0x0
 submax.pad3=0x0
 submax.pad4=0x0
+
 submin.byte1=0x1E
 submin.byte2=0x0
 submin.byte3=0x1E
@@ -510,6 +402,7 @@ submin.pad1=0x0
 submin.pad2=0x0
 submin.pad3=0x0
 submin.pad4=0x0
+
 unk.section1Start=0x0
 unk.section1End=0x2
 unk.section2Start=0x3
@@ -517,17 +410,17 @@ unk.section2End=0x10
 unk.section3Start=0x11
 unk.section3End=0x20
 unk.unk1=0x0
-unk.unk2=0x2050002
-unk.unk3=0x2FE0204
-unk.unk4=0x5FF0000
+unk.unk2=0x1FE01
+unk.unk3=0x1FC000A
+unk.unk4=0x14FD2800
 unk.unk5=0x0
 unk.unk6=0x0
 unk.unk7=0x0
 unk.unk8=0x0
 unk.unk9=0x0
-unk.unk10=0x400F0
-unk.unk11=0x80101
-unk.unk12=0x100200
+unk.unk10=0x71
+unk.unk11=0x1
+unk.unk12=0x380200
 unk.unk13=0x0
-unk.unk14=0x17F
+unk.unk14=0x27F
 unk.unk15=0x0

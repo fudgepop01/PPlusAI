@@ -45,7 +45,7 @@ if Equal CurrAction hex(0x1) || Equal CurrAction hex(0x6)
   Return
 endif
 
-if XDistBackEdge > -25 && Equal Direction OPos && !(Equal scriptVariant sv_dash_through)
+if XDistBackEdge > -20 && Equal Direction OPos && !(Equal scriptVariant sv_dash_through)
   scriptVariant = sv_dash_towards
 endif
 
@@ -55,7 +55,14 @@ if globTempVar < 0 && !(Equal scriptVariant sv_dash_toCenter)
   scriptVariant = sv_dash_toCenter
 endif
 
-if timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through)
+// LOGSTR str("timer")
+// LOGVAL timePassed
+// LOGVAL timeLimit
+// LOGVAL scriptVariant
+// PRINTLN
+
+if AnimFrame < 3 && Equal CurrAction hex(0x3)
+elif timePassed < dashForceTurnFrame && !(Equal scriptVariant sv_dash_through)
   if Equal scriptVariant sv_dash_towards
     AbsStick OPos
   elif Equal scriptVariant sv_dash_away || Equal scriptVariant sv_dash_away_defense || Equal scriptVariant sv_dash_outOfRange

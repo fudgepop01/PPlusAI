@@ -1,47 +1,55 @@
-#snippet COMBO_MOVES
-#endsnippet
+// #snippet ADDITIONAL_FILTERS
+//   if currGoal >= cg_edgeguard
+//     $ifLastList(uspecial;uspecialair;nspecial;nspecialair;sspecialair,if)
+//       lastAttack = -1
+//     endif
+//   endif
+// #endsnippet
 
-#snippet LAUNCH_MOVES
-  $addToDice(1, sspecial, 1)
-#endsnippet
+// #snippet COMBO_MOVES
+// #endsnippet
 
-#snippet TECHCHASE_MOVES
-  $addToDice(1, sspecial, 1)
-#endsnippet
+// #snippet LAUNCH_MOVES
+//   $addToDice(1, sspecial, 1)
+// #endsnippet
 
-#snippet ESCAPE_MOVES
-  if !(ODistLE 10)
-    $addToDice(1, sspecial, 1)
-    $addToDice(1, sspecialair, 1)
-  endif
-#endsnippet
+// #snippet TECHCHASE_MOVES
+//   $addToDice(1, sspecial, 1)
+// #endsnippet
 
-#snippet SPACING_MOVES
-  if !(ODistLE 10)
-    $addToDice(1, sspecial, 1)
-    $addToDice(1, sspecialair, 1)
-  endif
-  $addToDice(1, fair, 2)
-#endsnippet
+// #snippet ESCAPE_MOVES
+//   if !(ODistLE 10)
+//     $addToDice(1, sspecial, 1)
+//     $addToDice(1, sspecialair, 1)
+//   endif
+// #endsnippet
 
-#snippet PRESSURE_MOVES
-  $addToDice(1, sspecial, 1)
-  $addToDice(1, fair, 2)
-#endsnippet
+// #snippet SPACING_MOVES
+//   if !(ODistLE 10)
+//     $addToDice(1, sspecial, 1)
+//     $addToDice(1, sspecialair, 1)
+//   endif
+//   $addToDice(1, fair, 2)
+// #endsnippet
 
-#snippet BREAKCC_MOVES
-  $addToDice(1, sspecial, 1)
-#endsnippet
+// #snippet PRESSURE_MOVES
+//   $addToDice(1, sspecial, 1)
+//   $addToDice(1, fair, 2)
+// #endsnippet
 
-#snippet BAIT_MOVES
-  if !(ODistLE 10)
-    $addToDice(1, sspecial, 1)
-    $addToDice(1, sspecialair, 1)
-  endif
-  $addToDice(1, fair, 2)
-#endsnippet
+// #snippet BREAKCC_MOVES
+//   $addToDice(1, sspecial, 1)
+// #endsnippet
 
-#snippet CAMP_MOVES
-  $addToDice(1, sspecial, 1)
-  $addToDice(1, sspecialair, 1)
-#endsnippet
+// #snippet BAIT_MOVES
+//   if !(ODistLE 10)
+//     $addToDice(1, sspecial, 1)
+//     $addToDice(1, sspecialair, 1)
+//   endif
+//   $addToDice(1, fair, 2)
+// #endsnippet
+
+// #snippet CAMP_MOVES
+//   $addToDice(1, sspecial, 1)
+//   $addToDice(1, sspecialair, 1)
+// #endsnippet

@@ -41,3 +41,4 @@ char Knuckles : 0x2B
 char Wolf : 0x2C
 char Snake : 0x2E
 char Sonic : 0x2F
+char GigaBowser : 0x30

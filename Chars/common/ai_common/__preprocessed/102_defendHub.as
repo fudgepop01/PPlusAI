@@ -11,26 +11,30 @@ endif
 label begin
 XGoto PerFrameChecks
 //= XReciever
+var15 = -10
 
 var0 = PT_AGGRESSION
 
 var1 = 0.65
 
-// var22 = var0 * 0.08
-// var17 *= 1.75
+// immediateTempVar = aggression * 0.08
+// globTempVar *= 1.75
 // if !(CalledFrom AttackedHub)
-//   GetCommitPredictChance var23"C:\Users\dareb\Documents\AIScriptCLA\bin\Debug\netcoreapp3.1\win-x86\publish\AIScriptCLA.exe" --compile --path "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed" --out "C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac" --include "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include"
-//   if var23 > 0.45 && Rnd < var23 && CHANCE_MUL_LE var22 1
-//     var16 = 1
+//   GetCommitPredictChance anotherTempVar"C:\Users\dareb\Documents\AIScriptCLA\bin\Debug\netcoreapp3.1\win-x86\publish\AIScriptCLA.exe" --compile --path "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed" --out "C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac" --include "c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include"
+//   if anotherTempVar > 0.45 && Rnd < anotherTempVar && CHANCE_MUL_LE immediateTempVar 1
+//     scriptVariant = sv_fastAttack
 //     XGoto CalcAttackGoal
 //     //= XReciever
-//     var15 = -1
+//     skipMainInit = mainInitSkip
 //     CallI MainHub
 //   endif
 // endif
 
 if Equal AirGroundState 1
-  // LOGSTR_NL 1095193344 540098304 1056964608 0 0
+  // LOGSTR_NL str("AGS 1??")
+
+  predictAverage var2 10
+  var2 += OWidth
 
   predictOOption var22 7
   predictionConfidence var17 7
@@ -39,7 +43,12 @@ if Equal AirGroundState 1
     PredictOMov var22 15
     var22 *= 2.5
     if var22 < 0.25 || Equal OAirGroundState 2
-      CallI Shield
+      if XDistLE var2
+        CallI Shield
+      else
+        var21 = 10.2
+        Call MainHub
+      endif
     endif
   endif
 
@@ -49,7 +58,7 @@ if Equal AirGroundState 1
     CallI Shield
   endif
 
-  predictAverage var2 10
+  
 
   var22 = TopNX
   var17 = OTopNX
@@ -60,7 +69,7 @@ if Equal AirGroundState 1
       var16 = 1
       CallI Roll
     endif
-    GetAttribute var22 40; 0
+    GetAttribute var22 40 0
     var22 *= 8
     if Rnd < 0.1 && var22 > var2
       var16 = 5
@@ -82,7 +91,7 @@ if Equal AirGroundState 1
       var16 = 1.1
       CallI JumpScr
     endif
-    GetAttribute var22 40; 0
+    GetAttribute var22 40 0
     var22 *= 8
     if Rnd < 0.2 && var22 > var2
       var16 = 5
@@ -96,17 +105,15 @@ if Equal AirGroundState 1
   else
     var21 = 10.5
   endif
-  var15 = -1
   if Rnd < var22 && Rnd < var22
     var21 = 16.4
-    var15 = -1
   endif
 
   var23 = var2 + 15
 
   var3 = PT_BAIT_DASHAWAYCHANCE
 
-  GetAttribute var22 40; 0
+  GetAttribute var22 40 0
 
   if Equal IsOnPassableGround 1 && Rnd <= 0.20 && LevelValue >= 60
     CallI Shield
@@ -118,7 +125,7 @@ if Equal AirGroundState 1
   var0 = PT_BAIT_WDASHAWAYCHANCE
   var0 *= 0.3
 
-  GetAttribute var22 940; 0
+  GetAttribute var22 940 0
   var22 *= 0.1
   var22 = 0.7 - var22
   if Rnd < var22 && Rnd < var0
@@ -129,7 +136,7 @@ if Equal AirGroundState 1
   var0 = PT_BAIT_DASHAWAYCHANCE
   var0 *= 0.35
 
-  GetAttribute var22 40; 0
+  GetAttribute var22 40 0
   var22 *= 5
   var17 = OTopNX - TopNX
   Abs var17
@@ -145,8 +152,6 @@ if Equal var21 16.41
   var22 = TopNY - OTopNY
   if CHANCE_MUL_LE PT_AGGRESSION 0.10 && var22 < 20
     XGoto CalcAttackGoal
-    //= XReciever
-    var15 = -1
     CallI MainHub
   endif
 endif 
@@ -156,13 +161,12 @@ predictAverage var0 10
 var0 += 20
 PredictOMov var22 14
 var23 = TopNY - OTopNY
-// LOGSTR_NL 1329681408 0 0 0 0
-// LOGVAL_NL var0
+// LOGSTR_NL str("OAT")
+// LOGVAL_NL OXHitDist
 if ODistLE var0 || var23 > 45
   if Equal var21 16.41 && OTopNY < TopNY && CHANCE_MUL_LE var22 8
-    // LOGSTR_NL 1635213568 2035771648 1952991744 1970106368 0
+    // LOGSTR_NL str("awayWithJump")
     var16 = 3
-    var15 = -1
     CallI AerialDrift
   elif CHANCE_MUL_LE var22 4
     if NumJumps > 0 && CHANCE_MUL_LE PT_BRAVECHANCE 0.1
@@ -172,7 +176,7 @@ if ODistLE var0 || var23 > 45
       var16 = 3.1
       CallI JumpScr
     elif Rnd < 0.75 && YDistFloor > 10
-      // LOGSTR_NL 1635213568 2030043136 0 0 0
+      // LOGSTR_NL str("away")
       var16 = 2
       CallI AerialDrift
     endif
@@ -181,17 +185,15 @@ endif
 
 PredictOMov var22 15
 var22 *= 2
-if var22 < 0.30 && Rnd > var22 && Equal AirGroundState 1
+if var22 < 0.20 && Rnd > var22 && Equal AirGroundState 1
   CallI Shield
 endif
 var21 = 16.4
 if !(Equal var20 -1)
-  var15 = -1
   CallI MainHub
 else
   XGoto CalcAttackGoal
   //= XReciever
-  var15 = -1
   CallI MainHub
 endif 
 Return

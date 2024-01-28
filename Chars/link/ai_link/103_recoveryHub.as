@@ -1,6 +1,6 @@
 #snippet INITIALIZATION
-  #const UpBXDist = 70
-  #const UpBYDist = 30
+  #const UpBXDist = 33
+  #const UpBYDist = 47
   #const ZSnapDistY = 20
   #const ZSnapDistX = 30
   #const tolerence = 6
@@ -51,13 +51,15 @@
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     endif
   endif
   if YDistBackEdge > calc(cs_djumpHeight + UpBYDist - 20) || globTempVar < 18
-    if NumJumps > 0 && Rnd < 0.5
+    if NumJumps > 0
       Button X
       Goto handleJumpToStage
+      Seek begin
       Return
     else
       hasTriedToUpB = 1
@@ -69,7 +71,7 @@
   endif
 
   immediateTempVar = Direction * nearCliffX
-  if immediateTempVar > 0 && grappleValue <= grappleChance && YDistBackEdge < -ZSnapDistY && YDistBackEdge > ZSnapDistY && absNCX <= ZSnapDistX
+  if immediateTempVar > 0 && grappleValue <= grappleChance && YDistBackEdge > ZSnapDistY && YDistBackEdge < -ZSnapDistY && absNCX <= ZSnapDistX
     Button R|A
     ClearStick
     Stick 0 1
@@ -91,7 +93,7 @@
     AbsStick 0 (0.7)
     Return
   endif  
-  if absNCX <= UpBXDist && YDistBackEdge > calc(UpBYDist - tolerence) && Equal hasTriedToUpB 0
+  if absNCX <= UpBXDist && YDistBackEdge < calc(UpBYDist + tolerence) && Equal hasTriedToUpB 0
     hasTriedToUpB = 1
     Button B
     ClearStick

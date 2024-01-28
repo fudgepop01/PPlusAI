@@ -19,7 +19,7 @@ if CurrAction <= hex(0x20) || Equal CanCancelAttack 1
   CallI MainHub
 endif
 
-if !(Equal CurrAction hex(0x4D))
+if !(Equal CurrAction hex(0x4D)) && CurrAction < hex(0x89)
   Return
 endif
 
@@ -39,8 +39,8 @@ endif
 // react to/read the opponent's attack patterns
 immediateTempVar = (1 - (LevelValue / 100)) * 12
 immediateTempVar *= PT_REACTION_TIME
-MOD immediateTempVar AnimFrame immediateTempVar
-if Equal immediateTempVar 0
+MOD immediateTempVar GameTimer immediateTempVar
+if immediateTempVar <= 1
   predictAverage immediateTempVar man_OXHitDist
   immediateTempVar += 35
   if XDistLE immediateTempVar
@@ -49,21 +49,23 @@ if Equal immediateTempVar 0
   endif
 endif
 
-if timer >= 1 && Rnd <= 0.1 && Equal CurrAction hex(0x4D)
-  Goto smartRoll
-  Seek begin
-  Return
+if timer >= 1 && Rnd <= 0.1
+  if CurrAction >= hex(0x89) || Equal CurrAction hex(0x4D) 
+    Goto smartRoll
+    Seek begin
+    Return
+  endif
 endif
 timer += 1
 Return
 label smartRoll
-if XDistLE 35 && Rnd < 0.5
+if XDistLE 30 && Rnd < 0.2
   Button A
 else
   GetCommitPredictChance immediateTempVar
   PredictOMov anotherTempVar mov_shield
-  if XDistLE 45 && anotherTempVar < 0.28
-    if Rnd < 0.5 || immediateTempVar > 0.15
+  if XDistLE 25 && anotherTempVar < 0.12 && Rnd < 0.3
+    if Rnd < 0.5 || immediateTempVar > 0.25 && Rnd < 0.2
       Button A
     endif
     Button R

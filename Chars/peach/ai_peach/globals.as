@@ -6,8 +6,10 @@
 
 #const cs_shortHopHeight = 17.63
 #const cs_jumpHeight = 32.48
-#const cs_djumpHeight = 20.00
+#const cs_djumpHeight = 33.00
 #const cs_wavedashDist = 10
+#const cs_recoveryDistY = -36
+#const cs_recoveryDistX = 140
 
 #const cs_dashForceTurnFrame = 12
 #const cs_dashDanceMinFrames = 3
@@ -34,19 +36,30 @@
 
 // function stuff
 /// recovery
-#const recovery_moves = uspecial|sspecial
+// #const recovery_moves = uspecial|sspecial
 
-#const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
-#const uspecial_recovery_info = common|60
+// #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
+// #const uspecial_recovery_info = common|60
 
-#const sspecial_subaction_check = !(Equal CurrSubaction hex(0x1D4)) && !(Equal CurrSubaction hex(0x1D5))
-#const sspecial_recovery_info = custom
+// #const sspecial_subaction_check = !(Equal CurrSubaction hex(0x1D4)) && !(Equal CurrSubaction hex(0x1D5))
+// #const sspecial_recovery_info = custom
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) || Equal CurrAction hex(0x119)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x11b) || Equal CurrAction hex(0x11c)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+// #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+// #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
+// #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) || Equal CurrAction hex(0x119)
+// #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x11b) || Equal CurrAction hex(0x11c)
+// #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+
+// hover
+#const mv_hover = 1
+#const hover_IASA = 4
+#const hover_xOffset = -50
+#const hover_yOffset = 50
+#const hover_xRange = 100
+#const hover_yRange = 50
+#const hover_hitFrame = 10
+#const hover_lastHitFrame = 40
+#const hover_damage_info = NAir|0|0|0|0
 
 // jab123
 #const jab123_IASA = 15

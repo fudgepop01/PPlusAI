@@ -50,7 +50,7 @@ Return
 //   if OFramesHitstun <= 1
 //     var21 = 16.3
 //   else
-//     var15 = -1
+//     var15 = -10
 //     var21 = 16.4
 //   endif
 //   CallI MainHub

@@ -7,7 +7,7 @@
 #const cs_shortHopHeight = 21.28
 #const cs_jumpHeight = 35.52
 #const cs_djumpHeight = 39.52
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 28
 
 #const pt_jumpiness = 0.2
 #const pt_djumpiness = 0.15
@@ -22,8 +22,8 @@
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3
-#const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -50
+#const cs_recoveryDistX = 70
+#const cs_recoveryDistY = -70
 
 #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
 #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
@@ -137,14 +137,23 @@
 #const dsmash_damage_info = DSmash|13|35|80|40
 
 // noochB
-// TODO - watergun
-// #const nspecial_IASA = 9999.9999
-// #const nspecial_xOffset = 9999.9999
-// #const nspecial_yOffset = 9999.9999
-// #const nspecial_xRange = 9999.9999
-// #const nspecial_yRange = 9999.9999
-// #const nspecial_hitFrame = 9999.9999
-// #const nspecial_lastHitFrame = 9999.9999
+#const nspecial_IASA = 48
+#const nspecial_xOffset = 0.707
+#const nspecial_yOffset = -5.797
+#const nspecial_xRange = 63.293
+#const nspecial_yRange = 2.453
+#const nspecial_hitFrame = 10
+#const nspecial_lastHitFrame = 30
+#const nspecial_damage_info = NSpecial|-3|24|34|70
+
+#const nspecialair_IASA = 48
+#const nspecialair_xOffset = 0.271
+#const nspecialair_yOffset = 53.507
+#const nspecialair_xRange = 42.825
+#const nspecialair_yRange = 37.812
+#const nspecialair_hitFrame = 10
+#const nspecialair_lastHitFrame = 30
+#const nspecialair_damage_info = NSpecial|-3|24|34|70
 
 // upB
 // #const uspecial_IASA = 52

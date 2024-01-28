@@ -1,0 +1,285 @@
+// ARGUMENT TYPES: {
+  0 = INT,
+  1 = SCALAR,
+  2 = OFFSET,
+  3 = BOOL,
+  4 = FILE,
+  5 = VARIABLE,
+  6 = REQUIREMENT
+};
+
+// PSA FOR SUBSPACE ENEMY (Enemy::notifyEventAnimCmd)
+// module 0x65 (notifyEventAnimCmd[Enemy])
+65 00 00 00 = removeEnemyInstance
+65 01 00 00 = doFuncOtherenemy(onChildDeathFlag)
+  ==> if (LA-Bool[0] == false) {
+    RA-Bit[3] = true
+    LA-Bit[0] = true
+  }
+65 02 01 00: 
+65 03 01 00: {
+  02 => nodeID = the argument
+  03 => nodeID = found via string argument
+  initRotation(nodeID)
+}
+65 04 01 00: {
+  // arg1 = 0, 1, 2, or 3
+  resetFrameCounter(getIntData(arg1))
+}
+65 05 01 00: {
+  if(stageTriggerManager) {
+    int_a1 = getIntData(arg1)
+    enemyMessageCallback(int_a1) 
+  }
+}
+65 06 02 00: 
+65 07 02 00: {
+  if (arg1 is a VARIABLE) {
+    val1 = getConstantIndefinite(getValueIndexData(arg1)) // basically turns arg into an index?
+  } else {
+    val1 = getAddressData(arg1)
+  }
+  val2 = getValueIndexData(arg2)
+  06 => setValueRndInt(val1)
+  07 => setValueRndFloat(val1, val2)
+
+  // sets a value randomly in the enemy based on other stuff inside the enemy?
+}
+65 08 02 00: 
+65 09 02 00: {
+  if (arg1 is a VARIABLE) {
+    val1 = getConstantIndefinite(getValueIndexData(arg1)) // basically turns arg into an index?
+  } else {
+    val1 = getAddressData(arg1)
+  }
+  val2 = getValueIndexData(arg2)
+  06 => setValueInt(val1)
+  07 => setValueFloat(val1, val2)
+
+  // sets a value in the enemy based on other stuff inside the enemy?
+}
+65 0a 04 00: 
+65 0b 04 00: 
+65 0c 04 00: 
+65 0d 04 00: {
+  0a || 0b ==> nodeID = (arg1)
+  0c || 0d ==> nodeID = found via string (arg1)
+  if (arg2 is a VARIABLE) val2 = getValueFloat(getValueIndexData(arg2))
+  else val2 = getFloatData(arg2)
+  if (arg3 is a VARIABLE) val3 = getValueFloat(getValueIndexData(arg3))
+  else val3 = getFloatData(arg3)
+  if (arg4 is a VARIABLE) val4 = getValueFloat(getValueIndexData(arg4))
+  else val4 = getFloatData(arg4)
+
+  0a || 0b ==> setNodeRotation(nodeID, {arg2, arg3, arg4})
+  0c || 0d ==> setNodeRotation(nodeID, (current node rotation) + {arg2, arg3, arg4})
+}
+65 0e 01 00:
+65 0e 02 00:
+65 0e 03 00: {
+  if (arg1 is an OFFSET) {
+    val1 = getAddressData(arg1)
+  } else {
+    if (arg1 is NOT a VARIABLE) {
+      return // noop
+    } else {
+      val1 = getValueIndexData(arg1)
+    }
+  }
+  if (2 args) val2 = getIntData(arg2)
+  else val2 = 0
+  if (3 args) val3 = getIntData(arg3)
+  else val3 = -1
+  if (emWeaponMgr exists) {
+    Enemy::shoot(val2, val1, val3)
+  }
+}
+65 0f 01 00:
+65 0f 02 00: {
+  if (arg1 is an OFFSET) {
+    val1 = getAddressData(arg1)
+  } else {
+    if (arg1 is NOT a VARIABLE) {
+      return // noop
+    } else {
+      val1 = getValueIndexData(arg1)
+    }
+  }
+  if (2 args) val2 = getIntData(arg2)
+  else val2 = 0
+  if (emWeaponMgr exists) {
+    Enemy::addParts(val2, val1, 0)
+  }
+}
+65 10 01 00: {
+  // arg1 = 0, 1, 2, or 3
+  pauseFrameCounter(getIntData(arg1))
+}
+65 11 01 00: {
+  // arg1 = 0, 1, 2, or 3
+  resumeFrameCounter(getIntData(arg1))
+}
+65 12 00 00: 
+65 12 01 00: {
+  if (more than 0 args) {
+    resetFrontFlag()
+  } else {
+    return // noop
+  }
+}
+65 13 02 00: {
+  if (arg1 is a VARIABLE) val1 = getValueInt(getValueIndexData(arg1))
+  else val1 = getIntData(arg1)
+  if (arg2 is a VARIABLE) val2 = getValueInt(getValueIndexData(arg2))
+  else val2 = getIntData(arg2)
+
+  reqEffectAreaOut(val1, val2)
+}
+65 14 01 00:
+65 15 01 00: {
+  if (arg1 is a VARIABLE) val1 = getValueFloat(getValueIndexData(arg1))
+  else val1 = getFloatData(arg1)
+
+  14 ==> field_0xd0 = val1
+  15 ==> field_0xd4 = val1
+} 
+65 16 01 00: {
+  if (more than 0 args) resetGoalPos()
+  else return // noop
+}
+65 17 09 00: 
+65 17 0a 00: 
+65 17 0b 00: 
+65 17 0c 00: 
+65 17 0d 00: 
+65 18 09 00: 
+65 18 0a 00: 
+65 18 0b 00: 
+65 18 0c 00: 
+65 18 0d 00: {
+  val1 = int(arg1)
+  val2 = int(arg2)
+  17 ==> nodeID = (arg3)
+  18 ==> nodeID = found via string (arg3)
+  val4 = float(arg4)
+  val5 = float(arg5)
+  val6 = float(arg6)
+  val7 = float(arg7)
+  val8 = int(arg8)
+  val9 = int(arg9)
+
+  val10 through val13 = VARIABLES
+
+  createEnemyFromTriggerId(val7, (this), val1, nodeID, *val4, val8, val9, *val10-val13, val10-val13 entry count)
+}
+65 19 01 00: {
+  syncEnemyWorkWithParent(getValueIndexData(arg0))
+}
+65 1a 03 00: 
+65 1a 04 00: 
+65 1a 05 00: {
+  val1 = int(arg1)
+  val2 = int(arg2)
+  val3 = getAddressData(arg3)
+  val4,val5 = float(arg4) || 0.0
+  val5 = float(arg5) || 1.0
+  emShootItem(val4, val5, (this), val1, val2, val3)
+}
+65 1b 04 00: {
+  val1 = float(arg1)
+  val2 = float(arg2)
+  val3 = index(arg3)
+  val4 = bool(arg4)
+
+  if (val4) out = (val1 * (100 - val2) / 100)
+  else out = ((val1 * val2) / 100)
+
+  setFloat(out, val3)
+  // ...basically just means "set float variable to" the result of some sort of common operation
+} 
+65 1c 00 00:
+65 1c 01 00: {
+  val1 = bool(arg1) || false
+
+  int0 = LA-Basic[15]
+  if (int0 != 0) {
+    int1 = getItemFromInstanceId(int0)
+    if (int1 != 0) {
+      removeItem(int1)
+      if (val1) {
+        emItemInformationReturnEnemy(int0)      
+      }
+    }
+  }
+} 
+65 1d 01 00: {
+  val1 = int(arg1)
+  emCreateFigure(val1)
+}
+65 1e 01 00: {
+  val1 = address(arg1)
+  setPostureFromParam(val1, 1)
+}
+65 1f 02 00: 
+65 20 02 00: {
+  val1 = address(arg1)
+  val2 = index(arg2)
+  1f ==> setFloat(*val1)
+  20 ==> setFloat(*val1,val2)
+}
+65 21 04 00: 
+65 22 04 00: {
+  21 ==> nodeID = (arg1)
+  22 ==> nodeID = found via string (arg1)
+
+  val2 = index(arg2)
+  val3 = index(arg3)
+  val4 = index(arg4)
+
+  (x, y, z) = getDamageOffsetFromNode(nodeID)
+  setFloat(x, val2)
+  setFloat(y, val3)
+  setFloat(z, val4)
+}
+65 23 01 00: {
+  val1 = int(arg1)
+  resetLevel(val1)
+}
+65 24 00 00: {
+  cutCapture()
+}
+65 25 00 00: {
+  cutCatch()
+}
+65 26 05 00: {
+  val1 = float(arg1)
+  val2 = float(arg2)
+  val3 = float(arg3)
+  val4 = float(arg4)
+  val5 = index(arg4) // coding error???
+  out = getAtan2fAngle(<val1, val2>, <val3, val4>)
+  setFloat(out, val5) // due to the coding error this likely doesn't work as intended
+}
+65 27 01 00: {
+  val1 = bool(arg1)
+  updateVtxFromNode(val1)
+}
+65 28 03 00:
+65 28 04 00: {
+  val1 = index(arg1)
+  val2 = index(arg2)
+  val3 = index(arg3)
+  // due to a coding error, it will always attempt to read the 4th argument
+  // ...regardless of whether one exists or not
+  val4 = int(arg4) || -1 
+  sendEventThrow(val1, val2, val3, val4)
+}
+65 29 00 00: {
+  initReflect()
+  setAttackMul()
+}
+
+// there's also a "case -0x452e541f" which I can only assume means something has gone horribly hilariously wrong
+
+// within setValueRndInt / setValueRndFloat:
+//   LA-Float[12]

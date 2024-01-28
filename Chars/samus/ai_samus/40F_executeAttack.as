@@ -11,3 +11,16 @@
     Button A
   endif
 #endsnippet
+
+#snippet NSPECIAL 
+  if Equal CurrAction hex(0x118)
+    if XDistLE 50
+      anotherTempVar = OTopNY - TopNY
+      if anotherTempVar < 20
+        Button B
+      else
+        Button R
+      endif 
+    endif
+  endif
+#endsnippet

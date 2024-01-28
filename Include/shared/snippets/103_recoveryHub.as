@@ -32,10 +32,32 @@
 
 #snippet CD_OLD
   NEAREST_CLIFF(cliffDistX, cliffDistY)
+  if nearCliffY > 0
+    immediateTempVar = Direction * nearCliffX
+    if immediateTempVar > 0
+      immediateTempVar = Width * 2 
+      if nearCliffX > 0
+        nearCliffX -= immediateTempVar
+      else
+        nearCliffX += immediateTempVar
+      endif
+    endif
+  endif
 #endsnippet
 
 #snippet CD_NEW
   DIST_TO_CLIFF(cliffDistX, cliffDistY)
+  if nearCliffY > 0
+    immediateTempVar = Direction * nearCliffX
+    if immediateTempVar < 0
+      immediateTempVar = Width * 2 
+      if nearCliffX < 0
+        nearCliffX -= immediateTempVar
+      else
+        nearCliffX += immediateTempVar
+      endif
+    endif
+  endif
 #endsnippet
 
 
@@ -79,13 +101,14 @@
 #snippet PRE_CONDITIONS
   cliffDistY -= TotalYSpeed
   cliffDistY += HurtboxSize
-  if !(NoOneHanging) && !(Equal isBelowStage 1)
-    // LOGSTR_NL str("someone hanging")
-    // tolerence += 25
-  endif
+  // if !(NoOneHanging) && !(Equal isBelowStage 1)
+  //   LOGSTR_NL str("someone hanging")
+  //   tolerence += 25
+  // endif
   if YDistBackEdge < calc(cs_djumpHeight - 4) && absNCX <= 15 && NumJumps > 0
     Button X
     Goto handleJumpToStage
+    Seek begin
     Return
   endif
 #endsnippet
@@ -131,5 +154,74 @@
     AbsStick globTempVar
   else
     AbsStick cliffDistX
+  endif
+#endsnippet
+
+#snippet STANDARD_CLIFF_DATA
+  #let nearCliffX = var0
+  #let nearCliffY = var1
+  #let absNCX = var2  
+  #let highCliffY = var3
+  
+  DIST_TO_CLIFF(nearCliffX, nearCliffY)
+  
+  {CLIFF_OFFSET}
+
+  // LOGSTR str("values")
+  // LOGVAL nearCliffY
+  nearCliffY *= -1
+  anotherTempVar = HurtboxSize * 0.5
+  nearCliffY -= anotherTempVar
+  highCliffY = nearCliffY
+  // LOGVAL nearCliffY
+
+  if !(NoOneHanging) || shouldGoHigh >= true && isBelowStage <= false
+    highCliffY += shouldGoHigh
+    // LOGSTR str("hcy")
+    // LOGVAL highCliffY
+  endif
+
+  // drift towards goal
+  ClearStick
+  anotherTempVar = nearCliffX
+  if nearCliffY > 0 && AWAY_FROM_STAGE
+    immediateTempVar = Width * 2
+    if anotherTempVar > 0
+      anotherTempVar -= immediateTempVar
+    else
+      anotherTempVar += immediateTempVar
+    endif
+  endif
+  AbsStick anotherTempVar
+  absNCX = nearCliffX
+  Abs absNCX
+  anotherTempVar = Width * 0.5
+  absNCX -= anotherTempVar
+  Abs absNCX
+
+  // LOGVAL absNCX
+  // PRINTLN
+
+  anotherTempVar = HurtboxSize * 0.5 + CenterY
+  DrawDebugRectOutline CenterX anotherTempVar 1 1 color(0xFFFFFFDD)
+  DrawDebugRectOutline CenterX CenterY Width HurtboxSize color(0x888888DD)
+#endsnippet
+
+#snippet BREVERSE
+  anotherTempVar = XSpeed * cliffDistX
+  if AnimFrame < 5 && ActionTimer < 5 && anotherTempVar < 0
+    AbsStick cliffDistX
+#endsnippet
+
+#snippet GLIDE
+  if Equal CurrAction hex(0x84)
+    AbsStick cliffDistX
+  else
+    immediateTempVar = HurtboxSize * -0.5
+    if nearCliffY < immediateTempVar
+      Stick -1
+    elif nearCliffY > 15 && YSpeed > -1.25
+      Stick 1
+    endif
   endif
 #endsnippet

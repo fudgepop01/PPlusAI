@@ -23,7 +23,7 @@
 #const cs_djumpHeight = 42.39
 #const cs_wavedashDist = 32
 #const cs_recoveryDistX = 90
-#const cs_recoveryDistY = -85
+#const cs_recoveryDistY = -80
 
 //=========================================
 // RECOVERY ACTIONS MOVED TO RECOVERY HUB
@@ -110,14 +110,14 @@
 #const dsmash_damage_info = DSmash|15|20|65|25
 
 // noochB
-#const nspecial_IASA = 42
-#const nspecial_xOffset = 5
-#const nspecial_yOffset = -2
-#const nspecial_xRange = 200
-#const nspecial_yRange = 2
-#const nspecial_hitFrame = 10
-#const nspecial_lastHitFrame = 30
-#const nspecial_damage_info = NSpecial|-3|0|0|0
+// #const nspecial_IASA = 42
+// #const nspecial_xOffset = 5
+// #const nspecial_yOffset = -2
+// #const nspecial_xRange = 200
+// #const nspecial_yRange = 2
+// #const nspecial_hitFrame = 10
+// #const nspecial_lastHitFrame = 30
+// #const nspecial_damage_info = NSpecial|-3|0|0|0
 
 #const nspecialair_IASA = 31
 #const nspecialair_xOffset = 0

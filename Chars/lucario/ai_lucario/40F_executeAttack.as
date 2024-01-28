@@ -6,7 +6,7 @@
     Seek dspecial
     Jump
   elif Equal HitboxConnected 1
-    Seek 
+    Seek execGeneral
     Jump
   endif
 #endsnippet
@@ -15,7 +15,8 @@
   if !(True)
     label cancelCheck
     LUC_CANCEL_CHECK(lucCanCancel, immediateTempVar)
-    if Equal lucCanCancel 1
+    $ifLastAttack(usmash)
+    elif Equal lucCanCancel 1
       XGoto CalcAttackGoal
       //= XReciever
       if lastAttack > -1
@@ -38,6 +39,15 @@
     Goto cancelCheck
   endif
 #endsnippet
+
+#snippet NSPECIAL
+  Button R
+#endsnippet
+
+#snippet NSPECIALAIR
+  Button R
+#endsnippet
+
 
 #snippet JAB1232
   if Equal CurrSubaction hex(0x48) && AnimFrame >= 8 && Rnd <= 0.8

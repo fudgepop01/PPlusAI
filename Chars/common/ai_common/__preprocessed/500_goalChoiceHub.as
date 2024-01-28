@@ -3,17 +3,17 @@ id 0x8500
 unk 0x0
 
 //= XReciever
-if var21 >= 7 && var21 < 8
+if var21 < 8
   XGoto CircleCampGoal
   //= XReciever
+elif var21 < 11
+  Return
 elif var21 >= 16 && var21 < 17
   
   XGoto CalcAttackGoal
   //= XReciever
   XGoto SetAttackGoal
   //= XReciever
-elif var21 >= 10 && var21 < 11
-  Return
 else
   var21 = 0
   XGoto RandomizeGoal

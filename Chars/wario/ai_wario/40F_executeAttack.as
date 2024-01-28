@@ -39,13 +39,13 @@
 
 #snippet SSPECIAL_MID
   PredictOMov immediateTempVar mov_jump
-  if Equal CurrSubaction hex(0x1e6) && AnimFrame >= 4 && Rnd <= 0.8 && immediateTempVar >= 0.65 && XDistLE 25
+  if Equal CurrSubaction hex(0x1e6) && AnimFrame >= 4 && Rnd <= 0.8 && immediateTempVar >= 0.23 && XDistLE 25
     Button X
   endif
 #endsnippet
 
-#snippet SSPECIAL_JUMP
-  if Equal CurrSubaction hex(0x1e6) && AnimFrame >= 4 && Rnd <= 0.8
-    Button X
-  endif
-#endsnippet
+// #snippet SSPECIAL_JUMP
+//   if Equal CurrSubaction hex(0x1e6) && AnimFrame >= 4 && Rnd <= 0.8
+//     Button X
+//   endif
+// #endsnippet

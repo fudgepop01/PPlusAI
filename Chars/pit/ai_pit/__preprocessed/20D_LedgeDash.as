@@ -7,7 +7,7 @@ label prep
 XGoto PerFrameChecks
 //= XReciever
 Stick -1
-Seek
+Seek start
 Return
 label start
 XGoto PerFrameChecks

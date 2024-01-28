@@ -16,81 +16,85 @@ label setup
       CallI MainHub
     endif
     Seek landing
+    Jump
   endif
   if CurrAction >= 26 && CurrAction <= 29
   elif True
   var22 = 300
   XGoto GetChrSpecific
+  Seek setup
   if Equal var22 0 
     Return
   endif
-  endif  
-  Button X
-  Seek
-  Return
+  endif
 label jumpSquat
   XGoto PerFrameChecks
   //= XReciever
   Seek jumpSquat
   if Equal AirGroundState 2
-    Seek 
+    Seek landing
     Jump
+  elif NoJumpPrevFrame && !(Equal CurrAction 10) 
+    Button X
   endif
   Return
 label landing
   XGoto PerFrameChecks
   //= XReciever
-  Goto edgeCheck
-  Seek landing
-
+  if !(Equal var16 5)
+    Goto edgeCheck
+    Seek landing
+  endif
+  
   if var0 <= 0 || YSpeed < 0
     Button R
-    if Equal XDistBackEdge XDistFrontEdge
+    if YDistFloor < 0
       var17 = TopNX * -1
-      AbsStick var17 (-0.4)
+      AbsStick var17 (-0.3)
     elif Equal var16 4
-      var17 = XDistBackEdge
-      Abs var17
-      if XDistFrontEdge > var17
-        Stick 1 (-1)
-      else
-        Stick (-1) (-1)
-      endif
+      Stick var23 (-0.65)
     elif Equal var16 1
-      AbsStick OPos (-1)
+      AbsStick OPos (-0.5)
     elif Equal var16 2
       var22 = OPos * -1
-      AbsStick var22 (-1)
+      AbsStick var22 (-0.5)
     elif Equal var16 5
   var22 = 16
   XGoto GetChrSpecific
   //= XReciever
 var17 = var22
       var22 = var13 - TopNX
-      var17 = 1 / var17
-      var22 *= var17
+      var23 = 1 / var17
+      var22 *= var23
       var17 = var22
       Abs var17
       var17 = 1 - var22
-      if var17 > -0.45
-        var17 = -0.45
+      if var17 > -0.3
+        var17 = -0.3
       endif
       AbsStick var22 var17
     else
-      label
-      ClearStick
       AbsStick 0 (-1)
     endif
-    var15 = -1
+    if var15 > 0
+      var15 = -10
+    endif
     Call MainHub
   endif
   var0 -= 1
 Return
 label edgeCheck
-if XDistFrontEdge < 3
+var23 = 0
+if XDistBackEdge < -10
+  var23 = -1
+else
   var16 = 4
-elif XDistBackEdge > -3
+endif
+if XDistFrontEdge > 10
+  var23 = 1
+else
   var16 = 4
 endif
 Return
 Return
+

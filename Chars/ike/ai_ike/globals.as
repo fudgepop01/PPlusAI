@@ -21,9 +21,9 @@
 #const cs_shortHopHeight = 16.61
 #const cs_jumpHeight = 34.08
 #const cs_djumpHeight = 26.39
-#const cs_wavedashDist = 32
-#const cs_recoveryDistX = 80
-#const cs_recoveryDistY = -40
+#const cs_wavedashDist = 27
+#const cs_recoveryDistX = 70
+#const cs_recoveryDistY = -50
 
 //=========================================
 // RECOVERY ACTIONS MOVED TO RECOVERY HUB

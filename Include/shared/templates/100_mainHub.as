@@ -4,7 +4,107 @@ unk 0x0
 
 $genPersonalityStrings()
 
-//= XReciever
+// SetDebugMode 1
+// label loop
+// Seek loop
+// CalcYChange anotherTempVar 10 OYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
+// CalcYChange immediateTempVar 10 OYSpeed OGravity OMaxFallSpeed OFastFallSpeed 1
+// LOGSTR str("no ff; ff")
+// LOGVAL anotherTempVar
+// LOGVAL immediateTempVar
+// PRINTLN
+// Return
+
+// SetDebugMode 1
+// // var0 = 0
+// label loop
+// Seek loop
+
+// DrawDebugRectOutline OCenterX OCenterY OWidth OHurtboxSize color(0xFF00FFDD)
+
+// #let aimX = var0
+// #let aimY = var1
+// immediateTempVar = OTopNX - TopNX
+// anotherTempVar = OWidth * 0.5
+// Abs immediateTempVar
+// if immediateTempVar > anotherTempVar
+//   immediateTempVar = anotherTempVar
+// endif
+// aimX = OCenterX - OPos * immediateTempVar
+
+// immediateTempVar = TopNY - OTopNY
+// if immediateTempVar > OHurtboxSize
+//   immediateTempVar = OHurtboxSize
+// elif immediateTempVar < 0
+//   immediateTempVar = 0
+// endif
+// aimY = OTopNY + immediateTempVar
+
+// DrawDebugRectOutline aimX aimY 5 5 color(0x00FF00DD)
+
+// Return
+
+
+// SetDebugMode 1
+// // var0 = 0
+// label loop
+// Seek loop
+// LOGSTR str("============")
+// LOGVAL GameTimer
+// PRINTLN
+// LOGVAL_NL GetJumpLength
+// LOGVAL_NL GetJumpHeight
+
+// LOGVAL_NL OCharXSpeed
+// LOGVAL_NL OCharYSpeed
+// LOGVAL_NL OTotalXSpeed
+// LOGVAL_NL OTotalYSpeed
+// LOGVAL_NL OXSpeed
+// LOGVAL_NL OYSpeed
+// Return
+
+// SetDebugMode 1
+// label loop
+// Seek loop
+// if Rnd < 0.01
+//   Button R
+// endif
+// LOGSTR str("fSShield")
+// LOGVAL FramesSinceShield
+// PRINTLN
+// Return
+
+
+// Return
+
+// var0 += 0.5
+// var1 = var0
+// if ODistLE var0
+//   DrawDebugCircle TopNX TopNY var1 color(0x00FF00DD)  
+//   // DrawDebugRectOutline TopNX CenterY var1 10 color(0x00FF00DD)  
+// else
+//   DrawDebugCircle TopNX TopNY var1 color(0xFF0000DD)  
+//   // DrawDebugRectOutline TopNX CenterY var1 10 color(0xFF0000DD)  
+// endif
+// DrawDebugRectOutline OCenterX OCenterY OWidth OHurtboxSize color(0xFF8800DD)  
+// if var0 >= 200
+//   var0 = 0
+// endif
+// Return
+
+// SetDebugMode 1
+// label thing
+// Seek thing
+// GetLaBasic globTempVar 91 1
+// if globTempVar < 1
+//   DrawDebugRectOutline OCenterX OCenterY OWidth OHurtboxSize color(0x888888DD)
+// else
+//   DrawDebugRectOutline OCenterX OCenterY OWidth OHurtboxSize color(0x88FF88DD)
+// endif
+// Return
+
+// DrawDebugRectOutline OCenterX OCenterY OWidth OHurtboxSize color(0xFF00FFDD)
+// Return
 
 // XGoto PerFrameChecks
 //= XReciever
@@ -18,7 +118,18 @@ SetDisabledMd -1
 
 LOGSTR str("cg mainStart")
 LOGVAL currGoal
+LOGVAL skipMainInit
 PRINTLN
+
+// label marthThing
+//   XGoto PerFrameChecks
+//   $setLastAttack(fsmash)
+//   XGoto SetAttackGoal
+//   XGoto CheckAttackWillHit
+//   Seek marthThing
+//   AbsStick 0 -1
+//   Return
+  
 
 if TRAINING_MODE_OPTION >= 0
   XGoto PerFrameChecks
@@ -65,15 +176,16 @@ endif
 label initHitPredictValues
 getCurrentPredictValue immediateTempVar man_OXHitDist
 if Equal immediateTempVar 0
-  trackOAction man_OXHitDist 15
+  trackOAction man_OXHitDist 20
+  trackOAction man_OXSwingDist 40
+  trackOAction man_OFramesPostHitstun 250
   Seek initHitPredictValues
   Jump
 endif
 
 label start
 
-DisableDebugOverlay
-if Equal currGoal cg_recover && Equal YDistFloor -1
+if Equal currGoal cg_recover && Equal YDistFloor -1 || Equal CurrAction hex(0x10)
   CallI RecoveryHub
 elif currGoal >= cg_edgeguard
   lastAttack = -1
@@ -100,7 +212,10 @@ if Equal skipMainInit mainInitSkip
   if !(Equal lastAttack -1)
     XGoto SetAttackGoal
     //= XReciever
+
     IF_AERIAL_ATTACK(var0)
+    $ifLastOrigin(usmash,true)
+    $ifLastOrigin(uspecial,true)
     elif Equal CurrSubaction JumpSquat
       scriptVariant = sv_wavedash_in
       Call Wavedash      
@@ -132,7 +247,7 @@ elif Equal skipMainInit sm_execAttack
   skipMainInit = -100
 
   CallI ExecuteAttack
-elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDistLE 25) 
+elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 
   if YDistFloor > 25
     currGoal = cg_nothing
     lastAttack = -1
@@ -171,7 +286,7 @@ elif Equal currGoal cg_attack_wall && CHANCE_MUL_LE PT_WALL_CHANCE 0.45 && !(XDi
     Call MainHub
     Return
   endif
-  timer *= 0.35
+  timer *= 0.4 * Rnd
   label wallDelay
   XGoto PerFrameChecks 
   //= XReciever
@@ -197,6 +312,7 @@ elif Equal currGoal cg_bait_wait
   Seek waitSetup
   Jump
 endif
+DisableDebugOverlay
 
 label rollTactics
 
@@ -211,8 +327,14 @@ anotherTempVar = TopNX - OTopNX
 Abs anotherTempVar
 immediateTempVar = PT_CIRCLECAMPCHANCE * anotherTempVar * 0.025
 DynamicDiceAdd dslot0 cg_bait_attack immediateTempVar
-immediateTempVar *= 2
-DynamicDiceAdd dslot0 cg_circleCamp immediateTempVar
+immediateTempVar *= 3
+
+GetCommitPredictChance anotherTempVar
+anotherTempVar -= 0.25
+anotherTempVar *= -6 * immediateTempVar 
+DynamicDiceAdd dslot0 cg_circleCamp anotherTempVar
+// anotherTempVar *= 1.25 * PT_BAITCHANCE
+// DynamicDiceAdd dslot0 cg_bait_wait anotherTempVar
 
 // Functions = things that give a value
 // Requirements = stuff that go in an if condition
@@ -225,6 +347,14 @@ DynamicDiceAdd dslot0 cg_bait_attack immediateTempVar
 immediateTempVar = PT_BAIT_DASHAWAYCHANCE * 2
 DynamicDiceAdd dslot0 cg_bait_dashdance immediateTempVar
 
+if LevelValue >= LV8
+  immediateTempVar = 300 - GameTimer
+  if immediateTempVar > 0
+    immediateTempVar *= 0.1
+    DynamicDiceAdd dslot0 cg_bait_wait immediateTempVar
+    DynamicDiceAdd dslot0 cg_circleCamp immediateTempVar
+  endif
+endif
 anotherTempVar = LevelValue * 0.0075
 if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.2
   SeekNoCommit attack_roll
@@ -235,7 +365,7 @@ immediateTempVar = LevelValue * 0.0075
 anotherTempVar = 1 - immediateTempVar
 PredictOMov immediateTempVar mov_attack
 immediateTempVar *= anotherTempVar
-if immediateTempVar < 0.08
+if immediateTempVar < 0.02 && CHANCE_MUL_LE PT_AGGRESSION 0.02
   SeekNoCommit attack_roll
 elif Equal HitboxConnected 1
   if !(True)
@@ -251,7 +381,7 @@ elif Equal HitboxConnected 1
   DynamicDiceAdd dslot0 cg_attack immediateTempVar
   GetCommitPredictChance immediateTempVar
   if YDistFloor < 25
-    immediateTempVar *= 2.5 * PT_WALL_CHANCE
+    immediateTempVar *= 8 * PT_WALL_CHANCE
     DynamicDiceAdd dslot0 cg_attack_wall immediateTempVar
   endif
   immediateTempVar = 5 - immediateTempVar
@@ -296,8 +426,8 @@ endif
 
 #let techSkill = var0
 techSkill = LevelValue * 0.01
-if techSkill < 0
-  techSkill = 0.01
+if techSkill <= 0.1
+  techSkill = 0.1
 endif
 label tskillWait
 XGoto PerFrameChecks
@@ -310,21 +440,19 @@ Return
 label selectGoal
 XGoto PerFrameChecks
 Cmd30
-// if TEMP_DEBUG_TOGGLE > 0
-//   lastAttack = Damage
-//   currGoal = cg_attack_reversal
-//   CALL_EVENT(chr_cs_moveName)
-//   PRINTLN
-//   XGoto SetAttackGoal
-//   XGoto CheckAttackWillHit
-// else
+
+  if Equal currGoal cg_attack_wall && LevelValue <= LV5
+    currGoal = cg_attack
+  endif
+
   XGoto UpdateGoal
   LOGSTR str("cg-post UpD")
   LOGVAL currGoal
-// endif
+
 PRINTLN
 
-if Equal currGoal cg_bait_wait
+Seek selectGoal
+if Equal currGoal cg_bait_wait && LevelValue >= LV5
   label waitSetup
   #let timer = var4
   timer = Rnd * 55 + 5
@@ -332,17 +460,15 @@ if Equal currGoal cg_bait_wait
   LOGSTR_NL str("BAIT_WAIT")
   STACK_PUSH timer st_function
   XGoto PerFrameChecks
-  //= XReciever
   XGoto UpdateGoal
-  //= XReciever
   if Equal CurrAction hex(0x49)
     XGoto AttackedHub
   endif
   timer = STACK_POP
-  Seek baitWait
   timer -= 1
+  Seek baitWait
   predictAverage immediateTempVar man_OXHitDist
-  immediateTempVar *= 0.5
+  immediateTempVar *= 0.4
   if XDistLE immediateTempVar && Rnd <= 0.02
     CallI DefendHub
   endif
@@ -357,10 +483,6 @@ if Equal currGoal cg_bait_wait
   if LevelValue >= LV8
     Stick 0 -1
   endif
-  // if Rnd < pt_wall_chance && Rnd < pt_braveChance
-  //   Seek setupWallDelay
-  //   Jump
-  // endif
   if timer <= 0 || !(Equal currGoal cg_bait_wait)
     currGoal = cg_nothing
     skipMainInit = -100
@@ -368,13 +490,17 @@ if Equal currGoal cg_bait_wait
   endif
   Return
 elif Equal goalY BBoundary
-  Seek selectGoal
-  Return
-elif Equal currGoal cg_attack && Equal lastAttack -1
-  Seek selectGoal
   Return
 endif
-label navigateToGoal
+if !(True)
+  label navigateToGoal
+endif
+Seek selectGoal
+{NAVIGATION_OVERRIDE}
+if Equal scriptVariant sv_noNavigation
+  scriptVariant = 0
+  Return
+endif
 XGoto PerFrameChecks
 Goto isActionable
 Seek selectGoal
@@ -386,8 +512,22 @@ XGoto MoveToGoal
 Seek selectGoal
 Return
 label isActionable
+{ISACTIONABLE_OVERRIDE}
 immediateTempVar = 0
-ACTIONABLE_ON_GROUND
+
+if Equal CanCancelAttack 1
+elif Equal HitboxConnected 1 && HasCurry
+elif CurrAction >= hex(0x67) && CurrAction <= hex(0x6D)
+elif Equal CurrAction hex(0x16) 
+  if Equal PrevAction hex(0x21)
+    Return
+  elif AnimFrame <= 3
+    Return
+  endif
+elif CurrAction >= hex(0x18) && !(Equal CurrAction hex(0x49)) && !(Equal CurrAction hex(0x67)) && !(Equal CurrAction hex(0x6C))
+  Return
+endif
+
 immediateTempVar = 1
 Return
 Return

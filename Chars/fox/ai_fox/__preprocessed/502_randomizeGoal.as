@@ -16,11 +16,11 @@ var14 = var17
 var14 += 2
 
 if CHANCE_MUL_LE PT_JUMPINESS 1
-  GetAttribute var22 72; 0
+  GetAttribute var22 72 0
   var22 *= 3.5
   var14 = var14 + Rnd * var22 * 10
   if CHANCE_MUL_LE PT_DJUMPINESS 1
-    GetAttribute var22 88; 0
+    GetAttribute var22 88 0
     var14 = var14 + Rnd * var22 * 10
   endif
 endif

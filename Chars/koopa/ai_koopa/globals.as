@@ -21,20 +21,9 @@
 #const cs_shortHopHeight = 11.51
 #const cs_jumpHeight = 33.01
 #const cs_djumpHeight = 36.48
-#const cs_wavedashDist = 18
+#const cs_wavedashDist = 33
 #const cs_recoveryDistX = 70
 #const cs_recoveryDistY = -30
-
-#const recovery_moves = uspecial
-
-#const uspecial_subaction_check = !(True)
-#const uspecial_recovery_info = common|0
-
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x11c) || Equal CurrAction hex(0x11d)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x119) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x11b)
 
 // jab123
 #const jab123_IASA = 19
@@ -115,13 +104,13 @@
 #const dtilt_damage_info = DTilt|13|15|100|361
 
 #const mv_dtilt_2 = 1
-#const dtilt_2_IASA = 23
+#const dtilt_2_IASA = 32
 #const dtilt_2_xOffset = -0.18
 #const dtilt_2_yOffset = 2.85
 #const dtilt_2_xRange = 14.28
 #const dtilt_2_yRange = 7.19
-#const dtilt_2_hitFrame = 12
-#const dtilt_2_lastHitFrame = 15
+#const dtilt_2_hitFrame = 21
+#const dtilt_2_lastHitFrame = 24
 #const dtilt_2_damage_info = DTilt|12|12|100|361
 
 // fsmash
@@ -171,7 +160,7 @@
 #const nspecial_yRange = 8
 #const nspecial_hitFrame = 16
 #const nspecial_lastHitFrame = 80
-#const nspecial_damage_info = NSpecial|15|53|70|55
+#const nspecial_damage_info = NSpecial|-15|53|70|55
 
 #const nspecialair_IASA = 69
 #const nspecialair_xOffset = 9.83
@@ -180,7 +169,7 @@
 #const nspecialair_yRange = 8
 #const nspecialair_hitFrame = 16
 #const nspecialair_lastHitFrame = 80
-#const nspecialair_damage_info = NSpecialAir|15|53|70|55
+#const nspecialair_damage_info = NSpecialAir|-15|53|70|55
 
 // upB
 #const uspecial_IASA = 81
@@ -241,13 +230,25 @@
 #const sspecial_hit_damage_info = SSpecial|10|55|90|65
 
 #const mv_sspecial_throwb = 2
-#const sspecial_throwb_damage_info = SSpecial|15|60|75|-361
+#const sspecial_throwb_damage_info = SSpecial|15|60|75|361
 
 #const mv_sspecial_throwf = 3
 #const sspecial_throwf_damage_info = SSpecial|15|60|75|361
 
 #const mv_sspecial_throwlw = 4
 #const sspecial_throwlw_damage_info = SSpecial|15|80|20|280
+
+#const sspecialair_IASA = 49
+#const sspecialair_xOffset = 9.97
+#const sspecialair_yOffset = -1.08
+#const sspecialair_xRange = 7.56
+#const sspecialair_yRange = 5.29
+#const sspecialair_hitFrame = 16
+#const sspecialair_lastHitFrame = 16
+#const sspecialair_damage_info = SSpecialAir|0|0|0|0
+
+#const mv_sspecialair_throwlw = 1
+#const sspecialair_throwlw_damage_info = SSpecialAir|15|20|66|290
 
 // grab
 // when I want to techchase using grab, i'll set move_variant to this value

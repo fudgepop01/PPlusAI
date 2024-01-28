@@ -13,12 +13,12 @@
 #const cs_shortHopHeight = 14.81
 #const cs_jumpHeight = 37.92
 #const cs_djumpHeight = 30.72
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 33
 
 #const dashForceTurnFrame = 11
 #const dashDanceMinFrames = 2
 #const cs_recoveryDistX = 60
-#const cs_recoveryDistY = -70
+#const cs_recoveryDistY = -60
 
 #const pt_jumpiness = 0.05
 #const pt_djumpiness = 0.02
@@ -145,7 +145,16 @@
 #const nspecial_yRange = 2
 #const nspecial_hitFrame = 21
 #const nspecial_lastHitFrame = 90
-#const nspecial_damage_info = NSpecial|0|0|0|0
+#const nspecial_damage_info = NSpecial|-6|w26|100|361
+
+#const nspecialair_IASA = 58
+#const nspecialair_xOffset = 9
+#const nspecialair_yOffset = -7.85
+#const nspecialair_xRange = 45
+#const nspecialair_yRange = 2
+#const nspecialair_hitFrame = 21
+#const nspecialair_lastHitFrame = 90
+#const nspecialair_damage_info = NSpecialAir|-6|w26|100|361
 
 // upB
 #const uspecial_IASA = 41

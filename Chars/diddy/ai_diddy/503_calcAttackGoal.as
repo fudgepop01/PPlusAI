@@ -3,6 +3,15 @@
   //   skipMainInit = sm_execAttack
   //   CallI ExecuteAttack
   // endif
+  if currGoal >= cg_edgeguard
+    $ifLastList(uspecial;uspecialair,if)
+      lastAttack = -1
+    $elifLastAttack(sspecial)
+      lastAttack = -1
+    $elifLastAttack(sspecialair)
+      lastAttack = -1
+    endif
+  endif
 #endsnippet
 
 #snippet COMBO_MOVES

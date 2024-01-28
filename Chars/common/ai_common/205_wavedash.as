@@ -17,73 +17,75 @@ label setup
       CallI MainHub
     endif
     Seek landing
+    Jump
   endif
   if CurrAction >= hex(0x1A) && CurrAction <= hex(0x1D)
   elif True
-    ACTIONABLE_ON_GROUND
-  endif  
-  Button X
-  Seek
-  Return
+    ACTIONABLE_ON_GROUND(setup)
+  endif
 label jumpSquat
   XGoto PerFrameChecks
   //= XReciever
   Seek jumpSquat
   if Equal AirGroundState 2
-    Seek 
+    Seek landing
     Jump
+  elif NoJumpPrevFrame && !(Equal CurrAction hex(0xA)) 
+    Button X
   endif
   Return
 label landing
   XGoto PerFrameChecks
   //= XReciever
-  Goto edgeCheck
-  Seek landing
-
+  if !(Equal scriptVariant sv_wavedash_goal)
+    Goto edgeCheck
+    Seek landing
+  endif
+  
   if airTime <= 0 || YSpeed < 0
     Button R
-    if Equal XDistBackEdge XDistFrontEdge
+    if YDistFloor < 0
       globTempVar = TopNX * -1
-      AbsStick globTempVar (-0.4)
+      AbsStick globTempVar (-0.3)
     elif Equal scriptVariant sv_wavedash_awayFromLedge
-      globTempVar = XDistBackEdge
-      Abs globTempVar
-      if XDistFrontEdge > globTempVar
-        Stick 1 (-1)
-      else
-        Stick (-1) (-1)
-      endif
+      Stick anotherTempVar (-0.65)
     elif Equal scriptVariant sv_wavedash_in
-      AbsStick OPos (-1)
+      AbsStick OPos (-0.5)
     elif Equal scriptVariant sv_wavedash_out
       immediateTempVar = OPos * -1
-      AbsStick immediateTempVar (-1)
+      AbsStick immediateTempVar (-0.5)
     elif Equal scriptVariant sv_wavedash_goal
       GET_CHAR_TRAIT(globTempVar, chr_cs_wavedashDist)
       immediateTempVar = goalX - TopNX
-      globTempVar = 1 / globTempVar
-      immediateTempVar *= globTempVar
+      anotherTempVar = 1 / globTempVar
+      immediateTempVar *= anotherTempVar
       globTempVar = immediateTempVar
       Abs globTempVar
       globTempVar = 1 - immediateTempVar
-      if globTempVar > -0.45
-        globTempVar = -0.45
+      if globTempVar > -0.3
+        globTempVar = -0.3
       endif
       AbsStick immediateTempVar globTempVar
     else
-      label
-      ClearStick
       AbsStick 0 (-1)
     endif
-    skipMainInit = mainInitSkip
+    if skipMainInit > 0
+      skipMainInit = mainInitSkip
+    endif
     Call MainHub
   endif
   airTime -= 1
 Return
 label edgeCheck
-if XDistFrontEdge < 3
+anotherTempVar = 0
+if XDistBackEdge < -10
+  anotherTempVar = -1
+else
   scriptVariant = sv_wavedash_awayFromLedge
-elif XDistBackEdge > -3
+endif
+if XDistFrontEdge > 10
+  anotherTempVar = 1
+else
   scriptVariant = sv_wavedash_awayFromLedge
 endif
 Return

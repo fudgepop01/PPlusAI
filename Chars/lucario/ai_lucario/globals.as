@@ -22,19 +22,8 @@
 #const cs_jumpHeight = 38.44
 #const cs_djumpHeight = 34.69
 #const cs_wavedashDist = 24
-#const cs_recoveryDistX = 75
-#const cs_recoveryDistY = -75
-
-#const recovery_moves = uspecial
-
-#const uspecial_subaction_check = !(True)
-#const uspecial_recovery_info = common|0
-
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10) || Equal CurrAction hex(0x11c)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118) || Equal CurrAction hex(0x119)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrSubaction hex(0x66)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114) || Equal CurrAction hex(0x11b)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+#const cs_recoveryDistX = 70
+#const cs_recoveryDistY = -70
 
 // jab123
 #const jab123_IASA = 18
@@ -162,10 +151,10 @@
 #const nspecial_yRange = 10
 #const nspecial_hitFrame = 18
 #const nspecial_lastHitFrame = 40
-#const nspecial_damage_info = NSpecial|0|-1|0|0
+#const nspecial_damage_info = NSpecial|-1|-1|0|0
 
 #const mv_asc = 1
-#const asc_damage_info = NSpecial|0|0|0|0
+#const asc_damage_info = NSpecial|1|-1|0|0
 
 #const nspecialair_IASA = 48
 #const nspecialair_xOffset = 0
@@ -174,7 +163,7 @@
 #const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 18
 #const nspecialair_lastHitFrame = 40
-#const nspecialair_damage_info = NSpecialAir|0|-1|0|0
+#const nspecialair_damage_info = NSpecialAir|-1|-1|0|0
 
 // upB
 // #const uspecial_IASA = 81

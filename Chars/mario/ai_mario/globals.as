@@ -1,4 +1,4 @@
-#const DIRY_ABOVE = 8.1
+#const DIRY_ABOVE = 12
 #const DIRY_BELOW_AIR = 0
 #const DIRY_BELOW_GROUND = 0
 #const DIRX_FRONT = 4
@@ -21,21 +21,10 @@
 #const cs_shortHopHeight = 11.76
 #const cs_jumpHeight = 30.18
 #const cs_djumpHeight = 27.84
-#const cs_wavedashDist = 20
+#const cs_wavedashDist = 35
 
-#const cs_recoveryDistX = 40
-#const cs_recoveryDistY = -40
-
-#const recovery_moves = uspecial
-
-#const uspecial_subaction_check = !(True)
-#const uspecial_recovery_info = common|0
-
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+#const cs_recoveryDistX = 160
+#const cs_recoveryDistY = -45
 
 #const sv_execute_hardfall = -100
 #const sv_execute_rising = -101
@@ -166,7 +155,7 @@
 #const nspecialair_yRange = 30
 #const nspecialair_hitFrame = 25
 #const nspecialair_lastHitFrame = 45
-#const nspecialair_damage_info = NSpecialAir|0|0|0|0
+#const nspecialair_damage_info = NSpecialAir|-7|22|20|361
 
 // upB
 #const uspecialair_IASA = 70
@@ -187,7 +176,6 @@
 #const dspecial_hitFrame = 8
 #const dspecial_lastHitFrame = 45
 #const dspecial_damage_info = DSpecial|5|60|115|80
-
 
 // sideB
 #const sspecial_IASA = 37

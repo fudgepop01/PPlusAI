@@ -32,11 +32,11 @@
 #const uspecial_subaction_check = !(Equal CurrSubaction hex(0x1D6)) && !(Equal CurrSubaction hex(0x1D7))
 #const uspecial_recovery_info = common|60
 
-#const SFALL_ACTIONS = Equal CurrAction hex(0x10)
-#const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
-#const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x11b) || Equal CurrAction hex(0x11c) || Equal CurrAction hex(0x11c)
-#const USPECIAL_ACTIONS = Equal CurrAction hex(0x114)
-#const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
+// #const SFALL_ACTIONS = Equal CurrAction hex(0x10)
+// #const NSPECIAL_ACTIONS = Equal CurrAction hex(0x112) || Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+// #const SSPECIAL_ACTIONS = Equal CurrAction hex(0x113) || Equal CurrAction hex(0x11a) || Equal CurrAction hex(0x11b) || Equal CurrAction hex(0x11c) || Equal CurrAction hex(0x11c)
+// #const USPECIAL_ACTIONS = Equal CurrAction hex(0x114)
+// #const DSPECIAL_ACTIONS = Equal CurrAction hex(0x115)
 
 // jab123
 #const jab123_IASA = 25
