@@ -3,18 +3,18 @@ id 0x8100
 unk 0x0
 
 str "PERSONALITY"
-str "1.6"
-str "0.3"
-str "0.7"
-str "1.01"
+str "1.25"
 str "0.45"
-str "0.25"
-str "0.15"
-str "0.2"
-str "0.23"
+str "0.45"
+str "0.8"
+str "0.65"
+str "0.1"
+str "0.02"
+str "0.05"
+str "0.1"
 str "1"
 str "0.5"
-str "0.2"
+str "0.7"
 
 // SetDebugMode 1
 // label loop
@@ -26,6 +26,7 @@ str "0.2"
 SetAutoDefend 0
 SetDisabledSwitch 1
 SetDebugMode TEMP_DEBUG_TOGGLE
+LOGSTR_NL 1312902656 1092635904 1095323136 1213547008 0
 
 XGoto PerFrameChecks
 

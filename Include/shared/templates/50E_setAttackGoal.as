@@ -17,7 +17,7 @@ elif Equal OCurrSubaction hex(0xD9) || Equal OCurrSubaction hex(0x30) || Equal O
   Return
 endif
 globTempVar = 30 - LevelValue * 0.021
-if Equal anotherTempVar 0 && OAnimFrame < globTempVar
+if Equal anotherTempVar 0 || OAnimFrame < globTempVar
   Return
 endif
 
@@ -85,6 +85,13 @@ if OFramesHitstun > 0 && OFramesHitstun < move_hitFrame
   move_hitFrame = OFramesHitstun
 endif
 
+// frame addition to account for reaction time
+immediateTempVar = (1 - (LevelValue / 100)) * 60 + 10
+immediateTempVar *= PT_REACTION_TIME
+goalX = OTotalXSpeed * immediateTempVar
+LOGSTR str("RTime")
+LOGVAL goalX
+
 IF_AERIAL_ATTACK(var3)
   if Equal AirGroundState 1
     GetAttribute anotherTempVar attr_jumpSquatFrames 0
@@ -100,7 +107,12 @@ if isORecovering < 0
   else
     estOXPos = OTopNX + OTotalXSpeed * move_hitFrame
   endif
-  goalX = estOXPos
+
+  if OYDistBackEdge > 20
+    estOXPos = ODirection * OXDistFrontEdge + OTopNX
+  endif
+
+  goalX += estOXPos
 
   $tempVar(estOYPos, anotherTempVar)
   if Equal OAirGroundState 2
@@ -115,13 +127,15 @@ if isORecovering < 0
   else
 
     GetAttribute immediateTempVar attr_dashInitVel 1
+    LOGSTR str("attr")
+    LOGVAL immediateTempVar
     PredictOMov anotherTempVar mov_attack
     anotherTempVar *= immediateTempVar
     anotherTempVar *= OPos * -1
     if Equal currGoal cg_attack_wall || Equal currGoal cg_bait_attack 
-      goalX += anotherTempVar
+      goalX -= anotherTempVar
     endif
-    goalX += anotherTempVar
+    goalX -= anotherTempVar
     
     estOYPos = OTopNY
     // PredictOMov immediateTempVar mov_jump
@@ -151,10 +165,31 @@ elif True
   globTempVar = move_hitFrame
   O_RECOVERY_POSITION(immediateTempVar, anotherTempVar, globTempVar)
 
-  goalX = estOXPos
+  if OYDistBackEdge > 20
+    estOXPos = ODirection * OXDistFrontEdge + OTopNX 
+  endif
+
+  goalX += estOXPos
   Goto adjustPosIfInGround
   goalY = estOYPos
 endif
+
+LOGSTR str("End")
+LOGVAL goalX
+PRINTLN
+
+
+// if var3 < 1 || OYDistBackEdge > 20 && YDistFloor > 0
+//   GetYDistFloorAbsPos immediateTempVar goalX CenterY
+//   if immediateTempVar < 0
+//     goalX = TopNX
+//     anotherTempVar = XDistBackEdge * Direction * OPos
+//     if anotherTempVar < 0
+//       anotherTempVar = XDistFrontEdge * Direction
+//     endif
+//     goalX += anotherTempVar
+//   endif
+// endif
 
 // if Equal AirGroundState 2
 //   CalcYChange anotherTempVar move_hitFrame immediateTempVar Gravity MaxFallSpeed FastFallSpeed 0
@@ -162,7 +197,7 @@ endif
 // endif
 
 if Equal OCurrAction hex(0x54)
-  goalY = OTopNY
+  goalY = OCenterY
 endif
 
 DrawDebugRectOutline goalX goalY 3 3 color(0x00FF00DD)
@@ -177,15 +212,26 @@ else
 endif
 goalX -= move_centerX
 
-$tempVar(OWidthOffset,immediateTempVar)
-OWidthOffset = OPos * 0.25 * OWidth
-goalX += OWidthOffset
+if AnimFrame > 2
+  #let multiplier = var3
+  multiplier = LevelValue * 0.0125
+  immediateTempVar = TotalXSpeed * move_hitFrame
+  immediateTempVar *= multiplier
+  {UNAFFECTED_X_MOVES}
+
+  immediateTempVar = TotalYSpeed * move_hitFrame
+  // immediateTempVar *= multiplier
+  {UNAFFECTED_Y_MOVES}
+endif
+// $tempVar(OWidthOffset,immediateTempVar)
+// OWidthOffset = OPos * 0.5 * OWidth
+// goalX += OWidthOffset
 
 // goalY += move_yOffset
 // immediateTempVar = OHurtboxSize + move_yRange
 immediateTempVar = move_yRange - move_yOffset
 // immediateTempVar *= 0.5
-goalY += immediateTempVar
+goalY -= immediateTempVar
 // if Equal AirGroundState 2 && YDistFloor > 5 || YDistFloor < 0
 //   immediateTempVar = move_yRange * 0.5 + OHurtboxSize * 0.3
 //   goalY += immediateTempVar
@@ -212,7 +258,13 @@ goalY += immediateTempVar
 // immediateTempVar = OHurtboxSize
 // goalY += immediateTempVar
 
-goalY = TopNY
+if OTopNY > TopNY 
+  if SamePlane
+    goalY = TopNY
+  else
+    goalY = OTopNY
+  endif
+endif
 // IF_AERIAL_ATTACK(var3)
 //   immediateTempVar = (TopNY - YDistFloor) + cs_shortHopHeight
 //   // LOGSTR str("gy; ph; jhh")
@@ -262,7 +314,8 @@ if Equal OCurrAction hex(0x49) && !(CalledFrom ExecuteAttack)
     endif
   endif
 endif
-if !(Equal currGoal cg_attack_wall)
+GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
+if immediateTempVar < 5 && currGoal < cg_edgeguard && !(Equal currGoal cg_attack_shieldPunish) // && Equal DEBUG_VALUE 0 
   goalX += offsetAmount
 endif
 // if Equal OCurrAction hex(0x4D)

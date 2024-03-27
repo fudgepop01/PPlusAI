@@ -19,8 +19,8 @@ label start
 framesAfterHitlag = 0
 #let moveAngle = var18
 techSkill = LevelValue * 0.01
-if techSkill < 0.2
-  techSkill = 0.2
+if techSkill < 0.05
+  techSkill = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -287,7 +287,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction hex(0x39)
-    $ifLastOrigin(grab,false)
+    $ifLastAttack(grab)
+      XGoto CalcAttackGoal
+    $ifLastOrigin(grab,true)
     else
       XGoto CalcAttackGoal
     endif

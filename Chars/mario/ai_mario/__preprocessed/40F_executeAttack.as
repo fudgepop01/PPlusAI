@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -150,7 +150,24 @@ STACK_PUSH 17 0
 
 Cmd30
 ClearStick
-// {SKIP_EXEC}
+if !(True)
+    Goto handleUSpecial 
+elif Equal var20 13
+    Goto handleUSpecial
+  endif
+  if !(True)
+    label handleUSpecial
+    var23 = OPos * 30
+    GetYDistFloorOffset var22 var23 5 0
+    if var22 < 0
+      if Equal AirGroundState 1 
+var20 = 9
+      else
+var20 = 24
+      endif
+    endif
+    Return
+  endif
 
 if Equal var20 0
 Button A
@@ -380,9 +397,11 @@ if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
 endif
   ClearStick
   AbsStick OPos
-  MOD var22 AnimFrame 3
-  if OYDistFloor > 5 && var22 <= 1
-    Button B
+  MOD var22 AnimFrame 6
+  if var22 <= 1 && XDistLE 30
+    if OTopNY > TopNY || YDistFloor < 0
+      Button B
+    endif
   endif
   if AnimFrame > 50
     Seek finish
@@ -630,7 +649,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+if Equal var20 17
+      XGoto CalcAttackGoal
+elif Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
     else
       XGoto CalcAttackGoal
     endif

@@ -110,22 +110,22 @@ label grab
   Return
 // fthrow; 18
 label fthrow
-  SetVarAttackData 5.4 -5.17 5.76 3.6 7 16 46 9 0 80 20
+  SetVarAttackData 5.4 -5.17 5.76 3.6 7 25 46 9 0 80 20
   var22 = 40
   Return
 // dthrow; 19
 label dthrow
-  SetVarAttackData 5.4 -5.17 5.76 3.6 7 23 42 10 0 75 30
+  SetVarAttackData 5.4 -5.17 5.76 3.6 7 39 42 10 0 75 30
   var22 = 270
   Return
 // bthrow; 20
 label bthrow
-  SetVarAttackData 5.4 -5.17 5.76 3.6 7 11.5 33 9 0 80 20
+  SetVarAttackData 5.4 -5.17 5.76 3.6 7 16 33 9 0 80 20
   var22 = 40
   Return
 // uthrow; 21
 label uthrow
-  SetVarAttackData 5.4 -5.17 5.76 3.6 7 13.5 40 10 0 45 105
+  SetVarAttackData 5.4 -5.17 5.76 3.6 7 20 40 10 0 45 105
   var22 = 90
   Return
 // nair; 22
@@ -295,43 +295,43 @@ elif Equal var22 30000
           ADJUST_PERSONALITY 0 var22 Rnd
           ADJUST_PERSONALITY 3 -11 1
           ADJUST_PERSONALITY 3 1 1
-          ADJUST_PERSONALITY 10 -11 1
-          ADJUST_PERSONALITY 10 1.25 1
+          ADJUST_PERSONALITY 11 -11 1
+          ADJUST_PERSONALITY 11 1.25 1
           ADJUST_PERSONALITY 4 -11 1
           ADJUST_PERSONALITY 4 1.25 1
           ADJUST_PERSONALITY 5 -11 1
           ADJUST_PERSONALITY 0 3 Rnd
           ADJUST_PERSONALITY 3 2.5 Rnd
-          ADJUST_PERSONALITY 10 6 Rnd
+          ADJUST_PERSONALITY 11 6 Rnd
           ADJUST_PERSONALITY 4 3.5 Rnd
           ADJUST_PERSONALITY 5 4 Rnd
           if Rnd < 0.25
             ADJUST_PERSONALITY 1 -3 1
-            var22 = 0.3 * 3
+            var22 = 0.45 * 3
             ADJUST_PERSONALITY 1 1 1
             ADJUST_PERSONALITY 1 var22 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 2 -3 1
-            var22 = 0.7 * 3
+            var22 = 0.45 * 3
             ADJUST_PERSONALITY 2 1 1
             ADJUST_PERSONALITY 2 var22 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 7 -3 1
-            var22 = 0.2 * 4
+            var22 = 0.05 * 4
             ADJUST_PERSONALITY 7 1 1
             ADJUST_PERSONALITY 7 var22 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 6 -3 1
-            var22 = 0.15 * 4
+            var22 = 0.02 * 4
             ADJUST_PERSONALITY 6 1 1
             ADJUST_PERSONALITY 6 var22 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 8 -3 1
-            var22 = 0.23 * 4
+            var22 = 0.1 * 4
             ADJUST_PERSONALITY 8 1 1
             ADJUST_PERSONALITY 8 var22 Rnd
           endif
@@ -350,7 +350,7 @@ elif Equal var22 20000
       PredictOMov var22 14
       if var22 > 0.2
         ADJUST_PERSONALITY 0 -0.025 var22
-        ADJUST_PERSONALITY 10 0.025 var22
+        ADJUST_PERSONALITY 11 0.025 var22
         ADJUST_PERSONALITY 1 0.001 var22
         ADJUST_PERSONALITY 2 0.005 var22
         ADJUST_PERSONALITY 7 0.01 var22
@@ -362,7 +362,7 @@ elif Equal var22 20000
         var22 = var23
       endif
       if var22 >= 0.2
-        ADJUST_PERSONALITY 10 0.025 var22
+        ADJUST_PERSONALITY 11 0.025 var22
         ADJUST_PERSONALITY 3 0.025 var22
         ADJUST_PERSONALITY 1 0.005 var22
         ADJUST_PERSONALITY 4 0.01 var22
@@ -370,7 +370,7 @@ elif Equal var22 20000
       PredictOMov var23 10
       if var22 >= 0.2
         ADJUST_PERSONALITY 3 -0.025 var22
-        ADJUST_PERSONALITY 10 -0.025 var22
+        ADJUST_PERSONALITY 11 -0.025 var22
         ADJUST_PERSONALITY 0 0.025 var22
         ADJUST_PERSONALITY 4 0.025 var22
         ADJUST_PERSONALITY 6 0.01 var22
@@ -386,18 +386,18 @@ elif Equal var22 20000
         ADJUST_PERSONALITY 3 0.002 var22
         ADJUST_PERSONALITY 1 0.001 var22
         ADJUST_PERSONALITY 2 0.001 var22
-        ADJUST_PERSONALITY 10 0.005 var22
+        ADJUST_PERSONALITY 11 0.005 var22
         ADJUST_PERSONALITY 5 0.002 var22
       endif
     elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= 60 && var22 < 0.3
       ADJUST_PERSONALITY 0 -11 1
       ADJUST_PERSONALITY 0 1.7 1
       ADJUST_PERSONALITY 3 0.4 1
-      ADJUST_PERSONALITY 10 1.2 1
+      ADJUST_PERSONALITY 11 1.2 1
     elif Rnd < 0.04000000000000001
       var22 = (LevelValue / 35) * 0.4
       ADJUST_PERSONALITY 0 0.005 var22
-      ADJUST_PERSONALITY 10 0.015 var22
+      ADJUST_PERSONALITY 11 0.015 var22
     elif Rnd < 0.04000000000000001 && FramesHitstun > 0
       Goto shuffle_AI
     endif
@@ -561,9 +561,6 @@ elif Equal var22 0.003 || Equal var22 0.004
       var22 = OFramesHitstun + OFramesHitlag
     endif
   endif
-  if var22 > -1
-    var22 += 4
-  endif
   if Equal STACK_POP 0.004 && !(Equal CurrAction 29)
     if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274
       STACK_PUSH var22 0
@@ -589,38 +586,37 @@ elif Equal var22 0.003 || Equal var22 0.004
         Goto restoreTempRegs
         Return
       endif
-      // chr_trait_return = STACK_POP
-      // Goto restoreTempRegs
+    else
+      Goto restoreTempRegs
     endif
   else
     Goto restoreTempRegs
   endif
 elif Equal var22 23
+  var22 = 0
+  Return
   Goto saveTempRegs
-  if !(CalledFrom ExecuteAttack)
-  var22 = 200
-  XGoto GetChrSpecific
-  //= XReciever
+  if !(CalledFrom ExecuteAttack) && CurrAction < 32 && PrevAction < 32 && var21 < 16.7
+    // GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
     var23 = 0
-    if Equal var22 1
-      var22 = 0
-      Goto restoreTempRegs
-      Return
-    elif OYDistBackEdge < -10
-    elif !(Equal var21 16.4) && var21 < 16.7
-      var22 = OTopNY - TopNY
-      if var22 <= 30
-        var23 = 1
-      endif
-    endif
-    if !(Equal var23 0) 
+    // if Equal immediateTempVar 1
+    //   chr_trait_return = 0
+    //   Goto restoreTempRegs
+    //   Return
+    // if OYDistFloor > 10
+    // elif !(Equal currGoal cg_attack_reversal)
+    //   immediateTempVar = OTopNY - TopNY
+    //   if immediateTempVar <= 30
+    //     anotherTempVar = 1
+    //   endif
+    // endif
+    if OYDistFloor < 10 && var21 < 16.7
+    // elif !(Equal anotherTempVar 0) 
   var22 = 0.003
   XGoto GetChrSpecific
   //= XReciever
-      if var22 <= 10
+      if var22 <= 5
         var23 = 1
-      else
-        var23 = 0
       endif
     endif
 
@@ -643,13 +639,20 @@ elif Equal var22 23
       //     move_hitFrame = 10
       //   endif
       // endif
-      var22 *= 0.4 * var7 * OPos
+      // TODO
+      var22 *= 0.6000000000000001
       predictOOption var17 9
       predictionConfidence var23 9  
 
-      if Equal var17 1 && var23 >= 0.3
+      // FIXME
+      // globTempVar = op_bait_move
+      // anotherTempVar = 1
+
+      if Equal var17 1 && var23 >= 0.6
         predictOOption var23 8 
         predictAverage var17 10
+        // FIXME
+        // anotherTempVar = op_baitdir_overshoot
         var17 *= OPos
         if Equal var21 16.3
         elif Equal var23 3
@@ -660,25 +663,29 @@ elif Equal var22 23
           else
             var22 *= 5
           endif
-          var22 = var17 * -1
-          var22 -= var22
+          // chr_trait_return = immediateTempVar
+          // immediateTempVar *= -1
         elif Equal var23 2
           // LOGSTR_NL str("OVERSHOOT")
-          var22 = OPos * 15
-          GetYDistFloorOffset var22 var22 5 1
-          if !(Equal var22 -1)
+          var23 = 15 * var22
+          GetYDistFloorOffset var23 var23 5 1
+          if !(Equal var23 -1)
             // immediateTempVar *= 5
-            var22 = var17
-            var22 += var22
+            // chr_trait_return = immediateTempVar * -1
+            var22 *= -1
+          else
+            var22 = 0
           endif
         endif
       endif
+      var22 *= OPos
     else 
       var22 = 0
     endif
   else 
     var22 = 0
   endif
+
 
   Goto restoreTempRegs
 elif Equal var22 21

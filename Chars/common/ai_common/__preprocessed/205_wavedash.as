@@ -31,7 +31,7 @@ label jumpSquat
   XGoto PerFrameChecks
   //= XReciever
   Seek jumpSquat
-  if Equal AirGroundState 2
+  if LastJumpSquatFrame
     Seek landing
     Jump
   elif NoJumpPrevFrame && !(Equal CurrAction 10) 
@@ -43,8 +43,8 @@ label landing
   //= XReciever
   if !(Equal var16 5)
     Goto edgeCheck
-    Seek landing
   endif
+  Seek landing
   
   if var0 <= 0 || YSpeed < 0
     Button R
@@ -85,14 +85,13 @@ var17 = var22
 Return
 label edgeCheck
 var23 = 0
-if XDistBackEdge < -10
+var22 = 8 * YDistFloor + 10
+if DistBackEdge > var22
   var23 = -1
-else
-  var16 = 4
-endif
-if XDistFrontEdge > 10
+elif DistFrontEdge > var22
   var23 = 1
-else
+endif
+if DistBackEdge < var22 || DistFrontEdge < var22
   var16 = 4
 endif
 Return

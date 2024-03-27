@@ -17,7 +17,7 @@ elif Equal OCurrSubaction 217 || Equal OCurrSubaction 48 || Equal OCurrSubaction
   Return
 endif
 var17 = 30 - LevelValue * 0.021
-if Equal var23 0 && OAnimFrame < var17
+if Equal var23 0 || OAnimFrame < var17
   Return
 endif
 
@@ -92,6 +92,13 @@ if OFramesHitstun > 0 && OFramesHitstun < var7
   var7 = OFramesHitstun
 endif
 
+// frame addition to account for reaction time
+var22 = (1 - (LevelValue / 100)) * 60 + 10
+var22 *= PT_REACTION_TIME
+var13 = OTotalXSpeed * var22
+LOGSTR 1381263616 1835335680 0 0 0
+LOGVAL var13
+
   STACK_PUSH var22 0
   var22 = 100
   XGoto GetChrSpecific
@@ -113,7 +120,12 @@ if var12 < 0
   else
     var23 = OTopNX + OTotalXSpeed * var7
   endif
-  var13 = var23
+
+  if OYDistBackEdge > 20
+    var23 = ODirection * OXDistFrontEdge + OTopNX
+  endif
+
+  var13 += var23
 
 
   if Equal OAirGroundState 2
@@ -128,13 +140,15 @@ if var12 < 0
   else
 
     GetAttribute var22 40 1
+    LOGSTR 1635021824 1912602624 0 0 0
+    LOGVAL var22
     PredictOMov var23 14
     var23 *= var22
     var23 *= OPos * -1
     if Equal var21 16.3 || Equal var21 10.1 
-      var13 += var23
+      var13 -= var23
     endif
-    var13 += var23
+    var13 -= var23
     
     var23 = OTopNY
     // PredictOMov immediateTempVar mov_jump
@@ -187,10 +201,31 @@ STACK_PUSH 22 0
   var1 = STACK_POP
   var0 = STACK_POP
 
-  var13 = var22
+  if OYDistBackEdge > 20
+    var22 = ODirection * OXDistFrontEdge + OTopNX 
+  endif
+
+  var13 += var22
   Goto adjustPosIfInGround
   var14 = var23
 endif
+
+LOGSTR 1164862464 0 0 0 0
+LOGVAL var13
+PRINTLN
+
+
+// if var3 < 1 || OYDistBackEdge > 20 && YDistFloor > 0
+//   GetYDistFloorAbsPos immediateTempVar goalX CenterY
+//   if immediateTempVar < 0
+//     goalX = TopNX
+//     anotherTempVar = XDistBackEdge * Direction * OPos
+//     if anotherTempVar < 0
+//       anotherTempVar = XDistFrontEdge * Direction
+//     endif
+//     goalX += anotherTempVar
+//   endif
+// endif
 
 // if Equal AirGroundState 2
 //   CalcYChange anotherTempVar move_hitFrame immediateTempVar Gravity MaxFallSpeed FastFallSpeed 0
@@ -198,7 +233,7 @@ endif
 // endif
 
 if Equal OCurrAction 84
-  var14 = OTopNY
+  var14 = OCenterY
 endif
 
 DrawDebugRectOutline var13 var14 3 3 0 255 0 221
@@ -206,22 +241,38 @@ DrawDebugRectOutline var13 var14 3 3 0 255 0 221
 
 var22 = var9 + var11 
 // move_centerX *= 0.5
-if  var20 >= 16 && var20 <= 23
+if  var20 >= 16 && var20 <= 21
   var22 *= Direction
 else
   var22 *= OPos
 endif
 var13 -= var22
 
+if AnimFrame > 2
+  var3 = LevelValue * 0.0125
+  var22 = TotalXSpeed * var7
+  var22 *= var3
+if Equal var20 10
+  else
+  // goalX -= immediateTempVar
+  endif
 
-var22 = OPos * 0.25 * OWidth
-var13 += var22
+  var22 = TotalYSpeed * var7
+  // immediateTempVar *= multiplier
+if Equal var20 10
+  else
+  var14 -= var22
+  endif
+endif
+// $tempVar(OWidthOffset,immediateTempVar)
+// OWidthOffset = OPos * 0.5 * OWidth
+// goalX += OWidthOffset
 
 // goalY += move_yOffset
 // immediateTempVar = OHurtboxSize + move_yRange
 var22 = var8 - var10
 // immediateTempVar *= 0.5
-var14 += var22
+var14 -= var22
 // if Equal AirGroundState 2 && YDistFloor > 5 || YDistFloor < 0
 //   immediateTempVar = move_yRange * 0.5 + OHurtboxSize * 0.3
 //   goalY += immediateTempVar
@@ -248,7 +299,13 @@ var14 += var22
 // immediateTempVar = OHurtboxSize
 // goalY += immediateTempVar
 
-var14 = TopNY
+if OTopNY > TopNY 
+  if SamePlane
+    var14 = TopNY
+  else
+    var14 = OTopNY
+  endif
+endif
 // IF_AERIAL_ATTACK(var3)
 //   immediateTempVar = (TopNY - YDistFloor) + cs_shortHopHeight
 //   // LOGSTR str("gy; ph; jhh")
@@ -304,7 +361,10 @@ var3 = var22
     endif
   endif
 endif
-if !(Equal var21 16.3)
+  var22 = 0.003
+  XGoto GetChrSpecific
+  //= XReciever
+if var22 < 5 && var21 < 16.7 && !(Equal var21 16.5) // && Equal DEBUG_VALUE 0 
   var13 += var2
 endif
 // if Equal OCurrAction hex(0x4D)

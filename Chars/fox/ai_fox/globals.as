@@ -4,16 +4,16 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = 0
 
-#const pt_jumpiness = 0.1
-#const pt_djumpiness = 0.04
-#const pt_aggression = 1.25
-#const pt_bait_dashAwayChance = 0.6
-#const pt_bait_wdashAwayChance = 0.15
-#const pt_wall_chance = 0.4
-#const pt_platChance = 0.1
-#const pt_baitChance = 0.9
-#const pt_braveChance = 0.85
-#const pt_circleCampChance = 0.55
+#const _pt_jumpiness = 0.1
+#const _pt_djumpiness = 0.04
+#const _pt_aggression = 1.25
+#const _pt_bait_dashAwayChance = 0.6
+#const _pt_bait_wdashAwayChance = 0.15
+#const _pt_wall_chance = 0.4
+#const _pt_platChance = 0.1
+#const _pt_baitChance = 0.9
+#const _pt_braveChance = 0.85
+#const _pt_circleCampChance = 0.55
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 6
@@ -233,17 +233,17 @@
 #const bair_xRange = 9.53
 #const bair_yRange = 6.72
 #const bair_hitFrame = 4
-#const bair_lastHitFrame = 7
+#const bair_lastHitFrame = 19
 #const bair_damage_info = BAir|15|0|100|-361
 
-#const mv_bair_weak = 1
-#const bair_weak_xOffset = -13.34
-#const bair_weak_yOffset = -1.15
-#const bair_weak_xRange = 9.54
-#const bair_weak_yRange = 6.8
-#const bair_weak_hitFrame = 8
-#const bair_weak_lastHitFrame = 19
-#const bair_weak_damage_info = BAir|9|0|100|361
+// #const mv_bair_weak = 1
+// #const bair_weak_xOffset = -13.34
+// #const bair_weak_yOffset = -1.15
+// #const bair_weak_xRange = 9.54
+// #const bair_weak_yRange = 6.8
+// #const bair_weak_hitFrame = 8
+// #const bair_weak_lastHitFrame = 19
+// #const bair_weak_damage_info = BAir|9|0|100|361
 
 // UAir
 #const uair_IASA = 35
@@ -255,15 +255,15 @@
 #const uair_lastHitFrame = 14
 #const uair_damage_info = UAir|13|40|116|85
 
-#const mv_uair_weak = 1
-#const uair_weak_IASA = 35
-#const uair_weak_xOffset = -4.33
-#const uair_weak_yOffset = -5.6
-#const uair_weak_xRange = 5.11
-#const uair_weak_yRange = 7.12
-#const uair_weak_hitFrame = 8
-#const uair_weak_lastHitFrame = 9
-#const uair_weak_damage_info = UAir|4|w30|120|92
+// #const mv_uair_weak = 1
+// #const uair_weak_IASA = 35
+// #const uair_weak_xOffset = -4.33
+// #const uair_weak_yOffset = -5.6
+// #const uair_weak_xRange = 5.11
+// #const uair_weak_yRange = 7.12
+// #const uair_weak_hitFrame = 8
+// #const uair_weak_lastHitFrame = 9
+// #const uair_weak_damage_info = UAir|4|w30|120|92
 
 // DAir
 #const dair_IASA = 51

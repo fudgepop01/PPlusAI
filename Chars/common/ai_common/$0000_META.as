@@ -6,18 +6,28 @@ id 0x0000
 // dotnet run --compile --path c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/ai_common/__preprocessed --out C:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Chars/common/out/Fighter.pac --include c:/Users/dareb/OneDrive/Desktop/Brawlmods/PPlusAi/Include
 // str "PADDING_FILE"
 
-// LOGVAL_NL 420
+LOGVAL_NL 420
+LOGVAL_NL 69
 // LOGVAL_NL 69
+LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
+// LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
+// Fighter vanilla: 
+// Fighter adjusted: 0x80f9fb90
+
+// ai_common vanilla: 
+// ai_common adjusted: 0x80fce290
+
+// ef_common vanilla: 
+// ef_common adjusted: 0x80e3dcf0
+
 // LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")

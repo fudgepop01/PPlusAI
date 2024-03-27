@@ -185,7 +185,7 @@ if !(Equal var21 13.1)
       if Equal var17 1 && Rnd < var22
         if Rnd < 0.3
           var16 = 3
-          if XDistBackEdge > -15
+          if DistBackEdge < 15
             var16 = 1.1
           endif
           CallI JumpScr
@@ -202,7 +202,7 @@ Seek shield
 Return
 label wdPunish
 var16 = 1
-if XDistBackEdge > -10 || XDistFrontEdge < 10
+if DistBackEdge < 10 || DistFrontEdge < 10
   var16 = 4
 endif
 var15 = -10

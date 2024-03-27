@@ -1,0 +1,26 @@
+#include <Definition_AIMain.h>
+//TrueID=0x30D0
+id 0x30D0
+
+//Set Unknown
+unk 0x00000
+
+//Strings
+
+Call AIHub
+Return
+
+#include <Definition_AIMain.h>
+//TrueID=0x30D0
+id 0x30D0
+
+//Set Unknown
+unk 0x00000
+
+//Strings
+
+{CONDITIONS}
+Call AIHub
+Return
+
+

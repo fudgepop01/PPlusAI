@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -305,6 +305,7 @@ if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
 endif
   var8 = 0
   label _SSPECIAL_EXEC
+  Seek _SSPECIAL_EXEC
   if Equal CurrSubaction 471
     var22 = OTopNX - TopNX
     if Equal AnimFrame 8
@@ -316,6 +317,13 @@ endif
     else
       Button B
     endif
+    Return
+  elif Equal CurrSubaction 477
+    if AnimFrame >= 13
+      Button X
+      Seek finish
+    endif
+    Return
   elif Equal CurrSubaction 472
     var22 = OTopNX - TopNX
     Abs var22
@@ -354,6 +362,7 @@ endif
         CallI Wavedash
       endif
     endif
+    Return
   endif
 Goto common_checks
 Seek sspecial
@@ -566,7 +575,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14
+if Equal var20 10
+      XGoto CalcAttackGoal
+elif Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14
     else
       XGoto CalcAttackGoal
     endif

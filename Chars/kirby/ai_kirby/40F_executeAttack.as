@@ -28,17 +28,22 @@
 
 #snippet USPECIAL
   Button B
-  Stick 1 (-1)
+  if Equal Direction OPos
+    Stick 1 (-1)
+  endif
 #endsnippet
 
 #snippet USPECIALAIR
   Button B
-  Stick 1 (-1)
+  if Equal Direction OPos
+    Stick 1 (-1)
+  endif
 #endsnippet
 
 #snippet USPECIAL_PROJ
   if Equal CurrAction hex(0x114)
     ClearStick 0
+    Seek uspecial_proj
     Return
   endif
 #endsnippet

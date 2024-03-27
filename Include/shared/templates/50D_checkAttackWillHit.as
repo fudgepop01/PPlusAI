@@ -33,6 +33,9 @@ RESET_LTF_STACK_PTR
 GET_MOVE_DATA(globTempVar, move_xOffset, move_yOffset, move_xRange, move_yRange, move_hitFrame, move_duration, move_IASA, globTempVar, globTempVar, globTempVar, globTempVar)
 doesMoveHitBehind = 0
 
+LOGSTR str("1")
+LOGVAL move_xRange
+
 if Equal currGoal cg_attack_wall
   GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
   GetAttribute anotherTempVar attr_dashInitVel fromOpponent
@@ -53,6 +56,9 @@ move_xOffset *= Scale
 move_yOffset *= Scale
 move_xRange *= Scale
 move_yRange *= Scale
+
+LOGSTR str("2")
+LOGVAL move_xRange
 
 // temp until loop
 // 1. adjust hitFrame
@@ -124,6 +130,9 @@ move_xRange *= 2
 move_yRange *= 2
 // move_xRange -= 2
 // move_yRange -= 2
+
+LOGSTR str("3")
+LOGVAL move_xRange
 
 #let move_offsetMod = var2
 GET_CHAR_TRAIT(move_offsetMod, chr_calc_moveOffset)
@@ -238,19 +247,24 @@ endif
 //   // move_xOffset -= immediateTempVar
 // endif 
 
+LOGSTR_NL str("outside-chk")
 GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
-if immediateTempVar < 5 && currGoal < cg_edgeguard && Equal DEBUG_VALUE 0 
+if immediateTempVar < 5 && currGoal < cg_edgeguard //&& Equal DEBUG_VALUE 0 
+  LOGSTR_NL str("inside-chk")
   globTempVar = OTopNY + OHurtboxSize
   anotherTempVar = TopNY - move_yOffset
-  $ifAerialAttack()
-  elif globTempVar < anotherTempVar
+  // $ifAerialAttack()
+  if globTempVar < anotherTempVar && Equal AirGroundState 1
     lastAttack = -1
     Return  
   endif
 
   if !(Equal currGoal cg_attack_wall) && !(Equal currGoal cg_attack_shieldPunish)
-    move_xRange += move_offsetMod
+    LOGSTR_NL str("adjusting")
     move_offsetMod *= 0.5
+    anotherTempVar = move_offsetMod
+    Abs anotherTempVar
+    move_xRange += anotherTempVar
     move_centerX += move_offsetMod
   endif
 
@@ -269,6 +283,9 @@ if immediateTempVar < 5 && currGoal < cg_edgeguard && Equal DEBUG_VALUE 0
     move_xRange += Width
   endif
 endif
+
+LOGSTR str("4")
+LOGVAL move_xRange
 // LOGVAL_NL move_xRange
 
 $ifLastOrigin(grab,false)
@@ -301,18 +318,18 @@ if LevelValue <= LV3
   move_centerX += immediateTempVar
   immediateTempVar = Rnd * 80 - 40
   move_centerY += immediateTempVar
-  immediateTempVar = Rnd * 30
+  immediateTempVar = Rnd * 30 - 5
   move_xRange += immediateTempVar
-  immediateTempVar = Rnd * 30
+  immediateTempVar = Rnd * 30 - 5
   move_yRange += immediateTempVar
 elif LevelValue <= LV7
   immediateTempVar = Rnd * 26 - 13
   move_centerX += immediateTempVar
   immediateTempVar = Rnd * 26 - 13
   move_centerY += immediateTempVar
-  immediateTempVar = Rnd * 10
+  immediateTempVar = Rnd * 10 - 5
   move_xRange += immediateTempVar
-  immediateTempVar = Rnd * 10
+  immediateTempVar = Rnd * 10 - 5
   move_yRange += immediateTempVar
 endif
 
@@ -322,12 +339,16 @@ counter = move_duration
 // anotherTempVar = OHurtboxSize * 0.25
 // move_yRange += anotherTempVar
 
+LOGSTR str("xRange")
+LOGVAL move_xRange
+PRINTLN
 STACK_PUSH move_xRange 1
 STACK_PUSH move_yRange 1
 STACK_PUSH move_centerX 1
 
 immediateTempVar = 0
 $ifAerialAttack()
+  immediateTempVar = TotalYSpeed
   if OTopNY >= TopNY
     if Equal AirGroundState 1 || YDistFloor < 2 && YDistFloor > 0
       // LOGSTR_NL str("AAT AGS1")
@@ -358,8 +379,6 @@ $ifAerialAttack()
         // goalY += move_centerY
         goalX = TopNX
       endif
-      immediateTempVar = TotalYSpeed
-    elif Equal AirGroundState 2
       immediateTempVar = TotalYSpeed
     endif
   endif
@@ -485,8 +504,13 @@ estFrame += move_hitFrame
     else
       estOXPos = OCenterX + OTotalXSpeed * estFrame
     endif
-    STACK_PUSH estOXPos 0
 
+    // if OYDistBackEdge > 20
+    //   estOXPos = OTopNX
+    // endif
+
+    STACK_PUSH estOXPos 0
+    
     $tempVar(estOYPos, anotherTempVar)
     if Equal OAirGroundState 2
       anotherTempVar = estFrame
@@ -521,6 +545,10 @@ estFrame += move_hitFrame
     globTempVar = estFrame
     O_RECOVERY_POSITION(immediateTempVar, anotherTempVar, globTempVar)
 
+    if OYDistBackEdge > 20
+      estOXPos = OTopNX
+    endif
+    
     STACK_PUSH estOXPos 0
     Goto adjustPosIfInGround
     // estOYPos += OHurtboxSize
@@ -594,13 +622,25 @@ estFrame += move_hitFrame
   tempYRange += anotherTempVar
   tempXRange *= 0.5
   tempYRange *= 0.5
+
+  globTempVar = xDiff + OTotalXSpeed * 12 // wavedash lag
+
+  #let estOXPos = var12
+  estOXPos = STACK_POP // estXPos
+  xDiff -= estOXPos
+  Abs xDiff
   // handle dash for idle ground moves:
   $ifMoveRequiresIdleGround()
     anotherTempVar = TopNX + cs_wavedashDist * OPos
-    immediateTempVar = xDiff - anotherTempVar
+    immediateTempVar = globTempVar - anotherTempVar
     Abs immediateTempVar
-    if immediateTempVar <= tempXRange && yDiff <= tempYRange && currGoal < cg_edgeguard && LevelValue >= LV7
-      if Equal CurrAction hex(0x3) || Equal CurrAction hex(0x8) || Equal CurrAction hex(0x9)
+    if immediateTempVar <= tempXRange && xDiff > tempXRange && yDiff <= tempYRange && currGoal < cg_edgeguard && LevelValue >= LV7
+      GetAttribute immediateTempVar attr_groundFriction fromSelf
+      if Equal CurrAction hex(0x4) && immediateTempVar <= 0.6 && CHANCE_MUL_GE immediateTempVar 1.35 
+        scriptVariant = sv_wavedash_goal
+        skipMainInit = mainInitSkip
+        CallI Wavedash
+      elif Equal CurrAction hex(0x3) || Equal CurrAction hex(0x8) || Equal CurrAction hex(0x9)
         if AnimFrame < calc(cs_dashForceTurnFrame - 7) || Equal CurrAction hex(0x8) || Equal CurrAction hex(0x9) || !(Equal Direction OPos)
           scriptVariant = sv_wavedash_goal
           skipMainInit = sm_execAttack
@@ -611,9 +651,8 @@ estFrame += move_hitFrame
 
     if Equal CurrAction hex(0x3) && LevelValue >= LV4
       // STACK_TOSS 1 // ignore estXPos
-
-      anotherTempVar = TopNX + CharXSpeed * (AnimFrame - cs_dashForceTurnFrame)
-      immediateTempVar = xDiff - anotherTempVar
+      anotherTempVar = TopNX + TotalXSpeed * (AnimFrame - cs_dashForceTurnFrame + 2)
+      immediateTempVar = globTempVar - anotherTempVar
       Abs immediateTempVar
       if immediateTempVar <= tempXRange && yDiff <= tempYRange
         label runWait
@@ -630,10 +669,6 @@ estFrame += move_hitFrame
     endif
   endif
     
-  #let estOXPos = var12
-  estOXPos = STACK_POP // estXPos
-  xDiff -= estOXPos
-  Abs xDiff
   // LOGSTR str("xD")
   // LOGVAL xDiff
   // PRINTLN
@@ -662,14 +697,15 @@ estFrame += move_hitFrame
       elif True
         CalcYChange yChange estFrame anotherTempVar Gravity MaxFallSpeed FastFallSpeed 0
       endif
-      immediateTempVar = yChange + YDistFloor
+      anotherTempVar = HurtboxSize * 0.5
+      immediateTempVar = yChange + YDistFloor + anotherTempVar
       // LOGSTR str("YDF; ATV")
       // LOGVAL YDistFloor
       // LOGVAL immediateTempVar
       // PRINTLN
       if yChange > 0 && Equal shouldBeFalling 1
       elif immediateTempVar > 0 || YDistFloor < 0
-        CalcYChange yChange move_IASA anotherTempVar Gravity MaxFallSpeed FastFallSpeed 0
+        CalcYChange yChange move_IASA TotalYSpeed Gravity MaxFallSpeed FastFallSpeed 0
         Goto checkCanEdgeguard
         if immediateTempVar < 0
           if NumJumps < 1
@@ -697,8 +733,8 @@ estFrame += move_hitFrame
             //= XReciever
             Seek crouchWait
             if CurrAction < hex(0x3) || CurrAction > hex(0x4)
-              skipMainInit = sm_execAttack
-              Call MainHub
+              // skipMainInit = sm_execAttack
+              CallI ExecuteAttack
             endif
             ClearStick
             if Equal CurrAction hex(0x4)
@@ -878,7 +914,8 @@ label checkCanEdgeguard
       // LOGSTR str("fdist, range")
       // LOGVAL globTempVar
       // LOGVAL anotherTempVar
-      // DrawDebugRectOutline TopNX globTempVar 50 2 color(0xFF0000DD)
+      // DrawDebugLine TopNX TopNY TopNX globTempVar color(0xFF0000DD)
+      // DrawDebugRectOutline TopNX anotherTempVar 50 2 color(0xFF0000DD)
       // PRINTLN
       if globTempVar > anotherTempVar
       else

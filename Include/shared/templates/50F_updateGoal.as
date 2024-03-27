@@ -23,7 +23,6 @@ NoRepeat
 // endif
 
 // $setLastAttack(uair_outer)
-// currGoal = cg_circleCamp
 
 scriptVariant = sv_none
 if HasCurry
@@ -99,7 +98,7 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
   globTempVar *= -1
   globTempVar += 1
 
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 15 * globTempVar
+  immediateTempVar = (1 - (LevelValue / 100)) * 60 + 15 * globTempVar
   immediateTempVar *= PT_REACTION_TIME
   MOD immediateTempVar GameTimer immediateTempVar
   if immediateTempVar <= 1
@@ -172,7 +171,7 @@ if currGoal >= cg_circleCamp && currGoal < calc(cg_circleCamp + 1)
     globTempVar *= -1
     globTempVar += 1
 
-    immediateTempVar = (1 - (LevelValue / 100)) * 30 + 30 * globTempVar
+    immediateTempVar = (1 - (LevelValue / 100)) * 30 + 40 * globTempVar
     immediateTempVar *= PT_REACTION_TIME
     MOD immediateTempVar GameTimer immediateTempVar
     if immediateTempVar <= 1
@@ -531,10 +530,10 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
       DynamicDiceAdd dslot0 dr_wdash PT_BAIT_WDASHAWAYCHANCE
       immediateTempVar = 4 - PT_AGGRESSION
       DynamicDiceAdd dslot0 dr_shield immediateTempVar
-      immediateTempVar = PT_BAITCHANCE * 2
+      immediateTempVar = PT_BAITCHANCE * 2.5
       Abs immediateTempVar
       DynamicDiceAdd dslot0 dr_wait immediateTempVar
-      immediateTempVar *= 2
+      immediateTempVar *= 1.5
       DynamicDiceAdd dslot0 dr_dashdance immediateTempVar
       
 
@@ -551,7 +550,7 @@ elif currGoal >= cg_bait && currGoal < calc(cg_bait + 1)
       if Equal globTempVar -1 && !(Equal immediateTempVar -1) && immediateTempVar < 30
         DynamicDiceAdd dslot0 dr_plat 1 
       endif
-      if CHANCE_MUL_GE PT_AGGRESSION 0.75
+      if CHANCE_MUL_GE PT_AGGRESSION 0.5
         currGoal = cg_bait_wait
         if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
           currGoal = cg_bait_dashdance
@@ -821,11 +820,11 @@ elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
   
   #let shouldUpdate = var2
   // combos
-  shouldUpdate = (1 - (LevelValue / 100)) * 25 + 2
+  shouldUpdate = (1 - (LevelValue / 100)) * 45 + 4
   // standard
   GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
   if Equal immediateTempVar 0
-    shouldUpdate = (1 - (LevelValue / 100)) * 30 + 10
+    shouldUpdate = (1 - (LevelValue / 100)) * 60 + 10
   endif
 
   GET_CHAR_TRAIT(anotherTempVar, chr_calc_certainty)

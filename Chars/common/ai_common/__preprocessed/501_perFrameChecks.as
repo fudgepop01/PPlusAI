@@ -21,6 +21,27 @@ Cmd30
 // if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
 //   SwitchTarget
 // endif
+
+MOD var22 GameTimer 10
+if var22 < 1
+  getCurrentPredictValue var22 2
+  var23 = OTopNX * 0.25
+  var22 -= var23
+  Abs var22
+  var22 *= 4
+  trackOAction 3 var22
+  trackOAction 3 var22
+  trackOAction 3 var22
+  setPrediction var23 2
+  predictAverage var22 3
+  var23 = -0.5
+  if var22 < 5
+    var23 = 1
+  endif
+  ADJUST_PERSONALITY 0 -0.05 var23
+  ADJUST_PERSONALITY 3 0.05 var23
+  ADJUST_PERSONALITY 11 0.05 var23
+endif
 //--- track target stuff 
 // out of tumble action
 if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
@@ -65,12 +86,12 @@ if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnimFr
     Abs var23
     var17 *= 1.5
     trackOAction 11 var23 
-    RetrieveFullATKD var17 var23 var22 var23 var23 var23 var23 OCurrSubaction 1
-    if Equal var17 0
-      var17 = OEndFrame
-    endif 
-    var23 = var17 - var22
-    trackOAction 3 var23
+    // RetrieveFullATKD globTempVar anotherTempVar immediateTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
+    // if Equal globTempVar 0
+    //   globTempVar = OEndFrame
+    // endif 
+    // anotherTempVar = globTempVar - immediateTempVar
+    // trackOAction man_OAvgEndlag anotherTempVar
   endif
 elif Equal OAnimFrame 0 && OFramesSinceShield < 20
   if Equal OCurrAction 33
@@ -117,7 +138,7 @@ elif Rnd < 0.2
 endif
 if !(True)
   label baitDefendOption
-  var22 = (1 - (LevelValue / 100)) * 10 + 5
+  var22 = (1 - (LevelValue / 100)) * 30 + 10
   MOD var22 GameTimer var22
   if var22 < 1
     var17 = 9
@@ -173,7 +194,7 @@ elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
   CallI ExecuteAttack
 elif CurrAction >= 61 && CurrAction <= 63 || CurrAction >= 90 && CurrAction <= 95 || CurrAction >= 199 && CurrAction <= 218 || Equal CurrAction 236
   MOD var22 GameTimer 5
-  if var22 >= 4
+  if var22 >= 3
     var22 = Rnd * 2 - 1
     var23 = Rnd * 2 - 1
     AbsStick var22 var23
@@ -190,12 +211,11 @@ endif
 
 //--- switch tactic if conditions are met
 if !(CalledFrom AttackedHub)
-  if CurrAction >= 66 && CurrAction <= 69 && !(Equal OCurrAction 73) || GettingThrown
-    var22 = LevelValue * 0.01 - 0.15
+  if CurrAction >= 66 && CurrAction <= 73 || GettingThrown
     if FramesHitlag > 0 || FramesHitstun > 0
       Goto OnGotHitAdjustments
       CallI AttackedHub
-    elif GettingThrown || Equal CurrAction 238
+    elif GettingThrown || Equal CurrAction 238 || CurrAction >= 69 && YDistFloor > 0 && YDistFloor < 10
       CallI AttackedHub
     endif
   endif
@@ -238,6 +258,7 @@ if !(CalledFrom RecoveryHub) && Equal IsOnStage 0
   //= XReciever
 var17 = var22
   if Equal IsOnStage 0 && var21 < 16.7
+    var17 *= 0.25
     GetYDistFloorOffset var22 var17 15 0
     var17 *= -1
     GetYDistFloorOffset var23 var17 15 0
@@ -250,7 +271,7 @@ var17 = var22
   XGoto GetChrSpecific
   //= XReciever
 
-  var23 = var17 / var22
+  var23 = var22 / var17
   var17 = var23
 
   // X = direction to cliff
@@ -288,9 +309,9 @@ var17 = var22
 
   DrawDebugRectOutline TopNX var17 3 3 255 0 0 221
 endif
-if !(CalledFrom ExecuteAttack) && !(CalledFrom RecoveryHub)
-  if var21 >= 16.7 && Equal OIsOnStage 0
-  elif !(Equal var21 15) && !(Equal var21 16.71) && Equal FramesHitstun 0
+if !(CalledFrom ExecuteAttack)
+  if var21 >= 16.7 || Equal var21 3
+  elif Equal OIsOnStage 0 && !(Equal var21 15) && !(Equal var21 16.71) && Equal FramesHitstun 0
     GetYDistFloorOffset var22 10 15 1
     GetYDistFloorOffset var17 -10 15 1
     if Equal var22 -1 && Equal var17 -1

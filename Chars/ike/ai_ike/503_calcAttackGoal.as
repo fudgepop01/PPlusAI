@@ -2,7 +2,7 @@
   $ifLastAttack(sspecial)
     globTempVar = TopNX - OTopNX
     Abs globTempVar
-    if globTempVar < 35
+    if globTempVar < 10
       lastAttack = -1
     endif
   endif
@@ -38,19 +38,19 @@
   endif
 #endsnippet
 
-#snippet COMBO_ROUTINES
-  $ifLastAttack(uthrow)
-    DynamicDiceClear dslot0
-    $addOriginToDice(0, uair, 1)
-    $addOriginToDice(0, fair, 1)
-    $addOriginToDice(0, fsmash, 1)
-    $addToDice(0, uthrow, 1)
-  $ifLastOrigin(SSpecial, true)
-    DynamicDiceClear dslot0
-    $addOriginToDice(0, nair, 1)
-    $addOriginToDice(0, fair, 1)
-    $addOriginToDice(0, bair, 1)
-    $addOriginToDice(0, dair, 1)
-    $addOriginToDice(0, grab, 1)
-  endif
-#endsnippet
+// #snippet COMBO_ROUTINES
+//   $ifLastAttack(uthrow)
+//     DynamicDiceClear dslot0
+//     $addOriginToDice(0, uair, 1)
+//     $addOriginToDice(0, fair, 1)
+//     $addOriginToDice(0, fsmash, 1)
+//     $addToDice(0, uthrow, 1)
+//   $ifLastOrigin(SSpecial, true)
+//     DynamicDiceClear dslot0
+//     $addOriginToDice(0, nair, 1)
+//     $addOriginToDice(0, fair, 1)
+//     $addOriginToDice(0, bair, 1)
+//     $addOriginToDice(0, dair, 1)
+//     $addOriginToDice(0, grab, 1)
+//   endif
+// #endsnippet

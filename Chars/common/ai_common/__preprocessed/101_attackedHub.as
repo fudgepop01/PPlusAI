@@ -32,13 +32,18 @@ Seek hitlag
 EnableDebugOverlay
 SetDebugOverlayColor 255 255 255 221
 
+if FramesHitlag > 0 && Equal PrevAction 18
+  AbsStick 0 -1
+  Return
+endif
+
 if FramesHitlag > 2
   // SDI input frequency:
   // level 9: once per 20 frames
   // level 1: once per 50 frames
   var0 = PT_SDICHANCE * 0.4
   
-  var22 = (1 - (LevelValue / 100)) * 30 + 8
+  var22 = (1 - (LevelValue / 100)) * 70 + 15
   if PT_REACTION_TIME > 0.5
     var22 *= PT_REACTION_TIME
   else
@@ -48,7 +53,7 @@ if FramesHitlag > 2
   // LOGVAL_NL immediateTempVar
   MOD var22 GameTimer var22
   // LOGVAL_NL immediateTempVar
-
+  
   if Equal var22 1 && Rnd <= var0
     var17 = OPos * -1
     if XDistBackEdge > -15
@@ -103,7 +108,7 @@ label hitstun
 // Seek hitstun
 SetDebugOverlayColor 255 255 255 102
 
-if FramesHitstun > 0 || GettingThrown
+if FramesHitstun > 0 || GettingThrown || Equal CurrAction 73
   if LevelValue >= 48
     var0 = Rnd * 10 * OPos * -1
     if KBAngle > 90 && KBAngle < 170
@@ -143,7 +148,7 @@ if FramesHitstun > 0 || GettingThrown
   var4 = 0
   var5 = -2
   label HSHandler
-  
+  // LOGVAL_NL 10000
   if FramesHitlag > 1
     Seek hitlag
     Jump
@@ -154,7 +159,8 @@ if FramesHitstun > 0 || GettingThrown
   // LOGSTR str("tDir")
   // LOGVAL techDirection
   // LOGVAL techWindow
-  // PRINTLN
+  PRINTLN
+  // LOGVAL_NL 10001
   if LevelValue >= 21 && Equal var5 -2
     if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
       Goto _checkTech
@@ -166,16 +172,20 @@ if FramesHitstun > 0 || GettingThrown
     endif
   endif
   Seek HSHandler
-
-  if !(Equal var5 -2) && TotalYSpeed <= 0 && YDistFloor > 0 && YDistFloor < 10
-    if CurrAction <= 32 || FramesHitstun <= 1 && !(GettingThrown)
+  // LOGSTR str("Y stats")
+  // LOGVAL_NL YDistFloor
+  // LOGVAL_NL TotalYSpeed
+  // PRINTLN
+  if !(Equal var5 -2) && TotalYSpeed <= 0 && YDistFloor > 0 && YDistFloor < 20
+    // LOGVAL_NL 10002
+    if CurrAction <= 32
       Seek _done
       Jump
     endif
     if var5 < -0.5
-      AbsStick -1
+      AbsStick -0.7
     elif 0.5 < var5
-      AbsStick 1
+      AbsStick 0.7
     else
       ClearStick
     endif
@@ -240,7 +250,7 @@ if FramesHitstun > 0 || GettingThrown
     endif
   endif
 endif
-
+// LOGVAL_NL 10003
 if FramesHitstun > 0 && CurrAction <= 16
   Seek _done
   Jump
@@ -322,7 +332,6 @@ label _hitstunEnd
 Return
 
 label _checkTech
-  LOGVAL_NL var2 
   if var2 <= 0
     if CurrAction >= 66 && FramesSinceShield > 40
       var17 = OThrowReleaseFrame - 10
@@ -337,9 +346,8 @@ label _checkTech
       var17 += 0.80
       if Rnd < var17 && YDistFloor < 20
         if TotalYSpeed <= 0.3 || GettingThrown
-          var5 = Rnd * 7 - 2
+          var5 = Rnd * 5 - 2
         endif
-        // LOGVAL_NL techDirection
         if var5 < 2
           // LOGVAL_NL 10002
           Button R

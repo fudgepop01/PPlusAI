@@ -22,7 +22,7 @@ Seek begin
 
 if AnimFrame > 2
   if Equal currGoal cg_ledge_edgeguard
-    LOGSTR_NL str("LEDGE_EDGEGD")
+    // LOGSTR_NL str("LEDGE_EDGEGD")
     #let oCloseness = var0
     #let absOCloseness = var1
     oCloseness = OTopNX - TopNX
@@ -30,9 +30,11 @@ if AnimFrame > 2
     Abs absOCloseness
 
     if absOCloseness <= 45 && CHANCE_MUL_LE PT_AGGRESSION 0.25
-      if OCurrAction >= hex(0x110) && AnimFrame > 20
-        Button R
-        Call MainHub
+      if OCurrAction >= hex(0x110) || Equal OCurrAction hex(0x10)
+        if AnimFrame > 20 || ODistLE 10
+          Button R
+          Call MainHub
+        endif
       elif OYDistBackEdge > -45
         if OYDistBackEdge < -15
           Button X

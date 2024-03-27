@@ -186,7 +186,7 @@ if !(Equal currGoal cg_defend_crouchCancel)
       if Equal globTempVar op_defend_attack && Rnd < immediateTempVar
         if Rnd < 0.3
           scriptVariant = sv_jump_away
-          if XDistBackEdge > -15
+          if DistBackEdge < 15
             scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
           endif
           CallI JumpScr
@@ -203,7 +203,7 @@ Seek shield
 Return
 label wdPunish
 scriptVariant = sv_wavedash_in
-if XDistBackEdge > -10 || XDistFrontEdge < 10
+if DistBackEdge < 10 || DistFrontEdge < 10
   scriptVariant = sv_wavedash_awayFromLedge
 endif
 skipMainInit = mainInitSkip

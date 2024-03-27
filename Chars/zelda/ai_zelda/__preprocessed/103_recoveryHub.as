@@ -122,7 +122,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     var13 = 0
     Call MainHub
   elif CharYSpeed > 0 || AnimFrame < 2
-    var17 = 1
+    var17 = -1
     Goto handleJumpToStage
     Seek begin
     if AnimFrame < 10
@@ -133,7 +133,7 @@ endif
 Seek begin
 
 if YDistFloor > -1
-  if !(Equal var17 0)
+  if var17 > 0
     ClearStick
     var17 = TopNX * -1
     AbsStick var17

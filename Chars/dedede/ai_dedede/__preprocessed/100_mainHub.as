@@ -3,18 +3,18 @@ id 0x8100
 unk 0x0
 
 str "PERSONALITY"
-str "0.85"
-str "0.15"
-str "0.75"
+str "1.25"
+str "0.45"
+str "0.45"
+str "0.8"
 str "0.65"
-str "0.65"
-str "0.35"
-str "0.04"
+str "0.1"
+str "0.02"
 str "0.05"
-str "0.05"
+str "0.1"
 str "1"
 str "0.5"
-str "0.65"
+str "0.7"
 
 // SetDebugMode 1
 // label loop
@@ -155,7 +155,7 @@ if TRAINING_MODE_OPTION >= 0
   // ADJUST_PERSONALITY idx_jumpiness -100 1
   // ADJUST_PERSONALITY idx_platChance -100 1
   // ADJUST_PERSONALITY idx_SDIChance  1
-  ADJUST_PERSONALITY 10 -100 1
+  ADJUST_PERSONALITY 11 -100 1
   // ADJUST_PERSONALITY idx_reaction_time 100 1
   
   ClearStick
@@ -445,8 +445,8 @@ if Equal var22 0
 endif
 
 var0 = LevelValue * 0.01
-if var0 <= 0.1
-  var0 = 0.1
+if var0 <= 0.025
+  var0 = 0.025
 endif
 label tskillWait
 XGoto PerFrameChecks
@@ -467,6 +467,8 @@ Cmd30
   XGoto UpdateGoal
   LOGSTR 1667706112 1886352128 1948275968 1883504640 0
   LOGVAL var21
+  LOGVAL YDistBackEdge
+  LOGVAL YDistFloor
 
 PRINTLN
 
@@ -474,8 +476,11 @@ Seek selectGoal
 if Equal var21 10.4 && LevelValue >= 42
   label waitSetup
   var4 = Rnd * 55 + 5
+  // LOGSTR_NL str("BAIT_WAIT")
   label baitWait
-  LOGSTR_NL 1111574784 1415534336 1095324672 0 0
+  // LOGSTR str("WAITING; T:")
+  // LOGVAL timer
+  // PRINTLN
   STACK_PUSH var4 0
   XGoto PerFrameChecks
   XGoto UpdateGoal
@@ -484,6 +489,9 @@ if Equal var21 10.4 && LevelValue >= 42
   endif
   var4 = STACK_POP
   var4 -= 1
+  // LOGSTR str("T:")
+  // LOGVAL timer
+  // PRINTLN
   Seek baitWait
   predictAverage var22 10
   var22 *= 0.4
@@ -499,9 +507,14 @@ if Equal var21 10.4 && LevelValue >= 42
     Jump
   endif
   if LevelValue >= 75
-    Stick 0 -1
+    Stick 0 -0.7
   endif
   if var4 <= 0 || !(Equal var21 10.4)
+    // LOGVAL 10003
+    // LOGSTR str("time; goal")
+    // LOGVAL timer
+    // LOGVAL currGoal
+    // PRINTLN
     var21 = 0
     var15 = -100
     Call MainHub

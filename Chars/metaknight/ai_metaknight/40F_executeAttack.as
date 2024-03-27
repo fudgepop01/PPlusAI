@@ -3,12 +3,11 @@
     Goto handleUSpecial 
   $ifLastOrigin(uspecialair,true)
     Goto handleUSpecial
-  $ifLastOrigin(dspecial,false)
+  $ifLastOrigin(dspecial,true)
     Goto handleDSpecial 
   $ifLastOrigin(dspecialair,true)
     Goto handleDSpecial 
   endif 
-  endif
   if !(True)
     label handleUSpecial
     anotherTempVar = OPos * 30

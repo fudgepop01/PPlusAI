@@ -5,86 +5,86 @@ slot0 {
     NoAttack 30,30
 }
 
-slot1 {
-    NoAttack 0,30
-}
+// slot1 {
+//     NoAttack 0,30
+// }
 
-slot2 {
-    NoAttack 0,50
-}
+// slot2 {
+//     NoAttack 0,50
+// }
 
-slot3 {
-    NoAttack 30,30
-}
+// slot3 {
+//     NoAttack 30,30
+// }
 
-slot4 {
-    NoAttack 0,20
-}
+// slot4 {
+//     NoAttack 0,20
+// }
 
-slot5 {
-    NoAttack 0,30
-}
+// slot5 {
+//     NoAttack 0,30
+// }
 
-slot6 {
-    NoAttack 0,50
-}
+// slot6 {
+//     NoAttack 0,50
+// }
 
-slot8 {
-    NoAttack 30,30
-}
+// slot8 {
+//     NoAttack 30,30
+// }
 
-slot9 {
-    NoAttack 30,30
-}
+// slot9 {
+//     NoAttack 30,30
+// }
 
-slot10 {
-    NoAttack 30,30
-}
+// slot10 {
+//     NoAttack 30,30
+// }
 
-//_____In air_____
-slot11 {
-    NoAttack 30,30
-}
+// //_____In air_____
+// slot11 {
+//     NoAttack 30,30
+// }
 
-slot12 {
-    NoAttack 30,30
-}
+// slot12 {
+//     NoAttack 30,30
+// }
 
-slot13 {
-    NoAttack 30,30
-}
+// slot13 {
+//     NoAttack 30,30
+// }
 
-slot14 {
-    NoAttack 30,30
-}
+// slot14 {
+//     NoAttack 30,30
+// }
 
-slot15 {
-    NoAttack 30,30
-}
+// slot15 {
+//     NoAttack 30,30
+// }
 
-slot17 {
-    NoAttack 30,30
-}
+// slot17 {
+//     NoAttack 30,30
+// }
 
-slot18 {
-    NoAttack 30,30
-}
+// slot18 {
+//     NoAttack 30,30
+// }
 
-slot19 {
-    NoAttack 30,30
-}
+// slot19 {
+//     NoAttack 30,30
+// }
 
-slot21 {
-    NoAttack 30,30
-}
+// slot21 {
+//     NoAttack 30,30
+// }
 
-slot22 {
-    NoAttack 30,30
-}
+// slot22 {
+//     NoAttack 30,30
+// }
 
-slot23 {
-    NoAttack 30,30
-}
+// slot23 {
+//     NoAttack 30,30
+// }
 
 
 //Routine Call table

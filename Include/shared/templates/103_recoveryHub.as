@@ -102,7 +102,7 @@ elif CurrAction >= hex(0xB) && CurrAction <= hex(0xD)
     goalX = 0
     Call MainHub
   elif CharYSpeed > 0 || AnimFrame < 2
-    globTempVar = 1
+    globTempVar = -1
     Goto handleJumpToStage
     Seek begin
     if AnimFrame < 10
@@ -113,7 +113,7 @@ endif
 Seek begin
 
 if YDistFloor > -1
-  if !(Equal globTempVar 0)
+  if globTempVar > 0
     ClearStick
     globTempVar = TopNX * -1
     AbsStick globTempVar

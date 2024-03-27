@@ -415,10 +415,10 @@ export const generateFetchMoveData = (includeNames = "1") => {
     // // duration
     let duration = 0;
     if (["fthrow", "dthrow", "uthrow", "bthrow"].includes(mn)) {
-      duration = hitFrame + parseInt($globals[`${moveName}_throwFrame`]);
-      duration *= 0.5;
+      duration = parseInt($globals[`${moveName}_throwFrame`]);
+      // duration *= 0.5;
       let thing = parseInt($globals[`${moveName}_IASA`]) - (duration + hitFrame)
-      console.log(`duration [${mn}]: ${duration}; endlag: ${thing}`);
+      console.log(`duration [${mn}]: ${duration}; endlag: ${thing}; hframe: ${hitFrame}`);
     } else {
       duration = lastHitFrame - hitFrame;
     }
@@ -887,7 +887,7 @@ export const addToDice = (slot, moveName, weight) => {
 
 export const addOriginToDice = (slot, origin, weight) => {
   clearOut();
-  const moves = Object.values(getMoveData()).map((m, i) => [i, m]).filter(([_, m]) => m.origin.toLowerCase() == origin.toLowerCase());
+  const moves = Object.values(getMoveData()).map((m, i) => [i, m]).filter(([_, m]) => m.origin.toLowerCase() == origin.toLowerCase() && m.moveName.toLowerCase() !== "grab");
   for (const [i, m] of moves) {
     out(`DynamicDiceAdd dslot${slot} ${i} ${1 / moves.length}`);
   }

@@ -1,16 +1,12 @@
 #snippet SELF_Y_ADJUST
-  $ifLastOrigin(uspecialair,false)
-  $ifLastOrigin(dspecialair,true)
-  $ifLastOrigin(nspecialair,true)
+  $ifLastList(nspecialair;uspecialair;sspecialair;dspecialair,false)
   elif True
     {SELF_Y_ADJUST_INNER}
   endif
 #endsnippet
 
 #snippet FASTFALL_CHECK
-  $ifLastOrigin(uspecialair,false)
-  $ifLastOrigin(dspecialair,true)
-  $ifLastOrigin(nspecialair,true)
+  $ifLastList(nspecialair;uspecialair;sspecialair;dspecialair,false)
   elif True
     {FASTFALL_CHECK_INNER}
   endif
@@ -24,9 +20,7 @@
 #endsnippet
 
 #snippet UNAFFECTED_Y_MOVES
-  $ifLastOrigin(uspecialair,false)
-  $ifLastOrigin(dspecialair,true)
-  $ifLastOrigin(nspecialair,true)
+  $ifLastList(nspecialair;uspecialair;sspecialair;dspecialair,false)
 #endsnippet
 
 

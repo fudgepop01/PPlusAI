@@ -14,16 +14,16 @@
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 4
 
-#const pt_aggression = 1.4
-#const pt_bait_dashAwayChance = 0.55
-#const pt_bait_wdashAwayChance = 0.15
-#const pt_baitChance = 0.9
-#const pt_braveChance = 0.65
-#const pt_circleCampChance = 0.45
-#const pt_djumpiness = 0.02
-#const pt_jumpiness = 0.05
-#const pt_platChance = 0.25
-#const pt_wall_chance = 0.4
+#const _pt_aggression = 1.4
+#const _pt_bait_dashAwayChance = 0.55
+#const _pt_bait_wdashAwayChance = 0.15
+#const _pt_baitChance = 0.9
+#const _pt_braveChance = 0.65
+#const _pt_circleCampChance = 0.45
+#const _pt_djumpiness = 0.02
+#const _pt_jumpiness = 0.05
+#const _pt_platChance = 0.25
+#const _pt_wall_chance = 0.4
 
 // the following is the data that I give the AI that allows it to determine
 // where it should be before performing an attack.

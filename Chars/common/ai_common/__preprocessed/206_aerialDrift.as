@@ -9,13 +9,16 @@ label execution
 
 XGoto PerFrameChecks
 //= XReciever
-if !(Equal var20 -1) 
+if !(Equal var20 -1)
   STACK_PUSH var0 0
   STACK_PUSH var16 0
   XGoto SetAttackGoal
   XGoto CheckAttackWillHit
   var16 = STACK_POP
   var0 = STACK_POP
+  if Rnd < 0.01
+    var20 = -1
+  endif
 endif
 Seek execution
 // LOGSTR_NL str("exec")
@@ -25,8 +28,11 @@ if Equal var16 1
 elif Equal var16 2
   var22 = OPos * -1
   AbsStick var22
-elif Equal var16 3
+elif var16 >= 3
   var22 = OPos * -1
+  if Equal var16 4
+    var22 = TopNX * -1
+  endif
   AbsStick var22
   var22 = TopNY - OTopNY
   PredictOMov var23 14
@@ -35,10 +41,8 @@ elif Equal var16 3
   endif
 endif
 
-if Equal IsOnStage 0
-  ClearStick
-  var23 = TopNX * -1
-  AbsStick var23
+if Equal IsOnStage 0 && YDistBackEdge > -20
+  var16 = 4
 endif
 
 if var0 <= 0 || !(Equal AirGroundState 2)

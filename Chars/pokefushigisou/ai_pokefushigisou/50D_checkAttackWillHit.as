@@ -22,6 +22,7 @@
 
 #snippet SELF_X_ADJUST
   $ifLastOrigin(uspecialair,false)
+  $ifLastOrigin(sspecialair,true)
   elif True
     {SELF_X_ADJUST_INNER}
   endif

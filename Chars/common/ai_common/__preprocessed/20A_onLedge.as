@@ -22,15 +22,17 @@ Seek begin
 
 if AnimFrame > 2
   if Equal var21 16.71
-    LOGSTR_NL 1279607808 1195728640 1162102528 1162298368 0
+    // LOGSTR_NL str("LEDGE_EDGEGD")
     var0 = OTopNX - TopNX
     var1 = var0
     Abs var1
 
     if var1 <= 45 && CHANCE_MUL_LE PT_AGGRESSION 0.25
-      if OCurrAction >= 272 && AnimFrame > 20
-        Button R
-        Call MainHub
+      if OCurrAction >= 272 || Equal OCurrAction 16
+        if AnimFrame > 20 || ODistLE 10
+          Button R
+          Call MainHub
+        endif
       elif OYDistBackEdge > -45
         if OYDistBackEdge < -15
           Button X

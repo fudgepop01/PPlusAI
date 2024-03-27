@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -158,11 +158,11 @@ Seek jab123
 Return
 elif Equal var20 1
 Button A
-Seek jab123
+Seek jab1232
 Return
 elif Equal var20 2
 Button A
-Seek jab123
+Seek jab1233
 Return
 elif Equal var20 3
 Goto execDA
@@ -331,15 +331,23 @@ Goto PFC
 Goto common_checks
 Seek jab123
 Return
-label jab123
+label jab1232
 Goto PFC
+  if Equal CurrSubaction 72 && AnimFrame >= 8 && Rnd <= 0.8
+    Button A
+  endif
 Goto common_checks
-Seek jab123
+Seek jab1232
 Return
-label jab123
+label jab1233
 Goto PFC
+  if Equal CurrSubaction 72 && AnimFrame >= 8 && Rnd <= 0.8
+    Button A
+  elif Equal CurrSubaction 73 && AnimFrame >= 11 && Rnd <= 0.8
+    Button A
+  endif
 Goto common_checks
-Seek jab123
+Seek jab1233
 Return
 label dashattack
 Goto PFC
@@ -402,6 +410,7 @@ endif
     Jump
   endif
   if CurrAction >= 256
+    // 56 - startup (14) * distPerFrame
     var22 = TopNX - OTopNX
     Abs var22
     var23 = 0.1 * var22
@@ -409,9 +418,9 @@ endif
     var23 += 5
     var23 -= TopNY
     Abs var23
-    var17 = 56 + ActionTimer * 5.422222 
+    var17 = -19.911108 + ActionTimer * 5.422222 
     if var22 < var17 && var23 < 10
-    elif Equal CurrSubaction 463 || Equal CurrSubaction 466
+    elif Equal CurrSubaction 462 || Equal CurrSubaction 463
       if Rnd < 0.02 || XDistLE 25
       else
         Button B
@@ -433,13 +442,14 @@ endif
     Jump
   endif
   if CurrAction >= 256
+    // 56 - startup (14) * distPerFrame
     var22 = TopNX - OTopNX
     Abs var22
     var23 = 0.1 * var22
     EstOYCoord var23 var23
     var23 += 5
     var23 -= TopNY
-    var17 = 56 + ActionTimer * 5.422222 
+    var17 = -19.911108 + ActionTimer * 5.422222 
     if var22 < var17 && var23 < 10
     elif Equal CurrSubaction 463 || Equal CurrSubaction 466 || YDistFloor < 0
       if Rnd < 0.02 || XDistLE 25
@@ -764,7 +774,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25
+if Equal var20 21
+      XGoto CalcAttackGoal
+elif Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25
     else
       XGoto CalcAttackGoal
     endif

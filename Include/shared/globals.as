@@ -22,17 +22,17 @@
 #const DIRX_BACK = -3
 
 // "PERSONALITY" traits
-#const pt_braveChance = 0.65
-#const pt_baitChance = 0.65
-#const pt_aggression = 0.85
-#const pt_wall_chance = 0.65
-#const pt_circleCampChance = 0.45
-
-#const pt_bait_dashAwayChance = 0.85
-#const pt_bait_wdashAwayChance = 0.35
 #const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.07
-#const pt_platChance = 0.05
+#const pt_djumpiness = 0.02
+#const pt_aggression = 1.25
+#const pt_bait_dashAwayChance = 0.45
+#const pt_bait_wdashAwayChance = 0.45
+#const pt_wall_chance = 0.7
+#const pt_platChance = 0.1
+#const pt_baitChance = 0.8
+#const pt_braveChance = 0.65
+#const pt_circleCampChance = 0.1
+
 #const pt_SDIChance = 0.5
 #const pt_reactionTimeMultiplier = 1
 
@@ -45,9 +45,9 @@
 #const idx_djumpiness = 6
 #const idx_jumpiness = 7
 #const idx_platChance = 8
-#const idx_SDIChance = 9
-#const idx_wall_chance = 10
-#const idx_reaction_time = 11
+#const idx_reaction_time = 9
+#const idx_SDIChance = 10
+#const idx_wall_chance = 11
 
 #const TRAIN_JUMP = hex(0x0)
 #const TRAIN_ATTACK = hex(0x1)
@@ -380,6 +380,7 @@
 #const sv_aerialdrift_towards = 1
 #const sv_aerialdrift_away = 2
 #const sv_aerialdrift_away_withJump = 3
+#const sv_aerialdrift_center_withJump = 4
 
 #const sv_attackgoal_justy = 1
 #const sv_attackgoal_justx = 2
@@ -415,11 +416,11 @@
 #const cg_nothing = 0
 #const cg_runAway = 1
 #const cg_recover = 3
-#const cg_combo = 4
+// #const cg_combo = 4
 #const cg_circleCamp = 7
 #const cg_camp_attack = 7.1
-#const cg_avoidAttack = 8
-#const cg_returnToCenter = 9
+// #const cg_avoidAttack = 8
+// #const cg_returnToCenter = 9
 #const cg_bait = 10
 #const cg_bait_attack = 10.1
 #const cg_bait_shield = 10.2
@@ -427,11 +428,11 @@
 #const cg_bait_wait = 10.4
 #const cg_bait_dashdance = 10.5
 #const cg_bait_dashawayWhenApproached = 10.6
-#const cg_string = 11
+// #const cg_string = 11
 #const cg_inHitstun = 12
 #const cg_defend = 13
 #const cg_defend_crouchCancel = 13.1
-#const cg_special = 14
+// #const cg_special = 14
 #const cg_ledge = 15
 #const cg_ledge_edgeguard = 15.1
 #const cg_attack = 16
@@ -501,7 +502,8 @@
 
 // AI Tracker Values (0-15)
 
-#const man_OAvgEndlag = 3
+#const man_OPrevTrackedLocation = 2
+#const man_OMovement = 3
 #const man_OFramesPostHitstun = 4
 #const man_ODIAngle = 5
 #const man_OApproachPatterns = 6

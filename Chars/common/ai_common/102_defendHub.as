@@ -13,11 +13,11 @@ XGoto PerFrameChecks
 //= XReciever
 skipMainInit = mainInitSkip
 
-#let aggression = var0
-aggression = PT_AGGRESSION
+// #let aggression = var0
+// aggression = PT_AGGRESSION
 
-#let baitChance = var1
-baitChance = pt_baitChance
+// #let baitChance = var1
+// baitChance = pt_baitChance
 
 // immediateTempVar = aggression * 0.08
 // globTempVar *= 1.75
@@ -55,7 +55,7 @@ if Equal AirGroundState 1
     endif
   endif
 
-  immediateTempVar = 10 * PT_AGGRESSION
+  immediateTempVar = 50 * PT_AGGRESSION
   if CHANCE_MUL_LE PT_AGGRESSION 0.35 && Damage < immediateTempVar && CurrAction <= hex(0x20)
     currGoal = cg_defend_crouchCancel
     CallI Shield
@@ -86,12 +86,10 @@ if Equal AirGroundState 1
     scriptVariant = sv_dash_away
     CallI DashScr
   elif Rnd < 0.05 && NumJumps > 0
-    #let djumpiness = var3
-    djumpiness = PT_DJUMPINESS
     if Rnd < 0.05
       scriptVariant = sv_roll_through
       CallI Roll
-    elif Rnd < 0.4 && Rnd < djumpiness
+    elif Rnd < 0.4 && CHANCE_MUL_LE PT_DJUMPINESS 1
       scriptVariant = calc(sv_jump_over + svp_jump_fullhop)
       CallI JumpScr
     endif
@@ -103,20 +101,19 @@ if Equal AirGroundState 1
     endif
   endif
 
-  immediateTempVar = aggression * 0.08
   if Rnd < 0.5
     currGoal = cg_bait
   else
     currGoal = cg_bait_dashdance
   endif
-  if Rnd < immediateTempVar && Rnd < immediateTempVar
+  if CHANCE_MUL_LE PT_AGGRESSION 0.0064
     currGoal = cg_attack_reversal
   endif
 
   anotherTempVar = OXHitDist + 15
 
-  #let dashAwayChance = var3
-  dashAwayChance = PT_BAIT_DASHAWAYCHANCE
+  // #let dashAwayChance = var3
+  // dashAwayChance = PT_BAIT_DASHAWAYCHANCE
 
   GetAttribute immediateTempVar attr_dashInitVel 0
 
@@ -127,21 +124,21 @@ if Equal AirGroundState 1
     CallI DashScr
   endif
 
-  #let wdashAwayChance = var0
-  wdashAwayChance = PT_BAIT_WDASHAWAYCHANCE
-  wdashAwayChance *= 0.3
+  // #let wdashAwayChance = var0
+  // wdashAwayChance = PT_BAIT_WDASHAWAYCHANCE
+  // wdashAwayChance *= 0.3
 
   GetAttribute immediateTempVar attr_jumpSquatFrames 0
   immediateTempVar *= 0.1
   immediateTempVar = 0.7 - immediateTempVar
-  if Rnd < immediateTempVar && Rnd < wdashAwayChance
+  if Rnd < immediateTempVar && CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.3
     scriptVariant = sv_wavedash_out
     CallI Wavedash
   endif
 
-  #let dashAwayChance = var0
-  dashAwayChance = PT_BAIT_DASHAWAYCHANCE
-  dashAwayChance *= 0.35
+  // #let dashAwayChance = var0
+  // dashAwayChance = PT_BAIT_DASHAWAYCHANCE
+  // dashAwayChance *= 0.35
 
   GetAttribute immediateTempVar attr_dashInitVel 0
   immediateTempVar *= 5
@@ -149,7 +146,7 @@ if Equal AirGroundState 1
   Abs globTempVar
   immediateTempVar += globTempVar
 
-  if OXHitDist < immediateTempVar && Rnd < dashAwayChance && Rnd < 0.6
+  if OXHitDist < immediateTempVar && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.35 && Rnd < 0.6
     scriptVariant = sv_dash_away
     CallI DashScr
   endif

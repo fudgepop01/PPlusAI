@@ -122,7 +122,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     var13 = 0
     Call MainHub
   elif CharYSpeed > 0 || AnimFrame < 2
-    var17 = 1
+    var17 = -1
     Goto handleJumpToStage
     Seek begin
     if AnimFrame < 10
@@ -133,7 +133,7 @@ endif
 Seek begin
 
 if YDistFloor > -1
-  if !(Equal var17 0)
+  if var17 > 0
     ClearStick
     var17 = TopNX * -1
     AbsStick var17
@@ -197,14 +197,14 @@ endif
     Return
   endif
   
-  if var6 <= 0.4 && YDistBackEdge > 10 && Equal var4 0
+  if var6 <= 0.4 && YDistBackEdge > -10 && Equal var4 0
     var4 = 1
     Button B
     ClearStick
     AbsStick 0 (0.7)
     Return
   endif
-  var22 = 50 - 6 + HurtboxSize
+  var22 = 30 - 6 + HurtboxSize
   if var2 <= 65 && YDistBackEdge < var22 && YSpeed < 0 && Equal var4 0
     var4 = 1
     Button B
@@ -234,7 +234,7 @@ endif
     endif
   else
   
-    var22 = 69.00999999999999
+    var22 = 49.00999999999999
     if !(NoOneHanging)
       var22 -= 20
     endif

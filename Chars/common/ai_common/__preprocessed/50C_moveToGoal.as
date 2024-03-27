@@ -34,15 +34,13 @@ STACK_PUSH 4 0
   //= XReciever
   var23 *= 0.5
   var3 += var23 
-  // xRange -= OWidth
+  Abs var4
   var4 += var5
-  var23 = var5 * 0.5
-  if XDistLE var23
+  var23 = var4 - var5
+  if XDistLE var23 var4
     var5 *= 2
   endif
-  // xRange *= 2
-  // xOffset *= 2
-  // yRange *= 0.5
+  // xRange -= OWidth
   EstOYCoord var22 var3
   var22 -= OYCoord
   var7 = var14 //+ var22
@@ -60,8 +58,8 @@ var6 *= Scale
 
 
 var18 = LevelValue * 0.01
-if var18 < 0.1
-  var18 = 0.1
+if var18 < 0.025
+  var18 = 0.025
 endif
 
 var22 = TopNX - var13
@@ -80,11 +78,10 @@ if var17 > 0 && var21 < 10.5
   var17 = TopNY + 100 - var17
   if var21 >= 16 && var21 <= 17 && OFramesHitstun <= 0
   elif var22 < var17 && !(CalledFrom BoardPlatform)
-    var0 = PT_PLATCHANCE
-    if Rnd < var0
+    if CHANCE_MUL_LE PT_PLATCHANCE 1
       Seek platSkill
       Jump
-    elif var17 < var7 && Rnd < var0
+    elif var17 < var7 && CHANCE_MUL_LE PT_PLATCHANCE 1
       Seek platSkill
       Jump
     endif
@@ -115,14 +112,15 @@ elif Equal AirGroundState 2 && YSpeed < var22 && YDistBackEdge > -1 && !(Equal v
   endif
 endif
 
+// LOGVAL_NL strv("YOLO")
+// LOGVAL_NL xRange
+
 Goto XStickMovement
 
 var22 = GetJumpLength * var3 + TopNX
 var22 -= var13
 Abs var22
-var23 = var5 * 2
-// LOGVAL_NL strv("YOLO")
-// LOGVAL_NL immediateTempVar
+var23 = var5 * 3
 // LOGVAL_NL anotherTempVar
 if var22 <= var23 || Equal CurrSubaction JumpSquat && TopNY < var7
   var22 = 15
@@ -163,19 +161,19 @@ var1 = var22
     endif
   endif
 elif var22 <= 15 && TopNY > var7 && Equal IsOnPassableGround 1
-  var0 = PT_DJUMPINESS
+  // #let djumpiness = var0
+  // djumpiness = PT_DJUMPINESS
 
-  var1 = PT_AGGRESSION
+  // #let aggression = var1
+  // aggression = PT_AGGRESSION
 
-  if Equal Direction 1 
-    var22 = TopNX + XDistFrontEdge + 20
-    var17 = TopNX + XDistBackEdge - 20
-  else
-    var22 = TopNX - XDistBackEdge - 20
-    var17 = TopNX - XDistFrontEdge + 20
-  endif
 
-  if var17 <= var13 && var13 <= var22 && Rnd < var1
+  var22 = XDistFrontEdge * Direction + 20
+  var17 = XDistBackEdge * Direction - 20
+  var22 += TopNX
+  var17 += TopNX
+
+  if var17 <= var13 && var13 <= var22 && CHANCE_MUL_LE PT_AGGRESSION 1
     label empty_2
     XGoto PerFrameChecks
     Seek empty_2
@@ -237,7 +235,7 @@ label stickMovement
   var1 = var0
   
 
-  var23 = CharXSpeed * var3 + TopNX
+  var23 = TotalXSpeed * var3 + TopNX
   if var21 < 16 || Equal AirGroundState 1
     var23 = TopNX
   endif
@@ -246,20 +244,18 @@ label stickMovement
   var22 = var23
   Abs var23
   var23 -= var4
+  Abs var23
+  // anotherTempVar *= -1
 
   var0 = 1
+  // LOGVAL_NL anotherTempVar
 
   if Equal AirGroundState 1 && !(Equal CurrAction 10) && Equal var1 0
     if !(Equal var21 16.3)
       if var23 > 0 && var23 < var4 && var21 < 16.7
         var0 = 0.72
-      elif var23 < 0
-        var0 = 0
-        // anotherTempVar -= xRange
-        // if anotherTempVar > 0
-        // else
-        //   stickMagnitude *= -1
-        // endif
+      // elif anotherTempVar < 0
+      //   stickMagnitude = 1
       endif
       if var21 >= 16.7 && DistToOEdge < 30
         var0 *= 0.72
@@ -309,7 +305,7 @@ label stickMovement
   endif 
   
   if Equal AirGroundState 1
-    if Equal var21 16.7
+    if var21 >= 16.7
       var22 = var4 * 1.5
       var4 *= 0.5
       var23 = OPos * var22
@@ -450,10 +446,8 @@ if Equal AirGroundState 1
 else 
   GetAttribute var17 136 0
   var22 = var13 - TopNX
-  LOGVAL_NL var22
   var22 *= 0.05
   var22 = var22 / var17
-  LOGVAL_NL var22
   AbsStick var22
 endif
 Return
@@ -508,7 +502,7 @@ if !(Equal AirGroundState 3)
         Stick -1
       elif var17 > -5 && var17 < 0 && var23 < 0.2
         Stick 1
-      elif InAir && var17 < -5 && Equal PrevAction 10
+      elif LastJumpSquatFrame && var17 < -5 && Equal CurrAction 10
         Button R
         GetAttribute var22 36 0
         var17 *= var22

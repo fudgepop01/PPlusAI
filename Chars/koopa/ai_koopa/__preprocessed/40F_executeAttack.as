@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -751,7 +751,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 25 || Equal var20 26 || Equal var20 27 || Equal var20 28 || Equal var20 29
+if Equal var20 25
+      XGoto CalcAttackGoal
+elif Equal var20 25 || Equal var20 26 || Equal var20 27 || Equal var20 28 || Equal var20 29
     else
       XGoto CalcAttackGoal
     endif

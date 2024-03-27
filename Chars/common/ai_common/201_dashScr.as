@@ -51,7 +51,7 @@ endif
 
 globTempVar = OPos * 15
 GetYDistFloorOffset globTempVar globTempVar 10 1
-if globTempVar < 0 && !(Equal scriptVariant sv_dash_toCenter)
+if globTempVar < 0
   scriptVariant = sv_dash_toCenter
 endif
 

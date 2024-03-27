@@ -104,7 +104,7 @@ $filterMoveHitFrame(10)
 $filterMoveEndlag(10)
 $output(Goto)
 #let result = var2
-MOVE_KB_WITHIN(result, move_currKnockback, move_angle, 45, 0, 60, 0, 60)
+MOVE_KB_WITHIN(KBW, result, move_currKnockback, move_angle, 45, 0, 60, 0, 60)
 if Equal result 1
   Seek callMove
   Jump
@@ -117,7 +117,7 @@ $filterMoveHitFrame(20)
 $filterMoveEndlag(20)
 $output(Goto)
 #let result = var2
-KILL_CHECK(result, move_currKnockback, move_angle, OTopNX, OTopNY)
+KILL_CHECK(KCHK, result, move_currKnockback, move_angle, OTopNX, OTopNY)
 if Equal result 1
   Seek callMove
   Jump

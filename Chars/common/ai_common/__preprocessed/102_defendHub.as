@@ -13,9 +13,11 @@ XGoto PerFrameChecks
 //= XReciever
 var15 = -10
 
-var0 = PT_AGGRESSION
+// #let aggression = var0
+// aggression = PT_AGGRESSION
 
-var1 = 0.65
+// #let baitChance = var1
+// baitChance = pt_baitChance
 
 // immediateTempVar = aggression * 0.08
 // globTempVar *= 1.75
@@ -52,7 +54,7 @@ if Equal AirGroundState 1
     endif
   endif
 
-  var22 = 10 * PT_AGGRESSION
+  var22 = 50 * PT_AGGRESSION
   if CHANCE_MUL_LE PT_AGGRESSION 0.35 && Damage < var22 && CurrAction <= 32
     var21 = 13.1
     CallI Shield
@@ -83,11 +85,10 @@ if Equal AirGroundState 1
     var16 = 2
     CallI DashScr
   elif Rnd < 0.05 && NumJumps > 0
-    var3 = PT_DJUMPINESS
     if Rnd < 0.05
       var16 = 1
       CallI Roll
-    elif Rnd < 0.4 && Rnd < var3
+    elif Rnd < 0.4 && CHANCE_MUL_LE PT_DJUMPINESS 1
       var16 = 1.1
       CallI JumpScr
     endif
@@ -99,19 +100,19 @@ if Equal AirGroundState 1
     endif
   endif
 
-  var22 = var0 * 0.08
   if Rnd < 0.5
     var21 = 10
   else
     var21 = 10.5
   endif
-  if Rnd < var22 && Rnd < var22
+  if CHANCE_MUL_LE PT_AGGRESSION 0.0064
     var21 = 16.4
   endif
 
   var23 = var2 + 15
 
-  var3 = PT_BAIT_DASHAWAYCHANCE
+  // #let dashAwayChance = var3
+  // dashAwayChance = PT_BAIT_DASHAWAYCHANCE
 
   GetAttribute var22 40 0
 
@@ -122,19 +123,21 @@ if Equal AirGroundState 1
     CallI DashScr
   endif
 
-  var0 = PT_BAIT_WDASHAWAYCHANCE
-  var0 *= 0.3
+  // #let wdashAwayChance = var0
+  // wdashAwayChance = PT_BAIT_WDASHAWAYCHANCE
+  // wdashAwayChance *= 0.3
 
   GetAttribute var22 940 0
   var22 *= 0.1
   var22 = 0.7 - var22
-  if Rnd < var22 && Rnd < var0
+  if Rnd < var22 && CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.3
     var16 = 2
     CallI Wavedash
   endif
 
-  var0 = PT_BAIT_DASHAWAYCHANCE
-  var0 *= 0.35
+  // #let dashAwayChance = var0
+  // dashAwayChance = PT_BAIT_DASHAWAYCHANCE
+  // dashAwayChance *= 0.35
 
   GetAttribute var22 40 0
   var22 *= 5
@@ -142,7 +145,7 @@ if Equal AirGroundState 1
   Abs var17
   var22 += var17
 
-  if var2 < var22 && Rnd < var0 && Rnd < 0.6
+  if var2 < var22 && CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.35 && Rnd < 0.6
     var16 = 2
     CallI DashScr
   endif

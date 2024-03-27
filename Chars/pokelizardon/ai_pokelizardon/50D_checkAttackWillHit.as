@@ -18,6 +18,7 @@
 
 #snippet SELF_X_ADJUST
   $ifLastOrigin(uspecialair,false)
+  $ifLastOrigin(nspecialair,true)
   elif True
     {SELF_X_ADJUST_INNER}
   endif

@@ -11,11 +11,11 @@
 #const cs_recoveryDistX = 75
 #const cs_recoveryDistY = -100
 
-#const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.04
-#const pt_bait_dashAwayChance = 0.15
-#const pt_bait_wdashAwayChance = 0.75
-#const pt_circleCampChance = 0.35
+#const _pt_jumpiness = 0.05
+#const _pt_djumpiness = 0.04
+#const _pt_bait_dashAwayChance = 0.15
+#const _pt_bait_wdashAwayChance = 0.75
+#const _pt_circleCampChance = 0.35
 
 #const cs_dashForceTurnFrame = 8
 #const cs_dashDanceMinFrames = 3

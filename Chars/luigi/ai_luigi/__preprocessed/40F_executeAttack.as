@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -158,11 +158,11 @@ Seek jab123
 Return
 elif Equal var20 1
 Button A
-Seek jab1232
+Seek jab123_2
 Return
 elif Equal var20 2
 Button A
-Seek jab1233
+Seek jab123_3
 Return
 elif Equal var20 3
 Goto execDA
@@ -296,15 +296,23 @@ Goto PFC
 Goto common_checks
 Seek jab123
 Return
-label jab1232
+label jab123_2
 Goto PFC
+  if Equal CurrSubaction 72 && AnimFrame >= 6 && Rnd <= 0.8
+    Button A
+  endif
 Goto common_checks
-Seek jab1232
+Seek jab123_2
 Return
-label jab1233
+label jab123_3
 Goto PFC
+  if Equal CurrSubaction 72 && AnimFrame >= 6 && Rnd <= 0.8
+    Button A
+  elif Equal CurrSubaction 73 && AnimFrame >= 9 && Rnd <= 0.6
+    Button A
+  endif
 Goto common_checks
-Seek jab1233
+Seek jab123_3
 Return
 label dashattack
 Goto PFC
@@ -381,9 +389,11 @@ if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
 endif
   ClearStick
   AbsStick OPos
-  MOD var22 AnimFrame 3
-  if OYDistFloor > 5 && var22 <= 1
-    Button B
+  MOD var22 AnimFrame 6
+  if var22 <= 1 && XDistLE 30
+    if OTopNY > TopNY || YDistFloor < 0
+      Button B
+    endif
   endif
   if AnimFrame > 50
     Seek finish
@@ -399,9 +409,11 @@ if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
 endif
   ClearStick
   AbsStick OPos
-  MOD var22 AnimFrame 3
-  if OYDistFloor > 5 && var22 <= 1
-    Button B
+  MOD var22 AnimFrame 6
+  if var22 <= 1 && XDistLE 30
+    if OTopNY > TopNY || YDistFloor < 0
+      Button B
+    endif
   endif
   if AnimFrame > 50
     Seek finish
@@ -636,7 +648,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+if Equal var20 17
+      XGoto CalcAttackGoal
+elif Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
     else
       XGoto CalcAttackGoal
     endif

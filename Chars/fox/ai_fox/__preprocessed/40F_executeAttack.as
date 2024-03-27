@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -247,20 +247,10 @@ Seek bair
 Return
 elif Equal var20 20
 Button A
-Stick (-1) 0
-Seek bair_weak
-Return
-elif Equal var20 21
-Button A
 Stick 0 1
 Seek uair
 Return
-elif Equal var20 22
-Button A
-Stick 0 1
-Seek uair_weak
-Return
-elif Equal var20 23
+elif Equal var20 21
 Button A
 Stick 0 (-0.6)
 Seek dair
@@ -390,20 +380,10 @@ Goto PFC
 Goto common_checks
 Seek bair
 Return
-label bair_weak
-Goto PFC
-Goto common_checks
-Seek bair_weak
-Return
 label uair
 Goto PFC
 Goto common_checks
 Seek uair
-Return
-label uair_weak
-Goto PFC
-Goto common_checks
-Seek uair_weak
 Return
 label dair
 Goto PFC
@@ -449,7 +429,7 @@ label PFC
   XGoto PerFrameChecks
   //= XReciever
   if !(Equal var21 7)
-if  var20 >= 16 && var20 <= 23
+if  var20 >= 16 && var20 <= 21
       if Equal IsOnStage 0 && NumJumps < 1 && TotalYSpeed < -0.5
         var22 = TopNX * -1
         AbsStick var22
@@ -568,7 +548,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15
+if Equal var20 11
+      XGoto CalcAttackGoal
+elif Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal var20 14 || Equal var20 15
     else
       XGoto CalcAttackGoal
     endif

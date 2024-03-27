@@ -1,5 +1,5 @@
 #snippet ISACTIONABLE_OVERRIDE
-  if Equal CurrAction hex(0x115) && ActionTimer > 5
+  if Equal CurrAction hex(0x115) && ActionTimer > 5 && HasCurry
     Button X
     if Equal AirGroundState 1
       scriptVariant = sv_wavedash_awayFromLedge

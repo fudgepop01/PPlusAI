@@ -1,15 +1,17 @@
 meta:
-  id: movedef
+  id: move_def
   ks-debug: false
   ks-opaque-types: false
   endian: be
   encoding: ascii
   imports:
-    - animCmd
+    - anim_cmd
 seq:
   - id: header
     type: sakurai_header
     size: 0x20
+    doc: |
+      i'm a header, WEEEEEEE
   - id: body
     type: sakurai_body
     size: header.size - 0x20
@@ -115,6 +117,8 @@ types:
                 ? section_type::anim_cmd
                   : name == 'dataCommon'
                   ? section_type::data_common
+                  : name == 'data'
+                  ? section_type::data
                     : section_type::unk
               # section_type::data
               cases:
@@ -148,13 +152,15 @@ types:
           - {id: action_flags_start, type: s4}
           - {id: unknown7, type: s4}
           - {id: action_interrupts, type: s4}
-          - {id: entry_actions_start, type: s4}
-          - {id: exit_actions_start, type: s4}
+          # Luc = 0x13
+          - {id: entry_actions_start, type: ptr('u4')}
+          - {id: exit_actions_start, type: ptr('u4')}
           - {id: action_pre_start, type: s4}
-          - {id: subaction_main_start, type: s4}
-          - {id: subaction_gfx_start, type: s4}
-          - {id: subaction_sfx_start, type: s4}
-          - {id: subaction_other_start, type: s4}
+          # Luc = 0x1eb
+          - {id: subaction_main_start, type: ptr('u4')}
+          - {id: subaction_gfx_start, type: ptr('u4')}
+          - {id: subaction_sfx_start, type: ptr('u4')}
+          - {id: subaction_other_start, type: ptr('u4')}
           - {id: anchored_item_positions, type: s4}
           - {id: gooey_bomb_positions, type: s4}
           - {id: bone_ref1, type: s4}
@@ -174,8 +180,8 @@ types:
           - {id: global_ics_sse, type: s4}
           - {id: ics, type: s4}
           - {id: ics_sse, type: s4}
-          - {id: entry_actions_start, type: s4}
-          - {id: exit_actions_start, type: s4}
+          - {id: entry_actions_start, type: "ptr_ptr_table('anim_cmd', 0x112)"}
+          - {id: exit_actions_start, type: "ptr_ptr_table('anim_cmd', 0x112)"}
           - {id: flash_overlay_array, type: s4}
           - {id: unk7, type: s4}
           - {id: unk8, type: s4}
@@ -192,66 +198,99 @@ types:
           - {id: flash_overlay_offset, type: s4}
           - {id: screen_tints, type: s4}
           - {id: leg_bones, type: s4}
-          - {id: unk22_table_reference, type: s4}
-        instances:
-          entry_actions:
-            pos: entry_actions_start
-            type: action_pointer
-            repeat: expr
-            repeat-expr: 0x112
-          exit_actions:
-            pos: exit_actions_start
-            type: action_pointer
-            repeat: expr
-            repeat-expr: 0x112
-          unk22_list:
-            pos: unk22_table_reference
-            type: unk22_table
-        types:
-          action_pointer:
-            seq:
-              - {id: offset, type: s4}
-            instances:
-              script:
-                pos: offset
-                type: anim_cmd
-
-      unk22_table:
-        seq:
-        - id: offset
-          type: s4
-        - id: length
-          type: u4
-        instances:
-          objects:
-            pos: offset
-            type: s4
-            repeat: expr
-            repeat-expr: length
-  # list_offset:
-  #   params:
-  #     - id: contained_type
-  #       type: struct
-  #   seq:
-  #   - id: offset
-  #     type: s4
-  #   - id: length
-  #     type: u4
-  #   instances:
-  #     objects:
-  #       pos: offset
-  #       type: contained_type
-  #       repeat: expr
-  #       repeat-expr: length
-  # pointer:
-  #   params:
-  #     - id: referenced_type
-  #       type: struct
-  #   seq:
-  #     - id: offset
-  #       type: s4
-  #   instances:
-  #     object:
-  #       pos: offset
-  #       type: referenced_type     
+          - {id: unk22_table_reference, type: "ptr('unk22_table')"}
+  unk22_table:
+    seq:
+    - id: offset
+      type: s4
+    - id: length
+      type: u4
+    instances:
+      objects:
+        pos: offset
+        type: s4
+        repeat: expr
+        repeat-expr: length
+  dummy:
+    instances:
+      d:
+        value: '"dummy"'
+  atype:
+    params:
+      - id: dtype
+        type: str
+    seq:
+      - id: data
+        type: 
+          switch-on: dtype
+          cases:
+            '"anim_cmd"': anim_cmd
+            '"f4"': f4
+            '"u1"': u1
+            '"u2"': u2
+            '"u4"': u4
+            '"s1"': s1 
+            '"s2"': s2 
+            '"s4"': s4
+            '"unk22_table"': unk22_table
+            _: dummy
+  ptr:
+    params:
+      - id: dtype
+        type: str
+    seq:
+      - id: offset
+        type: s4
+    instances:
+      data:
+        if: offset != 0
+        pos: offset
+        type: atype(dtype)
           
+  ptr_table:
+    params:
+      - id: dtype
+        type: str
+      - id: amt
+        type: s4
+    seq:
+      - id: entries
+        repeat: expr
+        repeat-expr: amt
+        type: ptr(dtype)
+        
+  ptr_ptr:
+    params:
+      - id: dtype
+        type: str
+    seq:
+      - id: offset
+        type: s4
+    instances:
+      ptr:
+        if: offset != 0
+        pos: offset
+        type: ptr(dtype)
+
+  ptr_ptr_table:
+    params:
+      - id: dtype
+        type: str
+      - id: amt
+        type: s4
+    seq:
+      - id: offset
+        type: s4
+      - id: count
+        type: u4
+        if: amt == 0
+    instances:
+      len:
+        value: |
+          amt == -1 ? 0 
+          : amt == 0 ? count 
+          : amt
+      ptr_table:
+        if: offset != 0
+        pos: offset
+        type: "ptr_table(dtype, len)"

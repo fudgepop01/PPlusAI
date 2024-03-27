@@ -37,6 +37,9 @@ STACK_PUSH 0 0
   //= XReciever
 var16 = 0
 
+LOGSTR 822083584 0 0 0 0
+LOGVAL var10
+
 if Equal var21 16.3
   var22 = 0.003
   XGoto GetChrSpecific
@@ -59,6 +62,9 @@ var0 *= Scale
 var1 *= Scale
 var10 *= Scale
 var9 *= Scale
+
+LOGSTR 838860800 0 0 0 0
+LOGVAL var10
 
 // temp until loop
 // 1. adjust hitFrame
@@ -133,6 +139,9 @@ var10 *= 2
 var9 *= 2
 // move_xRange -= 2
 // move_yRange -= 2
+
+LOGSTR 855638016 0 0 0 0
+LOGVAL var10
 
   var22 = 23
   XGoto GetChrSpecific
@@ -249,21 +258,26 @@ endif
 //   // move_xOffset -= immediateTempVar
 // endif 
 
+LOGSTR_NL 1869968384 1936286720 1697473280 1751842816 0
   var22 = 0.003
   XGoto GetChrSpecific
   //= XReciever
-if var22 < 5 && var21 < 16.7 && Equal DEBUG_VALUE 0 
+if var22 < 5 && var21 < 16.7 //&& Equal DEBUG_VALUE 0 
+  LOGSTR_NL 1768846080 1768187136 761489408 1795162112 0
   var17 = OTopNY + OHurtboxSize
   var23 = TopNY - var1
-if  Equal var20 17 || Equal var20 21 || var20 >= 27 && var20 <= 32
-  elif var17 < var23
+  // $ifAerialAttack()
+  if var17 < var23 && Equal AirGroundState 1
     var20 = -1
     Return  
   endif
 
   if !(Equal var21 16.3) && !(Equal var21 16.5)
-    var10 += var2
+    LOGSTR_NL 1633970688 1970500608 1768843008 0 0
     var2 *= 0.5
+    var23 = var2
+    Abs var23
+    var10 += var23
     var0 += var2
   endif
 
@@ -282,6 +296,9 @@ if  Equal var20 17 || Equal var20 21 || var20 >= 27 && var20 <= 32
     var10 += Width
   endif
 endif
+
+LOGSTR 872415232 0 0 0 0
+LOGVAL var10
 // LOGVAL_NL move_xRange
 
 if Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25 || Equal var20 26
@@ -313,18 +330,18 @@ if LevelValue <= 21
   var0 += var22
   var22 = Rnd * 80 - 40
   var1 += var22
-  var22 = Rnd * 30
+  var22 = Rnd * 30 - 5
   var10 += var22
-  var22 = Rnd * 30
+  var22 = Rnd * 30 - 5
   var9 += var22
 elif LevelValue <= 60
   var22 = Rnd * 26 - 13
   var0 += var22
   var22 = Rnd * 26 - 13
   var1 += var22
-  var22 = Rnd * 10
+  var22 = Rnd * 10 - 5
   var10 += var22
-  var22 = Rnd * 10
+  var22 = Rnd * 10 - 5
   var9 += var22
 endif
 
@@ -334,12 +351,16 @@ var8 = var15
 // anotherTempVar = OHurtboxSize * 0.25
 // move_yRange += anotherTempVar
 
+LOGSTR 2018664704 1852269824 0 0 0
+LOGVAL var10
+PRINTLN
 STACK_PUSH var10 1
 STACK_PUSH var9 1
 STACK_PUSH var0 1
 
 var22 = 0
 if  Equal var20 17 || Equal var20 21 || var20 >= 27 && var20 <= 32
+  var22 = TotalYSpeed
   if OTopNY >= TopNY
     if Equal AirGroundState 1 || YDistFloor < 2 && YDistFloor > 0
       // LOGSTR_NL str("AAT AGS1")
@@ -370,8 +391,6 @@ if  Equal var20 17 || Equal var20 21 || var20 >= 27 && var20 <= 32
         // goalY += move_centerY
         var13 = TopNX
       endif
-      var22 = TotalYSpeed
-    elif Equal AirGroundState 2
       var22 = TotalYSpeed
     endif
   endif
@@ -527,8 +546,13 @@ if  Equal var20 17 || Equal var20 21 || var20 >= 27 && var20 <= 32
     else
       var23 = OCenterX + OTotalXSpeed * var2
     endif
-    STACK_PUSH var23 0
 
+    // if OYDistBackEdge > 20
+    //   estOXPos = OTopNX
+    // endif
+
+    STACK_PUSH var23 0
+    
 
     if Equal OAirGroundState 2
       var23 = var2
@@ -586,6 +610,10 @@ STACK_PUSH 22 0
   var1 = STACK_POP
   var0 = STACK_POP
 
+    if OYDistBackEdge > 20
+      var22 = OTopNX
+    endif
+    
     STACK_PUSH var22 0
     Goto adjustPosIfInGround
     // estOYPos += OHurtboxSize
@@ -656,13 +684,24 @@ STACK_PUSH 22 0
   var5 += var23
   var4 *= 0.5
   var5 *= 0.5
+
+  var17 = var10 + OTotalXSpeed * 12 // wavedash lag
+
+  var12 = STACK_POP // var23
+  var10 -= var12
+  Abs var10
   // handle dash for idle ground moves:
 if  var20 >= 0 && var20 <= 1 || var20 >= 4 && var20 <= 9 || var20 >= 12 && var20 <= 16 || var20 >= 18 && var20 <= 19
     var23 = TopNX + 50 * OPos
-    var22 = var10 - var23
+    var22 = var17 - var23
     Abs var22
-    if var22 <= var4 && var11 <= var5 && var21 < 16.7 && LevelValue >= 60
-      if Equal CurrAction 3 || Equal CurrAction 8 || Equal CurrAction 9
+    if var22 <= var4 && var10 > var4 && var11 <= var5 && var21 < 16.7 && LevelValue >= 60
+      GetAttribute var22 36 0
+      if Equal CurrAction 4 && var22 <= 0.6 && CHANCE_MUL_GE var22 1.35 
+        var16 = 5
+        var15 = -10
+        CallI Wavedash
+      elif Equal CurrAction 3 || Equal CurrAction 8 || Equal CurrAction 9
         if AnimFrame < 1 || Equal CurrAction 8 || Equal CurrAction 9 || !(Equal Direction OPos)
           var16 = 5
           var15 = -20
@@ -673,9 +712,8 @@ if  var20 >= 0 && var20 <= 1 || var20 >= 4 && var20 <= 9 || var20 >= 12 && var20
 
     if Equal CurrAction 3 && LevelValue >= 31
       // STACK_TOSS 1 // ignore estXPos
-
-      var23 = TopNX + CharXSpeed * (AnimFrame - 8)
-      var22 = var10 - var23
+      var23 = TopNX + TotalXSpeed * (AnimFrame - 8 + 2)
+      var22 = var17 - var23
       Abs var22
       if var22 <= var4 && var11 <= var5
         label runWait
@@ -692,9 +730,6 @@ if  var20 >= 0 && var20 <= 1 || var20 >= 4 && var20 <= 9 || var20 >= 12 && var20
     endif
   endif
     
-  var12 = STACK_POP // var23
-  var10 -= var12
-  Abs var10
   // LOGSTR str("xD")
   // LOGVAL xDiff
   // PRINTLN
@@ -734,7 +769,7 @@ elif !(True)
   CalcYChange var10 var17 var22 Gravity MaxFallSpeed FastFallSpeed 1
       if Equal var18 1 && var10 > 0
       else
-        var22 = TopNY + var10 - var1
+        var22 = TopNY + var10 + var1
         // VIS FASTFALL
         // tempYRange *= 0.5
         // tempXRange *= 0.5
@@ -751,6 +786,12 @@ elif !(True)
         // LOGVAL move_centerY
         // PRINTLN
         if var11 <= var5
+          var16 = 1
+          var10 = YDistFloor + 1
+if !(True)
+elif Equal var20 21
+elif !(True)
+          elif True  
   var17 = var7 + var15 - var8
   if Equal CurrSubaction JumpSquat || Equal AirGroundState 1 || Equal CurrAction 11 && Equal AnimFrame 0
     GetAttribute var22 940 0
@@ -760,17 +801,11 @@ elif !(True)
     var22 = TotalYSpeed
   endif
   CalcYChange var10 var17 var22 Gravity MaxFallSpeed FastFallSpeed 1
-          var16 = 1
-          var10 = YDistFloor + 1
-if !(True)
-elif Equal var20 21
-elif !(True)
-          elif True  
-            CalcYChange var10 var2 YSpeed Gravity MaxFallSpeed FastFallSpeed 1
           endif
-          var22 = var10 + YDistFloor
+          var23 = HurtboxSize * 0.5
+          var22 = var10 + YDistFloor + var23          
           if var22 > 0 || YDistFloor < 0
-            CalcYChange var10 var6 var23 Gravity MaxFallSpeed FastFallSpeed 1
+            CalcYChange var10 var6 TotalYSpeed Gravity MaxFallSpeed FastFallSpeed 1
             Goto checkCanEdgeguard
             if var22 > 0
               Goto checkIfAirViable // fastfall
@@ -797,14 +832,15 @@ elif !(True)
       elif True
         CalcYChange var10 var2 var23 Gravity MaxFallSpeed FastFallSpeed 0
       endif
-      var22 = var10 + YDistFloor
+      var23 = HurtboxSize * 0.5
+      var22 = var10 + YDistFloor + var23
       // LOGSTR str("YDF; ATV")
       // LOGVAL YDistFloor
       // LOGVAL immediateTempVar
       // PRINTLN
       if var10 > 0 && Equal var18 1
       elif var22 > 0 || YDistFloor < 0
-        CalcYChange var10 var6 var23 Gravity MaxFallSpeed FastFallSpeed 0
+        CalcYChange var10 var6 TotalYSpeed Gravity MaxFallSpeed FastFallSpeed 0
         Goto checkCanEdgeguard
         if var22 < 0
           if NumJumps < 1
@@ -832,8 +868,8 @@ if  var20 >= 0 && var20 <= 1 || var20 >= 4 && var20 <= 9 || var20 >= 12 && var20
             //= XReciever
             Seek crouchWait
             if CurrAction < 3 || CurrAction > 4
-              var15 = -20
-              Call MainHub
+              // skipMainInit = sm_execAttack
+              CallI ExecuteAttack
             endif
             ClearStick
             if Equal CurrAction 4
@@ -1016,7 +1052,8 @@ var23 = var22
       // LOGSTR str("fdist, range")
       // LOGVAL globTempVar
       // LOGVAL anotherTempVar
-      // DrawDebugRectOutline TopNX globTempVar 50 2 color(0xFF0000DD)
+      // DrawDebugLine TopNX TopNY TopNX globTempVar color(0xFF0000DD)
+      // DrawDebugRectOutline TopNX anotherTempVar 50 2 color(0xFF0000DD)
       // PRINTLN
       if var17 > var23
       else

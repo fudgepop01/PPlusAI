@@ -130,7 +130,6 @@
 #endmacro
 
 #macro CALC_ENDLAG(targetVar)
-  #const imperfection = 4
   {targetVar} = -1
   RetrieveFullATKD immediateTempVar globTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
   if Equal immediateTempVar 0
@@ -191,9 +190,6 @@
     else
       {targetVar} = OFramesHitstun + OFramesHitlag
     endif
-  endif
-  if {targetVar} > -1
-    {targetVar} += imperfection
   endif
 #endmacro
 

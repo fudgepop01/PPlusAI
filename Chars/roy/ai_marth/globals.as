@@ -13,16 +13,16 @@
 #const cs_recoveryDistY = -50
 
 
-#const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.02
-#const pt_aggression = 1.25
-#const pt_bait_dashAwayChance = 0.45
-#const pt_bait_wdashAwayChance = 0.45
-#const pt_wall_chance = 0.7
-#const pt_platChance = 0.1
-#const pt_baitChance = 0.8
-#const pt_braveChance = 0.65
-#const pt_circleCampChance = 0.1
+#const _pt_jumpiness = 0.05
+#const _pt_djumpiness = 0.02
+#const _pt_aggression = 1.25
+#const _pt_bait_dashAwayChance = 0.45
+#const _pt_bait_wdashAwayChance = 0.45
+#const _pt_wall_chance = 0.7
+#const _pt_platChance = 0.1
+#const _pt_baitChance = 0.8
+#const _pt_braveChance = 0.65
+#const _pt_circleCampChance = 0.1
 
 #const cs_dashForceTurnFrame = 13
 #const cs_dashDanceMinFrames = 3

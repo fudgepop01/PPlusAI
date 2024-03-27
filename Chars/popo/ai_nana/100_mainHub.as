@@ -14,6 +14,7 @@ $genPersonalityStrings()
 SetAutoDefend 0
 SetDisabledSwitch 1
 SetDebugMode TEMP_DEBUG_TOGGLE
+LOGSTR_NL str("NANA MAINHUB")
 
 XGoto PerFrameChecks
 

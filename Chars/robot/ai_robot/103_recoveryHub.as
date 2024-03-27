@@ -4,7 +4,7 @@
   SetDebugMode TEMP_DEBUG_TOGGLE
   
   #const UpBXDist = 65
-  #const UpBYDist = 50
+  #const UpBYDist = 30
   #const horizUpBHeight = 15
   #const horizUpBRange = 80
   #const tolerence = 6

@@ -2,7 +2,7 @@
   #let distEst = var8
   distEst = 0
   label _SSPECIAL_EXEC
-
+  Seek _SSPECIAL_EXEC
   if Equal CurrSubaction hex(0x1d7)
     immediateTempVar = OTopNX - TopNX
 
@@ -15,6 +15,13 @@
     else
       Button B
     endif
+    Return
+  elif Equal CurrSubaction hex(0x1dd)
+    if AnimFrame >= 13
+      Button X
+      Seek finish
+    endif
+    Return
   elif Equal CurrSubaction hex(0x1d8)
     immediateTempVar = OTopNX - TopNX
     Abs immediateTempVar
@@ -53,6 +60,7 @@
         CallI Wavedash
       endif
     endif
+    Return
   endif
 #endsnippet
 

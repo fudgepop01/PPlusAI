@@ -426,8 +426,8 @@ endif
 
 #let techSkill = var0
 techSkill = LevelValue * 0.01
-if techSkill <= 0.1
-  techSkill = 0.1
+if techSkill <= 0.025
+  techSkill = 0.025
 endif
 label tskillWait
 XGoto PerFrameChecks
@@ -438,6 +438,7 @@ if Rnd < techSkill
 endif
 Return
 label selectGoal
+XReciever
 XGoto PerFrameChecks
 Cmd30
 
@@ -448,6 +449,8 @@ Cmd30
   XGoto UpdateGoal
   LOGSTR str("cg-post UpD")
   LOGVAL currGoal
+  LOGVAL YDistBackEdge
+  LOGVAL YDistFloor
 
 PRINTLN
 
@@ -456,8 +459,11 @@ if Equal currGoal cg_bait_wait && LevelValue >= LV5
   label waitSetup
   #let timer = var4
   timer = Rnd * 55 + 5
+  // LOGSTR_NL str("BAIT_WAIT")
   label baitWait
-  LOGSTR_NL str("BAIT_WAIT")
+  // LOGSTR str("WAITING; T:")
+  // LOGVAL timer
+  // PRINTLN
   STACK_PUSH timer st_function
   XGoto PerFrameChecks
   XGoto UpdateGoal
@@ -466,6 +472,9 @@ if Equal currGoal cg_bait_wait && LevelValue >= LV5
   endif
   timer = STACK_POP
   timer -= 1
+  // LOGSTR str("T:")
+  // LOGVAL timer
+  // PRINTLN
   Seek baitWait
   predictAverage immediateTempVar man_OXHitDist
   immediateTempVar *= 0.4
@@ -481,9 +490,14 @@ if Equal currGoal cg_bait_wait && LevelValue >= LV5
     Jump
   endif
   if LevelValue >= LV8
-    Stick 0 -1
+    Stick 0 -0.7
   endif
   if timer <= 0 || !(Equal currGoal cg_bait_wait)
+    // LOGVAL 10003
+    // LOGSTR str("time; goal")
+    // LOGVAL timer
+    // LOGVAL currGoal
+    // PRINTLN
     currGoal = cg_nothing
     skipMainInit = -100
     Call MainHub

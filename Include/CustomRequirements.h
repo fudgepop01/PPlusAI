@@ -26,3 +26,6 @@ req NoJumpPrevFrame : 0x1028
 
 /// if the fighter is currently being thrown
 req GettingThrown : 0x1029
+
+/// if the fighter is on the final frame of jumpsquat
+req LastJumpSquatFrame : 0x102A

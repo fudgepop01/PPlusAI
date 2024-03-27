@@ -103,6 +103,9 @@ cmd incrementPrediction : 0x54 managertype
 /// obtains the current value stored in the prediction
 cmd getCurrentPredictValue : 0x55 variable managerType
 
+/// sets the current prediction directly
+cmd setPrediction : 0x56 value managertype
+
 /// predicts the chance that a target will attack based on their prior actions
 cmd GetCommitPredictChance : 0x58 variable
 

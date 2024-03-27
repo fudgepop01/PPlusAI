@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "../../../Documents/_ChronoGear"
+			"path": "../../../../Documents/Kaitai-Struct-Compiler"
 		},
 		{
 			"path": "../../../../Documents/Syriinge"
@@ -33,10 +33,6 @@
 		{
 			"name": "PPlusSpark",
 			"path": "../../../../Documents/PPlusSpark"
-		},
-		{
-			"name": "ghidra_scripts",
-			"path": "../../../Documents/ghidra_scripts"
 		},
 		{
 			"name": "PPlusPSA",
@@ -88,6 +84,7 @@
 		"files.associations": {
 			"*.ksy": "yaml",
 			"*.asm": "gctrm",
+			"*.gml": "gml-ntt-roa",
 			"vector": "cpp",
 			"algorithm": "cpp",
 			"chrono": "cpp",
@@ -117,7 +114,15 @@
 			"xlocmes": "cpp",
 			"xloctime": "cpp",
 			"compare": "cpp",
-			"cstddef": "cpp"
+			"cstddef": "cpp",
+			"atomic": "cpp",
+			"fstream": "cpp",
+			"ios": "cpp",
+			"iosfwd": "cpp",
+			"memory": "cpp",
+			"sstream": "cpp",
+			"streambuf": "cpp",
+			"xiosbase": "cpp"
 		},
 		"liveServer.settings.multiRootWorkspaceName": null,
 		"lldb.displayFormat": "auto",
@@ -133,6 +138,10 @@
 		},
 		"editor.formatOnSave": false,
 		"makefile.makefilePath": "C:\\Users\\dareb\\Documents\\Syriinge\\Syriinge\\Makefile",
-		"godot_tools.editor_path": "C:\\Users\\dareb\\Downloads\\Godot_v4.2-stable_win64.exe\\Godot_v4.2-stable_win64.exe"
+		"godot_tools.editor_path": "C:\\Users\\dareb\\Downloads\\Godot_v4.2-stable_win64.exe\\Godot_v4.2-stable_win64.exe",
+		"files.watcherExclude": {
+			"**/target": true
+		},
+		"dotnet.defaultSolution": "disable"
 	}
 }

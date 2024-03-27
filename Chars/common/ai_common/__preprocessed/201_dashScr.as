@@ -53,7 +53,7 @@ endif
 
 var17 = OPos * 15
 GetYDistFloorOffset var17 var17 10 1
-if var17 < 0 && !(Equal var16 4)
+if var17 < 0
   var16 = 4
 endif
 

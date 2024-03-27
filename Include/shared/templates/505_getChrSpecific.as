@@ -157,35 +157,36 @@ elif Equal chr_trait_select chr_get_OEndlag || Equal chr_trait_select chr_get_OE
         Goto restoreTempRegs
         Return
       endif
-      // chr_trait_return = STACK_POP
-      // Goto restoreTempRegs
+    else
+      Goto restoreTempRegs
     endif
   else
     Goto restoreTempRegs
   endif
 elif Equal chr_trait_select chr_calc_moveOffset
   #let move_hitFrame = var7
+  chr_trait_return = 0
+  Return
   Goto saveTempRegs
-  if !(CalledFrom ExecuteAttack)
-    GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+  if !(CalledFrom ExecuteAttack) && CurrAction < hex(0x20) && PrevAction < hex(0x20) && currGoal < cg_edgeguard
+    // GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
     anotherTempVar = 0
-    if Equal immediateTempVar 1
-      chr_trait_return = 0
-      Goto restoreTempRegs
-      Return
-    elif OYDistBackEdge < -10
-    elif !(Equal currGoal cg_attack_reversal) && currGoal < cg_edgeguard
-      immediateTempVar = OTopNY - TopNY
-      if immediateTempVar <= 30
-        anotherTempVar = 1
-      endif
-    endif
-    if !(Equal anotherTempVar 0) 
+    // if Equal immediateTempVar 1
+    //   chr_trait_return = 0
+    //   Goto restoreTempRegs
+    //   Return
+    // if OYDistFloor > 10
+    // elif !(Equal currGoal cg_attack_reversal)
+    //   immediateTempVar = OTopNY - TopNY
+    //   if immediateTempVar <= 30
+    //     anotherTempVar = 1
+    //   endif
+    // endif
+    if OYDistFloor < 10 && currGoal < cg_edgeguard
+    // elif !(Equal anotherTempVar 0) 
       GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
-      if immediateTempVar <= 10
+      if immediateTempVar <= 5
         anotherTempVar = 1
-      else
-        anotherTempVar = 0
       endif
     endif
 
@@ -208,13 +209,20 @@ elif Equal chr_trait_select chr_calc_moveOffset
       //     move_hitFrame = 10
       //   endif
       // endif
-      immediateTempVar *= 0.4 * move_hitFrame * OPos
+      // TODO
+      immediateTempVar *= calc(0.2 * 3)
       predictOOption globTempVar man_OBaitOption
       predictionConfidence anotherTempVar man_OBaitOption  
 
-      if Equal globTempVar op_bait_move && anotherTempVar >= 0.3
+      // FIXME
+      // globTempVar = op_bait_move
+      // anotherTempVar = 1
+
+      if Equal globTempVar op_bait_move && anotherTempVar >= 0.6
         predictOOption anotherTempVar man_OBaitDirection 
         predictAverage globTempVar man_OXHitDist
+        // FIXME
+        // anotherTempVar = op_baitdir_overshoot
         globTempVar *= OPos
         if Equal currGoal cg_attack_wall
         elif Equal anotherTempVar op_baitdir_undershoot
@@ -225,25 +233,29 @@ elif Equal chr_trait_select chr_calc_moveOffset
           else
             immediateTempVar *= 5
           endif
-          chr_trait_return = globTempVar * -1
-          chr_trait_return -= immediateTempVar
+          // chr_trait_return = immediateTempVar
+          // immediateTempVar *= -1
         elif Equal anotherTempVar op_baitdir_overshoot
           // LOGSTR_NL str("OVERSHOOT")
-          immediateTempVar = OPos * 15
-          GetYDistFloorOffset immediateTempVar immediateTempVar 5 1
-          if !(Equal immediateTempVar -1)
+          anotherTempVar = 15 * immediateTempVar
+          GetYDistFloorOffset anotherTempVar anotherTempVar 5 1
+          if !(Equal anotherTempVar -1)
             // immediateTempVar *= 5
-            chr_trait_return = globTempVar
-            chr_trait_return += immediateTempVar
+            // chr_trait_return = immediateTempVar * -1
+            immediateTempVar *= -1
+          else
+            immediateTempVar = 0
           endif
         endif
       endif
+      chr_trait_return *= OPos
     else 
       chr_trait_return = 0
     endif
   else 
     chr_trait_return = 0
   endif
+
 
   Goto restoreTempRegs
 elif Equal chr_trait_select chr_calc_certainty

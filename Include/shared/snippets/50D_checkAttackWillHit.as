@@ -12,7 +12,7 @@
       CALC_FASTFALL_DIST(yChange, estFrame - 4)
       if Equal shouldBeFalling 1 && yChange > 0
       else
-        immediateTempVar = TopNY + yChange - move_centerY
+        immediateTempVar = TopNY + yChange + move_centerY
         // VIS FASTFALL
         // tempYRange *= 0.5
         // tempXRange *= 0.5
@@ -30,16 +30,16 @@
         // LOGVAL move_centerY
         // PRINTLN
         if yDiff <= tempYRange
-          CALC_FASTFALL_DIST(yChange, move_hitFrame + move_duration - counter)
           scriptVariant = sv_execute_fastfall
           yChange = YDistFloor + 1
           {UNAFFECTED_Y_MOVES}
           elif True  
-            CalcYChange yChange estFrame YSpeed Gravity MaxFallSpeed FastFallSpeed 1
+            CALC_FASTFALL_DIST(yChange, move_hitFrame + move_duration - counter)
           endif
-          immediateTempVar = yChange + YDistFloor
+          anotherTempVar = HurtboxSize * 0.5
+          immediateTempVar = yChange + YDistFloor + anotherTempVar          
           if immediateTempVar > 0 || YDistFloor < 0
-            CalcYChange yChange move_IASA anotherTempVar Gravity MaxFallSpeed FastFallSpeed 1
+            CalcYChange yChange move_IASA TotalYSpeed Gravity MaxFallSpeed FastFallSpeed 1
             Goto checkCanEdgeguard
             if immediateTempVar > 0
               Goto checkIfAirViable // fastfall

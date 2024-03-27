@@ -8,7 +8,7 @@ RESET_LTF_STACK_PTR
 
 if !(Equal DEBUG_VALUE 0)
   if var21 < 16.7
-    var21 = 16.5
+    var21 = 16
   endif
   SeekNoCommit debug_value_latk
 endif
@@ -378,11 +378,10 @@ endif
 
 DynamicDiceClear 0
 if CurrAction >= 52 && CurrAction <= 58 
-DynamicDiceAdd 1 15 0.2
-DynamicDiceAdd 1 16 0.2
-DynamicDiceAdd 1 17 0.2
-DynamicDiceAdd 1 18 0.2
-DynamicDiceAdd 1 19 0.2
+DynamicDiceAdd 1 16 0.25
+DynamicDiceAdd 1 17 0.25
+DynamicDiceAdd 1 18 0.25
+DynamicDiceAdd 1 19 0.25
 else
 DynamicDiceClear 0
 DynamicDiceAdd 0 0 0.3333333333333333
@@ -418,6 +417,13 @@ endif
 // {COMBO_ROUTINES}
 
 // perform these expensive calculations once for efficiency
+
+// Recovery Distance
+  var22 = 18
+  XGoto GetChrSpecific
+  //= XReciever
+var23 = var22
+STACK_PUSH var23 1
 
 // EstOTopNY
 var22 = OTotalYSpeed / OGravity
@@ -507,6 +513,7 @@ STACK_PUSH 5 0
   XGoto GetChrSpecific
   //= XReciever
 
+  RESET_LTF_STACK_PTR
   Goto __ADDITIONAL_FILTERS__
   if Equal var20 -1 
     SeekNoCommit __DICE_LOOP__
@@ -527,6 +534,7 @@ endif
 
 if !(True)
   label __ADDITIONAL_FILTERS__
+  var17 = LTF_STACK_READ
 if Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19
     if Equal CurrAction 60 
       Return
@@ -554,6 +562,7 @@ elif !(True)
         Return
       endif
     endif
+
   STACK_PUSH var22 0
   var22 = 100
   XGoto GetChrSpecific
@@ -564,6 +573,15 @@ var11 = var22
     else
       var20 = -1
       Return
+    endif
+
+    if YDistFloor < 0
+      CalcYChange var23 var9 YSpeed Gravity MaxFallSpeed FastFallSpeed 0
+      var23 += TopNY
+      if var23 < var17
+        var20 = -1
+        Return
+      endif
     endif
   endif
 
@@ -668,6 +686,10 @@ PRINTLN
 DynamicDiceClear 0
 DynamicDiceClear 1
 
+if Equal var20 -1 && YDistFloor < 0
+  CallI RecoveryHub
+endif
+
 if Equal HitboxConnected 1 && HasCurry
   if YDistBackEdge > -15 && Equal IsOnStage 0
     Button X
@@ -676,6 +698,7 @@ if Equal HitboxConnected 1 && HasCurry
   var21 = 16.5
   CallI MainHub
 endif
+
 
 XGoto SetAttackGoal
 Return
@@ -702,11 +725,13 @@ elif Equal var20 24
       GetAttribute var22 312 0
     endif
     if !(Equal var22 0) 
-      if Equal AirGroundState 2
+      var23 = OWidth + Width + var3
+      if Equal AirGroundState 2 && XDistLE var23
         var22 *= 0.5
       else
         GetAttribute var23 940 0
-        var7 += var23 + 2
+        var7 += var23
+        var7 += 2
         GetAttribute var23 112 0
         if var23 > 0.06
           var22 *= 0.5
@@ -752,29 +777,30 @@ elif Equal var20 24
     var22 = TopNX - OTopNX
     Abs var22
     var22 += 1
-    var15 = var22 * var3 * 0.05
+    var15 = var22 * var3 * 0.15
+    var9 *= 0.5
     // if anotherTempVar > 100
     //   anotherTempVar = 100
     // endif
     // rollWeight += anotherTempVar
     GetAttribute var23 40 1 
-    var23 *= 0.25
+    var23 *= 0.15
     var23 *= var9
     predictAverage var17 10
     // LOGSTR str("distChk")
     // LOGVAL globTempVar
     // LOGVAL immediateTempVar
-    if Equal var21 7.1
-      var15 *= 2
+    if Equal var21 7.1 || var21 >= 16.7
+      var15 *= 3
     endif
     if YDistFloor < 0
       PRINTLN
       Return
     elif Equal var10 0
       if var9 <= 10
-        var15 *= 3
+        var15 *= 1.5
       endif
-      var15 *= 15
+      var15 *= 1.5
       Goto addMove
       PRINTLN
       Return
@@ -796,7 +822,6 @@ elif Equal var20 24
     // endif    
     if !(Equal var21 16.3) && !(Equal var21 16.41)
       // "lol" said the programmer, "lmao"
-      RESET_LTF_STACK_PTR
       
       // EstOTopNY
       var23 = LTF_STACK_READ
@@ -854,11 +879,17 @@ label dirCheck
   //   endif
   // endif
 
-  var23 = TopNY - OTopNY
   var17 = TopNX - OTopNX
+  Abs var17
+  Goto getMaxXDist
+  if var23 > var17
+    var5 = 0
+    var3 = var17 * 0.5
+  endif
+
+  var23 = TopNY - OTopNY
   Abs var23
   var23 *= 0.5
-  Abs var17
   if var17 > var23
     GetAttribute var22 52 0
     GetAttribute var23 40 0
@@ -877,12 +908,17 @@ if  Equal var20 0 || Equal var20 12 || Equal var20 14 || var20 >= 20 && var20 <=
       var23 = var22 * 1.5
       var23 += 1
       var3 *= var23
+      var23 = var3 + var5
+      Abs var23
+      if var23 < Width
+        var3 *= 0.25
+      endif
     endif
     
     if OFramesHitstun < 5
-      var23 = TopNX - OTopNX
+      var22 = TopNX - OTopNX
       var17 = var7 * XSpeed
-      var17 -= var23
+      var17 -= var22
       Abs var17
       Goto getMaxXDist
       if var17 >= var23
@@ -896,16 +932,13 @@ if  Equal var20 0 || Equal var20 12 || Equal var20 14 || var20 >= 20 && var20 <=
         //   anotherTempVar = 25
         // endif
 
-        var23 *= 0.75
-        var15 += var23
-        var15 += var23
+        var23 *= 0.5 * var23 
         var15 += var23
         if Equal var21 16.3
           var15 += var23
-          var15 += var23
         endif
 
-        var23 *= 0.35
+        var23 *= 0.035
         var23 += 1
         var15 *= var23
 
@@ -919,7 +952,7 @@ if  Equal var20 0 || Equal var20 12 || Equal var20 14 || var20 >= 20 && var20 <=
           if var11 > 0 && Equal AirGroundState 2 || YDistFloor < OFramesHitstun && YDistFloor > -1 && var23 < 35
             if Equal Direction OPos && var22 >= 0 
               var15 *= 1.75
-            elif !(Equal Direction OPos) && var22 < 0 
+            elif !(Equal Direction OPos) && var22 <= 0 
               var15 *= 1.75
             elif !(Equal var22 0) && var23 < 30
               var15 *= 0.05
@@ -974,8 +1007,6 @@ if Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal
     LOGSTR 1179142400 1409286144 0 0 0
     LOGVAL var15
   else 
-    // anotherTempVar = TopNX - OTopNX
-    // Abs anotherTempVar
     // globTempVar = move_xRange * 3
     // if anotherTempVar < globTempVar
       var23 = var22
@@ -1007,20 +1038,13 @@ if Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal
     // endif
   endif
     
-  // if Equal currGoal cg_attack_wall
-  //   if move_duration <= 3
-  //     immediateTempVar = move_duration + 1
-  //     immediateTempVar = rollWeight / immediateTempVar
-  //     rollWeight *= immediateTempVar
-  //   elif True
-  //     immediateTempVar = move_duration - 3
-  //     immediateTempVar *= 0.15
-  //     rollWeight *= immediateTempVar
-  //   endif
-  //   // LOGSTR str("INTERM")
-  //   // LOGVAL rollWeight
-  //   // PAUSE
-  // endif
+
+  GetAttribute var17 52 0
+  var22 = OTopNX - TopNX
+  Abs var22
+  var17 /= var22
+  // frames to reach opponent
+  var23 *= var17
 
   if var23 < var7 && var21 < 16.7 && !(Equal var21 12)
     Goto getEndlag
@@ -1105,7 +1129,7 @@ elif Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equ
   if !(True)
     label addMove
   endif
-
+ 
   
   if var10 <= 0
     var15 *= 5
@@ -1144,8 +1168,11 @@ var11 = var22
     endif
   endif
   GetCommitPredictChance var23
+  PredictOMov var17 10
+  var23 += var17
 if Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19
-  elif var23 < 0.13 && OFramesHitstun < var7
+    var22 *= 0.75
+  elif var23 < 0.16 && OFramesHitstun < var7
     var22 *= 5
   endif
 Return
@@ -1153,6 +1180,18 @@ label getOEndlag
   var22 = 0.003
   XGoto GetChrSpecific
   //= XReciever
+  if var21 < 16.7 
+    STACK_PUSH var22 0
+    var22 = OTopNY - TopNY
+    STACK_PUSH var22 0
+    var22 = TopNX - OTopNX
+    Abs var22
+    var22 *= -0.015
+    if STACK_POP < 20
+      var22 *= 3
+    endif
+    var22 += STACK_POP
+  endif
 Return
 label addIfFastHit
   var22 = var7
@@ -1171,13 +1210,13 @@ var11 = var22
   if var22 < 0
     var22 = 15 - var7
     if Equal var16 1
-      var22 *= 0.5
+      var22 *= 0.6
     else
       GetCommitPredictChance var23
-      if var23 > 0.18
-        var22 *= 0.3
+      if var23 < 0.11
+        var22 *= 0.5
       else 
-        var22 *= 0.15
+        var22 *= 0.25
       endif
     endif
     var22 += 1

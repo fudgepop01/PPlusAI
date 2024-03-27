@@ -27,7 +27,7 @@ label jumpSquat
   XGoto PerFrameChecks
   //= XReciever
   Seek jumpSquat
-  if Equal AirGroundState 2
+  if LastJumpSquatFrame
     Seek landing
     Jump
   elif NoJumpPrevFrame && !(Equal CurrAction hex(0xA)) 
@@ -39,8 +39,8 @@ label landing
   //= XReciever
   if !(Equal scriptVariant sv_wavedash_goal)
     Goto edgeCheck
-    Seek landing
   endif
+  Seek landing
   
   if airTime <= 0 || YSpeed < 0
     Button R
@@ -78,14 +78,13 @@ label landing
 Return
 label edgeCheck
 anotherTempVar = 0
-if XDistBackEdge < -10
+immediateTempVar = 8 * YDistFloor + 10
+if DistBackEdge > immediateTempVar
   anotherTempVar = -1
-else
-  scriptVariant = sv_wavedash_awayFromLedge
-endif
-if XDistFrontEdge > 10
+elif DistFrontEdge > immediateTempVar
   anotherTempVar = 1
-else
+endif
+if DistBackEdge < immediateTempVar || DistFrontEdge < immediateTempVar
   scriptVariant = sv_wavedash_awayFromLedge
 endif
 Return

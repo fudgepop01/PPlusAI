@@ -7,7 +7,6 @@ unk 0x0
 
 //Strings
 
-label
 var0=DistFrontEdge
 var1=DistBackEdge
 ClearStick
@@ -19,7 +18,7 @@ else
     Stick 0 1
 endif
 if CurrAction <= 32 || FramesHitstun > 0
-    Call MainHub
+    Return
 endif
 Return
 Return

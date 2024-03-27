@@ -4,16 +4,16 @@
 #const DIRX_FRONT = 4
 #const DIRX_BACK = 0
 
-#const pt_jumpiness = 0.1
-#const pt_djumpiness = 0.04
-#const pt_aggression = 1.25
-#const pt_bait_dashAwayChance = 0.6
-#const pt_bait_wdashAwayChance = 0.15
-#const pt_wall_chance = 0.4
-#const pt_platChance = 0.1
-#const pt_baitChance = 0.9
-#const pt_braveChance = 0.85
-#const pt_circleCampChance = 0.55
+#const _pt_jumpiness = 0.1
+#const _pt_djumpiness = 0.04
+#const _pt_aggression = 1.25
+#const _pt_bait_dashAwayChance = 0.6
+#const _pt_bait_wdashAwayChance = 0.15
+#const _pt_wall_chance = 0.4
+#const _pt_platChance = 0.1
+#const _pt_baitChance = 0.9
+#const _pt_braveChance = 0.85
+#const _pt_circleCampChance = 0.55
 
 #const cs_dashForceTurnFrame = 10
 #const cs_dashDanceMinFrames = 3

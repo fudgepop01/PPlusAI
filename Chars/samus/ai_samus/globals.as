@@ -9,16 +9,16 @@
 #const cs_djumpHeight = 39.01
 #const cs_wavedashDist = 35
 
-#const pt_jumpiness = 0.1
-#const pt_djumpiness = 0.1
-#const pt_aggression = 0.75
-#const pt_bait_dashAwayChance = 0.35
-#const pt_bait_wdashAwayChance = 0.7
-#const pt_wall_chance = 0.7
-#const pt_platChance = 0.23
-#const pt_baitChance = 1.5
-#const pt_braveChance = 0.3
-#const pt_circleCampChance = 0.9
+#const _pt_jumpiness = 0.1
+#const _pt_djumpiness = 0.1
+#const _pt_aggression = 0.75
+#const _pt_bait_dashAwayChance = 0.35
+#const _pt_bait_wdashAwayChance = 0.7
+#const _pt_wall_chance = 0.7
+#const _pt_platChance = 0.23
+#const _pt_baitChance = 1.5
+#const _pt_braveChance = 0.3
+#const _pt_circleCampChance = 0.9
 
 #const cs_dashForceTurnFrame = 9
 #const cs_dashDanceMinFrames = 3

@@ -21,6 +21,27 @@ Cmd30
 // if Equal PlayerNum OPlayerNum && !(Equal YDistFloor -1)
 //   SwitchTarget
 // endif
+
+MOD immediateTempVar GameTimer 10
+if immediateTempVar < 1
+  getCurrentPredictValue immediateTempVar man_OPrevTrackedLocation
+  anotherTempVar = OTopNX * 0.25
+  immediateTempVar -= anotherTempVar
+  Abs immediateTempVar
+  immediateTempVar *= 4
+  trackOAction man_OMovement immediateTempVar
+  trackOAction man_OMovement immediateTempVar
+  trackOAction man_OMovement immediateTempVar
+  setPrediction anotherTempVar man_OPrevTrackedLocation
+  predictAverage immediateTempVar man_OMovement
+  anotherTempVar = -0.5
+  if immediateTempVar < 5
+    anotherTempVar = 1
+  endif
+  ADJUST_PERSONALITY idx_aggression -0.05 anotherTempVar
+  ADJUST_PERSONALITY idx_baitChance 0.05 anotherTempVar
+  ADJUST_PERSONALITY idx_wall_chance 0.05 anotherTempVar
+endif
 //--- track target stuff 
 // out of tumble action
 if Equal OPrevAction hex(0x44) || Equal OPrevAction hex(0x45) || Equal OPrevAction hex(0x49)
@@ -65,12 +86,12 @@ if OAttackCond && Equal OAnimFrame 0 && Equal OActionTimer 0
     Abs anotherTempVar
     globTempVar *= 1.5
     trackOAction man_OXSwingDist anotherTempVar 
-    RetrieveFullATKD globTempVar anotherTempVar immediateTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
-    if Equal globTempVar 0
-      globTempVar = OEndFrame
-    endif 
-    anotherTempVar = globTempVar - immediateTempVar
-    trackOAction man_OAvgEndlag anotherTempVar
+    // RetrieveFullATKD globTempVar anotherTempVar immediateTempVar anotherTempVar anotherTempVar anotherTempVar anotherTempVar OCurrSubaction 1
+    // if Equal globTempVar 0
+    //   globTempVar = OEndFrame
+    // endif 
+    // anotherTempVar = globTempVar - immediateTempVar
+    // trackOAction man_OAvgEndlag anotherTempVar
   endif
 elif Equal OAnimFrame 0 && OFramesSinceShield < 20
   if Equal OCurrAction hex(0x21)
@@ -117,7 +138,7 @@ elif Rnd < 0.2
 endif
 if !(True)
   label baitDefendOption
-  immediateTempVar = (1 - (LevelValue / 100)) * 10 + 5
+  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10
   MOD immediateTempVar GameTimer immediateTempVar
   if immediateTempVar < 1
     globTempVar = man_OBaitOption
@@ -173,7 +194,7 @@ elif Equal CurrAction hex(0x39) && !(CalledFrom ExecuteAttack)
   CallI ExecuteAttack
 elif CurrAction >= hex(0x3D) && CurrAction <= hex(0x3F) || CurrAction >= hex(0x5A) && CurrAction <= hex(0x5F) || CurrAction >= hex(0xC7) && CurrAction <= hex(0xDA) || Equal CurrAction hex(0xEC)
   MOD immediateTempVar GameTimer 5
-  if immediateTempVar >= 4
+  if immediateTempVar >= 3
     immediateTempVar = Rnd * 2 - 1
     anotherTempVar = Rnd * 2 - 1
     AbsStick immediateTempVar anotherTempVar
@@ -190,12 +211,11 @@ endif
 
 //--- switch tactic if conditions are met
 if !(CalledFrom AttackedHub)
-  if CurrAction >= hex(0x42) && CurrAction <= hex(0x45) && !(Equal OCurrAction hex(0x49)) || GettingThrown
-    immediateTempVar = LevelValue * 0.01 - 0.15
+  if CurrAction >= hex(0x42) && CurrAction <= hex(0x49) || GettingThrown
     if FramesHitlag > 0 || FramesHitstun > 0
       Goto OnGotHitAdjustments
       CallI AttackedHub
-    elif GettingThrown || Equal CurrAction hex(0xee)
+    elif GettingThrown || Equal CurrAction hex(0xee) || CurrAction >= hex(0x45) && YDistFloor > 0 && YDistFloor < 10
       CallI AttackedHub
     endif
   endif
@@ -225,6 +245,7 @@ if !(CalledFrom RecoveryHub) && Equal IsOnStage 0
   endif
   GET_CHAR_TRAIT(globTempVar, chr_cs_recoveryDistX)
   if Equal IsOnStage 0 && currGoal < cg_edgeguard
+    globTempVar *= 0.25
     GetYDistFloorOffset immediateTempVar globTempVar 15 0
     globTempVar *= -1
     GetYDistFloorOffset anotherTempVar globTempVar 15 0
@@ -235,7 +256,7 @@ if !(CalledFrom RecoveryHub) && Equal IsOnStage 0
   endif
   GET_CHAR_TRAIT(immediateTempVar, chr_cs_recoveryDistY)
 
-  anotherTempVar = globTempVar / immediateTempVar
+  anotherTempVar = immediateTempVar / globTempVar
   globTempVar = anotherTempVar
 
   DIST_TO_CLIFF(immediateTempVar, anotherTempVar)
@@ -256,11 +277,11 @@ if !(CalledFrom RecoveryHub) && Equal IsOnStage 0
 
   DrawDebugRectOutline TopNX globTempVar 3 3 color(0xFF0000DD)
 endif
-if !(CalledFrom ExecuteAttack) && !(CalledFrom RecoveryHub)
-  if currGoal >= cg_edgeguard && Equal OIsOnStage 0
-  elif !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0
-    GetYDistFloorOffset immediateTempVar 10 15 1
-    GetYDistFloorOffset globTempVar -10 15 1
+if !(CalledFrom ExecuteAttack)
+  if currGoal >= cg_edgeguard || Equal currGoal cg_recover
+  elif Equal OIsOnStage 0 && !(Equal currGoal cg_ledge) && !(Equal currGoal cg_ledge_edgeguard) && Equal FramesHitstun 0
+    GetYDistFloorOffset immediateTempVar 10 15 fromOpponent
+    GetYDistFloorOffset globTempVar -10 15 fromOpponent
     if Equal immediateTempVar -1 && Equal globTempVar -1
       currGoal = cg_edgeguard
       skipMainInit = mainInitSkip

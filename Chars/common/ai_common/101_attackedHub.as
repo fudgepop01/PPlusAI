@@ -33,6 +33,11 @@ Seek hitlag
 EnableDebugOverlay
 SetDebugOverlayColor color(0xFFFFFFDD)
 
+if FramesHitlag > 0 && Equal PrevAction hex(0x12)
+  AbsStick 0 -1
+  Return
+endif
+
 if FramesHitlag > 2
   // SDI input frequency:
   // level 9: once per 20 frames
@@ -40,7 +45,7 @@ if FramesHitlag > 2
   #let sdiChance = var0
   sdiChance = PT_SDICHANCE * 0.4
   
-  immediateTempVar = (1 - (LevelValue / 100)) * 30 + 8
+  immediateTempVar = (1 - (LevelValue / 100)) * 70 + 15
   if PT_REACTION_TIME > 0.5
     immediateTempVar *= PT_REACTION_TIME
   else
@@ -50,7 +55,7 @@ if FramesHitlag > 2
   // LOGVAL_NL immediateTempVar
   MOD immediateTempVar GameTimer immediateTempVar
   // LOGVAL_NL immediateTempVar
-
+  
   if Equal immediateTempVar 1 && Rnd <= sdiChance
     globTempVar = OPos * -1
     if XDistBackEdge > -shortEdgeRange
@@ -110,7 +115,7 @@ SetDebugOverlayColor color(0xFFFFFF66)
 #let techWindow = var2
 #let MCWindow = var3
 #let framesOnGround = var4
-if FramesHitstun > 0 || GettingThrown
+if FramesHitstun > 0 || GettingThrown || Equal CurrAction hex(0x49)
   if LevelValue >= LV6
     stickX = Rnd * 10 * OPos * -1
     if KBAngle > 90 && KBAngle < 170
@@ -150,7 +155,7 @@ if FramesHitstun > 0 || GettingThrown
   framesOnGround = 0
   techDirection = -2
   label HSHandler
-  
+  // LOGVAL_NL 10000
   if FramesHitlag > 1
     Seek hitlag
     Jump
@@ -161,7 +166,8 @@ if FramesHitstun > 0 || GettingThrown
   // LOGSTR str("tDir")
   // LOGVAL techDirection
   // LOGVAL techWindow
-  // PRINTLN
+  PRINTLN
+  // LOGVAL_NL 10001
   if LevelValue >= LV3 && Equal techDirection -2
     if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
       Goto _checkTech
@@ -173,16 +179,20 @@ if FramesHitstun > 0 || GettingThrown
     endif
   endif
   Seek HSHandler
-
-  if !(Equal techDirection -2) && TotalYSpeed <= 0 && YDistFloor > 0 && YDistFloor < 10
-    if CurrAction <= hex(0x20) || FramesHitstun <= 1 && !(GettingThrown)
+  // LOGSTR str("Y stats")
+  // LOGVAL_NL YDistFloor
+  // LOGVAL_NL TotalYSpeed
+  // PRINTLN
+  if !(Equal techDirection -2) && TotalYSpeed <= 0 && YDistFloor > 0 && YDistFloor < 20
+    // LOGVAL_NL 10002
+    if CurrAction <= hex(0x20)
       Seek _done
       Jump
     endif
     if techDirection < -0.5
-      AbsStick -1
+      AbsStick -0.7
     elif 0.5 < techDirection
-      AbsStick 1
+      AbsStick 0.7
     else
       ClearStick
     endif
@@ -247,7 +257,7 @@ if FramesHitstun > 0 || GettingThrown
     endif
   endif
 endif
-
+// LOGVAL_NL 10003
 if FramesHitstun > 0 && CurrAction <= hex(0x10)
   Seek _done
   Jump
@@ -329,7 +339,6 @@ label _hitstunEnd
 Return
 
 label _checkTech
-  LOGVAL_NL techWindow 
   if techWindow <= 0
     if CurrAction >= hex(0x42) && FramesSinceShield > 40
       globTempVar = OThrowReleaseFrame - 10
@@ -344,9 +353,8 @@ label _checkTech
       globTempVar += 0.80
       if Rnd < globTempVar && YDistFloor < 20
         if TotalYSpeed <= 0.3 || GettingThrown
-          techDirection = Rnd * 7 - 2
+          techDirection = Rnd * 5 - 2
         endif
-        // LOGVAL_NL techDirection
         if techDirection < 2
           // LOGVAL_NL 10002
           Button R

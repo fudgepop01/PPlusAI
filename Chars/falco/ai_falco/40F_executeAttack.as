@@ -21,7 +21,7 @@
     Button X
     AbsStick OPos
     Seek finish
-    Jump
+    Return
   endif
 #endsnippet
 

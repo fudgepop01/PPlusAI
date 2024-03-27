@@ -59,7 +59,8 @@
   endif
   if CurrAction >= hex(0x100)
     #const chargeLen = 45
-    #const xMin = 56
+    // 56 - startup (14) * distPerFrame
+    #const xMin = -19.911108
     #const xMax = 300
     #const distPerFrame = 5.422222
 
@@ -91,7 +92,8 @@
   endif
   if CurrAction >= hex(0x100)
     #const chargeLen = 45
-    #const xMin = 56
+    // 56 - startup (14) * distPerFrame
+    #const xMin = -19.911108
     #const xMax = 300
     #const distPerFrame = 5.422222
 
@@ -106,7 +108,7 @@
 
     globTempVar = xMin + ActionTimer * distPerFrame 
     if immediateTempVar < globTempVar && anotherTempVar < 10
-    elif Equal CurrSubaction hex(0x1cf) || Equal CurrSubaction hex(0x1d2)
+    elif Equal CurrSubaction hex(0x1ce) || Equal CurrSubaction hex(0x1cf)
       if Rnd < 0.02 || XDistLE 25
       else
         Button B

@@ -15,8 +15,8 @@ endif
 label start
 var15 = 0
 var7 = LevelValue * 0.01
-if var7 < 0.2
-  var7 = 0.2
+if var7 < 0.05
+  var7 = 0.05
 endif
 
 XGoto PerFrameChecks
@@ -413,7 +413,7 @@ endif
     Button X
     AbsStick OPos
     Seek finish
-    Jump
+    Return
   endif
 Goto common_checks
 Seek dspecial
@@ -671,7 +671,9 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+if Equal var20 17
+      XGoto CalcAttackGoal
+elif Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
     else
       XGoto CalcAttackGoal
     endif

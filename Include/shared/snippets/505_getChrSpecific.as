@@ -55,13 +55,16 @@
 #endsnippet
 
 #snippet EVT_CHR_CHECKS
+  if !(Equal DEBUG_VALUE 0) && currGoal < cg_edgeguard
+    currGoal = cg_attack
+  endif 
   if Equal TRAINING_MODE_OPTION -1
 
     globTempVar = (LevelValue / 35) * 0.05
     ADJUST_PERSONALITY idx_aggression 0.003 globTempVar
 
+    PredictOMov immediateTempVar mov_attack
     if Rnd < globTempVar
-      PredictOMov immediateTempVar mov_attack
       PredictOMov anotherTempVar mov_shield
       immediateTempVar -= anotherTempVar
       if immediateTempVar > 0.1
@@ -100,17 +103,17 @@
       endif
     endif
 
+    GET_CHAR_TRAIT(anotherTempVar, chr_chk_OInCombo)
     if Rnd <= 0.02
-      GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-      if Equal immediateTempVar 0
+      if Equal anotherTempVar 0
         immediateTempVar = (LevelValue / 35) * 0.1
         ADJUST_PERSONALITY idx_baitChance 0.002 immediateTempVar
         ADJUST_PERSONALITY idx_bait_dashAwayChance 0.001 immediateTempVar
         ADJUST_PERSONALITY idx_bait_wdashAwayChance 0.001 immediateTempVar
-        ADJUST_PERSONALITY idx_wall_chance 0.005 immediateTempVar
-        ADJUST_PERSONALITY idx_circleCampChance 0.002 immediateTempVar
+        ADJUST_PERSONALITY idx_wall_chance 0.004 immediateTempVar
+        ADJUST_PERSONALITY idx_circleCampChance 0.005 immediateTempVar
       endif
-    elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= LV7 && immediateTempVar < 0.3
+    elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= LV7 && Equal anotherTempVar 0 && immediateTempVar < 0.08
       ADJUST_PERSONALITY idx_aggression -11 1
       ADJUST_PERSONALITY idx_aggression 1.65 1
       ADJUST_PERSONALITY idx_baitChance 0.4 1
@@ -118,6 +121,7 @@
     elif Rnd < calc(0.2 ** 2)
       immediateTempVar = (LevelValue / 35) * 0.4
       ADJUST_PERSONALITY idx_wall_chance 0.015 immediateTempVar
+      ADJUST_PERSONALITY idx_circleCampChance 0.015 immediateTempVar
     elif Rnd < calc(0.2 ** 2) && FramesHitstun > 0
       Goto shuffle_AI
     endif
@@ -129,99 +133,101 @@
 #endsnippet
 
 #snippet EVT_CHECK_DEFEND
-  anotherTempVar = LevelValue + 2
-  immediateTempVar = Rnd * anotherTempVar
-  if currGoal < cg_edgeguard && TRAINING_MODE_OPTION <= 1 && !(CalledFrom RecoveryHub) && !(Equal skipMainInit sm_execAttack) && immediateTempVar > 1
+  if !(CalledFrom AttackedHub)
+    anotherTempVar = LevelValue + 2
+    immediateTempVar = Rnd * anotherTempVar
+    if currGoal < cg_edgeguard && TRAINING_MODE_OPTION <= 1 && !(CalledFrom RecoveryHub) && !(Equal skipMainInit sm_execAttack) && immediateTempVar > 1
 
-    $tempVar(OEndLag,globTempVar)
-    GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
-    if OEndLag < 3
-      GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
-      if Equal immediateTempVar 0 && !(Equal currGoal cg_inHitstun)
-        // react to/read the opponent's attack patterns
-        immediateTempVar = (1 - (LevelValue / 100)) * 30 + 10
-        immediateTempVar *= PT_REACTION_TIME
-        MOD globTempVar GameTimer immediateTempVar
+      $tempVar(OEndLag,globTempVar)
+      GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
+      if OEndLag < 3
+        GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
+        if Equal immediateTempVar 0 && !(Equal currGoal cg_inHitstun)
+          // react to/read the opponent's attack patterns
+          immediateTempVar = (1 - (LevelValue / 100)) * 40 + 5
+          immediateTempVar *= PT_REACTION_TIME
+          MOD globTempVar GameTimer immediateTempVar
 
-        anotherTempVar = OAnimFrame + 2
-        MOD anotherTempVar anotherTempVar immediateTempVar
-        // LOGSTR str("atv;gtv")
-        // LOGVAL globTempVar
-        // LOGVAL anotherTempVar
-        // PRINTLN
-        if globTempVar > 1 && anotherTempVar >= 1
-        elif Equal OCurrAction hex(0x4D) && OAnimFrame > 25
-        elif Equal currGoal cg_attack_shieldPunish || Equal currGoal cg_bait_shield
-        elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
-          // LOGSTR_NL str("defending")
-          if OCurrAction >= hex(0x3) && OCurrAction <= hex(0xF) && OAnimFrame > 5
-            GetCommitPredictChance globTempVar
-            if globTempVar >= 0.15
-              // LOGSTR_NL str("wall prio")
-              predictAverage immediateTempVar man_OXHitDist
-              immediateTempVar -= 10
-              anotherTempVar = immediateTempVar
-              anotherTempVar += 20
-              globTempVar = TopNX - OTopNX
-              Abs globTempVar
-              if globTempVar > immediateTempVar && globTempVar < anotherTempVar
-                currGoal = cg_attack_wall
-                Return
+          anotherTempVar = OAnimFrame + 2
+          MOD anotherTempVar anotherTempVar immediateTempVar
+          LOGSTR str("atv;gtv")
+          LOGVAL globTempVar
+          LOGVAL anotherTempVar
+          PRINTLN
+          if globTempVar > 1 && anotherTempVar >= 1
+          elif Equal OCurrAction hex(0x4D) && OAnimFrame > 25
+          elif Equal currGoal cg_attack_shieldPunish || Equal currGoal cg_bait_shield
+          elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
+            // LOGSTR_NL str("defending")
+            if OCurrAction >= hex(0x3) && OCurrAction <= hex(0xF) && OAnimFrame > 5
+              GetCommitPredictChance globTempVar
+              if globTempVar >= 0.15
+                // LOGSTR_NL str("wall prio")
+                predictAverage immediateTempVar man_OXHitDist
+                immediateTempVar -= 10
+                anotherTempVar = immediateTempVar
+                anotherTempVar += 20
+                globTempVar = TopNX - OTopNX
+                Abs globTempVar
+                if globTempVar > immediateTempVar && globTempVar < anotherTempVar
+                  currGoal = cg_attack_wall
+                  Return
+                endif
               endif
-            endif
-          elif !(Equal currGoal cg_bait_dashawayWhenApproached)
-            if OCurrAction < hex(0x42) || OCurrAction >= hex(0x48)
-              // LOGSTR_NL str("defendChance")
-              predictAverage immediateTempVar man_OXHitDist
-              // LOGSTR str("hitDist")
-              // LOGVAL immediateTempVar
-              immediateTempVar += 35
-              globTempVar = OPos * immediateTempVar
-              GetYDistFloorOffset globTempVar globTempVar 10 1
-              anotherTempVar = OTopNX - TopNX
-              Abs anotherTempVar
-              anotherTempVar -= 40
-              if anotherTempVar > 0 && anotherTempVar < immediateTempVar && globTempVar > 0
+            elif !(Equal currGoal cg_bait_dashawayWhenApproached)
+              if OCurrAction < hex(0x42) || OCurrAction >= hex(0x48) || OAnimFrame > 15
                 // LOGSTR_NL str("defendChance")
-                GetCommitPredictChance globTempVar
-                globTempVar *= 1.75
-                // if Equal currGoal cg_bait_dashdance
-                //   globTempVar *= 0.06 * PT_BAITCHANCE
-                // endif
+                predictAverage immediateTempVar man_OXHitDist
+                // LOGSTR str("hitDist")
+                // LOGVAL immediateTempVar
+                immediateTempVar += 35
+                globTempVar = OPos * immediateTempVar
+                GetYDistFloorOffset globTempVar globTempVar 10 1
+                anotherTempVar = OTopNX - TopNX
+                Abs anotherTempVar
+                anotherTempVar -= 40
+                if anotherTempVar > 0 && anotherTempVar < immediateTempVar && globTempVar > 0
+                  LOGSTR_NL str("defendChance")
+                  GetCommitPredictChance globTempVar
+                  globTempVar *= 1.75
+                  // if Equal currGoal cg_bait_dashdance
+                  //   globTempVar *= 0.06 * PT_BAITCHANCE
+                  // endif
 
-                immediateTempVar = 0.13
-                if currGoal >= cg_attack
-                  immediateTempVar = 0.15
-                endif
-                PredictOMov anotherTempVar mov_shield
-                anotherTempVar *= 0.5
-                globTempVar -= anotherTempVar
-                PredictOMov anotherTempVar mov_dash
-                anotherTempVar *= 0.5
-                globTempVar -= anotherTempVar
-                if globTempVar > immediateTempVar && Rnd < 0.7
-                  // LOGSTR_NL str("defNorm")
-                  CallI DefendHub
-                endif
-                if Equal AirGroundState 1
-                  // LOGSTR_NL str("defGrnd")
-                  PredictOMov immediateTempVar mov_attack
-                  PredictOMov anotherTempVar mov_grab
-                  PredictOMov globTempVar mov_shield
-                  immediateTempVar -= anotherTempVar
-                  globTempVar -= anotherTempVar
-                  immediateTempVar -= globTempVar
-                  Abs immediateTempVar
-                  if immediateTempVar < 0.1 && Rnd < 0.5
-                    currGoal = cg_bait_shield
+                  immediateTempVar = 0.13
+                  if currGoal >= cg_attack
+                    immediateTempVar = 0.15
                   endif
-                  PredictOMov immediateTempVar mov_attack
-                  PredictOMov anotherTempVar mov_grab
-                  PredictOMov globTempVar mov_dash
-                  anotherTempVar -= immediateTempVar
-                  globTempVar -= immediateTempVar
-                  if anotherTempVar < -0.1 && globTempVar < 0.1
-                    currGoal = cg_bait_dashdance
+                  PredictOMov anotherTempVar mov_shield
+                  anotherTempVar *= 0.5
+                  globTempVar -= anotherTempVar
+                  PredictOMov anotherTempVar mov_dash
+                  anotherTempVar *= 0.5
+                  globTempVar -= anotherTempVar
+                  if globTempVar > immediateTempVar && Rnd < 0.7
+                    // LOGSTR_NL str("defNorm")
+                    CallI DefendHub
+                  endif
+                  if Equal AirGroundState 1
+                    // LOGSTR_NL str("defGrnd")
+                    PredictOMov immediateTempVar mov_attack
+                    PredictOMov anotherTempVar mov_grab
+                    PredictOMov globTempVar mov_shield
+                    immediateTempVar -= anotherTempVar
+                    globTempVar -= anotherTempVar
+                    immediateTempVar -= globTempVar
+                    Abs immediateTempVar
+                    if immediateTempVar < 0.1 && Rnd < 0.5
+                      currGoal = cg_bait_shield
+                    endif
+                    PredictOMov immediateTempVar mov_attack
+                    PredictOMov anotherTempVar mov_grab
+                    PredictOMov globTempVar mov_dash
+                    anotherTempVar -= immediateTempVar
+                    globTempVar -= immediateTempVar
+                    if anotherTempVar < -0.1 && globTempVar < 0.1
+                      currGoal = cg_bait_dashdance
+                    endif
                   endif
                 endif
               endif
@@ -229,59 +235,59 @@
           endif
         endif
       endif
-    endif
 
-    anotherTempVar = LevelValue + 2
-    immediateTempVar = Rnd * anotherTempVar
-    if immediateTempVar > 1
-      if !(Equal currGoal cg_attack_shieldPunish) && !(Equal currGoal cg_attack_inCombo) && !(Equal currGoal cg_defend) && !(Equal currGoal cg_bait_shield)
-        immediateTempVar = (1 - (LevelValue / 100)) * 60 + 10
-        immediateTempVar *= PT_REACTION_TIME
-        GetCommitPredictChance anotherTempVar
-        anotherTempVar = 1.1 - anotherTempVar
-        anotherTempVar *= 0.25
-        immediateTempVar *= anotherTempVar
-        MOD immediateTempVar GameTimer immediateTempVar
-        // LOGSTR str("immTV GCS")
-        // LOGVAL immediateTempVar
-        // PRINTLN
-        if immediateTempVar <= 1 || Equal currGoal cg_bait_wait
-          $tempVar(OEndLag,globTempVar)
-          GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
-          // LOGSTR str("OEndL")
-          // LOGVAL OEndLag
+      anotherTempVar = LevelValue + 2
+      immediateTempVar = Rnd * anotherTempVar
+      if immediateTempVar > 1
+        if !(Equal currGoal cg_attack_shieldPunish) && !(Equal currGoal cg_attack_inCombo) && !(Equal currGoal cg_defend) && !(Equal currGoal cg_bait_shield)
+          immediateTempVar = (1 - (LevelValue / 100)) * 80 + 10
+          immediateTempVar *= PT_REACTION_TIME
+          GetCommitPredictChance anotherTempVar
+          anotherTempVar = 1.1 - anotherTempVar
+          anotherTempVar *= 0.25
+          immediateTempVar *= anotherTempVar
+          MOD immediateTempVar GameTimer immediateTempVar
+          // LOGSTR str("immTV GCS")
+          // LOGVAL immediateTempVar
           // PRINTLN
-          if !(Equal lastAttack -1) && !(Equal currGoal cg_attack_wall)
-          elif OEndLag >= 3
-            GetAttribute anotherTempVar attr_dashInitVel 0
-            immediateTempVar = OEndLag * anotherTempVar * 0.6
-            if OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
-            elif !(XDistLE immediateTempVar) && OAttacking && OEndLag <= 13
-              if CHANCE_MUL_LE PT_BAITCHANCE 0.2
-                currGoal = cg_bait
-                if CHANCE_MUL_LE PT_AGGRESSION 0.3 && CHANCE_MUL_LE PT_BRAVECHANCE 0.4
-                  currGoal = cg_bait_shield
-                  if CHANCE_MUL_LE PT_AGGRESSION 0.25
-                    currGoal = cg_attack
+          if immediateTempVar <= 1 || Equal currGoal cg_bait_wait
+            $tempVar(OEndLag,globTempVar)
+            GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
+            // LOGSTR str("OEndL")
+            // LOGVAL OEndLag
+            // PRINTLN
+            if !(Equal lastAttack -1) && !(Equal currGoal cg_attack_wall)
+            elif OEndLag >= 3
+              GetAttribute anotherTempVar attr_dashInitVel 0
+              immediateTempVar = OEndLag * anotherTempVar * 0.6
+              if OCurrAction >= hex(0x4A) && OCurrAction <= hex(0x65)
+              elif !(XDistLE immediateTempVar) && OAttacking && OEndLag <= 13
+                if CHANCE_MUL_LE PT_BAITCHANCE 0.2
+                  currGoal = cg_bait
+                  if CHANCE_MUL_LE PT_AGGRESSION 0.3 && CHANCE_MUL_LE PT_BRAVECHANCE 0.4
+                    currGoal = cg_bait_shield
+                    if CHANCE_MUL_LE PT_AGGRESSION 0.25
+                      currGoal = cg_attack
+                    endif
                   endif
                 endif
-              endif
-            else
-              predictAverage immediateTempVar man_OXHitDist
-              immediateTempVar *= 1
-              immediateTempVar += OEndLag + 5
-              globTempVar = immediateTempVar * 0.3
-              if OAttacking
-                globTempVar += 5
-              endif
-              anotherTempVar = OTopNY + 5
-              DrawDebugRectOutline OTopNX anotherTempVar globTempVar 1 color(0xFF0000DD)
-              anotherTempVar += 5
-              DrawDebugRectOutline OTopNX anotherTempVar immediateTempVar 1 color(0xFFFF00DD)
-              if XDistLE globTempVar
-                currGoal = cg_attack_reversal
-              elif XDistLE immediateTempVar
-                currGoal = cg_attack
+              else
+                predictAverage immediateTempVar man_OXHitDist
+                immediateTempVar *= 1
+                immediateTempVar += OEndLag + 5
+                globTempVar = immediateTempVar * 0.3
+                if OAttacking
+                  globTempVar += 5
+                endif
+                anotherTempVar = OTopNY + 5
+                DrawDebugRectOutline OTopNX anotherTempVar globTempVar 1 color(0xFF0000DD)
+                anotherTempVar += 5
+                DrawDebugRectOutline OTopNX anotherTempVar immediateTempVar 1 color(0xFFFF00DD)
+                if XDistLE globTempVar
+                  currGoal = cg_attack_reversal
+                elif XDistLE immediateTempVar
+                  currGoal = cg_attack
+                endif
               endif
             endif
           endif

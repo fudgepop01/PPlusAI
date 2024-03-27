@@ -1,7 +1,13 @@
-#snippet SELF_Y_ADJUST
-  // $ifLastOrigin(sspecial,false)
-  // $ifLastOrigin(sspecialair,true)
-  // elif True
-    {SELF_Y_ADJUST_INNER}
-  // endif
+#snippet UNAFFECTED_Y_MOVES
+  $ifLastList(uspecialair;sspecialair;nspecialair,false)
+  else
+    {UNAFFECTED_Y_MOVES_INNER}
+  endif
+#endsnippet
+
+#snippet UNAFFECTED_X_MOVES
+  $ifLastList(uspecialair;sspecialair;nspecialair,false)
+  else
+    {UNAFFECTED_X_MOVES_INNER}
+  endif
 #endsnippet

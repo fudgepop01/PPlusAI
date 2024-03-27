@@ -23,7 +23,6 @@ NoRepeat
 // endif
 
 // $setLastAttack(uair_outer)
-// currGoal = cg_circleCamp
 
 var16 = 0
 if HasCurry
@@ -101,7 +100,7 @@ var17 = var22
   var17 *= -1
   var17 += 1
 
-  var22 = (1 - (LevelValue / 100)) * 30 + 15 * var17
+  var22 = (1 - (LevelValue / 100)) * 60 + 15 * var17
   var22 *= PT_REACTION_TIME
   MOD var22 GameTimer var22
   if var22 <= 1
@@ -177,7 +176,7 @@ var17 = var22
     var17 *= -1
     var17 += 1
 
-    var22 = (1 - (LevelValue / 100)) * 30 + 30 * var17
+    var22 = (1 - (LevelValue / 100)) * 30 + 40 * var17
     var22 *= PT_REACTION_TIME
     MOD var22 GameTimer var22
     if var22 <= 1
@@ -532,10 +531,10 @@ var17 = var22
       DynamicDiceAdd 0 3 PT_BAIT_WDASHAWAYCHANCE
       var22 = 4 - PT_AGGRESSION
       DynamicDiceAdd 0 4 var22
-      var22 = PT_BAITCHANCE * 2
+      var22 = PT_BAITCHANCE * 2.5
       Abs var22
       DynamicDiceAdd 0 7 var22
-      var22 *= 2
+      var22 *= 1.5
       DynamicDiceAdd 0 8 var22
       
 
@@ -552,7 +551,7 @@ var17 = var22
       if Equal var17 -1 && !(Equal var22 -1) && var22 < 30
         DynamicDiceAdd 0 5 1 
       endif
-      if CHANCE_MUL_GE PT_AGGRESSION 0.75
+      if CHANCE_MUL_GE PT_AGGRESSION 0.5
         var21 = 10.4
         if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.05
           var21 = 10.5
@@ -823,13 +822,13 @@ elif var21 >= 16 && var21 < 17
   // $printMoveName()
   
   // combos
-  var2 = (1 - (LevelValue / 100)) * 25 + 2
+  var2 = (1 - (LevelValue / 100)) * 45 + 4
   // standard
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
   if Equal var22 0
-    var2 = (1 - (LevelValue / 100)) * 30 + 10
+    var2 = (1 - (LevelValue / 100)) * 60 + 10
   endif
 
   var22 = 21
@@ -860,7 +859,7 @@ var23 = var22
   //   DrawDebugRectOutline 0 10 shouldUpdate 2 color(0xFF0000EE)
   // endif
 
-if Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22
+if Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23
   elif OCurrAction >= 26 && OCurrAction <= 29 && var2 < 1 && Rnd < 0.2
     var20 = -1
     Return      

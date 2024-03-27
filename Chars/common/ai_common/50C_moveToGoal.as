@@ -25,15 +25,13 @@ if !(Equal lastAttack -1)
   GET_MOVE_DATA(globTempVar, xOffset, globTempVar, xRange, yRange, hitFrame, anotherTempVar, globTempVar, globTempVar, globTempVar, globTempVar, globTempVar)
   anotherTempVar *= 0.5
   hitFrame += anotherTempVar 
-  // xRange -= OWidth
+  Abs xOffset
   xOffset += xRange
-  anotherTempVar = xRange * 0.5
-  if XDistLE anotherTempVar
+  anotherTempVar = xOffset - xRange
+  if XDistLE anotherTempVar xOffset
     xRange *= 2
   endif
-  // xRange *= 2
-  // xOffset *= 2
-  // yRange *= 0.5
+  // xRange -= OWidth
   EstOYCoord immediateTempVar hitFrame
   immediateTempVar -= OYCoord
   simGoalY = goalY //+ immediateTempVar
@@ -52,8 +50,8 @@ yRange *= Scale
 
 #let techSkill = var18
 techSkill = LevelValue * 0.01
-if techSkill < 0.1
-  techSkill = 0.1
+if techSkill < 0.025
+  techSkill = 0.025
 endif
 
 immediateTempVar = TopNX - goalX
@@ -73,12 +71,10 @@ if globTempVar > 0 && currGoal < cg_bait_dashdance
   globTempVar = TopNY + 100 - globTempVar
   if currGoal >= cg_attack && currGoal <= calc(cg_attack + 1) && OFramesHitstun <= 0
   elif immediateTempVar < globTempVar && !(CalledFrom BoardPlatform)
-    #let platChance = var0
-    platChance = PT_PLATCHANCE
-    if Rnd < platChance
+    if CHANCE_MUL_LE PT_PLATCHANCE 1
       Seek platSkill
       Jump
-    elif globTempVar < simGoalY && Rnd < platChance
+    elif globTempVar < simGoalY && CHANCE_MUL_LE PT_PLATCHANCE 1
       Seek platSkill
       Jump
     endif
@@ -109,14 +105,15 @@ elif Equal AirGroundState 2 && YSpeed < immediateTempVar && YDistBackEdge > -1 &
   endif
 endif
 
+// LOGVAL_NL strv("YOLO")
+// LOGVAL_NL xRange
+
 Goto XStickMovement
 
 immediateTempVar = GetJumpLength * hitFrame + TopNX
 immediateTempVar -= goalX
 Abs immediateTempVar
-anotherTempVar = xRange * 2
-// LOGVAL_NL strv("YOLO")
-// LOGVAL_NL immediateTempVar
+anotherTempVar = xRange * 3
 // LOGVAL_NL anotherTempVar
 if immediateTempVar <= anotherTempVar || Equal CurrSubaction JumpSquat && TopNY < simGoalY
   #let totalJumpHeight = var1
@@ -155,21 +152,19 @@ if immediateTempVar <= anotherTempVar || Equal CurrSubaction JumpSquat && TopNY 
     endif
   endif
 elif immediateTempVar <= 15 && TopNY > simGoalY && Equal IsOnPassableGround 1
-  #let djumpiness = var0
-  djumpiness = PT_DJUMPINESS
+  // #let djumpiness = var0
+  // djumpiness = PT_DJUMPINESS
 
-  #let aggression = var1
-  aggression = PT_AGGRESSION
+  // #let aggression = var1
+  // aggression = PT_AGGRESSION
 
-  if Equal Direction 1 
-    immediateTempVar = TopNX + XDistFrontEdge + 20
-    globTempVar = TopNX + XDistBackEdge - 20
-  else
-    immediateTempVar = TopNX - XDistBackEdge - 20
-    globTempVar = TopNX - XDistFrontEdge + 20
-  endif
 
-  if globTempVar <= goalX && goalX <= immediateTempVar && Rnd < aggression
+  immediateTempVar = XDistFrontEdge * Direction + 20
+  globTempVar = XDistBackEdge * Direction - 20
+  immediateTempVar += TopNX
+  globTempVar += TopNX
+
+  if globTempVar <= goalX && goalX <= immediateTempVar && CHANCE_MUL_LE PT_AGGRESSION 1
     label empty_2
     XGoto PerFrameChecks
     Seek empty_2
@@ -225,16 +220,19 @@ label stickMovement
   immediateTempVar = anotherTempVar
   Abs anotherTempVar
   anotherTempVar -= xOffset
+  Abs anotherTempVar
+  // anotherTempVar *= -1
 
   #let stickMagnitude = var0
   stickMagnitude = 1
+  // LOGVAL_NL anotherTempVar
 
   if Equal AirGroundState 1 && !(Equal CurrAction hex(0xA)) && Equal isAerialAttack 0
     if !(Equal currGoal cg_attack_wall)
       if anotherTempVar > 0 && anotherTempVar < xOffset && currGoal < cg_edgeguard
         stickMagnitude = 0.72
-      elif anotherTempVar < 0
-        stickMagnitude = 0
+      // elif anotherTempVar < 0
+      //   stickMagnitude = 1
       endif
       if currGoal >= cg_edgeguard && DistToOEdge < 30
         stickMagnitude *= 0.72
@@ -284,7 +282,7 @@ label stickMovement
   endif 
   
   if Equal AirGroundState 1
-    if Equal currGoal cg_edgeguard
+    if currGoal >= cg_edgeguard
       immediateTempVar = xOffset * 1.5
       xOffset *= 0.5
       anotherTempVar = OPos * immediateTempVar
@@ -423,10 +421,8 @@ if Equal AirGroundState 1
 else 
   GetAttribute globTempVar attr_airXTermVel 0
   immediateTempVar = goalX - TopNX
-  LOGVAL_NL immediateTempVar
   immediateTempVar *= 0.05
   immediateTempVar = immediateTempVar / globTempVar
-  LOGVAL_NL immediateTempVar
   AbsStick immediateTempVar
 endif
 Return
@@ -482,7 +478,7 @@ if !(Equal AirGroundState 3)
         Stick -1
       elif globTempVar > -5 && globTempVar < 0 && anotherTempVar < 0.2
         Stick 1
-      elif InAir && globTempVar < -5 && Equal PrevAction hex(0xA)
+      elif LastJumpSquatFrame && globTempVar < -5 && Equal CurrAction hex(0xA)
         Button R
         GetAttribute immediateTempVar attr_groundFriction 0
         globTempVar *= immediateTempVar
