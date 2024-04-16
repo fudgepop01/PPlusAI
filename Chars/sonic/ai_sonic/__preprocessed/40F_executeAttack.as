@@ -379,7 +379,7 @@ endif
     endif
   elif Equal CurrAction 286
     AbsStick OPos
-    if Equal HitboxConnected 1 || XDistLE 30 && Rnd < 0.01 || YDistFloor < 0
+    if Equal HitboxConnected 1 || {XDistLE 30 && Rnd < 0.01} || YDistFloor < 0
       Button X
     endif
   elif Equal CurrAction 290
@@ -406,7 +406,7 @@ if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
   if Equal CurrAction 287 
-    if AnimFrame >= 7 && Rnd < 0.4 || AnimFrame >= 7 && Equal HitboxConnected 1
+    if {AnimFrame >= 7 && Rnd < 0.4} || {AnimFrame >= 7 && Equal HitboxConnected 1}
       if Equal HitboxConnected 1
         Button X
         Seek finish
@@ -523,6 +523,15 @@ label getHeight
 label PFC
   XGoto PerFrameChecks
   //= XReciever
+  if var21 < 16.7
+    var22 = XSpeed * 20
+    GetYDistFloorOffset var22 var22 5 0
+    if var22 < 0
+      var22 = XSpeed * -20
+      AbsStick var22
+      Return
+    endif
+  endif
   if !(Equal var21 7)
 if  var20 >= 21 && var20 <= 28
       if Equal IsOnStage 0 && NumJumps < 1 && TotalYSpeed < -0.5
@@ -531,7 +540,9 @@ if  var20 >= 21 && var20 <= 28
       elif True
         if Equal var21 16.3
           PredictOMov var22 14
-          if var22 > 0.25 && XDistLE 50
+          if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && XDistLE 20
+            XGoto MoveToGoal
+          elif var22 > 0.1 && XDistLE 50
             var22 = OPos * -1
             AbsStick var22
             Return
@@ -543,7 +554,7 @@ if  var20 >= 21 && var20 <= 28
           XGoto MoveToGoal
           //= XReciever
         elif Equal var21 16.3
-          var22 = XSpeed * -2
+          var22 = XSpeed * -8
           AbsStick var22
         else
           XGoto MoveToGoal
@@ -560,7 +571,7 @@ label common_checks
     Seek finish
     Jump
   elif Equal HitboxConnected 1 && HasCurry
-    if OFramesHitstun > 1 && OFramesHitlag < 1 && OAnimFrame >= 3 || OFramesHitlag >= 8
+    if OFramesHitstun > 1 && OFramesHitlag < 1 && OAnimFrame >= 3
       Seek finish
       Jump
     endif

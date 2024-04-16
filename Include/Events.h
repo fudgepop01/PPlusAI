@@ -16,6 +16,9 @@ event ev2 : 0x2
 ///Has something to do with stage
 event ev3 : 0x3
 
+///If the stage does NOT have a PTCP file in hand, it's defaulted to Y Coordinate of the Bottom Blast-Line.
+event InDangerZone : 0x3
+
 ///The opponent is in front of the character and X distance is large
 event fXFar : 0x4
 
@@ -81,6 +84,12 @@ event VeryCloseOrBack : 0x17
 
 ///Not in state of MeteoChance,too far,not on the same plane,in the air 
 ///but in the state of the opponent is in high sky
+///Checks the following:
+///- The opponent is not recovering back on stage.
+///- Is too far away from the character.
+///- Is not on the same plane as the opponent. 
+///- The character is in midair. 
+///- When the opponent is very high above the stage.
 event Not1_4_9_12And2 : 0x18
 
 ///Snake is using up-b

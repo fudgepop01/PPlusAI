@@ -8,6 +8,7 @@ if Equal IsOnPassableGround 0
 endif
 label setup
 var0 = 0
+ClearStick
 label drop
 XGoto PerFrameChecks
 //= XReciever
@@ -15,7 +16,6 @@ Goto AGSCheck
 Seek drop
 Button R
 if var0 >= 2
-  var22 = var0 - 1
   MOD var22 GameTimer 8
   var22 *= -0.125
   // LOGVAL immediateTempVar

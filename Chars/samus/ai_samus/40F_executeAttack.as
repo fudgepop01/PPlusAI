@@ -21,6 +21,20 @@
       else
         Button R
       endif 
+    elif Rnd < 0.04
+      if Rnd < 0.25
+        Button B
+      else
+        Button R
+      endif
     endif
+    if YDistFloor < 0
+      Button R
+    endif 
   endif
+#endsnippet
+
+#snippet NSPECIALAIR
+  Seek nspecial
+  Jump
 #endsnippet

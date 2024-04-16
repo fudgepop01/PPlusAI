@@ -5,251 +5,91 @@ slot0 {
     NoAttack 30,30
 }
 
-slot1 {
-    NoAttack 0,30
-}
+// slot1 {
+//     NoAttack 0,30
+// }
 
-slot2 {
-    NoAttack 0,50
-}
+// slot2 {
+//     NoAttack 0,50
+// }
 
-slot3 {
-    NoAttack 30,30
-}
+// slot3 {
+//     NoAttack 30,30
+// }
 
-slot4 {
-    NoAttack 0,20
-}
+// slot4 {
+//     NoAttack 0,20
+// }
 
-slot5 {
-    NoAttack 0,30
-}
+// slot5 {
+//     NoAttack 0,30
+// }
 
-slot6 {
-    NoAttack 0,50
-}
+// slot6 {
+//     NoAttack 0,50
+// }
 
-slot8 {
-    NoAttack 30,30
-}
+// slot8 {
+//     NoAttack 30,30
+// }
 
-slot9 {
-    NoAttack 30,30
-}
+// slot9 {
+//     NoAttack 30,30
+// }
 
-slot10 {
-    NoAttack 30,30
-}
+// slot10 {
+//     NoAttack 30,30
+// }
 
-//_____In air_____
-slot11 {
-    NoAttack 30,30
-}
+// //_____In air_____
+// slot11 {
+//     NoAttack 30,30
+// }
 
-slot12 {
-    NoAttack 30,30
-}
+// slot12 {
+//     NoAttack 30,30
+// }
 
-slot13 {
-    NoAttack 30,30
-}
+// slot13 {
+//     NoAttack 30,30
+// }
 
-slot14 {
-    NoAttack 30,30
-}
+// slot14 {
+//     NoAttack 30,30
+// }
 
-slot15 {
-    NoAttack 30,30
-}
+// slot15 {
+//     NoAttack 30,30
+// }
 
-slot17 {
-    NoAttack 30,30
-}
+// slot17 {
+//     NoAttack 30,30
+// }
 
-slot18 {
-    NoAttack 30,30
-}
+// slot18 {
+//     NoAttack 30,30
+// }
 
-slot19 {
-    NoAttack 30,30
-}
+// slot19 {
+//     NoAttack 30,30
+// }
 
-slot21 {
-    NoAttack 30,30
-}
+// slot21 {
+//     NoAttack 30,30
+// }
 
-slot22 {
-    NoAttack 30,30
-}
+// slot22 {
+//     NoAttack 30,30
+// }
 
-slot23 {
-    NoAttack 30,30
-}
+// slot23 {
+//     NoAttack 30,30
+// }
 
 
 //Routine Call table
 //_____Section1 starts_____
 //Entry number : 0x0
-JumpRecoverRange&&CanJump {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x1
-CanJump {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x2
-True {
-    MainHub 0,0,0,0
-}
-
-//_____Section1 ends_____
-//_____Section2 starts_____
-//Entry number : 0x3
-MeteoChance {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x4
-Lying&&SamePlane {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x5
-Not1_4_9_12And2 {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x6
-OInHigh&&XVeryClose {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x7
-Back&&OInHigh {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x8
-OInHigh&&!fVeryClose {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x9
-InAir {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0xA
-ev3 {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0xB
-Back {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0xC
-fXFar&&!FullCharge {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0xD
-fXFar {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0xE
-fXMiddle {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0xF
-fVeryClose {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x10
-fXClose {
-    MainHub 0,0,0,0
-}
-
-//_____Section2 ends_____
-//_____Section3 starts_____
-//Entry number : 0x11
-InAir {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x12
-MeteoChance {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x13
-if !SamePlane
-
-//Entry number : 0x14
-fXClose&&ev3 {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x15
-fXClose&&OInHigh {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x16
-fXClose {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x17
-!FullCharge {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x18
-Far {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x19
-True {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x1A
-endif
-
-//Entry number : 0x1B
-Back {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x1C
-fVeryClose {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x1D
-fXClose {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x1E
-fXMiddle {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x1F
-!FullCharge {
-    MainHub 0,0,0,0
-}
-
-//Entry number : 0x20
 True {
     MainHub 0,0,0,0
 }
@@ -404,11 +244,11 @@ submin.pad3=0x0
 submin.pad4=0x0
 
 unk.section1Start=0x0
-unk.section1End=0x2
-unk.section2Start=0x3
-unk.section2End=0x10
-unk.section3Start=0x11
-unk.section3End=0x20
+unk.section1End=0x0
+unk.section2Start=0x0
+unk.section2End=0x0
+unk.section3Start=0x0
+unk.section3End=0x0
 unk.unk1=0x0
 unk.unk2=0x1FE01
 unk.unk3=0x1FC000A

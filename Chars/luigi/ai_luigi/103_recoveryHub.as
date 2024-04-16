@@ -14,7 +14,7 @@
 
   #const LuigiDownB_LABit = hex(0x3D)
   
-  #const UpBXDist = 2
+  #const UpBXDist = 5
   #const UpBYDist = 42
   #const sideBHeight = 4
   #const sideBRange = 80

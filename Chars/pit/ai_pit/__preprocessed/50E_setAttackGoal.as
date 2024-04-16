@@ -7,9 +7,7 @@ Cmd30
 NoRepeat
 
 var23 = 1
-if OCurrAction >= 77 && OCurrAction <= 82
-  var23 = 0
-elif OCurrAction >= 96 && OCurrAction <= 97
+if {OCurrAction >= 77 && OCurrAction <= 82} || {OCurrAction >= 96 && OCurrAction <= 97}
   var23 = 0
 elif Equal OCurrSubaction 217 || Equal OCurrSubaction 48 || Equal OCurrSubaction 222 || Equal OCurrSubaction 221
   var13 = ODirection * 30 * OScale + OTopNX
@@ -73,6 +71,11 @@ endif
   XGoto GetChrSpecific
   //= XReciever
 var2 = var22
+var23 = var9 + var11
+Abs var23
+if var23 < 3
+  var2 = 0
+endif
 
 var12 = -1
 if OCurrAction >= 256
@@ -96,8 +99,8 @@ endif
 var22 = (1 - (LevelValue / 100)) * 60 + 10
 var22 *= PT_REACTION_TIME
 var13 = OTotalXSpeed * var22
-LOGSTR 1381263616 1835335680 0 0 0
-LOGVAL var13
+// LOGSTR str("RTime")
+// LOGVAL goalX
 
   STACK_PUSH var22 0
   var22 = 100
@@ -140,15 +143,17 @@ if var12 < 0
   else
 
     GetAttribute var22 40 1
-    LOGSTR 1635021824 1912602624 0 0 0
-    LOGVAL var22
+    // LOGSTR str("attr")
+    // LOGVAL immediateTempVar
     PredictOMov var23 14
-    var23 *= var22
+    var23 *= var22 * 4
+    var23 += 1
     var23 *= OPos * -1
     if Equal var21 16.3 || Equal var21 10.1 
-      var13 -= var23
+      var23 *= 5
+      var13 += var23
     endif
-    var13 -= var23
+    var13 += var23
     
     var23 = OTopNY
     // PredictOMov immediateTempVar mov_jump
@@ -210,9 +215,9 @@ STACK_PUSH 22 0
   var14 = var23
 endif
 
-LOGSTR 1164862464 0 0 0 0
-LOGVAL var13
-PRINTLN
+// LOGSTR str("End")
+// LOGVAL goalX
+// PRINTLN
 
 
 // if var3 < 1 || OYDistBackEdge > 20 && YDistFloor > 0
@@ -239,14 +244,25 @@ endif
 DrawDebugRectOutline var13 var14 3 3 0 255 0 221
 
 
-var22 = var9 + var11 
-// move_centerX *= 0.5
-if  var20 >= 23 && var20 <= 30
-  var22 *= Direction
-else
-  var22 *= OPos
+var23 = var9 + var11
+Abs var23
+
+
+var22 = OWidth * 0.5
+if var22 > var23
+  var23 += var22
 endif
-var13 -= var22
+
+if  var20 >= 23 && var20 <= 30
+  if Equal AirGroundState 2
+    var23 *= Direction
+  else
+    var23 *= OPos
+  endif
+else
+  var23 *= OPos
+endif
+var13 -= var23
 
 if AnimFrame > 2
   var3 = LevelValue * 0.0125
@@ -269,9 +285,10 @@ endif
 // goalX += OWidthOffset
 
 // goalY += move_yOffset
-// immediateTempVar = OHurtboxSize + move_yRange
 var22 = var8 - var10
 // immediateTempVar *= 0.5
+var14 -= var22
+var22 = OHurtboxSize * 0.5
 var14 -= var22
 // if Equal AirGroundState 2 && YDistFloor > 5 || YDistFloor < 0
 //   immediateTempVar = move_yRange * 0.5 + OHurtboxSize * 0.3
@@ -300,10 +317,9 @@ var14 -= var22
 // goalY += immediateTempVar
 
 if OTopNY > TopNY 
+  var14 = OTopNY
   if SamePlane
     var14 = TopNY
-  else
-    var14 = OTopNY
   endif
 endif
 // IF_AERIAL_ATTACK(var3)
@@ -364,7 +380,7 @@ endif
   var22 = 0.003
   XGoto GetChrSpecific
   //= XReciever
-if var22 < 5 && var21 < 16.7 && !(Equal var21 16.5) // && Equal DEBUG_VALUE 0 
+if var22 < 5 && var21 < 16.7 && !(Equal var21 16.5) && !(Equal var21 16.3) // && Equal DEBUG_VALUE 0 
   var13 += var2
 endif
 // if Equal OCurrAction hex(0x4D)

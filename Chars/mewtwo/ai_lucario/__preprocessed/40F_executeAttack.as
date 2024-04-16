@@ -56,7 +56,7 @@ if Equal AirGroundState 1
   elif Equal CurrAction 6 && AnimFrame < 3
     Return
   elif Equal CurrAction 10
-if Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19
+if Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
       Seek execGeneral
       Jump
     endif
@@ -108,7 +108,7 @@ var0 = var22
     endif
     Return
   endif
-elif Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19
+elif Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
   if !(Equal AirGroundState 1)
     Return
   endif
@@ -119,7 +119,7 @@ endif
 if Equal var20 2 || Equal var20 3
   Seek execDA
   Jump
-elif Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19
+elif Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
   MOD var22 GameTimer 3
   if !(Equal CurrSubaction JumpSquat) && !(Equal CurrAction 6)
     if var22 <= 1
@@ -221,68 +221,76 @@ Seek dsmash
 Return
 elif Equal var20 12
 Button B
+Seek nspecial
+Return
+elif Equal var20 13
+Button B
+Seek nspecialair
+Return
+elif Equal var20 14
+Button B
 Stick 0 (-0.7)
 Seek dspecial
 Return
-elif Equal var20 13
+elif Equal var20 15
 Button B
 AbsStick OPos
 Seek sspecial
 Return
-elif Equal var20 14
+elif Equal var20 16
 Button B
 AbsStick OPos
 Seek sspecialair
 Return
-elif Equal var20 15
+elif Equal var20 17
 Button R|A
 Seek grab
 Return
-elif Equal var20 16
+elif Equal var20 18
 Button R|A
 Seek fthrow
 Return
-elif Equal var20 17
+elif Equal var20 19
 Button R|A
 Seek dthrow
 Return
-elif Equal var20 18
+elif Equal var20 20
 Button R|A
 Seek bthrow
 Return
-elif Equal var20 19
+elif Equal var20 21
 Button R|A
 Seek uthrow
 Return
-elif Equal var20 20
+elif Equal var20 22
 Button A
 Seek nair
 Return
-elif Equal var20 21
+elif Equal var20 23
 Button A
 Seek nair_multihit
 Return
-elif Equal var20 22
+elif Equal var20 24
 Button A
 Stick 1
 Seek fair
 Return
-elif Equal var20 23
+elif Equal var20 25
 Button A
 Stick (-1) 0
 Seek bair
 Return
-elif Equal var20 24
+elif Equal var20 26
 Button A
 Stick 0 1
 Seek uair
 Return
-elif Equal var20 25
+elif Equal var20 27
 Button A
 Stick 0 1
 Seek uair_late
 Return
-elif Equal var20 26
+elif Equal var20 28
 Button A
 Stick 0 (-0.6)
 Seek dair
@@ -370,6 +378,43 @@ label dsmash
 Goto PFC
 Goto common_checks
 Seek dsmash
+Return
+label nspecial
+Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
+  AbsStick OPos
+endif
+  if Equal CurrAction 279 || Equal CurrAction 280
+    if XDistLE 50
+      var23 = OTopNY - TopNY
+      if var23 < 20
+        Button B
+      else
+        Button R
+      endif 
+    elif Rnd < 0.04
+      if Rnd < 0.25
+        Button B
+      else
+        Button R
+      endif
+    endif
+    if YDistFloor < 0
+      Button R
+    endif
+  endif
+Goto common_checks
+Seek nspecial
+Return
+label nspecialair
+Goto PFC
+if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
+  AbsStick OPos
+endif
+  Seek nspecial
+  Jump
+Goto common_checks
+Seek nspecialair
 Return
 label dspecial
 Goto PFC
@@ -493,15 +538,26 @@ label getHeight
 label PFC
   XGoto PerFrameChecks
   //= XReciever
+  if var21 < 16.7
+    var22 = XSpeed * 20
+    GetYDistFloorOffset var22 var22 5 0
+    if var22 < 0
+      var22 = XSpeed * -20
+      AbsStick var22
+      Return
+    endif
+  endif
   if !(Equal var21 7)
-if  Equal var20 0 || var20 >= 20 && var20 <= 26
+if  Equal var20 0 || var20 >= 22 && var20 <= 28
       if Equal IsOnStage 0 && NumJumps < 1 && TotalYSpeed < -0.5
         var22 = TopNX * -1
         AbsStick var22
       elif True
         if Equal var21 16.3
           PredictOMov var22 14
-          if var22 > 0.25 && XDistLE 50
+          if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && XDistLE 20
+            XGoto MoveToGoal
+          elif var22 > 0.1 && XDistLE 50
             var22 = OPos * -1
             AbsStick var22
             Return
@@ -513,7 +569,7 @@ if  Equal var20 0 || var20 >= 20 && var20 <= 26
           XGoto MoveToGoal
           //= XReciever
         elif Equal var21 16.3
-          var22 = XSpeed * -2
+          var22 = XSpeed * -8
           AbsStick var22
         else
           XGoto MoveToGoal
@@ -530,7 +586,7 @@ label common_checks
     Seek finish
     Jump
   elif Equal HitboxConnected 1 && HasCurry
-    if OFramesHitstun > 1 && OFramesHitlag < 1 && OAnimFrame >= 3 || OFramesHitlag >= 8
+    if OFramesHitstun > 1 && OFramesHitlag < 1 && OAnimFrame >= 3
       Seek finish
       Jump
     endif
@@ -613,19 +669,19 @@ label common_checks
 
   // grabs
   if Equal CurrAction 57
-if Equal var20 15
+if Equal var20 17
       XGoto CalcAttackGoal
-elif Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19
+elif Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
     else
       XGoto CalcAttackGoal
     endif
-if Equal var20 16
+if Equal var20 18
       Stick 1 0
-elif Equal var20 17
-      Stick 0 (-1)
-elif Equal var20 18
-      Stick -1 0
 elif Equal var20 19
+      Stick 0 (-1)
+elif Equal var20 20
+      Stick -1 0
+elif Equal var20 21
       Stick 0 1
     endif
   endif

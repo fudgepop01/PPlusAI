@@ -43,7 +43,7 @@
 #endsnippet
 
 #snippet RECOVERY_CONDITIONS
-   {STANDARD_CLIFF_DATA}
+  {STANDARD_CLIFF_DATA}
   
   DynamicDiceClear dslot0
   DynamicDiceAdd dslot0 optNone 5
@@ -58,7 +58,7 @@
     immediateTempVar = XSpeed
     Abs immediateTempVar
     if immediateTempVar > 1
-      $if_recoveryRect(x_abs,0,sideBRange,y_rangeAbove,highCliffY,sideBHeight,100)
+      $if_recoveryRect(x_abs,10,sideBRange,y_rangeAbove,highCliffY,sideBHeight,100)
         DynamicDiceAdd dslot0 optSideB 50
       endif
     endif
@@ -170,7 +170,6 @@
 
 // float
 #snippet DSPECIAL
-  Button X
   if !(NoOneHanging) && !(Equal isBelowStage 1)
     nearCliffY -= 25
     if nearCliffX > 0
@@ -178,6 +177,14 @@
     else
       nearCliffX -= 15
     endif
+  endif
+  Norm immediateTempVar nearCliffX nearCliffY
+  Abs immediateTempVar
+  if immediateTempVar > 6 || nearCliffY < 0
+    Button X
+  else
+    Seek begin
+    Return
   endif
 
   #let absNCX = var4

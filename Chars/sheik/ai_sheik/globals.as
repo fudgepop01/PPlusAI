@@ -131,7 +131,7 @@
 #const nspecial_IASA = 48
 #const nspecial_xOffset = 0.707
 #const nspecial_yOffset = -5.797
-#const nspecial_xRange = 63.293
+#const nspecial_xRange = 200.293
 #const nspecial_yRange = 2.453
 #const nspecial_hitFrame = 10
 #const nspecial_lastHitFrame = 30
@@ -144,7 +144,7 @@
 #const nspecialair_yRange = 37.812
 #const nspecialair_hitFrame = 10
 #const nspecialair_lastHitFrame = 30
-#const nspecialair_damage_info = NSpecial|-3|24|34|70
+#const nspecialair_damage_info = NSpecialAir|-3|24|34|70
 
 // upB
 // #const uspecial_IASA = 52

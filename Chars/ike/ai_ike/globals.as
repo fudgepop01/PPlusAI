@@ -170,7 +170,7 @@
 // sideB
 #const sspecial_IASA = 43
 #const sspecial_xOffset = -1.28
-#const sspecial_yOffset = -5.3
+#const sspecial_yOffset = 5.3
 #const sspecial_xRange = 90
 #const sspecial_yRange = 60
 #const sspecial_hitFrame = 11

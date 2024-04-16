@@ -128,13 +128,21 @@
 
     if Equal CurrSubaction hex(0x1DB)
       if nearCliffX > TopNX
-        nearCliffX += 15
+        nearCliffX += Width
       else
-        nearCliffX -= 15
+        nearCliffX -= Width
       endif
+    elif nearCliffX > TopNX
+      nearCliffX += 15
+    else
+      nearCliffX -= 15
     endif
 
     Norm globTempVar nearCliffX nearCliffY
+    if globTempVar > 45 && Equal CurrSubaction hex(0x1DB)
+      nearCliffY -= 25
+      Norm globTempVar nearCliffX nearCliffY
+    endif
     nearCliffX /= globTempVar
     nearCliffY /= globTempVar
     nearCliffX *= -1

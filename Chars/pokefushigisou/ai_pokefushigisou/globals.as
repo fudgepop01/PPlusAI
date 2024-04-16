@@ -188,7 +188,7 @@
 // sideB
 #const sspecial_IASA = 43
 #const sspecial_xOffset = 4.510
-#const sspecial_yOffset = -0.991
+#const sspecial_yOffset = 0.991
 #const sspecial_xRange = 29.588
 #const sspecial_yRange = 4.263
 #const sspecial_hitFrame = 22
@@ -197,7 +197,7 @@
 
 #const sspecialair_IASA = 43
 #const sspecialair_xOffset = 4.510
-#const sspecialair_yOffset = -0.991
+#const sspecialair_yOffset = 0.991
 #const sspecialair_xRange = 29.588
 #const sspecialair_yRange = 4.263
 #const sspecialair_hitFrame = 22

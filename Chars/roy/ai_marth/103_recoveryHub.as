@@ -15,7 +15,7 @@
   #const UpBXDist = 48
   #const UpBYDist = 40
   #const sideBHeight = 80
-  #const sideBRange = 50
+  #const sideBRange = 100
 
   #const optNone = 0
   #const optJump = 10
@@ -42,10 +42,11 @@
   endif
 
   if AWAY_FROM_STAGE
+    globTempVar = nearCliffX * XSpeed
     anotherTempVar = XSpeed
     Abs anotherTempVar
-    if anotherTempVar > 0.65
-      $if_recoveryRect(x_abs,2,sideBRange,y_rangeAbove,nearCliffY,30,100)
+    if globTempVar > 0 && anotherTempVar > 0.65
+      $if_recoveryRect(x_abs,2,sideBRange,y_rangeAbove,nearCliffY,20,100)
         DynamicDiceAdd dslot0 optSideB 100
       endif
     endif
@@ -95,9 +96,8 @@
 
 #snippet USPECIAL
   ClearStick
-  {BREVERSE}
-  elif Equal isBelowStage 1 || nearCliffX > 6 || nearCliffX < -6
-    nearCliffX *= 0.05
+  if Equal isBelowStage 1 || nearCliffX > 6 || nearCliffX < -6
+    nearCliffX *= 0.025
     AbsStick nearCliffX
   endif
 #endsnippet

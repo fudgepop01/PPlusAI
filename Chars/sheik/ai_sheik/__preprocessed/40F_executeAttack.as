@@ -207,7 +207,7 @@ Seek nspecial
 Return
 elif Equal var20 11
 Button B
-Seek nspecial
+Seek nspecialair
 Return
 elif Equal var20 12
 Button R|A
@@ -319,16 +319,33 @@ Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
+  if Equal CurrAction 274 || Equal CurrAction 279 
+    if XDistLE 25
+      var23 = OTopNY - TopNY
+      if var23 < 15
+      else
+        Button R
+      endif
+    elif Rnd < 0.96
+      if Rnd < 0.02
+        Button R
+      endif
+      Button B
+    endif
+    if YDistFloor < 0
+      Button R
+    endif 
+  endif
 Goto common_checks
 Seek nspecial
 Return
-label nspecial
+label nspecialair
 Goto PFC
 if AnimFrame >= 2 && AnimFrame <= 7 && !(Equal Direction OPos)
   AbsStick OPos
 endif
 Goto common_checks
-Seek nspecial
+Seek nspecialair
 Return
 label grab
 Goto PFC
@@ -423,6 +440,15 @@ label getHeight
 label PFC
   XGoto PerFrameChecks
   //= XReciever
+  if var21 < 16.7
+    var22 = XSpeed * 20
+    GetYDistFloorOffset var22 var22 5 0
+    if var22 < 0
+      var22 = XSpeed * -20
+      AbsStick var22
+      Return
+    endif
+  endif
   if !(Equal var21 7)
 if  var20 >= 17 && var20 <= 22
       if Equal IsOnStage 0 && NumJumps < 1 && TotalYSpeed < -0.5
@@ -431,7 +457,9 @@ if  var20 >= 17 && var20 <= 22
       elif True
         if Equal var21 16.3
           PredictOMov var22 14
-          if var22 > 0.25 && XDistLE 50
+          if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && XDistLE 20
+            XGoto MoveToGoal
+          elif var22 > 0.1 && XDistLE 50
             var22 = OPos * -1
             AbsStick var22
             Return
@@ -443,7 +471,7 @@ if  var20 >= 17 && var20 <= 22
           XGoto MoveToGoal
           //= XReciever
         elif Equal var21 16.3
-          var22 = XSpeed * -2
+          var22 = XSpeed * -8
           AbsStick var22
         else
           XGoto MoveToGoal
@@ -460,7 +488,7 @@ label common_checks
     Seek finish
     Jump
   elif Equal HitboxConnected 1 && HasCurry
-    if OFramesHitstun > 1 && OFramesHitlag < 1 && OAnimFrame >= 3 || OFramesHitlag >= 8
+    if OFramesHitstun > 1 && OFramesHitlag < 1 && OAnimFrame >= 3
       Seek finish
       Jump
     endif

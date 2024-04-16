@@ -40,12 +40,9 @@ endif
 //   endif
 // endif
 
-if Equal var21 16.3 && YDistFloor > 25
+if {Equal var21 16.3 && YDistFloor > 25} || {Equal var21 16.3 && YDistFloor < 0}
   var21 = 16
-elif Equal var21 16.3 && YDistFloor < 0
-  var21 = 16
-elif var21 >= 16 && var21 <= 17
-elif Equal var16 2 || Equal var21 10.1 || Equal var21 10.2
+elif {var21 >= 16 && var21 <= 17} || {Equal var16 2 || Equal var21 10.1 || Equal var21 10.2}
 else
   var21 = 16
 endif
@@ -358,13 +355,8 @@ var22 -= var23
 var12 = 1
 // PredictOMov anotherTempVar mov_jump
 // anotherTempVar *= 0.2
-if CurrAction >= 26 && CurrAction <= 29
-elif Equal CurrSubaction JumpSquat || CalledFrom Shield
-elif YDistFloor > 5 && YSpeed > -0.25 && CurrAction <= 32 || OYDistFloor > 45
-elif var22 > 5
-elif YDistFloor > 8 && XDistLE 15
-elif OCurrAction >= 66 && OCurrAction <= 100 && var22 > 20
-elif CurrAction >= 115 && CurrAction <= 123
+if {CurrAction >= 26 && CurrAction <= 29} || {Equal CurrSubaction JumpSquat || CalledFrom Shield} || var22 > 5 || {YDistFloor > 8 && XDistLE 15} || {OCurrAction >= 66 && OCurrAction <= 100 && var22 > 20} || {CurrAction >= 115 && CurrAction <= 123}}
+elif {{YDistFloor > 5 && YSpeed > -0.25 && CurrAction <= 32} || OYDistFloor > 45}
 else
   var12 = 0
 endif
@@ -378,10 +370,10 @@ endif
 
 DynamicDiceClear 0
 if CurrAction >= 52 && CurrAction <= 58 
-DynamicDiceAdd 1 14 0.25
 DynamicDiceAdd 1 15 0.25
 DynamicDiceAdd 1 16 0.25
 DynamicDiceAdd 1 17 0.25
+DynamicDiceAdd 1 18 0.25
 else
 DynamicDiceClear 0
 DynamicDiceAdd 0 0 1
@@ -397,15 +389,15 @@ DynamicDiceAdd 0 9 1
 DynamicDiceAdd 0 10 1
 DynamicDiceAdd 0 11 1
 DynamicDiceAdd 0 12 1
-DynamicDiceAdd 0 14 0.2
+DynamicDiceAdd 0 13 1
 DynamicDiceAdd 0 15 0.2
 DynamicDiceAdd 0 16 0.2
 DynamicDiceAdd 0 17 0.2
-DynamicDiceAdd 0 18 0.5
+DynamicDiceAdd 0 18 0.2
 DynamicDiceAdd 0 19 0.5
-DynamicDiceAdd 0 20 1
-DynamicDiceAdd 0 21 0.5
-DynamicDiceAdd 0 22 0.5
+DynamicDiceAdd 0 20 0.5
+DynamicDiceAdd 0 21 1
+DynamicDiceAdd 0 22 1
 DynamicDiceAdd 0 23 1
 DynamicDiceAdd 0 24 1
 endif
@@ -522,6 +514,7 @@ STACK_PUSH 5 0
   endif
 
   Goto check_hub
+
   var18 -= 1
   if var18 <= 0
     SeekNoCommit __DICE_LOOP_END__
@@ -534,7 +527,7 @@ endif
 if !(True)
   label __ADDITIONAL_FILTERS__
   var17 = LTF_STACK_READ
-if Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
+if Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
     if Equal CurrAction 60 
       Return
     endif
@@ -607,10 +600,7 @@ var11 = var22
   var22 = STACK_POP
   if Equal var11 1
   endif
-  if CurrAction >= 42 && CurrAction <= 50 && Equal var11 1
-    var20 = -1
-    Return
-  elif Equal var11 0 && YSpeed < 0
+  if {CurrAction >= 42 && CurrAction <= 50 && Equal var11 1} || {Equal var11 0 && YSpeed < 0}
     var20 = -1
     Return  
   endif
@@ -701,13 +691,13 @@ label check_hub
 
   if YDistFloor < 20 && !(Equal YDistFloor -1) 
     var22 = 0
-if Equal var20 18 || Equal var20 19
+if Equal var20 19 || Equal var20 20
       GetAttribute var22 300 0
-elif Equal var20 20
+elif Equal var20 21
       GetAttribute var22 304 0
 elif Equal var20 24
       GetAttribute var22 316 0
-elif Equal var20 21 || Equal var20 22
+elif Equal var20 22
       GetAttribute var22 308 0
 elif Equal var20 23
       GetAttribute var22 312 0
@@ -752,23 +742,23 @@ elif Equal var20 23
   if var10 <= 0
     var22 = TopNX - OTopNX
     Abs var22
+    var22 *= 0.2
     var22 += 1
-    var15 = var22 * var3 * 0.15
-    var9 *= 0.5
+    var22 *= var22
+    var15 = var22 * var3 * 0.10
+    var9 *= 0.75
     // if anotherTempVar > 100
     //   anotherTempVar = 100
     // endif
     // rollWeight += anotherTempVar
     GetAttribute var23 40 1 
-    var23 *= 0.15
+    var23 *= 0.8
     var23 *= var9
     predictAverage var17 10
+    var17 += var23
     // LOGSTR str("distChk")
     // LOGVAL globTempVar
     // LOGVAL immediateTempVar
-    if Equal var21 7.1 || var21 >= 16.7
-      var15 *= 3
-    endif
     if YDistFloor < 0
       PRINTLN
       Return
@@ -784,6 +774,10 @@ elif Equal var20 23
       PRINTLN
       Return
     endif
+    if Equal var21 7.1 || var21 >= 16.7
+      var15 *= 2
+    endif
+
     Goto aftDirs
     PRINTLN
     Return 
@@ -810,7 +804,7 @@ elif Equal var20 23
 var11 = var22
   var22 = STACK_POP
   if Equal var11 1
-elif Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
+elif Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
         var22 = 1
       elif OYDistFloor < 0
         var23 = TopNY - YDistFloor
@@ -820,7 +814,7 @@ elif Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equ
       endif
       // rollWeightVariable ODamage OWeight moveAngle moveBaseKnockback moveKnockbackGrowth moveHitFrame moveDuration moveIASA moveDamage moveIsWeightDependent          XTerminalVelocity jumpVelocity   OEndLag        EstOTopNX      TopNX TopBZ     xBZ       stageWidth     EstOTopNY      EstOYDistFloor
       CalcMoveWeight var15 ODamage OWeight var1 var4 var6 var7 var8 var9 var10 var13 LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ LTF_STACK_READ TopNX TBoundary RBoundary LTF_STACK_READ var23 var22
-elif Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
+elif Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
       Return
     else
       var15 = 20
@@ -880,7 +874,7 @@ label dirCheck
     var3 /= var22
     var5 /= var22
 
-if  Equal var20 10 || Equal var20 12 || var20 >= 18 && var20 <= 24
+if  Equal var20 10 || Equal var20 13 || var20 >= 19 && var20 <= 24
       var23 = var22 * 1.5
       var23 += 1
       var3 *= var23
@@ -926,9 +920,7 @@ if  Equal var20 10 || Equal var20 12 || var20 >= 18 && var20 <= 24
           var23 = TopNX - OTopNX
           Abs var23
           if var11 > 0 && Equal AirGroundState 2 || YDistFloor < OFramesHitstun && YDistFloor > -1 && var23 < 35
-            if Equal Direction OPos && var22 >= 0 
-              var15 *= 1.75
-            elif !(Equal Direction OPos) && var22 <= 0 
+            if {Equal Direction OPos && var22 >= 0} || {!(Equal Direction OPos) && var22 <= 0} 
               var15 *= 1.75
             elif !(Equal var22 0) && var23 < 30
               var15 *= 0.05
@@ -962,7 +954,7 @@ if  Equal var20 10 || Equal var20 12 || var20 >= 18 && var20 <= 24
     LOGSTR 1480870144 1375731712 0 0 0
     LOGVAL var15
   endif
-if Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
+if Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
     PredictOMov var17 10
     if var17 > 0.15 && OYDistFloor < 20 && OYDistFloor > -1
       var15 *= 2
@@ -1036,15 +1028,11 @@ if Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal
     predictAverage var17 10
     var17 *= 0.5
     var23 += var17
-
-    if Equal var16 2 || Equal var21 10.1
-      if XDistLE var23
-        Return
-      endif
-    endif
-    if var10 < 0 && XDistLE var23
-      Return
-    endif
+    // if XDistLE anotherTempVar && {Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack} 
+    //   Return
+    // elif move_damage < 0 && XDistLE anotherTempVar
+    //   Return
+    // endif
 
 
 
@@ -1084,8 +1072,8 @@ if Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal
   endif
 
   if !(Equal var21 16.3)
-if Equal var20 13
-elif Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
+if Equal var20 14
+elif Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
       PredictOMov var23 10
       if var23 > 0.18 && !(Equal var16 1)
         var23 = 100 * var23
@@ -1105,7 +1093,6 @@ elif Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equ
   if !(True)
     label addMove
   endif
- 
   
   if var10 <= 0
     var15 *= 5
@@ -1146,7 +1133,7 @@ var11 = var22
   GetCommitPredictChance var23
   PredictOMov var17 10
   var23 += var17
-if Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17
+if Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
     var22 *= 0.75
   elif var23 < 0.16 && OFramesHitstun < var7
     var22 *= 5

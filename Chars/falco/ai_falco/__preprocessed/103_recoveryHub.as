@@ -37,7 +37,7 @@ Abs var0
 
 var5 = 0
 var6 = 0
-if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -68,8 +68,7 @@ if var17 < 10 && var17 > -10
   else
     var2 = -4
   endif
-elif var1 < TopNX && TopNX < var0
-elif var0 < TopNX && TopNX < var1  
+elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
 elif TopNY < var2
   if var17 < 0
     var2 = 6
@@ -113,6 +112,14 @@ endif
   endif
 
 var17 = 0
+
+if Equal CanCancelAttack 1
+  if {{Equal CurrAction 16 || Equal CurrAction 280} || {Equal CurrAction 276 || Equal CurrAction 279} || {Equal CurrAction 274} || {Equal CurrAction 275} || {Equal CurrAction 277 || Equal CurrAction 282 || Equal CurrAction 284}}
+    Seek postMoveCheck
+    Jump
+  endif
+endif
+
 if CurrAction >= 98 && CurrAction <= 108 && AnimFrame < 8
   Return
 elif Equal CurrAction 16 || Equal CurrAction 280
@@ -146,6 +153,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     endif
   endif
 endif
+label postMoveCheck
 Seek begin
 
 if YDistFloor > -1
@@ -214,7 +222,7 @@ endif
   var1 -= var23
   var3 = var1
   // LOGVAL nearCliffY
-  if !(NoOneHanging) || var6 >= 1 && var16 <= 0
+  if !(NoOneHanging) || {var6 >= 1 && var16 <= 0}
     var3 += var6
     // LOGSTR str("hcy")
     // LOGVAL highCliffY
@@ -397,9 +405,7 @@ Return
 
 label handleJumpToStage
   ClearStick
-  if Equal var16 1
-    AbsStick var0
-  elif var0 > 6 || var0 < -6
+  if Equal var16 1 || {var0 > 6 || var0 < -6}
     AbsStick var0
   elif YDistBackEdge < 43.68
     var17 = var0 * 3

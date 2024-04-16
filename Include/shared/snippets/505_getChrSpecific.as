@@ -21,31 +21,31 @@
           ADJUST_PERSONALITY idx_braveChance -1 PT_BRAVECHANCE
           ADJUST_PERSONALITY idx_circleCampChance -1 PT_CIRCLECAMPCHANCE
 
-          ADJUST_PERSONALITY idx_aggression calc(pt_aggression * 3) Rnd
-          ADJUST_PERSONALITY idx_baitChance calc(pt_baitChance * 2) Rnd
+          ADJUST_PERSONALITY idx_aggression calc(pt_aggression * 2) Rnd
+          ADJUST_PERSONALITY idx_baitChance calc(pt_baitChance * 4) Rnd
           ADJUST_PERSONALITY idx_wall_chance calc(pt_wall_chance * 2) Rnd
           ADJUST_PERSONALITY idx_braveChance calc(pt_braveChance * 2) Rnd
-          ADJUST_PERSONALITY idx_circleCampChance calc(pt_circleCampChance * 2) Rnd
+          ADJUST_PERSONALITY idx_circleCampChance calc(pt_circleCampChance * 4) Rnd
 
           if Rnd < 0.25
             ADJUST_PERSONALITY idx_bait_dashAwayChance -1 PT_BAIT_DASHAWAYCHANCE
-            ADJUST_PERSONALITY idx_bait_dashAwayChance calc(pt_bait_dashAwayChance * 2) Rnd
+            ADJUST_PERSONALITY idx_bait_dashAwayChance calc(pt_bait_dashAwayChance * 5) Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY idx_bait_wdashAwayChance -1 PT_BAIT_WDASHAWAYCHANCE
-            ADJUST_PERSONALITY idx_bait_wdashAwayChance calc(pt_bait_wdashAwayChance * 2) Rnd
+            ADJUST_PERSONALITY idx_bait_wdashAwayChance calc(pt_bait_wdashAwayChance * 5) Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY idx_jumpiness -1 PT_JUMPINESS
-            ADJUST_PERSONALITY idx_jumpiness calc(pt_jumpiness * 3) Rnd
+            ADJUST_PERSONALITY idx_jumpiness calc(pt_jumpiness * 4) Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY idx_djumpiness -1 PT_DJUMPINESS
-            ADJUST_PERSONALITY idx_djumpiness calc(pt_djumpiness * 3) Rnd
+            ADJUST_PERSONALITY idx_djumpiness calc(pt_djumpiness * 4) Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY idx_platChance -1 PT_PLATCHANCE
-            ADJUST_PERSONALITY idx_platChance calc(pt_platChance * 3) Rnd
+            ADJUST_PERSONALITY idx_platChance calc(pt_platChance * 5) Rnd
           endif
         endif
 
@@ -132,6 +132,22 @@
   ADJUST_PERSONALITY idx_circleCampChance 0.025 Rnd
 #endsnippet
 
+#snippet EVT_ITEM_CHECK
+  if CurrAction >= hex(0xDF) && CurrAction <= hex(0xE5)
+    goalX = OTopNX
+    goalY = OTopNY
+    XGoto MoveToGoal
+    Return
+  elif Equal CurrAction hex(0xDC)
+    goalX = OTopNX
+    XGoto MoveToGoal
+    Return
+  elif CurrAction >= hex(0x92) && CurrAction <= hex(0x94)
+    Button X
+    Return
+  endif
+#endsnippet
+
 #snippet EVT_CHECK_DEFEND
   if !(CalledFrom AttackedHub)
     anotherTempVar = LevelValue + 2
@@ -140,23 +156,23 @@
 
       $tempVar(OEndLag,globTempVar)
       GET_CHAR_TRAIT(OEndLag, chr_get_OEndlagSafe)
-      if OEndLag < 3
+      // if OEndLag < 3
         GET_CHAR_TRAIT(immediateTempVar, chr_chk_OInCombo)
         if Equal immediateTempVar 0 && !(Equal currGoal cg_inHitstun)
           // react to/read the opponent's attack patterns
-          immediateTempVar = (1 - (LevelValue / 100)) * 40 + 5
+          immediateTempVar = (1 - (LevelValue / 100)) * 40 + 15
           immediateTempVar *= PT_REACTION_TIME
           MOD globTempVar GameTimer immediateTempVar
 
           anotherTempVar = OAnimFrame + 2
           MOD anotherTempVar anotherTempVar immediateTempVar
           LOGSTR str("atv;gtv")
+          LOGVAL PT_REACTION_TIME
+          LOGVAL immediateTempVar
           LOGVAL globTempVar
           LOGVAL anotherTempVar
           PRINTLN
-          if globTempVar > 1 && anotherTempVar >= 1
-          elif Equal OCurrAction hex(0x4D) && OAnimFrame > 25
-          elif Equal currGoal cg_attack_shieldPunish || Equal currGoal cg_bait_shield
+          if {globTempVar > 10 && anotherTempVar >= 10} || {Equal OCurrAction hex(0x4D) && OAnimFrame > 25} || Equal currGoal cg_attack_shieldPunish || Equal currGoal cg_bait_shield
           elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
             // LOGSTR_NL str("defending")
             if OCurrAction >= hex(0x3) && OCurrAction <= hex(0xF) && OAnimFrame > 5
@@ -204,6 +220,9 @@
                   PredictOMov anotherTempVar mov_dash
                   anotherTempVar *= 0.5
                   globTempVar -= anotherTempVar
+                  if Equal AirGroundState 2
+                    immediateTempVar *= 2.5
+                  endif
                   if globTempVar > immediateTempVar && Rnd < 0.7
                     // LOGSTR_NL str("defNorm")
                     CallI DefendHub
@@ -234,7 +253,7 @@
             endif
           endif
         endif
-      endif
+      // endif
 
       anotherTempVar = LevelValue + 2
       immediateTempVar = Rnd * anotherTempVar

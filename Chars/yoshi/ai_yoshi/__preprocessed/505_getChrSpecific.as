@@ -293,9 +293,7 @@ elif Equal var22 200
       Goto restoreTempRegs
       Return
     endif
-    if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
-    elif Equal OCurrAction 73 && OYDistFloor > 15
-    elif Equal HitboxConnected 1 || Equal PrevAction 60
+    if {OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)} || {Equal OCurrAction 73 && OYDistFloor > 15} || {Equal HitboxConnected 1 || Equal PrevAction 60}
     else
       // LOGSTR_NL str("NOT COMBOING")
       var22 = 0
@@ -312,9 +310,7 @@ elif Equal var22 200
 elif Equal var22 300
   // chr chk_actionableOnGround
   var22 = 0
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif CurrAction >= 103 && CurrAction <= 109
+  if Equal CanCancelAttack 1 || {HasCurry && Equal HitboxConnected 1} || {CurrAction >= 103 && CurrAction <= 109}
   elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
@@ -360,30 +356,30 @@ elif Equal var22 30000
           ADJUST_PERSONALITY 11 -1 PT_WALL_CHANCE
           ADJUST_PERSONALITY 4 -1 PT_BRAVECHANCE
           ADJUST_PERSONALITY 5 -1 PT_CIRCLECAMPCHANCE
-          ADJUST_PERSONALITY 0 3.75 Rnd
-          ADJUST_PERSONALITY 3 1.6 Rnd
-          ADJUST_PERSONALITY 11 1.4 Rnd
-          ADJUST_PERSONALITY 4 1.3 Rnd
-          ADJUST_PERSONALITY 5 0.2 Rnd
+          ADJUST_PERSONALITY 0 2 Rnd
+          ADJUST_PERSONALITY 3 4 Rnd
+          ADJUST_PERSONALITY 11 0.7 Rnd
+          ADJUST_PERSONALITY 4 2 Rnd
+          ADJUST_PERSONALITY 5 4 Rnd
           if Rnd < 0.25
             ADJUST_PERSONALITY 1 -1 PT_BAIT_DASHAWAYCHANCE
-            ADJUST_PERSONALITY 1 0.9 Rnd
+            ADJUST_PERSONALITY 1 5 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 2 -1 PT_BAIT_WDASHAWAYCHANCE
-            ADJUST_PERSONALITY 2 0.9 Rnd
+            ADJUST_PERSONALITY 2 5 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 7 -1 PT_JUMPINESS
-            ADJUST_PERSONALITY 7 0.15000000000000002 Rnd
+            ADJUST_PERSONALITY 7 1.6 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 6 -1 PT_DJUMPINESS
-            ADJUST_PERSONALITY 6 0.06 Rnd
+            ADJUST_PERSONALITY 6 0.8 Rnd
           endif
           if Rnd < 0.25
             ADJUST_PERSONALITY 8 -1 PT_PLATCHANCE
-            ADJUST_PERSONALITY 8 0.30000000000000004 Rnd
+            ADJUST_PERSONALITY 8 1.5 Rnd
           endif
         endif
       Return
@@ -475,24 +471,24 @@ elif Equal var22 40000
   XGoto GetChrSpecific
   //= XReciever
 var17 = var22
-      if var17 < 3
+      // if OEndLag < 3
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
         if Equal var22 0 && !(Equal var21 12)
           // react to/read the opponent's attack patterns
-          var22 = (1 - (LevelValue / 100)) * 40 + 5
+          var22 = (1 - (LevelValue / 100)) * 40 + 15
           var22 *= PT_REACTION_TIME
           MOD var17 GameTimer var22
           var23 = OAnimFrame + 2
           MOD var23 var23 var22
           LOGSTR 1635022336 996635648 1979711488 0 0
+          LOGVAL PT_REACTION_TIME
+          LOGVAL var22
           LOGVAL var17
           LOGVAL var23
           PRINTLN
-          if var17 > 1 && var23 >= 1
-          elif Equal OCurrAction 77 && OAnimFrame > 25
-          elif Equal var21 16.5 || Equal var21 10.2
+          if {var17 > 10 && var23 >= 10} || {Equal OCurrAction 77 && OAnimFrame > 25} || Equal var21 16.5 || Equal var21 10.2
           elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
             // LOGSTR_NL str("defending")
             if OCurrAction >= 3 && OCurrAction <= 15 && OAnimFrame > 5
@@ -539,6 +535,9 @@ var17 = var22
                   PredictOMov var23 4
                   var23 *= 0.5
                   var17 -= var23
+                  if Equal AirGroundState 2
+                    var22 *= 2.5
+                  endif
                   if var17 > var22 && Rnd < 0.7
                     // LOGSTR_NL str("defNorm")
                     CallI DefendHub
@@ -569,7 +568,7 @@ var17 = var22
             endif
           endif
         endif
-      endif
+      // endif
       var23 = LevelValue + 2
       var22 = Rnd * var23
       if var22 > 1
@@ -630,6 +629,21 @@ var17 = var22
         endif
       endif
     endif
+  endif
+elif Equal var22 60000
+  // evt checkDefend
+  if CurrAction >= 223 && CurrAction <= 229
+    var13 = OTopNX
+    var14 = OTopNY
+    XGoto MoveToGoal
+    Return
+  elif Equal CurrAction 220
+    var13 = OTopNX
+    XGoto MoveToGoal
+    Return
+  elif CurrAction >= 146 && CurrAction <= 148
+    Button X
+    Return
   endif
 elif Equal var22 0.003 || Equal var22 0.004
   // chr get_OEndlag

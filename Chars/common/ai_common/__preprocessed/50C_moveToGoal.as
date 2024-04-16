@@ -77,14 +77,9 @@ if var17 > 0 && var21 < 10.5
   var22 = TopNY + 3 - var22
   var17 = TopNY + 100 - var17
   if var21 >= 16 && var21 <= 17 && OFramesHitstun <= 0
-  elif var22 < var17 && !(CalledFrom BoardPlatform)
-    if CHANCE_MUL_LE PT_PLATCHANCE 1
-      Seek platSkill
-      Jump
-    elif var17 < var7 && CHANCE_MUL_LE PT_PLATCHANCE 1
-      Seek platSkill
-      Jump
-    endif
+  elif var22 < var17 && !(CalledFrom BoardPlatform) && {CHANCE_MUL_LE PT_PLATCHANCE 1 || {var17 < var7 && CHANCE_MUL_LE PT_PLATCHANCE 1}}
+    Seek platSkill
+    Jump
   endif
 endif
 GetAttribute var22 940 0
@@ -122,40 +117,42 @@ var22 -= var13
 Abs var22
 var23 = var5 * 3
 // LOGVAL_NL anotherTempVar
-if var22 <= var23 || Equal CurrSubaction JumpSquat && TopNY < var7
+if TopNY < var7
+  if var23 <= var22 || Equal CurrSubaction JumpSquat
   var22 = 15
   XGoto GetChrSpecific
   //= XReciever
 var2 = var22
-  var22 = var7 - TopNY
-  var1 = var2 * NumJumps * 1.2
-  if var22 < var1
-    if Equal AirGroundState 1 
+    var22 = var7 - TopNY
+    var1 = var2 * NumJumps * 1.2
+    if var22 < var1
+      if Equal AirGroundState 1 
   var22 = 14
   XGoto GetChrSpecific
   //= XReciever
 var1 = var22
-      var17 = var1 + TopNY
-      // globTempVar += 10
-      if Equal CurrSubaction JumpSquat && var7 > var17
-        Button X
-        Goto jumpDirHandler
-      elif TopNY < var7 && !(Equal CurrSubaction JumpSquat)
-        Goto jumpPreCheck
-      endif
-    elif AnimFrame > 3
-      var23 = TopNY + var2 - 5
-      if YSpeed > 0
-        var22 = YSpeed / Gravity
-        EstYCoord var23 var22
-      endif
-      // anotherTempVar += HurtboxSize
-      // anotherTempVar -= yRange           
-      if var23 < var7
-        Goto isAirAttack
-        if Equal var0 1 || Equal var20 -1
+        var17 = var1 + TopNY
+        // globTempVar += 10
+        if Equal CurrSubaction JumpSquat && var7 > var17
           Button X
           Goto jumpDirHandler
+        elif TopNY < var7 && !(Equal CurrSubaction JumpSquat)
+          Goto jumpPreCheck
+        endif
+      elif AnimFrame > 3
+        var23 = TopNY + var2 - 5
+        if YSpeed > 0
+          var22 = YSpeed / Gravity
+          EstYCoord var23 var22
+        endif
+        // anotherTempVar += HurtboxSize
+        // anotherTempVar -= yRange           
+        if var23 < var7
+          Goto isAirAttack
+          if Equal var0 1 || Equal var20 -1
+            Button X
+            Goto jumpDirHandler
+          endif
         endif
       endif
     endif
@@ -168,12 +165,11 @@ elif var22 <= 15 && TopNY > var7 && Equal IsOnPassableGround 1
   // aggression = PT_AGGRESSION
 
 
-  var22 = XDistFrontEdge * Direction + 20
-  var17 = XDistBackEdge * Direction - 20
+  var22 = XDistFrontEdge * Direction + 40
+  var17 = XDistBackEdge * Direction - 40
   var22 += TopNX
   var17 += TopNX
-
-  if var17 <= var13 && var13 <= var22 && CHANCE_MUL_LE PT_AGGRESSION 1
+  if var17 <= var13 && var13 <= var22
     label empty_2
     XGoto PerFrameChecks
     Seek empty_2
@@ -201,7 +197,7 @@ var1 = var22
   endif
 endif
 if var21 < 16.7
-  if Equal AirGroundState 2 && !(OutOfStage) || Equal CurrAction 10
+  if {Equal AirGroundState 2 && !(OutOfStage)} || Equal CurrAction 10
   var17 = 15
   var2 = XSpeed * var17
   GetYDistFloorOffset var1 var2 5 0
@@ -250,18 +246,13 @@ label stickMovement
   var0 = 1
   // LOGVAL_NL anotherTempVar
 
-  if Equal AirGroundState 1 && !(Equal CurrAction 10) && Equal var1 0
-    if !(Equal var21 16.3)
-      if var23 > 0 && var23 < var4 && var21 < 16.7
-        var0 = 0.72
-      // elif anotherTempVar < 0
-      //   stickMagnitude = 1
-      endif
-      if var21 >= 16.7 && DistToOEdge < 30
-        var0 *= 0.72
-      elif var23 > var4 && Equal CurrAction 1 
-        var0 = 0
-      endif
+  if Equal AirGroundState 1 && !(Equal CurrAction 10) && Equal var1 0 && !(Equal var21 16.3)
+    if {var23 > 0 && var23 < var4 && var21 < 16.7} || {var21 >= 16.7 && DistToOEdge < 30}
+      var0 *= 0.72
+    // elif anotherTempVar < 0
+    //   stickMagnitude = 1
+    elif var23 > var4 && Equal CurrAction 1 
+      var0 = 0
     endif
   endif
 
@@ -337,7 +328,7 @@ var2 = var22
           // within 80 x units
           if var17 <= 80
             // within djump height
-            if var22 < var2 && var22 > 0 || var17 > 60
+            if {var22 < var2 && var22 > 0} || var17 > 60
               if Equal CurrSubaction JumpSquat
                 Goto jumpPreCheck
               else
@@ -405,12 +396,12 @@ elif 16 <= var21 && var21 <= 17
   XGoto GetChrSpecific
   //= XReciever
 var0 = var22
-    if Equal var0 -1 && Equal Direction OPos
-      ClearStick
-      Stick -1
-    elif Equal var0 1 && !(Equal Direction OPos)
-      ClearStick
-      Stick -1
+    var0 *= Direction * OPos
+    if Equal var0 -1
+      if !(Equal CurrAction 7) && !(Equal CurrAction 6)
+        ClearStick
+        Stick -1
+      endif
     else
       Button X
     endif
@@ -510,10 +501,8 @@ if !(Equal AirGroundState 3)
           var17 = -0.3
         endif
         Stick var17 (-0.75)
-      elif var17 < 0 && !(Equal CurrAction 10)
-        if CurrAction < 22 || CurrAction > 25
-          Button X
-        endif
+      elif {var17 < 0 && !(Equal CurrAction 10)} && {CurrAction < 22 || CurrAction > 25}
+        Button X
       endif
     else
       AbsStick OPos

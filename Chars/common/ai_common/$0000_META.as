@@ -7,15 +7,15 @@ id 0x0000
 // str "PADDING_FILE"
 
 LOGVAL_NL 420
-LOGVAL_NL 69
 // LOGVAL_NL 69
 LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
-// LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
+LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 // LOGSTR_NL str("| - init - |")
 

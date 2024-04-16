@@ -195,7 +195,7 @@
 // sideB
 #const sspecial_IASA = 50
 #const sspecial_xOffset = 20
-#const sspecial_yOffset = -40
+#const sspecial_yOffset = 40
 #const sspecial_xRange = 80
 #const sspecial_yRange = 40
 #const sspecial_hitFrame = 50
@@ -204,7 +204,7 @@
 
 #const sspecialair_IASA = 50
 #const sspecialair_xOffset = 20
-#const sspecialair_yOffset = -40
+#const sspecialair_yOffset = 40
 #const sspecialair_xRange = 80
 #const sspecialair_yRange = 40
 #const sspecialair_hitFrame = 50

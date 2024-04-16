@@ -5,7 +5,7 @@ unk 0x0
 //= XReciever
 label setup
 #let timer = var0
-timer = Rnd * 80 + 45
+timer = Rnd * 80 + 20
 label execution
 
 XGoto PerFrameChecks
@@ -24,25 +24,27 @@ endif
 Seek execution
 // LOGSTR_NL str("exec")
 
+EstOXCoord immediateTempVar 15
+immediateTempVar -= TopNX
+PredictOMov anotherTempVar mov_attack
 if Equal scriptVariant sv_aerialdrift_towards
-  AbsStick OPos
+  AbsStick immediateTempVar
 elif Equal scriptVariant sv_aerialdrift_away
-  immediateTempVar = OPos * -1
+  immediateTempVar *= -1
   AbsStick immediateTempVar
 elif scriptVariant >= sv_aerialdrift_away_withJump
-  immediateTempVar = OPos * -1
+  immediateTempVar *= -1
   if Equal scriptVariant sv_aerialdrift_center_withJump
     immediateTempVar = TopNX * -1
   endif
   AbsStick immediateTempVar
   immediateTempVar = TopNY - OTopNY
-  PredictOMov anotherTempVar mov_attack
   if anotherTempVar >= 0.15 && immediateTempVar < 25
     Button X
   endif
 endif
 
-if Equal IsOnStage 0 && YDistBackEdge > -20
+if YDistBackEdge > -20 && XDistBackEdge > -15 && !(ODistLE 15)
   scriptVariant = sv_aerialdrift_center_withJump
 endif
 

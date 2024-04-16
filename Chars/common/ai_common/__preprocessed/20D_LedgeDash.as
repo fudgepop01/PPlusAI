@@ -17,7 +17,7 @@ XGoto PerFrameChecks
   XGoto GetChrSpecific
   //= XReciever
 Seek start
-var22 -= 10
+var22 -= HurtboxSize
 if YDistBackEdge >= var22
   Button X
   Stick 1
@@ -32,6 +32,9 @@ if YDistFloor >= 0
   Button R
   Stick 1 (-1)
   Call MainHub
+endif
+if Equal CurrAction 116 
+  Call OnLedge
 endif
 Return
 Return

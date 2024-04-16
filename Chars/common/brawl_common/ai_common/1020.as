@@ -1,0 +1,38 @@
+#include <Definition_AIMain.h>
+//TrueID=0x1020
+id 0x1020
+
+//Set Unknown
+unk 0x40000
+
+//Strings
+str "#full_f"
+str "#range_chk_f"
+
+var0=8
+var1=30
+AtkDiceRoll slot3
+Cmd2F var2 25
+if !(XDistLE var2)
+    Cmd30
+endif
+//____________________
+label
+if FrameGE var0
+    var3=1
+else
+    var3=0.7
+endif
+var3*=OPos
+AbsStick var3
+if MeteoChance
+    Finish
+endif
+if FrameGE var1 && !(XDistLE 0 AIPDFloat2)
+    Finish
+endif
+if XDistLE var2
+    Call 
+endif
+Return
+Return

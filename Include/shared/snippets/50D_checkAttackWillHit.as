@@ -9,7 +9,7 @@
     if LevelValue >= LV4 && immediateTempVar > 1
 
       // accounts for delay in fastfall
-      CALC_FASTFALL_DIST(yChange, estFrame - 4)
+      CALC_FASTFALL_DIST(yChange, estFrame)
       if Equal shouldBeFalling 1 && yChange > 0
       else
         immediateTempVar = TopNY + yChange + move_centerY
@@ -88,7 +88,7 @@
     elif XDistLE immediateTempVar
       GetAttribute anotherTempVar attr_airMobilityB 0
       anotherTempVar *= estFrame
-    tempXRange += anotherTempVar
+      tempXRange += anotherTempVar
     endif
   else
     estXPos = 0

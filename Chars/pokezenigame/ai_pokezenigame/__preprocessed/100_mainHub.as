@@ -3,19 +3,37 @@ id 0x8100
 unk 0x0
 
 str "PERSONALITY"
-str "1.25"
-str "0.45"
-str "0.45"
-str "0.8"
-str "0.65"
-str "0.1"
-str "0.02"
-str "0.05"
-str "0.1"
+str "1"
+str "1"
+str "1"
+str "1"
+str "1"
+str "1"
+str "0.2"
+str "0.4"
+str "0.3"
 str "1"
 str "0.5"
-str "0.7"
+str "0.35"
 
+
+
+// SetAutoDefend 0
+// SetDisabledSwitch 1
+// SetDebugMode TEMP_DEBUG_TOGGLE
+// label loop
+// Seek loop
+// XGoto PerFrameChecks
+// if XDistFrontEdge > 5
+//   Stick 1
+// elif Equal CurrAction hex(0x7C) || Equal CurrAction hex(0x7D)
+//   Stick -1
+// else
+//   Taunt utaunt
+// endif
+// Return
+
+// Call Shield
 // SetDebugMode 1
 // label loop
 // Seek loop
@@ -28,7 +46,7 @@ str "0.7"
 // Return
 
 // SetDebugMode 1
-// // var0 = 0
+// var0 = 0
 // label loop
 // Seek loop
 
@@ -93,10 +111,10 @@ str "0.7"
 // var1 = var0
 // if ODistLE var0
 //   DrawDebugCircle TopNX TopNY var1 color(0x00FF00DD)  
-//   // DrawDebugRectOutline TopNX CenterY var1 10 color(0x00FF00DD)  
+//   DrawDebugRectOutline TopNX CenterY var1 10 color(0x00FF00DD)  
 // else
 //   DrawDebugCircle TopNX TopNY var1 color(0xFF0000DD)  
-//   // DrawDebugRectOutline TopNX CenterY var1 10 color(0xFF0000DD)  
+//   DrawDebugRectOutline TopNX CenterY var1 10 color(0xFF0000DD)  
 // endif
 // DrawDebugRectOutline OCenterX OCenterY OWidth OHurtboxSize color(0xFF8800DD)  
 // if var0 >= 200
@@ -127,6 +145,10 @@ SetDebugMode TEMP_DEBUG_TOGGLE
 // SetDebugMode 1
 
 SetDisabledMd -1
+
+if Equal var21 -1
+  var21 = 0
+endif
 
 LOGSTR 1667702784 1835100416 1850962944 1634890752 0
 LOGVAL var21
@@ -197,7 +219,7 @@ endif
 
 label start
 
-if Equal var21 3 && Equal YDistFloor -1 || Equal CurrAction 16
+if {Equal var21 3 && Equal YDistFloor -1} || Equal CurrAction 16
   CallI RecoveryHub
 elif var21 >= 16.7
   var20 = -1
@@ -374,9 +396,7 @@ if LevelValue >= 75
   endif
 endif
 var23 = LevelValue * 0.0075
-if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.2
-  SeekNoCommit attack_roll
-elif CHANCE_MUL_LE PT_AGGRESSION var23
+if {Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.2} || CHANCE_MUL_LE PT_AGGRESSION var23
   SeekNoCommit attack_roll
 endif
 var22 = LevelValue * 0.0075
@@ -404,6 +424,7 @@ elif Equal HitboxConnected 1
   endif
   var22 = 5 - var22
   DynamicDiceAdd 0 16.4 var22
+
 endif
 
 DynamicDiceRoll 0 var21 0
@@ -417,9 +438,7 @@ PRINTLN
   //= XReciever
 if Equal var3 1
   var21 = 7
-elif Equal HitboxConnected 1 || Equal PrevAction 60
-  var21 = 16.4
-elif Equal var22 1
+elif {Equal HitboxConnected 1 || Equal PrevAction 60} || Equal var22 1
   var21 = 16.4
 endif
 var14 = BBoundary
@@ -457,6 +476,7 @@ if Rnd < var0
 endif
 Return
 label selectGoal
+XReciever
 XGoto PerFrameChecks
 Cmd30
 
@@ -467,13 +487,15 @@ Cmd30
   XGoto UpdateGoal
   LOGSTR 1667706112 1886352128 1948275968 1883504640 0
   LOGVAL var21
-  LOGVAL YDistBackEdge
-  LOGVAL YDistFloor
 
 PRINTLN
 
 Seek selectGoal
 if Equal var21 10.4 && LevelValue >= 42
+  if CurrAction >= 3 && CurrAction <= 10
+    var16 = 3
+    CallI Wavedash
+  endif
   label waitSetup
   var4 = Rnd * 55 + 5
   // LOGSTR_NL str("BAIT_WAIT")
@@ -546,9 +568,7 @@ label isActionable
 // {ISACTIONABLE_OVERRIDE}
 var22 = 0
 
-if Equal CanCancelAttack 1
-elif Equal HitboxConnected 1 && HasCurry
-elif CurrAction >= 103 && CurrAction <= 109
+if Equal CanCancelAttack 1 || {HasCurry && Equal HitboxConnected 1} || {CurrAction >= 103 && CurrAction <= 109}
 elif Equal CurrAction 22 
   if Equal PrevAction 33
     Return

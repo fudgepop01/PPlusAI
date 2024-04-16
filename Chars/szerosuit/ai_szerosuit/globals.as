@@ -140,18 +140,18 @@
 // noochB
 #const nspecial_IASA = 58
 #const nspecial_xOffset = 9
-#const nspecial_yOffset = -7.85
+#const nspecial_yOffset = -2.85
 #const nspecial_xRange = 45
-#const nspecial_yRange = 2
+#const nspecial_yRange = 15
 #const nspecial_hitFrame = 21
 #const nspecial_lastHitFrame = 90
 #const nspecial_damage_info = NSpecial|-6|w26|100|361
 
 #const nspecialair_IASA = 58
 #const nspecialair_xOffset = 9
-#const nspecialair_yOffset = -7.85
+#const nspecialair_yOffset = -2.85
 #const nspecialair_xRange = 45
-#const nspecialair_yRange = 2
+#const nspecialair_yRange = 15
 #const nspecialair_hitFrame = 21
 #const nspecialair_lastHitFrame = 90
 #const nspecialair_damage_info = NSpecialAir|-6|w26|100|361

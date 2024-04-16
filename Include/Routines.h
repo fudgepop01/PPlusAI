@@ -5,17 +5,29 @@ act Nothing : 0x0
 /// act_m_wait_init/act_m_wait
 act Unk10 : 0x10
 
+/// Get to Distance X LEDGE
 act Unk20 : 0x20
 act Unk21 : 0x21
 act Unk22 : 0x22
 act Unk23 : 0x23
 act Unk24 : 0x24
 
-/// Run Away X
+act GoFarLedge : 0x21
+act GoMidFarLedge : 0x22
+act GoMidCloseLedge : 0x23
+act GoCloseLedge : 0x24
+
+/// Get To Distance X
 act Unk30 : 0x30
 act Unk31 : 0x31
 act Unk32 : 0x32
 act Unk33 : 0x33
+act Unk34 : 0x34
+
+act GoFar : 0x31
+act GoMidFar : 0x32
+act GoMidClose : 0x33
+act GoClose : 0x34
 
 ///Walk up to the opponent
 act WalkUp : 0x40
@@ -60,8 +72,10 @@ act Unk1060 : 0x1060
 /// slots 17 (bair), 18 (uair), and 11 (nair)
 /// only relevant in captain, fox, ike, lucario, lucas, marth, ness, snake, yoshi
 act Unk1070 : 0x1070
+act AtkApproachAerial : 0x1070
 /// captain, fox, ike, lucario, lucas (overrides), marth, ness, yoshi
 act Unk1071 : 0x1071
+act AtkJumpAerial : 0x1071
 /// snake
 act Unk1072 : 0x1072
 /// captain
@@ -105,7 +119,9 @@ act Unk1120 : 0x1120
 /// | yoshi = walk up DA / jab / tilt
 act Unk1130 : 0x1130
 /// jump up/offstage ==> edgeguard
+/// edgeguard with meteor smash
 act Unk1140 : 0x1140
+act EdgeguardMS : 0x1140
 /// force-called under a condition having something to do with AIPD def10
 act Unk1160 : 0x1160
 /// slot9 (undefined in common); if XDistLE AIPDFloat2 && XDistLE 10

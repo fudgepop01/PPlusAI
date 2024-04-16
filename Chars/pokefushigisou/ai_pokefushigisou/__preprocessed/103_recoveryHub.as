@@ -33,11 +33,11 @@ label reroll
     endif
   endif
 Abs var0
-
+  // dair
 
 var5 = 0
 var6 = 0
-if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -67,8 +67,7 @@ if var17 < 10 && var17 > -10
   else
     var2 = -4
   endif
-elif var1 < TopNX && TopNX < var0
-elif var0 < TopNX && TopNX < var1  
+elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
 elif TopNY < var2
   if var17 < 0
     var2 = 6
@@ -112,6 +111,14 @@ endif
   endif
 
 var17 = 0
+
+if Equal CanCancelAttack 1
+  if {{Equal CurrAction 16} || {Equal CurrAction 276 || Equal CurrAction 128 || Equal CurrAction 129 || Equal CurrAction 130 || Equal CurrAction 131} || {Equal CurrAction 274 || Equal CurrAction 279 || Equal CurrAction 280} || {Equal CurrAction 275 || Equal CurrAction 51} || {Equal CurrAction 277}}
+    Seek postMoveCheck
+    Jump
+  endif
+endif
+
 if CurrAction >= 98 && CurrAction <= 108 && AnimFrame < 8
   Return
 elif Equal CurrAction 16
@@ -123,7 +130,7 @@ elif Equal CurrAction 276 || Equal CurrAction 128 || Equal CurrAction 129 || Equ
 elif Equal CurrAction 274 || Equal CurrAction 279 || Equal CurrAction 280
   Goto handleNSpecial
   var17 = 1
-elif Equal CurrAction 275
+elif Equal CurrAction 275 || Equal CurrAction 51
   Goto handleSSpecial
   var17 = 1
 elif Equal CurrAction 277
@@ -145,6 +152,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     endif
   endif
 endif
+label postMoveCheck
 Seek begin
 
 if YDistFloor > -1
@@ -211,7 +219,7 @@ endif
   var1 -= var23
   var3 = var1
   // LOGVAL nearCliffY
-  if !(NoOneHanging) || var6 >= 1 && var16 <= 0
+  if !(NoOneHanging) || {var6 >= 1 && var16 <= 0}
     var3 += var6
     // LOGSTR str("hcy")
     // LOGVAL highCliffY
@@ -238,7 +246,17 @@ endif
   var23 = HurtboxSize * 0.5 + CenterY
   DrawDebugRectOutline CenterX var23 1 1 255 255 255 221
   DrawDebugRectOutline CenterX CenterY Width HurtboxSize 136 136 136 221
-  
+  GetColDistPosRel var17 var23 TopNX CenterY 0 80 0
+  if Equal var23 -1
+    var23 = var0
+    Abs var23
+    if var23 < 10
+      var0 *= -1
+      ClearStick
+      AbsStick var0
+      var0 *= -1
+    endif
+  endif
   DynamicDiceClear 0
   DynamicDiceAdd 0 0 1
   if NumJumps > 0
@@ -269,18 +287,29 @@ DrawDebugRectOutline var17 70 148 100 0 255 0 170
 if var2 > 2 && var2 < 150 && var1 < -20 && var1 > -120
         DynamicDiceAdd 0 50 100
       endif
-    endif
-    DynamicDiceSize 0 var22
-    if var22 < 2
 var23 = Width * -0.5
-var23 += 32.5
+var23 += 105
 var17 = var0 - var23 + CenterX
 if var0 < 0
   var17 = var0 + var23 + CenterX
 endif
 var22 = -32.5
-DrawDebugRectOutline var17 -32.5 55 55 0 0 255 170
-if var2 > 5 && var2 < 60 && var1 < 60 && var1 > 5
+DrawDebugRectOutline var17 -32.5 50 55 0 0 255 170
+if var2 > 80 && var2 < 130 && var1 < 60 && var1 > 5
+        DynamicDiceAdd 0 50 100
+      endif
+    endif
+    DynamicDiceSize 0 var22
+    if var22 < 2
+var23 = Width * -0.5
+var23 += 27.5
+var17 = var0 - var23 + CenterX
+if var0 < 0
+  var17 = var0 + var23 + CenterX
+endif
+var22 = -32.5
+DrawDebugRectOutline var17 -32.5 45 55 255 255 0 170
+if var2 > 5 && var2 < 50 && var1 < 60 && var1 > 5
         DynamicDiceAdd 0 20 50
       endif
     endif
@@ -325,13 +354,14 @@ label handleNSpecial
 Return
 
 label handleSSpecial
-
+  // DAIR
+  AbsStick var0
 Return
 
 label handleUSpecial
   ClearStick
   var23 = XSpeed * var0
-  if AnimFrame < 5 && ActionTimer < 5 && var23 < 0
+  if AnimFrame <= 12 && ActionTimer <= 12 && var23 < 0
     AbsStick var0
   elif Equal CurrAction 129
     Button A
@@ -352,9 +382,7 @@ Return
 
 label handleJumpToStage
   ClearStick
-  if Equal var16 1
-    AbsStick var0
-  elif var0 > 6 || var0 < -6
+  if Equal var16 1 || {var0 > 6 || var0 < -6}
     AbsStick var0
   elif YDistBackEdge < 31.1
     var17 = var0 * 3

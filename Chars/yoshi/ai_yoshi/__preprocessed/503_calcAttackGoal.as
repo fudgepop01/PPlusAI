@@ -40,12 +40,9 @@ endif
 //   endif
 // endif
 
-if Equal var21 16.3 && YDistFloor > 25
+if {Equal var21 16.3 && YDistFloor > 25} || {Equal var21 16.3 && YDistFloor < 0}
   var21 = 16
-elif Equal var21 16.3 && YDistFloor < 0
-  var21 = 16
-elif var21 >= 16 && var21 <= 17
-elif Equal var16 2 || Equal var21 10.1 || Equal var21 10.2
+elif {var21 >= 16 && var21 <= 17} || {Equal var16 2 || Equal var21 10.1 || Equal var21 10.2}
 else
   var21 = 16
 endif
@@ -358,13 +355,8 @@ var22 -= var23
 var12 = 1
 // PredictOMov anotherTempVar mov_jump
 // anotherTempVar *= 0.2
-if CurrAction >= 26 && CurrAction <= 29
-elif Equal CurrSubaction JumpSquat || CalledFrom Shield
-elif YDistFloor > 5 && YSpeed > -0.25 && CurrAction <= 32 || OYDistFloor > 45
-elif var22 > 5
-elif YDistFloor > 8 && XDistLE 15
-elif OCurrAction >= 66 && OCurrAction <= 100 && var22 > 20
-elif CurrAction >= 115 && CurrAction <= 123
+if {CurrAction >= 26 && CurrAction <= 29} || {Equal CurrSubaction JumpSquat || CalledFrom Shield} || var22 > 5 || {YDistFloor > 8 && XDistLE 15} || {OCurrAction >= 66 && OCurrAction <= 100 && var22 > 20} || {CurrAction >= 115 && CurrAction <= 123}}
+elif {{YDistFloor > 5 && YSpeed > -0.25 && CurrAction <= 32} || OYDistFloor > 45}
 else
   var12 = 0
 endif
@@ -521,6 +513,7 @@ STACK_PUSH 5 0
   endif
 
   Goto check_hub
+
   var18 -= 1
   if var18 <= 0
     SeekNoCommit __DICE_LOOP_END__
@@ -606,10 +599,7 @@ var11 = var22
   var22 = STACK_POP
   if Equal var11 1
   endif
-  if CurrAction >= 42 && CurrAction <= 50 && Equal var11 1
-    var20 = -1
-    Return
-  elif Equal var11 0 && YSpeed < 0
+  if {CurrAction >= 42 && CurrAction <= 50 && Equal var11 1} || {Equal var11 0 && YSpeed < 0}
     var20 = -1
     Return  
   endif
@@ -756,23 +746,23 @@ elif Equal var20 10
   if var10 <= 0
     var22 = TopNX - OTopNX
     Abs var22
+    var22 *= 0.2
     var22 += 1
-    var15 = var22 * var3 * 0.15
-    var9 *= 0.5
+    var22 *= var22
+    var15 = var22 * var3 * 0.10
+    var9 *= 0.75
     // if anotherTempVar > 100
     //   anotherTempVar = 100
     // endif
     // rollWeight += anotherTempVar
     GetAttribute var23 40 1 
-    var23 *= 0.15
+    var23 *= 0.8
     var23 *= var9
     predictAverage var17 10
+    var17 += var23
     // LOGSTR str("distChk")
     // LOGVAL globTempVar
     // LOGVAL immediateTempVar
-    if Equal var21 7.1 || var21 >= 16.7
-      var15 *= 3
-    endif
     if YDistFloor < 0
       PRINTLN
       Return
@@ -788,6 +778,10 @@ elif Equal var20 10
       PRINTLN
       Return
     endif
+    if Equal var21 7.1 || var21 >= 16.7
+      var15 *= 2
+    endif
+
     Goto aftDirs
     PRINTLN
     Return 
@@ -930,9 +924,7 @@ if  Equal var20 12 || var20 >= 18 && var20 <= 23
           var23 = TopNX - OTopNX
           Abs var23
           if var11 > 0 && Equal AirGroundState 2 || YDistFloor < OFramesHitstun && YDistFloor > -1 && var23 < 35
-            if Equal Direction OPos && var22 >= 0 
-              var15 *= 1.75
-            elif !(Equal Direction OPos) && var22 <= 0 
+            if {Equal Direction OPos && var22 >= 0} || {!(Equal Direction OPos) && var22 <= 0} 
               var15 *= 1.75
             elif !(Equal var22 0) && var23 < 30
               var15 *= 0.05
@@ -1040,15 +1032,11 @@ if Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal
     predictAverage var17 10
     var17 *= 0.5
     var23 += var17
-
-    if Equal var16 2 || Equal var21 10.1
-      if XDistLE var23
-        Return
-      endif
-    endif
-    if var10 < 0 && XDistLE var23
-      Return
-    endif
+    // if XDistLE anotherTempVar && {Equal scriptVariant sv_campAttack || Equal currGoal cg_bait_attack} 
+    //   Return
+    // elif move_damage < 0 && XDistLE anotherTempVar
+    //   Return
+    // endif
 
 
 
@@ -1109,7 +1097,6 @@ elif Equal var20 13 || Equal var20 14 || Equal var20 15 || Equal var20 16 || Equ
   if !(True)
     label addMove
   endif
- 
   
   if var10 <= 0
     var15 *= 5

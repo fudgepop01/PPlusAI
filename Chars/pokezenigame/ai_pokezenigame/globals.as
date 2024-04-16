@@ -148,7 +148,7 @@
 #const nspecialair_damage_info = NSpecialair|-2|0|100|20
 
 // upB
-#const uspecial_IASA = 52
+#const uspecial_IASA = 117
 #const uspecial_xOffset = 23.1
 #const uspecial_yOffset = -54.27
 #const uspecial_xRange = 10.85

@@ -63,10 +63,7 @@
 
 #snippet JUMP_TO_STAGE_OLD
   ClearStick
-  if Equal isBelowStage 1
-    globTempVar = nearCliffX * -1
-    AbsStick globTempVar
-  elif nearCliffX > 6 || nearCliffX < -6
+  if Equal isBelowStage 1 || {nearCliffX > 6 || nearCliffX < -6}
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
   elif YDistBackEdge < cs_djumpHeight
@@ -77,9 +74,7 @@
 
 #snippet JUMP_TO_STAGE_NEW
   ClearStick
-  if Equal isBelowStage 1
-    AbsStick cliffDistX
-  elif cliffDistX > 6 || cliffDistX < -6
+  if Equal isBelowStage 1 || {cliffDistX > 6 || cliffDistX < -6}
     AbsStick cliffDistX
   elif YDistBackEdge < cs_djumpHeight
     globTempVar = cliffDistX * 3
@@ -175,7 +170,7 @@
   highCliffY = nearCliffY
   // LOGVAL nearCliffY
 
-  if !(NoOneHanging) || shouldGoHigh >= true && isBelowStage <= false
+  if !(NoOneHanging) || {shouldGoHigh >= true && isBelowStage <= false}
     highCliffY += shouldGoHigh
     // LOGSTR str("hcy")
     // LOGVAL highCliffY
@@ -209,7 +204,7 @@
 
 #snippet BREVERSE
   anotherTempVar = XSpeed * cliffDistX
-  if AnimFrame < 5 && ActionTimer < 5 && anotherTempVar < 0
+  if AnimFrame <= 12 && ActionTimer <= 12 && anotherTempVar < 0
     AbsStick cliffDistX
 #endsnippet
 
@@ -217,7 +212,7 @@
   if Equal CurrAction hex(0x84)
     AbsStick cliffDistX
   else
-    immediateTempVar = HurtboxSize * -0.5
+    immediateTempVar = HurtboxSize * -0.15
     if nearCliffY < immediateTempVar
       Stick -1
     elif nearCliffY > 15 && YSpeed > -1.25

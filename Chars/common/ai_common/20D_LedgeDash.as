@@ -16,7 +16,7 @@ XGoto PerFrameChecks
 #let HSize = var0
 GET_CHAR_TRAIT(immediateTempVar, chr_cs_djumpHeight)
 Seek start
-immediateTempVar -= 10
+immediateTempVar -= HurtboxSize
 if YDistBackEdge >= immediateTempVar
   Button X
   Stick 1
@@ -31,6 +31,9 @@ if YDistFloor >= 0
   Button R
   Stick 1 (-1)
   Call MainHub
+endif
+if Equal CurrAction hex(0x74) 
+  Call OnLedge
 endif
 Return
 Return

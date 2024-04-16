@@ -37,25 +37,25 @@ STACK_PUSH 0 0
   //= XReciever
 var16 = 0
 
-LOGSTR 822083584 0 0 0 0
-LOGVAL var10
+// LOGSTR str("1")
+// LOGVAL move_xRange
 
-if Equal var21 16.3
-  var22 = 0.003
-  XGoto GetChrSpecific
-  //= XReciever
-  GetAttribute var23 40 1
-  var17 = var6
-  var17 -= var22
-  var17 *= var23
-  if XDistLE var17
-    var21 = 16.4
-    XGoto CalcAttackGoal
-  endif
-endif
+// if Equal currGoal cg_attack_wall
+//   GET_CHAR_TRAIT(immediateTempVar, chr_get_OEndlag)
+//   GetAttribute anotherTempVar attr_dashInitVel fromOpponent
+//   globTempVar = move_IASA
+//   globTempVar -= immediateTempVar
+//   globTempVar *= anotherTempVar
+//   if XDistLE globTempVar
+//     currGoal = cg_attack_reversal
+//     XGoto CalcAttackGoal
+//   endif
+// endif
 
 if var15 > 10
   var15 = 10
+elif var15 < 1
+  var15 = 1
 endif
 
 var0 *= Scale
@@ -63,8 +63,8 @@ var1 *= Scale
 var10 *= Scale
 var9 *= Scale
 
-LOGSTR 838860800 0 0 0 0
-LOGVAL var10
+// LOGSTR str("2")
+// LOGVAL move_xRange
 
 // temp until loop
 // 1. adjust hitFrame
@@ -83,26 +83,10 @@ endif
 
 // 2. check if it's worth pursuing this attack
 var17 = OAnimFrame + var7
-if OCurrAction >= 78 && OCurrAction <= 82 && var17 < 26
+// __, __, roll, spotdodge, airdodge, roll from ledge, ledgeroll SLOW
+if var17 < 8
+elif {OCurrAction >= 78 && OCurrAction <= 82 && var17 < 26} || {OCurrAction >= 96 && OCurrAction <= 97 && var17 < 19} || {OCurrAction >= 31 && OCurrAction <= 32 && var17 < 19} || {{Equal OCurrAction 30 || Equal OCurrAction 142 || Equal OCurrAction 144 || Equal OCurrAction 145} && var17 < 15} || {Equal OCurrAction 33 && var17 < 29} || {{Equal OCurrSubaction 217 || Equal OCurrSubaction 48} && var17 < 33} || {{Equal OCurrSubaction 222 || Equal OCurrSubaction 221} && var17 < 61}
   Return
-elif OCurrAction >= 96 && OCurrAction <= 97 && var17 < 19
-  Return
-elif OCurrAction >= 31 && OCurrAction <= 32 && var17 < 19 // roll
-  Return
-elif Equal OCurrAction 30 || Equal OCurrAction 142 || Equal OCurrAction 144 || Equal OCurrAction 145
-  if var17 < 15 // spotdodge
-    Return
-  endif
-elif Equal OCurrAction 33 && var17 < 29 // airdodge
-  Return
-elif Equal OCurrSubaction 217 || Equal OCurrSubaction 48
-  if var17 < 33 // roll from ledge
-    Return
-  endif
-elif Equal OCurrSubaction 222 || Equal OCurrSubaction 221
-  if var17 < 61 // roll from ledge SLOW
-    Return
-  endif
 endif
 
 // 3. setup ranges
@@ -129,9 +113,9 @@ var18 = 0
 var22 = HurtboxSize * 0.9
 if var1 > var22 && OTopNY < TopNY
   var18 = 1
-  LOGSTR_NL 1397247744 1431061504 541204480 1178684416 1279872512
-  LOGVAL_NL var22
-  LOGVAL_NL var1
+  // LOGSTR_NL str("SHOULD B FALLING")
+  // LOGVAL_NL immediateTempVar
+  // LOGVAL_NL move_centerY
 endif
 
 // move_centerY += 2
@@ -140,14 +124,18 @@ var9 *= 2
 // move_xRange -= 2
 // move_yRange -= 2
 
-LOGSTR 855638016 0 0 0 0
-LOGVAL var10
+// LOGSTR str("3")
+// LOGVAL move_xRange
 
   var22 = 23
   XGoto GetChrSpecific
   //= XReciever
 var2 = var22
-
+var23 = var10 + var0
+Abs var23
+if var23 < 3
+  var2 = 0
+endif
 // grabs an estimate of the potential move xRange to hit
 // $ifAerialAttackNotSpecial()
 //   globTempVar = move_hitFrame + move_duration * 0.25
@@ -222,9 +210,8 @@ var2 = var22
 if  var20 >= 10 && var20 <= 13
   Abs var0
 elif Equal AirGroundState 1
-  if var0 < 0 && OPos < 0
-  elif var0 > 0 && OPos > 0
-  else
+  if {var0 < 0 && OPos < 0} || {var0 > 0 && OPos > 0}
+  elif True
     var0 *= -1
   endif
 elif var16 > 0
@@ -274,7 +261,6 @@ if var22 < 5 && var21 < 16.7 //&& Equal DEBUG_VALUE 0
 
   if !(Equal var21 16.3) && !(Equal var21 16.5)
     LOGSTR_NL 1633970688 1970500608 1768843008 0 0
-    var2 *= 0.5
     var23 = var2
     Abs var23
     var10 += var23
@@ -297,8 +283,8 @@ if var22 < 5 && var21 < 16.7 //&& Equal DEBUG_VALUE 0
   endif
 endif
 
-LOGSTR 872415232 0 0 0 0
-LOGVAL var10
+// LOGSTR str("4")
+// LOGVAL move_xRange
 // LOGVAL_NL move_xRange
 
 if Equal var20 14 || Equal var20 15 || Equal var20 16 || Equal var20 17 || Equal var20 18
@@ -345,15 +331,17 @@ elif LevelValue <= 60
   var9 += var22
 endif
 
-var7 += 1
+// move_hitFrame += 1
 var8 = var15
 
 // anotherTempVar = OHurtboxSize * 0.25
 // move_yRange += anotherTempVar
+var10 *= 0.5
+var9 *= 0.5
 
-LOGSTR 2018664704 1852269824 0 0 0
-LOGVAL var10
-PRINTLN
+// LOGSTR str("xRange")
+// LOGVAL move_xRange
+// PRINTLN
 STACK_PUSH var10 1
 STACK_PUSH var9 1
 STACK_PUSH var0 1
@@ -362,7 +350,7 @@ var22 = 0
 if  Equal var20 11 || Equal var20 13 || var20 >= 19 && var20 <= 26
   var22 = TotalYSpeed
   if OTopNY >= TopNY
-    if Equal AirGroundState 1 || YDistFloor < 2 && YDistFloor > 0
+    if Equal AirGroundState 1 || {YDistFloor < 2 && YDistFloor > 0}
       // LOGSTR_NL str("AAT AGS1")
       GetAttribute var22 84 0
       // globTempVar = TopNY + immediateTempVar //- move_centerY
@@ -411,15 +399,15 @@ STACK_PUSH var1 1
 
 // move_yOffset *= -1
 
-LOGSTR 1481768960 0 0 0 0
-LOGVAL var10
-LOGSTR 1498546176 0 0 0 0
-LOGVAL var9
-LOGSTR 1129840640 0 0 0 0
-LOGVAL var0
-LOGSTR 1129906176 0 0 0 0
-LOGVAL var1
-PRINTLN
+// LOGSTR str("XR")
+// LOGVAL move_xRange
+// LOGSTR str("YR")
+// LOGVAL move_yRange
+// LOGSTR str("CX")
+// LOGVAL move_centerX
+// LOGSTR str("CY")
+// LOGVAL move_centerY
+// PRINTLN
 
 var16 = -1
 if OCurrAction >= 256
@@ -479,7 +467,7 @@ if  Equal var20 11 || Equal var20 13 || var20 >= 19 && var20 <= 26
     elif XDistLE var22
       GetAttribute var23 132 0
       var23 *= var2
-    var4 += var23
+      var4 += var23
     endif
   else
     var23 = 0
@@ -561,11 +549,14 @@ if  Equal var20 11 || Equal var20 13 || var20 >= 19 && var20 <= 26
         // estOYPos += immediateTempVar
       else
         EstOYCoord var23 var23
-        var22 = OHurtboxSize * 0.5
+        var22 = OHurtboxSize
         var23 += var22
       endif
     else
       var23 = OCenterY
+      if Equal AirGroundState 2
+        var23 -= OHurtboxSize
+      endif
     endif
     // if OYDistBackEdge > 5
     //   if estOYPos < 0
@@ -676,12 +667,12 @@ STACK_PUSH 22 0
   // LOGVAL yDiff
   // PRINTLN
 
+  // tempXRange *= 0.5
+  // tempYRange *= 0.5
   var23 = OWidth * 0.5
   var4 += var23
   var23 = OHurtboxSize * 0.5
   var5 += var23
-  var4 *= 0.5
-  var5 *= 0.5
 
   var17 = var10 + OTotalXSpeed * 12 // wavedash lag
 
@@ -754,7 +745,7 @@ if Equal var20 11 || Equal var20 13
     var22 = Rnd * var23
     if LevelValue >= 31 && var22 > 1
       // accounts for delay in fastfall
-  var17 = var2 - 4
+  var17 = var2
   if Equal CurrSubaction JumpSquat || Equal AirGroundState 1 || Equal CurrAction 11 && Equal AnimFrame 0
     GetAttribute var22 940 0
     var17 -= var22
@@ -1029,7 +1020,7 @@ label checkCanEdgeguard
   GetYDistFloorOffset var22 var22 5 0
   var23 = var14 + 10
   GetYDistFloorAbsPos var23 var13 var23
-  if Equal var22 -1 || Equal var23 -1 || Equal YDistFloor -1 || var21 >= 16.7 && Equal OYDistFloor -1
+  if Equal var22 -1 || Equal var23 -1 || Equal YDistFloor -1 || {var21 >= 16.7 && Equal OYDistFloor -1}
   var22 = 18
   XGoto GetChrSpecific
   //= XReciever
@@ -1063,18 +1054,17 @@ label checkIfAirViable
   var22 = 0.001
   XGoto GetChrSpecific
   //= XReciever
+    var22 *= Direction * OPos
 if  var20 >= 10 && var20 <= 13
       if NoJumpPrevFrame
         Button X
       endif
-    elif Equal var22 -1 && Equal Direction OPos
+    elif Equal var22 -1
       var16 = -99
-      ClearStick
-      Stick -1
-    elif !(Equal var22 -1) && !(Equal Direction OPos)
-      var16 = -99
-      ClearStick
-      Stick -1
+      if !(Equal CurrAction 7) && !(Equal CurrAction 6)
+        ClearStick
+        Stick -1
+      endif
     elif NoJumpPrevFrame
       Button X
     endif

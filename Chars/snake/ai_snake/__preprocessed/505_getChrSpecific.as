@@ -100,7 +100,7 @@ label uspecial
   Return
 // sspecial; 16
 label sspecial
-  SetVarAttackData 9.611 -7.954 39 3 17 20 53 0 0 0 0
+  SetVarAttackData 9.611 -7.954 39 7 17 20 53 0 0 0 0
   var22 = 0
   Return
 // grab; 17
@@ -231,9 +231,7 @@ elif Equal var22 200
       Goto restoreTempRegs
       Return
     endif
-    if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
-    elif Equal OCurrAction 73 && OYDistFloor > 15
-    elif Equal HitboxConnected 1 || Equal PrevAction 60
+    if {OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)} || {Equal OCurrAction 73 && OYDistFloor > 15} || {Equal HitboxConnected 1 || Equal PrevAction 60}
     else
       // LOGSTR_NL str("NOT COMBOING")
       var22 = 0
@@ -250,9 +248,7 @@ elif Equal var22 200
 elif Equal var22 300
   // chr chk_actionableOnGround
   var22 = 0
-  if Equal CanCancelAttack 1
-  elif Equal HitboxConnected 1 && HasCurry
-  elif CurrAction >= 103 && CurrAction <= 109
+  if Equal CanCancelAttack 1 || {HasCurry && Equal HitboxConnected 1} || {CurrAction >= 103 && CurrAction <= 109}
   elif Equal CurrAction 22 
     if Equal PrevAction 33
       Return
@@ -284,56 +280,44 @@ endif
 elif Equal var22 30000
   // evt gotHit
   if Equal TRAINING_MODE_OPTION -1
-    Goto shuffle_AI
+    if Rnd < 0.02
+      Goto shuffle_AI
+    endif
     if !(True)
       label shuffle_AI
         var22 = LevelValue * 0.005
         if Rnd < var22
-          ADJUST_PERSONALITY 0 -11 1
-          ADJUST_PERSONALITY 0 1.25 1
-          var22 = LevelValue * 0.02
+          ADJUST_PERSONALITY 0 -1 PT_AGGRESSION
+          var22 = LevelValue * 0.005
           ADJUST_PERSONALITY 0 var22 Rnd
-          ADJUST_PERSONALITY 3 -11 1
-          ADJUST_PERSONALITY 3 1 1
-          ADJUST_PERSONALITY 11 -11 1
-          ADJUST_PERSONALITY 11 1.25 1
-          ADJUST_PERSONALITY 4 -11 1
-          ADJUST_PERSONALITY 4 1.25 1
-          ADJUST_PERSONALITY 5 -11 1
-          ADJUST_PERSONALITY 0 3 Rnd
-          ADJUST_PERSONALITY 3 2.5 Rnd
-          ADJUST_PERSONALITY 11 6 Rnd
-          ADJUST_PERSONALITY 4 3.5 Rnd
+          ADJUST_PERSONALITY 3 -1 PT_BAITCHANCE
+          ADJUST_PERSONALITY 11 -1 PT_WALL_CHANCE
+          ADJUST_PERSONALITY 4 -1 PT_BRAVECHANCE
+          ADJUST_PERSONALITY 5 -1 PT_CIRCLECAMPCHANCE
+          ADJUST_PERSONALITY 0 2 Rnd
+          ADJUST_PERSONALITY 3 4 Rnd
+          ADJUST_PERSONALITY 11 0.7 Rnd
+          ADJUST_PERSONALITY 4 2 Rnd
           ADJUST_PERSONALITY 5 4 Rnd
           if Rnd < 0.25
-            ADJUST_PERSONALITY 1 -3 1
-            var22 = 0.45 * 3
-            ADJUST_PERSONALITY 1 1 1
-            ADJUST_PERSONALITY 1 var22 Rnd
+            ADJUST_PERSONALITY 1 -1 PT_BAIT_DASHAWAYCHANCE
+            ADJUST_PERSONALITY 1 5 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 2 -3 1
-            var22 = 0.45 * 3
-            ADJUST_PERSONALITY 2 1 1
-            ADJUST_PERSONALITY 2 var22 Rnd
+            ADJUST_PERSONALITY 2 -1 PT_BAIT_WDASHAWAYCHANCE
+            ADJUST_PERSONALITY 2 5 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 7 -3 1
-            var22 = 0.05 * 4
-            ADJUST_PERSONALITY 7 1 1
-            ADJUST_PERSONALITY 7 var22 Rnd
+            ADJUST_PERSONALITY 7 -1 PT_JUMPINESS
+            ADJUST_PERSONALITY 7 1.6 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 6 -3 1
-            var22 = 0.02 * 4
-            ADJUST_PERSONALITY 6 1 1
-            ADJUST_PERSONALITY 6 var22 Rnd
+            ADJUST_PERSONALITY 6 -1 PT_DJUMPINESS
+            ADJUST_PERSONALITY 6 0.8 Rnd
           endif
           if Rnd < 0.25
-            ADJUST_PERSONALITY 8 -3 1
-            var22 = 0.1 * 4
-            ADJUST_PERSONALITY 8 1 1
-            ADJUST_PERSONALITY 8 var22 Rnd
+            ADJUST_PERSONALITY 8 -1 PT_PLATCHANCE
+            ADJUST_PERSONALITY 8 1.5 Rnd
           endif
         endif
       Return
@@ -341,16 +325,22 @@ elif Equal var22 30000
   endif
 elif Equal var22 20000
   // evt chrChecks
+  if !(Equal DEBUG_VALUE 0) && var21 < 16.7
+    var21 = 16
+  endif 
   if Equal TRAINING_MODE_OPTION -1
-    var22 = (LevelValue / 35) * 0.05
-    if Rnd < var22
-  var22 = 21
-  XGoto GetChrSpecific
-  //= XReciever
-      PredictOMov var22 14
-      if var22 > 0.2
-        ADJUST_PERSONALITY 0 -0.025 var22
-        ADJUST_PERSONALITY 11 0.025 var22
+    var17 = (LevelValue / 35) * 0.05
+    ADJUST_PERSONALITY 0 0.003 var17
+    PredictOMov var22 14
+    if Rnd < var17
+      PredictOMov var23 10
+      var22 -= var23
+      if var22 > 0.1
+        var22 *= 5
+        // if PT_AGGRESSION > 1.5
+        //   ADJUST_PERSONALITY idx_aggression -0.025 immediateTempVar
+        // endif
+        ADJUST_PERSONALITY 11 0.045 var22
         ADJUST_PERSONALITY 1 0.001 var22
         ADJUST_PERSONALITY 2 0.005 var22
         ADJUST_PERSONALITY 7 0.01 var22
@@ -361,43 +351,47 @@ elif Equal var22 20000
       if var23 > var22
         var22 = var23
       endif
-      if var22 >= 0.2
-        ADJUST_PERSONALITY 11 0.025 var22
+      if var22 >= 0.35
+        ADJUST_PERSONALITY 0 0.025 var22
+        ADJUST_PERSONALITY 11 -0.025 var22
         ADJUST_PERSONALITY 3 0.025 var22
         ADJUST_PERSONALITY 1 0.005 var22
         ADJUST_PERSONALITY 4 0.01 var22
       endif
+      PredictOMov var22 14
       PredictOMov var23 10
-      if var22 >= 0.2
-        ADJUST_PERSONALITY 3 -0.025 var22
-        ADJUST_PERSONALITY 11 -0.025 var22
-        ADJUST_PERSONALITY 0 0.025 var22
-        ADJUST_PERSONALITY 4 0.025 var22
-        ADJUST_PERSONALITY 6 0.01 var22
+      var23 -= var22
+      if var23 >= 0.075
+        var23 *= 5
+        ADJUST_PERSONALITY 3 0.05 var23
+        ADJUST_PERSONALITY 11 -0.05 var23
+        ADJUST_PERSONALITY 0 0.05 var23
+        ADJUST_PERSONALITY 4 0.05 var23
+        ADJUST_PERSONALITY 6 0.02 var23
       endif
     endif
-    PredictOMov var23 10
-    if Rnd <= 0.02
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-      if Equal var22 0
+var23 = var22
+    if Rnd <= 0.02
+      if Equal var23 0
         var22 = (LevelValue / 35) * 0.1
         ADJUST_PERSONALITY 3 0.002 var22
         ADJUST_PERSONALITY 1 0.001 var22
         ADJUST_PERSONALITY 2 0.001 var22
-        ADJUST_PERSONALITY 11 0.005 var22
-        ADJUST_PERSONALITY 5 0.002 var22
+        ADJUST_PERSONALITY 11 0.004 var22
+        ADJUST_PERSONALITY 5 0.005 var22
       endif
-    elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= 60 && var22 < 0.3
+    elif CHANCE_MUL_LE PT_AGGRESSION 0.001 && LevelValue >= 60 && Equal var23 0 && var22 < 0.08
       ADJUST_PERSONALITY 0 -11 1
-      ADJUST_PERSONALITY 0 1.7 1
+      ADJUST_PERSONALITY 0 1.65 1
       ADJUST_PERSONALITY 3 0.4 1
       ADJUST_PERSONALITY 11 1.2 1
     elif Rnd < 0.04000000000000001
       var22 = (LevelValue / 35) * 0.4
-      ADJUST_PERSONALITY 0 0.005 var22
       ADJUST_PERSONALITY 11 0.015 var22
+      ADJUST_PERSONALITY 5 0.015 var22
     elif Rnd < 0.04000000000000001 && FramesHitstun > 0
       Goto shuffle_AI
     endif
@@ -495,6 +489,21 @@ var23 = var22
         endif
       endif
     endif
+  endif
+elif Equal var22 60000
+  // evt checkDefend
+  if CurrAction >= 223 && CurrAction <= 229
+    var13 = OTopNX
+    var14 = OTopNY
+    XGoto MoveToGoal
+    Return
+  elif Equal CurrAction 220
+    var13 = OTopNX
+    XGoto MoveToGoal
+    Return
+  elif CurrAction >= 146 && CurrAction <= 148
+    Button X
+    Return
   endif
 elif Equal var22 0.003 || Equal var22 0.004
   // chr get_OEndlag

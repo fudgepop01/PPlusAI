@@ -151,7 +151,7 @@
 #const nspecial_yRange = 10
 #const nspecial_hitFrame = 18
 #const nspecial_lastHitFrame = 40
-#const nspecial_damage_info = NSpecial|-1|-1|0|0
+#const nspecial_damage_info = NSpecial|-1|0|0|0
 
 #const mv_asc = 1
 #const asc_damage_info = NSpecial|1|-1|0|0
@@ -163,7 +163,7 @@
 #const nspecialair_yRange = 10
 #const nspecialair_hitFrame = 18
 #const nspecialair_lastHitFrame = 40
-#const nspecialair_damage_info = NSpecialAir|-1|-1|0|0
+#const nspecialair_damage_info = NSpecialAir|-1|0|0|0
 
 // upB
 // #const uspecial_IASA = 81

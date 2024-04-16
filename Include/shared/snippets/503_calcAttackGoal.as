@@ -19,10 +19,7 @@
 #snippet TURBO_FILTERS
   IF_AERIAL_ATTACK(var11)
   endif
-  if CurrAction >= hex(0x2A) && CurrAction <= hex(0x32) && Equal var11 1
-    lastAttack = -1
-    Return
-  elif Equal var11 0 && YSpeed < 0
+  if {CurrAction >= hex(0x2A) && CurrAction <= hex(0x32) && Equal var11 1} || {Equal var11 0 && YSpeed < 0}
     lastAttack = -1
     Return  
   endif

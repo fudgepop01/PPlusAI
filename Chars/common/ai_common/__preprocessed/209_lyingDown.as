@@ -48,12 +48,10 @@ if var22 <= 1
   endif
 endif
 
-if var0 >= 1 && Rnd <= 0.1
-  if CurrAction >= 137 || Equal CurrAction 77 
-    Goto smartRoll
-    Seek begin
-    Return
-  endif
+if {var0 >= 1 && Rnd <= 0.1} && {CurrAction >= 137 || Equal CurrAction 77}
+  Goto smartRoll
+  Seek begin
+  Return
 endif
 var0 += 1
 Return

@@ -40,12 +40,31 @@
   endif
 #endsnippet
 
-#snippet NSPECIAL
-  Button R
+#snippet NSPECIAL 
+  if Equal CurrAction hex(0x117) || Equal CurrAction hex(0x118)
+    if XDistLE 50
+      anotherTempVar = OTopNY - TopNY
+      if anotherTempVar < 20
+        Button B
+      else
+        Button R
+      endif 
+    elif Rnd < 0.04
+      if Rnd < 0.25
+        Button B
+      else
+        Button R
+      endif
+    endif
+    if YDistFloor < 0
+      Button R
+    endif 
+  endif
 #endsnippet
 
 #snippet NSPECIALAIR
-  Button R
+  Seek nspecial
+  Jump
 #endsnippet
 
 

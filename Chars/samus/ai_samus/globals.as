@@ -188,18 +188,18 @@
 
 // downB
 #const dspecial_IASA = 54
-#const dspecial_xOffset = -7.380
+#const dspecial_xOffset = -40.380
 #const dspecial_yOffset = 4.292
-#const dspecial_xRange = 7.380
+#const dspecial_xRange = 40.380
 #const dspecial_yRange = 10.186
 #const dspecial_hitFrame = 11
 #const dspecial_lastHitFrame = 25
 #const dspecial_damage_info = DSpecial|-8|10|30|361
 
 #const dspecialair_IASA = 54
-#const dspecialair_xOffset = -7.380
+#const dspecialair_xOffset = -40.380
 #const dspecialair_yOffset = 37.764
-#const dspecialair_xRange = 7.380
+#const dspecialair_xRange = 40.380
 #const dspecialair_yRange = 25.990
 #const dspecialair_hitFrame = 11
 #const dspecialair_lastHitFrame = 25
@@ -209,9 +209,9 @@
 // TODO - bullet thingies
 #const sspecial_IASA = 49
 #const sspecial_xOffset = 8.554
-#const sspecial_yOffset = -8.929
+#const sspecial_yOffset = -1.929
 #const sspecial_xRange = 76.300
-#const sspecial_yRange = 2.500
+#const sspecial_yRange = 35.500
 #const sspecial_hitFrame = 22
 #const sspecial_lastHitFrame = 49
 #const sspecial_damage_info = SSpecial|-15|40|110|80

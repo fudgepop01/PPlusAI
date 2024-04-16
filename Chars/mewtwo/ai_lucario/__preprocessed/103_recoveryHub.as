@@ -37,7 +37,7 @@ Abs var0
 
 var5 = 0
 var6 = 0
-if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -67,8 +67,7 @@ if var17 < 10 && var17 > -10
   else
     var2 = -4
   endif
-elif var1 < TopNX && TopNX < var0
-elif var0 < TopNX && TopNX < var1  
+elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
 elif TopNY < var2
   if var17 < 0
     var2 = 6
@@ -112,6 +111,14 @@ endif
   endif
 
 var17 = 0
+
+if Equal CanCancelAttack 1
+  if {{Equal CurrAction 16 || Equal CurrAction 286} || {Equal CurrAction 276 || Equal CurrAction 283 || Equal CurrAction 284} || {Equal CurrAction 274 || Equal CurrAction 279 || Equal CurrAction 280 || Equal CurrAction 281} || {Equal CurrAction 275} || {Equal CurrAction 277 || Equal CurrAction 288}}
+    Seek postMoveCheck
+    Jump
+  endif
+endif
+
 if CurrAction >= 98 && CurrAction <= 108 && AnimFrame < 8
   Return
 elif Equal CurrAction 16 || Equal CurrAction 286
@@ -145,6 +152,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     endif
   endif
 endif
+label postMoveCheck
 Seek begin
 
 if YDistFloor > -1
@@ -211,7 +219,7 @@ endif
   var1 -= var23
   var3 = var1
   // LOGVAL nearCliffY
-  if !(NoOneHanging) || var6 >= 1 && var16 <= 0
+  if !(NoOneHanging) || {var6 >= 1 && var16 <= 0}
     var3 += var6
     // LOGSTR str("hcy")
     // LOGVAL highCliffY
@@ -259,14 +267,14 @@ if var2 > 0 && var2 < 300 && var1 < 165 && var3 > 15
     Abs var22
     if var22 > 1
 var23 = Width * -0.5
-var23 += 45
+var23 += 50
 var17 = var0 - var23 + CenterX
 if var0 < 0
   var17 = var0 + var23 + CenterX
 endif
 var22 = 46
-DrawDebugRectOutline var17 46 90 100 0 255 0 170
-if var2 > 0 && var2 < 90 && var1 < 4 && var3 > -96
+DrawDebugRectOutline var17 46 80 100 0 255 0 170
+if var2 > 10 && var2 < 90 && var1 < 4 && var3 > -96
         DynamicDiceAdd 0 30 50
       endif
     endif
@@ -345,7 +353,7 @@ Return
 
 label handleSSpecial
   var23 = XSpeed * var0
-  if AnimFrame < 5 && ActionTimer < 5 && var23 < 0
+  if AnimFrame <= 12 && ActionTimer <= 12 && var23 < 0
     AbsStick var0
   else
     Stick 1
@@ -389,7 +397,6 @@ label handleUSpecial
 Return
 
 label handleDSpecial
-  Button X
   if !(NoOneHanging) && !(Equal var16 1)
     var1 -= 25
     if var0 > 0
@@ -397,6 +404,14 @@ label handleDSpecial
     else
       var0 -= 15
     endif
+  endif
+  Norm var22 var0 var1
+  Abs var22
+  if var22 > 6 || var1 < 0
+    Button X
+  else
+    Seek begin
+    Return
   endif
   var4 = var0
   var3 = var1
@@ -431,9 +446,7 @@ label handleJumpToStage
     AbsStick 0 -1
   endif
   ClearStick
-  if Equal var16 1
-    AbsStick var0
-  elif var0 > 6 || var0 < -6
+  if Equal var16 1 || {var0 > 6 || var0 < -6}
     AbsStick var0
   elif YDistBackEdge < 34.59
     var17 = var0 * 3

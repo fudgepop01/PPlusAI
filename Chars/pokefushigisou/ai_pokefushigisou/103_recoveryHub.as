@@ -8,11 +8,12 @@
 #snippet INITIALIZATION
   $genActions(SFALL, 10)
   $genActions(NSPECIAL, 112|117|118)
-  $genActions(SSPECIAL, 113)
+  // dair
+  $genActions(SSPECIAL, 113|33)
   $genActions(USPECIAL, 114|80|81|82|83)
   $genActions(DSPECIAL, 115)
 
-  #const UpBXDist = 60
+  #const UpBXDist = 50
   #const UpBYDist = 60
   #const dairHeight = 80
   #const dairRange = 150
@@ -32,7 +33,19 @@
 
 #snippet RECOVERY_CONDITIONS
   {STANDARD_CLIFF_DATA}
-  
+
+  GetColDistPosRel globTempVar anotherTempVar TopNX CenterY 0 80 false
+  if Equal anotherTempVar -1
+    anotherTempVar = nearCliffX
+    Abs anotherTempVar
+    if anotherTempVar < 10
+      nearCliffX *= -1
+      ClearStick
+      AbsStick nearCliffX
+      nearCliffX *= -1
+    endif
+  endif
+
   DynamicDiceClear dslot0
   DynamicDiceAdd dslot0 optNone 1
 
@@ -47,6 +60,9 @@
     Abs anotherTempVar
     if anotherTempVar > 0.65 && YSpeed < 0
       $if_recoveryRect(x_abs,2,dairRange,y_rangeAbove,nearCliffY,-20,100)
+        DynamicDiceAdd dslot0 optDair 100
+      endif
+      $if_recoveryRect(x_abs,80,130,y_rangeAbove,nearCliffY,UpBYDist,55)
         DynamicDiceAdd dslot0 optDair 100
       endif
     endif
@@ -106,6 +122,8 @@
 #endsnippet
 
 #snippet SSPECIAL
+  // DAIR
+  AbsStick nearCliffX
 #endsnippet
 
 #snippet DSPECIAL

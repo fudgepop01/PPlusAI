@@ -35,12 +35,12 @@ if var22 < 1
   setPrediction var23 2
   predictAverage var22 3
   var23 = -0.5
-  if var22 < 5
+  if var22 < 3
     var23 = 1
   endif
-  ADJUST_PERSONALITY 0 -0.05 var23
-  ADJUST_PERSONALITY 3 0.05 var23
-  ADJUST_PERSONALITY 11 0.05 var23
+  ADJUST_PERSONALITY 0 -0.03 var23
+  ADJUST_PERSONALITY 3 0.03 var23
+  ADJUST_PERSONALITY 11 0.03 var23
 endif
 //--- track target stuff 
 // out of tumble action
@@ -58,9 +58,7 @@ if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
   endif
 endif
 // frame count after hitstun ends
-if OCurrAction >= 65 && OCurrAction <= 100
-  trackOAction 4 0
-elif OFramesHitstun > 0
+if {OCurrAction >= 65 && OCurrAction <= 100} || OFramesHitstun > 0
   trackOAction 4 0
 else 
   getCurrentPredictValue var22 4
@@ -129,11 +127,7 @@ if Equal OAnimFrame 10
   endif
 endif
 // O Bait/Defend Option
-if var21 >= 7 && var21 < 11
-  Goto baitDefendOption
-elif Equal var21 13
-  Goto baitDefendOption
-elif Rnd < 0.2
+if {var21 >= 7 && var21 < 11} || Equal var21 13 || Rnd < 0.2
   Goto baitDefendOption
 endif
 if !(True)
@@ -179,10 +173,10 @@ endif
 
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
-  Stick -0.78
-elif CurrAction >= 179 && CurrAction <= 188 && NoJumpPrevFrame || Equal CurrAction 186 || CurrAction >= 146 && CurrAction <= 148
+  Stick -1
+elif {NoJumpPrevFrame && CurrAction >= 179 && CurrAction <= 188} || Equal CurrAction 186 || {CurrAction >= 146 && CurrAction <= 148}
   Button X
-elif CurrAction >= 152 && CurrAction <= 154 || CurrAction >= 169 && CurrAction <= 174
+elif {CurrAction >= 152 && CurrAction <= 154} || {CurrAction >= 169 && CurrAction <= 174}
   Button A
   var22 = Rnd * 2 - 1
   var23 = Rnd * 2 - 1
@@ -192,7 +186,7 @@ elif CurrAction >= 152 && CurrAction <= 154 || CurrAction >= 169 && CurrAction <
   endif
 elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
   CallI ExecuteAttack
-elif CurrAction >= 61 && CurrAction <= 63 || CurrAction >= 90 && CurrAction <= 95 || CurrAction >= 199 && CurrAction <= 218 || Equal CurrAction 236
+elif {CurrAction >= 61 && CurrAction <= 63} || {CurrAction >= 90 && CurrAction <= 95} || {CurrAction >= 199 && CurrAction <= 218} || Equal CurrAction 236
   MOD var22 GameTimer 5
   if var22 >= 3
     var22 = Rnd * 2 - 1
@@ -202,20 +196,18 @@ elif CurrAction >= 61 && CurrAction <= 63 || CurrAction >= 90 && CurrAction <= 9
 elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 elif !(CalledFrom LyingDown)
-  if CurrAction >= 74 && CurrAction <= 84 
-    CallI LyingDown
-  elif CurrAction >= 138 && CurrAction <= 141
+  if {CurrAction >= 74 && CurrAction <= 84} || {CurrAction >= 138 && CurrAction <= 141}
     CallI LyingDown
   endif
 endif
 
 //--- switch tactic if conditions are met
 if !(CalledFrom AttackedHub)
-  if CurrAction >= 66 && CurrAction <= 73 || GettingThrown
+  if {CurrAction >= 66 && CurrAction <= 73} || GettingThrown
     if FramesHitlag > 0 || FramesHitstun > 0
       Goto OnGotHitAdjustments
       CallI AttackedHub
-    elif GettingThrown || Equal CurrAction 238 || CurrAction >= 69 && YDistFloor > 0 && YDistFloor < 10
+    elif GettingThrown || Equal CurrAction 238 || {CurrAction >= 69 && CurrAction <= 73 && YDistFloor > 0 && YDistFloor < 10}
       CallI AttackedHub
     endif
   endif
@@ -228,6 +220,9 @@ if Equal OFramesHitlag 1 && OFramesHitstun > 0 && Equal HitboxConnected 0
 endif
 
   var22 = 20000
+  XGoto GetChrSpecific
+  //= XReciever
+  var22 = 60000
   XGoto GetChrSpecific
   //= XReciever
 

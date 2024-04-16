@@ -161,13 +161,13 @@
 #const nspecialair_damage_info = NSpecialAir|8|10|100|90
 
 // upB
-#const uspecial_IASA = 9999.9999
-#const uspecial_xOffset = 9999.9999
-#const uspecial_yOffset = 9999.9999
-#const uspecial_xRange = 9999.9999
-#const uspecial_yRange = 9999.9999
-#const uspecial_hitFrame = 9999.9999
-#const uspecial_lastHitFrame = 9999.9999
+// #const uspecial_IASA = 9999.9999
+// #const uspecial_xOffset = 9999.9999
+// #const uspecial_yOffset = 9999.9999
+// #const uspecial_xRange = 9999.9999
+// #const uspecial_yRange = 9999.9999
+// #const uspecial_hitFrame = 9999.9999
+// #const uspecial_lastHitFrame = 9999.9999
 
 // downB
 #const dspecial_IASA = 57
@@ -196,7 +196,7 @@
 #const sspecialair_yRange = 30
 #const sspecialair_hitFrame = 17
 #const sspecialair_lastHitFrame = 51 // just a dummy
-#const sspecial_damage_info = SSpecialAir|-7|22|130|70
+#const sspecialair_damage_info = SSpecialAir|-7|22|130|70
 
 // grab
 // when I want to techchase using grab, i'll set move_variant to this value
@@ -267,14 +267,14 @@
 #const bair_lastHitFrame = 8
 #const bair_damage_info = BAir|13|20|100|361
 
-#const mv_bair_weak = 1
-#const bair_weak_xOffset = -19.79
-#const bair_weak_yOffset = 0.77
-#const bair_weak_xRange = 8.09
-#const bair_weak_yRange = 5.9
-#const bair_weak_hitFrame = 9
-#const bair_weak_lastHitFrame = 21
-#const bair_weak_damage_info = BAir|9|20|100|361
+// #const mv_bair_weak = 1
+// #const bair_weak_xOffset = -19.79
+// #const bair_weak_yOffset = 0.77
+// #const bair_weak_xRange = 8.09
+// #const bair_weak_yRange = 5.9
+// #const bair_weak_hitFrame = 9
+// #const bair_weak_lastHitFrame = 21
+// #const bair_weak_damage_info = BAir|9|20|100|361
 
 // UAir
 #const uair_IASA = 44

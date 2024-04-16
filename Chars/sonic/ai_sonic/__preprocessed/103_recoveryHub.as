@@ -28,7 +28,7 @@ Abs var0
 
 var5 = 0
 var6 = 0
-if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -58,8 +58,7 @@ if var17 < 10 && var17 > -10
   else
     var2 = -4
   endif
-elif var1 < TopNX && TopNX < var0
-elif var0 < TopNX && TopNX < var1  
+elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
 elif TopNY < var2
   if var17 < 0
     var2 = 6
@@ -92,6 +91,14 @@ endif
   endif
 
 var17 = 0
+
+if Equal CanCancelAttack 1
+  if {{Equal CurrAction 16 || Equal CurrAction 478 || Equal CurrAction 285 || Equal CurrAction 291} || {Equal CurrAction 276} || {Equal CurrAction 274 || Equal CurrAction 280 || Equal CurrAction 281 || Equal CurrAction 282 || Equal CurrAction 283} || {Equal CurrAction 275 || Equal CurrAction 286 || Equal CurrAction 287} || {Equal CurrAction 277 || Equal CurrAction 286 || Equal CurrAction 288 || Equal CurrAction 290 || Equal CurrAction 292}}
+    Seek postMoveCheck
+    Jump
+  endif
+endif
+
 if CurrAction >= 98 && CurrAction <= 108 && AnimFrame < 8
   Return
 elif Equal CurrAction 16 || Equal CurrAction 478 || Equal CurrAction 285 || Equal CurrAction 291
@@ -125,6 +132,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     endif
   endif
 endif
+label postMoveCheck
 Seek begin
 
 if YDistFloor > -1
@@ -210,7 +218,7 @@ endif
     AbsStick 0 (0.7)
     Return
   endif 
-  if Equal var4 1 || var5 <= 0.1 && NumJumps > 0
+  if Equal var4 1 || {var5 <= 0.1 && NumJumps > 0}
     if YDistBackEdge > 31.35 && Rnd < 0.5
       Button X
       Goto handleJumpToStage
@@ -262,10 +270,7 @@ Return
 
 label handleJumpToStage
   ClearStick
-  if Equal var16 1
-    var17 = var0 * -1
-    AbsStick var17
-  elif var0 > 6 || var0 < -6
+  if Equal var16 1 || {var0 > 6 || var0 < -6}
     var17 = var0 * -1
     AbsStick var17
   elif YDistBackEdge < 37.35

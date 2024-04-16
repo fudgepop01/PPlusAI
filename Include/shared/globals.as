@@ -22,16 +22,16 @@
 #const DIRX_BACK = -3
 
 // "PERSONALITY" traits
-#const pt_jumpiness = 0.05
-#const pt_djumpiness = 0.02
-#const pt_aggression = 1.25
-#const pt_bait_dashAwayChance = 0.45
-#const pt_bait_wdashAwayChance = 0.45
-#const pt_wall_chance = 0.7
-#const pt_platChance = 0.1
-#const pt_baitChance = 0.8
-#const pt_braveChance = 0.65
-#const pt_circleCampChance = 0.1
+#const pt_jumpiness = 0.4
+#const pt_djumpiness = 0.2
+#const pt_aggression = 1
+#const pt_bait_dashAwayChance = 1
+#const pt_bait_wdashAwayChance = 1
+#const pt_wall_chance = 0.35
+#const pt_platChance = 0.3
+#const pt_baitChance = 1
+#const pt_braveChance = 1
+#const pt_circleCampChance = 1
 
 #const pt_SDIChance = 0.5
 #const pt_reactionTimeMultiplier = 1
@@ -121,6 +121,7 @@
 #const evt_gotHit = 30000
 #const evt_checkDefend = 40000
 #const evt_grabbed = 50000
+#const evt_itemCheck = 60000
 
 #const shortEdgeRange = 15
 

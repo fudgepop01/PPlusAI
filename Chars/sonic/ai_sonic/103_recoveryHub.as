@@ -59,7 +59,7 @@
     AbsStick 0 (0.7)
     Return
   endif 
-  if Equal hasTriedToUpB 1 || jumpValue <= jumpChance && NumJumps > 0
+  if Equal hasTriedToUpB 1 || {jumpValue <= jumpChance && NumJumps > 0}
     if YDistBackEdge > calc(cs_djumpHeight - 6) && Rnd < 0.5
       Button X
       Goto handleJumpToStage

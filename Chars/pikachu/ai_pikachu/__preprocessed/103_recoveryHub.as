@@ -31,7 +31,7 @@ Abs var0
 
 var5 = 0
 var6 = 0
-if !(NoOneHanging) && Rnd < 0.8 || Rnd < 0.25
+if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -61,8 +61,7 @@ if var17 < 10 && var17 > -10
   else
     var2 = -3
   endif
-elif var1 < TopNX && TopNX < var0
-elif var0 < TopNX && TopNX < var1  
+elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
 elif TopNY < var2
   if var17 < 0
     var2 = 5
@@ -95,6 +94,14 @@ endif
   endif
 
 var17 = 0
+
+if Equal CanCancelAttack 1
+  if {{Equal CurrAction 16} || {Equal CurrAction 276 || Equal CurrAction 279 || Equal CurrAction 280} || {Equal CurrAction 274} || {Equal CurrAction 275 || Equal CurrAction 282 || Equal CurrAction 283 || Equal CurrAction 284} || {Equal CurrAction 277 || Equal CurrAction 285}}
+    Seek postMoveCheck
+    Jump
+  endif
+endif
+
 if CurrAction >= 98 && CurrAction <= 108 && AnimFrame < 8
   Return
 elif Equal CurrAction 16
@@ -128,6 +135,7 @@ elif CurrAction >= 11 && CurrAction <= 13
     endif
   endif
 endif
+label postMoveCheck
 Seek begin
 
 if YDistFloor > -1
@@ -303,12 +311,20 @@ label handleUSpecial
     var3 = var1
     if Equal CurrSubaction 475
       if var0 > TopNX
-        var0 += 15
+        var0 += Width
       else
-        var0 -= 15
+        var0 -= Width
       endif
+    elif var0 > TopNX
+      var0 += 15
+    else
+      var0 -= 15
     endif
     Norm var17 var0 var1
+    if var17 > 45 && Equal CurrSubaction 475
+      var1 -= 25
+      Norm var17 var0 var1
+    endif
     var0 /= var17
     var1 /= var17
     var0 *= -1

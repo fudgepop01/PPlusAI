@@ -132,16 +132,14 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction hex(0x49)
     if Rnd < 0.5
       stickY -= 0.5
     endif
-    if Equal IsOnStage 0 || KBSpeed > 3 || DistBackEdge > -20 || DistFrontEdge < 20
-      if Rnd < 0.8
-        // if offstage with high damage, switch to survival DI
-        stickX = TopNX * -1
-        stickY = 1
-        if KBAngle > 90 && KBAngle < 170
-          stickX *= -1 * Rnd
-        elif KBAngle > 180
-          stickY = 0
-        endif
+    if {Equal IsOnStage 0 || KBSpeed > 3 || DistBackEdge > -20 || DistFrontEdge < 20} && Rnd < 0.8
+      // if offstage with high damage, switch to survival DI
+      stickX = TopNX * -1
+      stickY = 1
+      if KBAngle > 90 && KBAngle < 170
+        stickX *= -1 * Rnd
+      elif KBAngle > 180
+        stickY = 0
       endif
     endif
   else
@@ -169,9 +167,7 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction hex(0x49)
   PRINTLN
   // LOGVAL_NL 10001
   if LevelValue >= LV3 && Equal techDirection -2
-    if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1
-      Goto _checkTech
-    elif GettingThrown
+    if {Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1} || GettingThrown
       Goto _checkTech
     elif Equal PrevAction hex(0x42) && AnimFrame < 5
     elif Equal IsOnStage 1 && YDistFloor < 25 && TotalYSpeed < 0.3
@@ -203,11 +199,7 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction hex(0x49)
       Goto _checkMeteorCancel
       Seek HSHandler
     endif
-    if FramesHitstun > 1
-      Goto exec_DI
-      Seek HSHandler
-      Return
-    elif GettingThrown
+    if FramesHitstun > 1 || GettingThrown
       Goto exec_DI
       Seek HSHandler
       Return
@@ -258,10 +250,7 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction hex(0x49)
   endif
 endif
 // LOGVAL_NL 10003
-if FramesHitstun > 0 && CurrAction <= hex(0x10)
-  Seek _done
-  Jump
-elif FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5
+if {FramesHitstun > 0 && CurrAction <= hex(0x10)} || {FramesHitstun > 0 && framesOnGround > 3 && LevelValue >= LV5}
   label _done
   Seek _done
   // techskill
@@ -310,9 +299,7 @@ if CurrAction >= hex(0x11) && CurrAction <= hex(0x17)
   framesOnGround += 1
 endif
 
-if FramesHitstun > 0 || GettingThrown
-  Return
-elif CurrAction >= hex(0x4E) && CurrAction <= hex(0x64)
+if FramesHitstun > 0 || GettingThrown || {CurrAction >= hex(0x4E) && CurrAction <= hex(0x64)}
   Return
 endif
 CallI MainHub
@@ -373,9 +360,7 @@ label _checkMeteorCancel
     globTempVar = (100 - LevelValue) / 100
     globTempVar = 0.9 - globTempVar
     if Rnd < 0.9
-      if CanJump && Rnd < 0.5
-        Button X
-      elif CanJump && YDistFrontEdge > 15
+      if {CanJump && Rnd < 0.5} || {CanJump && YDistFrontEdge > 15}
         Button X
       else
         Stick 0 0.7

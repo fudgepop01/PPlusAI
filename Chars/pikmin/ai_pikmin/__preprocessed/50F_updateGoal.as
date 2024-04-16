@@ -105,7 +105,7 @@ var17 = var22
   MOD var22 GameTimer var22
   if var22 <= 1
     var17 = OTopNY - TopNY
-    if var17 > 45 || OYDistBackEdge < -20 && Equal AirGroundState 1
+    if {var17 > 45 || OYDistBackEdge < -20} && Equal AirGroundState 1
       GetCommitPredictChance var22
       if CHANCE_MUL_LE PT_AGGRESSION 0.2 && XDistLE 40 && var22 < 0.125
         var21 = 16
@@ -268,11 +268,9 @@ var17 = var22
     Goto OPosGoal
 
     var17 = OTopNY - TopNY
-    if var17 > 45 || OYDistBackEdge < -20 && Equal AirGroundState 1
-      if CHANCE_MUL_LE PT_AGGRESSION 1.25
-        var21 = 16
-        Return
-      endif
+    if {var17 > 45 || OYDistBackEdge < -20} && Equal AirGroundState 1 && CHANCE_MUL_LE PT_AGGRESSION 1.25
+      var21 = 16
+      Return
     endif
     
     // GetAttribute anotherTempVar attr_dashInitVel 0
@@ -407,10 +405,8 @@ var17 = var22
 
   Goto getDist
   GetCommitPredictChance var23
-  if var22 >= 55 || var23 < 0.12
+  if var22 >= 55 || var23 < 0.12 || CHANCE_MUL_LE PT_BAITCHANCE 0.1 || var23 > 0.18
     var1 = 1
-  elif CHANCE_MUL_LE PT_BAITCHANCE 0.1 || var23 > 0.18
-    var1 = -1
   endif 
 
   predictAverage var23 11
@@ -487,10 +483,7 @@ var17 = var22
     if Equal var21 10.2 && Equal AirGroundState 1
       label startup
       Stick 1
-      if Equal CurrAction 3 && AnimFrame >= 5
-        Seek slide
-        Jump
-      elif CurrAction <= 5 && !(Equal CurrAction 0)
+      if {Equal CurrAction 3 && AnimFrame >= 5} || {CurrAction <= 5 && !(Equal CurrAction 0)}
         Seek slide
         Jump
       endif
@@ -654,8 +647,8 @@ elif var21 >= 16 && var21 < 17
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-  if var22 > 0
-    if var21 < 16.4 || Equal OIsOnStage 1 && var21 >= 16.7 
+  if var21 < 16.4 || {Equal OIsOnStage 1 && var21 >= 16.7}
+    if var22 > 0
       var21 = 16.4
     endif
   endif
@@ -698,8 +691,8 @@ elif var21 >= 16 && var21 < 17
   else
     SetDebugOverlayColor 0 255 255 136
 
-    if Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0 && YDistFloor > 0 && DistToOEdge < 40 && OXDistBackEdge > 20 
-      if CHANCE_MUL_LE PT_BAITCHANCE 0.15 || CHANCE_MUL_LE PT_AGGRESSION 0.1
+    if {CHANCE_MUL_LE PT_BAITCHANCE 0.15 || CHANCE_MUL_LE PT_AGGRESSION 0.1}
+      if {Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0 && YDistFloor > 0 && DistToOEdge < 40 && OXDistBackEdge > 20}
         var21 = 16.72
         Return
       endif
@@ -794,25 +787,30 @@ elif var21 >= 16 && var21 < 17
   // endif
 
   predictAverage var23 10
+  var23 *= 0.5
+  if XDistLE var23 && Equal var21 16.3 && CHANCE_MUL_LE PT_AGGRESSION 0.2
+    var21 = 16
+    var20 = -1
+    Return
+  endif
+  var23 *= 2
   var23 += 20
-  if XDistLE var23 && var21 < 16.4
-    if !(Equal var21 16.3)
-      GetCommitPredictChance var22
-      var22 *= 0.075
-      if Rnd < var22 
-        if CHANCE_MUL_LE PT_WALL_CHANCE 0.45 || CHANCE_MUL_LE PT_BAITCHANCE 0.25
-          if CHANCE_MUL_LE PT_BAITCHANCE 0.75
-            var21 = 10
-          else
-            var20 = -1
-            var21 = 16.3
-          endif
+  if XDistLE var23 && var21 < 16.4 && !(Equal var21 16.3)
+    GetCommitPredictChance var22
+    var22 *= 0.075
+    if Rnd < var22 
+      if CHANCE_MUL_LE PT_WALL_CHANCE 0.45 || CHANCE_MUL_LE PT_BAITCHANCE 0.25
+        if CHANCE_MUL_LE PT_BAITCHANCE 0.75
+          var21 = 10
+        else
+          var20 = -1
+          var21 = 16.3
+        endif
+        Return
+      elif CHANCE_MUL_LE PT_BAITCHANCE 0.2 || CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.2
+        if YDistFloor < 15 && YDistFloor > 0
+          var21 = 10.5
           Return
-        elif CHANCE_MUL_LE PT_BAITCHANCE 0.2 || CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.2
-          if YDistFloor < 15 && YDistFloor > 0
-            var21 = 10.5
-            Return
-          endif
         endif
       endif
     endif
@@ -900,13 +898,11 @@ if Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal
 
   predictAverage var22 10
   var22 += 10
-  if Equal OCurrAction 73 && var21 < 16.7
-    if XDistLE var22 && !(Equal OAirGroundState 1) 
-      predictOOption var22 15
-      predictionConfidence var17 15
-      if Equal var22 2 && Rnd < var17
-        Call Shield
-      endif
+  if {Equal OCurrAction 73 && var21 < 16.7} && {XDistLE var22 && !(Equal OAirGroundState 1)}
+    predictOOption var22 15
+    predictionConfidence var17 15
+    if Equal var22 2 && Rnd < var17
+      Call Shield
     endif
   endif
 
@@ -952,6 +948,8 @@ if Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal
         GetCommitPredictChance var22
         var23 = var22 * 1.5
         if var22 >= 0.13
+          // LOGSTR str("aggro wait")
+          // LOGVAL immediateTempVar
           // predictAverage immediateTempVar man_OAvgEndlag
           if CHANCE_MUL_GE PT_AGGRESSION var23 //|| var22 >= 15
             Goto aggressiveWait
@@ -965,8 +963,7 @@ if Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 13 || Equal
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-      if Equal var22 1
-      elif var21 >= 16.7
+      if Equal var22 1 || var21 >= 16.7
       elif !(SamePlane) && CHANCE_MUL_LE PT_BAITCHANCE 0.15 && Rnd < 0.2 && OFramesHitstun <= 0
         var21 = 10
         Return
@@ -1045,7 +1042,7 @@ label changeGoal
   XGoto CalcAttackGoal
 Return
 label forceChangeGoal
-  if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.35 || Equal var21 7 && Rnd < 0.75
+  if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.35 || {Equal var21 7 && Rnd < 0.75}
     XGoto CircleCampGoal
   else
     XGoto RandomizeGoal
@@ -1055,9 +1052,10 @@ label aggressiveWait
   var23 = LevelValue + 2
   var22 = Rnd * var23
   if var20 >= 0 && LevelValue >= 42
-    if CHANCE_MUL_LE PT_AGGRESSION 0.10
+    if CHANCE_MUL_LE PT_AGGRESSION 0.02
       var21 = 16.5
     elif CHANCE_MUL_LE PT_AGGRESSION 0.2
+      var20 = -1
       var21 = 16.3
     endif
   endif

@@ -70,9 +70,7 @@ else
     if !(Equal currGoal cg_bait_shield)
       GetCommitPredictChance immediateTempVar
       PredictOMov anotherTempVar mov_grab
-      if Rnd < 0.3 && immediateTempVar > 0.21
-        Goto rollOption
-      elif anotherTempVar > 0.12
+      if {Rnd < 0.3 && immediateTempVar > 0.21} || anotherTempVar > 0.12
         Goto rollOption
       endif
     endif
@@ -100,28 +98,23 @@ if OAttackCond && Equal OEndLag -1 && CurrAction <= hex(0x1E)
 endif
 
 MOD globTempVar GameTimer 3
-if Equal globTempVar 0 || patience <= 0
-  if Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x11) || Equal CurrAction hex(0x12)
-    GetShieldRemain globTempVar
-    immediateTempVar = OHasHitShield * 0.05
-    GetCommitPredictChance anotherTempVar
-    if globTempVar < 40 || OEndLag > 6 || !(XDistLE 50)
-      Seek pickOption
-      Jump
-    elif anotherTempVar > 0.25 && Rnd <= 0.85 && Equal willStrike false
-      Return
-    elif Equal willStrike true && XDistLE 40 && Rnd < 0.4
-      Seek pickOption
-      Jump
-    elif OAttacking && OEndLag < 1
-      Return
-    elif Rnd <= immediateTempVar
-      Seek pickOption
-      Jump
-    elif patience <= 0 && !(XDistLE 10)
-      Seek pickOption
-      Jump
-    endif
+if {Equal globTempVar 0 || patience <= 0} && {Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x11) || Equal CurrAction hex(0x12)}
+  GetShieldRemain globTempVar
+  immediateTempVar = OHasHitShield * 0.05
+  GetCommitPredictChance anotherTempVar
+  if globTempVar < 40 || OEndLag > 6 || !(XDistLE 50)
+    Seek pickOption
+    Jump
+  elif anotherTempVar > 0.25 && Rnd <= 0.85 && Equal willStrike false
+    Return
+  elif Equal willStrike true && XDistLE 40 && Rnd < 0.4
+    Seek pickOption
+    Jump
+  elif OAttacking && OEndLag < 1
+    Return
+  elif Rnd <= immediateTempVar || {patience <= 0 && !(XDistLE 10)}
+    Seek pickOption
+    Jump
   endif
 endif
 Return
@@ -130,13 +123,10 @@ OEndLag += 8
 predictAverage immediateTempVar man_OXHitDist
 immediateTempVar += 10
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
-  if OEndLag > 10 && Rnd < 0.85
+  if {OEndLag > 10 && Rnd < 0.85} || {Equal willStrike true && Rnd < 0.6}
     Seek exec_attack
     Jump
   elif Rnd < 0.2 && XDistLE immediateTempVar
-    Seek exec_attack
-    Jump
-  elif Rnd < 0.6 && Equal willStrike true
     Seek exec_attack
     Jump
   endif
@@ -161,11 +151,9 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
     CallI MainHub
   endif
 
-  if Equal OPos Direction && XDistLE 10
-    if OEndLag > 5 && Rnd < 0.75 || Equal willStrike true
-      Button A
-      Call ExecuteAttack
-    endif
+  if {{OEndLag > 5 && Rnd < 0.75} || Equal willStrike true} && {Equal OPos Direction && XDistLE 10}
+    Button A
+    Call ExecuteAttack
   endif
 endif
 

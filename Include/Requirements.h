@@ -120,6 +120,9 @@ req ev2 : 0x2
 ///Has something to do with stage
 req ev3 : 0x3
 
+/// If the stage does NOT have a PTCP file in hand, it's defaulted to Y Coordinate of the Bottom Blast-Line.
+req InDangerZone : 0x3
+
 ///The opponent is in fron of the character and X distance is large
 req fXFar : 0x4
 

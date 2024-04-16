@@ -4,7 +4,7 @@ unk 0x0
 
 //= XReciever
 label setup
-var0 = Rnd * 80 + 45
+var0 = Rnd * 80 + 20
 label execution
 
 XGoto PerFrameChecks
@@ -23,25 +23,27 @@ endif
 Seek execution
 // LOGSTR_NL str("exec")
 
+EstOXCoord var22 15
+var22 -= TopNX
+PredictOMov var23 14
 if Equal var16 1
-  AbsStick OPos
+  AbsStick var22
 elif Equal var16 2
-  var22 = OPos * -1
+  var22 *= -1
   AbsStick var22
 elif var16 >= 3
-  var22 = OPos * -1
+  var22 *= -1
   if Equal var16 4
     var22 = TopNX * -1
   endif
   AbsStick var22
   var22 = TopNY - OTopNY
-  PredictOMov var23 14
   if var23 >= 0.15 && var22 < 25
     Button X
   endif
 endif
 
-if Equal IsOnStage 0 && YDistBackEdge > -20
+if YDistBackEdge > -20 && XDistBackEdge > -15 && !(ODistLE 15)
   var16 = 4
 endif
 

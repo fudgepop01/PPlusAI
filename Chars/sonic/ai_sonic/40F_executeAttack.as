@@ -11,7 +11,7 @@
 
 #snippet SSPECIAL
   if Equal CurrAction hex(0x11f) 
-    if AnimFrame >= 7 && Rnd < 0.4 || AnimFrame >= 7 && Equal HitboxConnected 1
+    if {AnimFrame >= 7 && Rnd < 0.4} || {AnimFrame >= 7 && Equal HitboxConnected 1}
       if Equal HitboxConnected 1
         Button X
         Seek finish
@@ -34,7 +34,7 @@
     endif
   elif Equal CurrAction hex(0x11e)
     AbsStick OPos
-    if Equal HitboxConnected 1 || XDistLE 30 && Rnd < 0.01 || YDistFloor < 0
+    if Equal HitboxConnected 1 || {XDistLE 30 && Rnd < 0.01} || YDistFloor < 0
       Button X
     endif
   elif Equal CurrAction hex(0x122)

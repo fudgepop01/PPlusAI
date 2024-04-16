@@ -9,6 +9,7 @@ endif
 label setup
 #let timer = var0
 timer = 0
+ClearStick
 label drop
 XGoto PerFrameChecks
 //= XReciever
@@ -16,7 +17,6 @@ Goto AGSCheck
 Seek drop
 Button R
 if timer >= 2
-  immediateTempVar = timer - 1
   MOD immediateTempVar GameTimer 8
   immediateTempVar *= -0.125
   // LOGVAL immediateTempVar

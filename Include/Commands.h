@@ -178,6 +178,7 @@ cmd EstOPosVecR : 0x2E variable1 variable2 second
 
 ///Something attack range related
 /// still no idea how the end result works until i know what r23 and f27 are
+/// Attack Range Related
 cmd Cmd2F : 0x2F variable unkval
 
 ///Always used with AtkDiceRoll and cmd2F. This seems to restrict characters' move

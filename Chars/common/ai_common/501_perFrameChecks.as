@@ -35,12 +35,12 @@ if immediateTempVar < 1
   setPrediction anotherTempVar man_OPrevTrackedLocation
   predictAverage immediateTempVar man_OMovement
   anotherTempVar = -0.5
-  if immediateTempVar < 5
+  if immediateTempVar < 3
     anotherTempVar = 1
   endif
-  ADJUST_PERSONALITY idx_aggression -0.05 anotherTempVar
-  ADJUST_PERSONALITY idx_baitChance 0.05 anotherTempVar
-  ADJUST_PERSONALITY idx_wall_chance 0.05 anotherTempVar
+  ADJUST_PERSONALITY idx_aggression -0.03 anotherTempVar
+  ADJUST_PERSONALITY idx_baitChance 0.03 anotherTempVar
+  ADJUST_PERSONALITY idx_wall_chance 0.03 anotherTempVar
 endif
 //--- track target stuff 
 // out of tumble action
@@ -58,9 +58,7 @@ if Equal OPrevAction hex(0x44) || Equal OPrevAction hex(0x45) || Equal OPrevActi
   endif
 endif
 // frame count after hitstun ends
-if OCurrAction >= hex(0x41) && OCurrAction <= hex(0x64)
-  trackOAction man_OFramesPostHitstun 0
-elif OFramesHitstun > 0
+if {OCurrAction >= hex(0x41) && OCurrAction <= hex(0x64)} || OFramesHitstun > 0
   trackOAction man_OFramesPostHitstun 0
 else 
   getCurrentPredictValue immediateTempVar man_OFramesPostHitstun
@@ -129,11 +127,7 @@ if Equal OAnimFrame 10
   endif
 endif
 // O Bait/Defend Option
-if currGoal >= cg_circleCamp && currGoal < calc(cg_bait + 1)
-  Goto baitDefendOption
-elif Equal currGoal cg_defend
-  Goto baitDefendOption
-elif Rnd < 0.2
+if {currGoal >= cg_circleCamp && currGoal < calc(cg_bait + 1)} || Equal currGoal cg_defend || Rnd < 0.2
   Goto baitDefendOption
 endif
 if !(True)
@@ -179,10 +173,10 @@ endif
 
 //--- special state switches
 if Equal CurrAction hex(0x7C) || Equal CurrAction hex(0x7D)
-  Stick -0.78
-elif CurrAction >= hex(0xB3) && CurrAction <= hex(0xBC) && NoJumpPrevFrame || Equal CurrAction hex(0xBA) || CurrAction >= hex(0x92) && CurrAction <= hex(0x94)
+  Stick -1
+elif {NoJumpPrevFrame && CurrAction >= hex(0xB3) && CurrAction <= hex(0xBC)} || Equal CurrAction hex(0xBA) || {CurrAction >= hex(0x92) && CurrAction <= hex(0x94)}
   Button X
-elif CurrAction >= hex(0x98) && CurrAction <= hex(0x9A) || CurrAction >= hex(0xA9) && CurrAction <= hex(0xAE)
+elif {CurrAction >= hex(0x98) && CurrAction <= hex(0x9A)} || {CurrAction >= hex(0xA9) && CurrAction <= hex(0xAE)}
   Button A
   immediateTempVar = Rnd * 2 - 1
   anotherTempVar = Rnd * 2 - 1
@@ -192,7 +186,7 @@ elif CurrAction >= hex(0x98) && CurrAction <= hex(0x9A) || CurrAction >= hex(0xA
   endif
 elif Equal CurrAction hex(0x39) && !(CalledFrom ExecuteAttack)
   CallI ExecuteAttack
-elif CurrAction >= hex(0x3D) && CurrAction <= hex(0x3F) || CurrAction >= hex(0x5A) && CurrAction <= hex(0x5F) || CurrAction >= hex(0xC7) && CurrAction <= hex(0xDA) || Equal CurrAction hex(0xEC)
+elif {CurrAction >= hex(0x3D) && CurrAction <= hex(0x3F)} || {CurrAction >= hex(0x5A) && CurrAction <= hex(0x5F)} || {CurrAction >= hex(0xC7) && CurrAction <= hex(0xDA)} || Equal CurrAction hex(0xEC)
   MOD immediateTempVar GameTimer 5
   if immediateTempVar >= 3
     immediateTempVar = Rnd * 2 - 1
@@ -202,20 +196,18 @@ elif CurrAction >= hex(0x3D) && CurrAction <= hex(0x3F) || CurrAction >= hex(0x5
 elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= hex(0x73) && CurrAction <= hex(0x75)
   CallI OnLedge
 elif !(CalledFrom LyingDown)
-  if CurrAction >= hex(0x4A) && CurrAction <= hex(0x54) 
-    CallI LyingDown
-  elif CurrAction >= hex(0x8A) && CurrAction <= hex(0x8D)
+  if {CurrAction >= hex(0x4A) && CurrAction <= hex(0x54)} || {CurrAction >= hex(0x8A) && CurrAction <= hex(0x8D)}
     CallI LyingDown
   endif
 endif
 
 //--- switch tactic if conditions are met
 if !(CalledFrom AttackedHub)
-  if CurrAction >= hex(0x42) && CurrAction <= hex(0x49) || GettingThrown
+  if {CurrAction >= hex(0x42) && CurrAction <= hex(0x49)} || GettingThrown
     if FramesHitlag > 0 || FramesHitstun > 0
       Goto OnGotHitAdjustments
       CallI AttackedHub
-    elif GettingThrown || Equal CurrAction hex(0xee) || CurrAction >= hex(0x45) && YDistFloor > 0 && YDistFloor < 10
+    elif GettingThrown || Equal CurrAction hex(0xee) || {CurrAction >= hex(0x45) && CurrAction <= hex(0x49) && YDistFloor > 0 && YDistFloor < 10}
       CallI AttackedHub
     endif
   endif
@@ -226,6 +218,7 @@ if Equal OFramesHitlag 1 && OFramesHitstun > 0 && Equal HitboxConnected 0
 endif
 
 CALL_EVENT(evt_chrChecks)
+CALL_EVENT(evt_itemCheck)
 
 if !(True)
   label OnGotHitAdjustments

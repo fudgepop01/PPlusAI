@@ -166,7 +166,8 @@
     absNCX = nearCliffX
     Abs absNCX
 
-    anotherTempVar = ActionTimer * calc(1 / 8) - 1
+    anotherTempVar = ActionTimer * calc(1 / 8)
+    anotherTempVar -= 3
     travelDist = 45 + anotherTempVar * 9
     travelDist *= Direction
 
