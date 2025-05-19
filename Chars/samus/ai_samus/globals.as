@@ -216,6 +216,15 @@
 #const sspecial_lastHitFrame = 49
 #const sspecial_damage_info = SSpecial|-15|40|110|80
 
+#const sspecialair_IASA = 25
+#const sspecialair_xOffset = 8.554
+#const sspecialair_yOffset = -1.929
+#const sspecialair_xRange = 76.300
+#const sspecialair_yRange = 10.500
+#const sspecialair_hitFrame = 22
+#const sspecialair_lastHitFrame = 49
+#const sspecialair_damage_info = SSpecialAir|-15|40|110|80
+
 // #const mv_sspecial_smissile = 1
 // #const sspecial_IASA = 59
 // #const sspecial_xOffset = 15.380

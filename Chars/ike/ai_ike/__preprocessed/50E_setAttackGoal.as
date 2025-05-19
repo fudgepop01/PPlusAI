@@ -7,7 +7,9 @@ Cmd30
 NoRepeat
 
 var23 = 1
-if {OCurrAction >= 77 && OCurrAction <= 82} || {OCurrAction >= 96 && OCurrAction <= 97}
+if OCurrAction >= 77 && OCurrAction <= 82
+  var23 = 0
+elif OCurrAction >= 96 && OCurrAction <= 97
   var23 = 0
 elif Equal OCurrSubaction 217 || Equal OCurrSubaction 48 || Equal OCurrSubaction 222 || Equal OCurrSubaction 221
   var13 = ODirection * 30 * OScale + OTopNX
@@ -248,10 +250,15 @@ var23 = var9 + var11
 Abs var23
 
 
-var22 = OWidth * 0.5
-if var22 > var23
+// immediateTempVar = OWidth * 0.5
+// if immediateTempVar > move_centerX
+//   move_centerX += immediateTempVar
+// endif
+var22 = var23 - OWidth - 2
+if var22 > 0
   var23 += var22
 endif
+
 
 if  var20 >= 15 && var20 <= 19
   if Equal AirGroundState 2

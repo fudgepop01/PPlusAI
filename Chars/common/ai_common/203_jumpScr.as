@@ -70,7 +70,10 @@ if Equal scriptVariant sv_jump_over
     Return
   endif
   AbsStick savedOPos
-  if {currGoal >= cg_attack && currGoal < calc(cg_attack + 1)} || !(Equal savedOPos OPos) || YSpeed < 0
+  if currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
+    JmpNextIfLabel
+  elif !(Equal savedOPos OPos) || YSpeed < 0
+    IfLabel
     if currGoal < cg_attack
       scriptVariant = sv_aerialdrift_away
       CallI AerialDrift

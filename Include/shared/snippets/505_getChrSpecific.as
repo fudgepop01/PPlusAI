@@ -172,7 +172,9 @@
           LOGVAL globTempVar
           LOGVAL anotherTempVar
           PRINTLN
-          if {globTempVar > 10 && anotherTempVar >= 10} || {Equal OCurrAction hex(0x4D) && OAnimFrame > 25} || Equal currGoal cg_attack_shieldPunish || Equal currGoal cg_bait_shield
+          if globTempVar > 10 && anotherTempVar >= 10
+          elif Equal OCurrAction hex(0x4D) && OAnimFrame > 25
+          elif Equal currGoal cg_attack_shieldPunish || Equal currGoal cg_bait_shield
           elif !(Equal currGoal cg_defend) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal currGoal cg_bait_shield)
             // LOGSTR_NL str("defending")
             if OCurrAction >= hex(0x3) && OCurrAction <= hex(0xF) && OAnimFrame > 5

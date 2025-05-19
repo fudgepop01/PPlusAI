@@ -9,6 +9,12 @@
   $elifLastAttack(nspecial)
     lastAttack = -1
   endif
+  $ifLastAttack(sspeciaair)
+    if YSpeed >= 0
+      lastAttack = -1
+    endif
+  endif
+
   if currGoal >= cg_edgeguard
     $ifLastList(uspecial;uspecialair,if)
       lastAttack = -1

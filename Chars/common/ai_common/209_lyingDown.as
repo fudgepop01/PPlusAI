@@ -49,7 +49,7 @@ if immediateTempVar <= 1
   endif
 endif
 
-if {timer >= 1 && Rnd <= 0.1} && {CurrAction >= hex(0x89) || Equal CurrAction hex(0x4D)}
+if timer >= 1 && Rnd <= 0.1 && CurrAction >= hex(0x89) || Equal CurrAction hex(0x4D)
   Goto smartRoll
   Seek begin
   Return

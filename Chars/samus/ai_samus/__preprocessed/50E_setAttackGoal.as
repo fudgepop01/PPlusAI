@@ -7,7 +7,9 @@ Cmd30
 NoRepeat
 
 var23 = 1
-if {OCurrAction >= 77 && OCurrAction <= 82} || {OCurrAction >= 96 && OCurrAction <= 97}
+if OCurrAction >= 77 && OCurrAction <= 82
+  var23 = 0
+elif OCurrAction >= 96 && OCurrAction <= 97
   var23 = 0
 elif Equal OCurrSubaction 217 || Equal OCurrSubaction 48 || Equal OCurrSubaction 222 || Equal OCurrSubaction 221
   var13 = ODirection * 30 * OScale + OTopNX
@@ -60,7 +62,7 @@ if var2 <= 0
   var14 = TopNY
   Return
 endif
-if Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+if Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22
   var0 = 1
 endif
 if var0 > 10
@@ -248,12 +250,17 @@ var23 = var9 + var11
 Abs var23
 
 
-var22 = OWidth * 0.5
-if var22 > var23
+// immediateTempVar = OWidth * 0.5
+// if immediateTempVar > move_centerX
+//   move_centerX += immediateTempVar
+// endif
+var22 = var23 - OWidth - 2
+if var22 > 0
   var23 += var22
 endif
 
-if  var20 >= 22 && var20 <= 27
+
+if  var20 >= 23 && var20 <= 28
   if Equal AirGroundState 2
     var23 *= Direction
   else
@@ -268,14 +275,14 @@ if AnimFrame > 2
   var3 = LevelValue * 0.0125
   var22 = TotalXSpeed * var7
   var22 *= var3
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
   else
   // goalX -= immediateTempVar
   endif
 
   var22 = TotalYSpeed * var7
   // immediateTempVar *= multiplier
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
   else
   var14 -= var22
   endif

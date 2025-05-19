@@ -15,8 +15,11 @@ str "0.3"
 str "1"
 str "0.5"
 str "0.35"
+// "OR" IS EVALUATED BEFORE "AND"
 
+// label start
 
+// LOGSTR_NL str("-------")
 
 // SetAutoDefend 0
 // SetDisabledSwitch 1
@@ -167,27 +170,29 @@ PRINTLN
 
 if TRAINING_MODE_OPTION >= 0
   XGoto PerFrameChecks
-  ADJUST_PERSONALITY 0 -100 1
-  ADJUST_PERSONALITY 1 -100 1
-  ADJUST_PERSONALITY 2 -100 1
-  ADJUST_PERSONALITY 3 -100 1
-  ADJUST_PERSONALITY 4 -100 1
-  ADJUST_PERSONALITY 5 -100 1
-  // ADJUST_PERSONALITY idx_djumpiness -100 1
-  // ADJUST_PERSONALITY idx_jumpiness -100 1
-  // ADJUST_PERSONALITY idx_platChance -100 1
-  // ADJUST_PERSONALITY idx_SDIChance  1
-  ADJUST_PERSONALITY 11 -100 1
+  var22 = -100
+  var23 = 1
+  ADJUST_PERSONALITY 0 var22 var23
+  ADJUST_PERSONALITY 1 var22 var23
+  ADJUST_PERSONALITY 2 var22 var23
+  ADJUST_PERSONALITY 3 var22 var23
+  ADJUST_PERSONALITY 4 var22 var23
+  ADJUST_PERSONALITY 5 var22 var23
+  // ADJUST_PERSONALITY idx_djumpiness immediateTempVar anotherTempVar
+  // ADJUST_PERSONALITY idx_jumpiness immediateTempVar anotherTempVar
+  // ADJUST_PERSONALITY idx_platChance immediateTempVar anotherTempVar
+  // ADJUST_PERSONALITY idx_SDIChance  anotherTempVar
+  ADJUST_PERSONALITY 11 var22 var23
   // ADJUST_PERSONALITY idx_reaction_time 100 1
   
   ClearStick
   if Equal TRAINING_MODE_OPTION 1
-    ADJUST_PERSONALITY 0 100 1
-    ADJUST_PERSONALITY 4 100 1
+    ADJUST_PERSONALITY 0 100 var23
+    ADJUST_PERSONALITY 4 100 var23
     Seek initHitPredictValues
   elif Equal TRAINING_MODE_OPTION 5
-    ADJUST_PERSONALITY 5 100 1
-    ADJUST_PERSONALITY 3 100 1
+    ADJUST_PERSONALITY 5 100 var23
+    ADJUST_PERSONALITY 3 100 var23
     Seek initHitPredictValues
   elif Equal TRAINING_MODE_OPTION 6
     Button R
@@ -219,7 +224,9 @@ endif
 
 label start
 
-if {Equal var21 3 && Equal YDistFloor -1} || Equal CurrAction 16
+if Equal var21 3 && Equal YDistFloor -1
+  CallI RecoveryHub
+elif Equal CurrAction 16
   CallI RecoveryHub
 elif var21 >= 16.7
   var20 = -1
@@ -371,7 +378,7 @@ var22 *= 3
 
 GetCommitPredictChance var23
 var23 -= 0.25
-var23 *= -6 * var22 
+var23 *= -3 * var22 
 DynamicDiceAdd 0 7 var23
 // anotherTempVar *= 1.25 * PT_BAITCHANCE
 // DynamicDiceAdd dslot0 cg_bait_wait anotherTempVar
@@ -382,9 +389,10 @@ DynamicDiceAdd 0 7 var23
 
 var22 = PT_BAITCHANCE
 DynamicDiceAdd 0 10 var22
-var22 += PT_AGGRESSION
+var23 = PT_AGGRESSION * 0.675
+var22 += var23
 DynamicDiceAdd 0 10.1 var22
-var22 = PT_BAIT_DASHAWAYCHANCE * 2
+var22 = PT_BAIT_DASHAWAYCHANCE * 1.2
 DynamicDiceAdd 0 10.5 var22
 
 if LevelValue >= 75
@@ -396,19 +404,20 @@ if LevelValue >= 75
   endif
 endif
 var23 = LevelValue * 0.0075
-if {Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.2} || CHANCE_MUL_LE PT_AGGRESSION var23
-  SeekNoCommit attack_roll
+if Equal HitboxConnected 0 && CHANCE_MUL_LE PT_AGGRESSION 0.2
+  JmpNextIfLabel
+elif CHANCE_MUL_LE PT_AGGRESSION var23
+  JmpNextIfLabel
 endif
 var22 = LevelValue * 0.0075
 var23 = 1 - var22
 PredictOMov var22 14
 var22 *= var23
 if var22 < 0.02 && CHANCE_MUL_LE PT_AGGRESSION 0.02
-  SeekNoCommit attack_roll
+  JmpNextIfLabel
 elif Equal HitboxConnected 1
-  if !(True)
-    label attack_roll
-  endif
+  IfLabel
+
   var22 = PT_BAIT_DASHAWAYCHANCE
   DynamicDiceAdd 0 10.5 var22
   predictionConfidence var22 9
@@ -419,7 +428,8 @@ elif Equal HitboxConnected 1
   DynamicDiceAdd 0 16 var22
   GetCommitPredictChance var22
   if YDistFloor < 25
-    var22 *= 8 * PT_WALL_CHANCE
+    var22 += 0.2
+    var22 *= 7 * PT_WALL_CHANCE
     DynamicDiceAdd 0 16.3 var22
   endif
   var22 = 5 - var22
@@ -438,7 +448,7 @@ PRINTLN
   //= XReciever
 if Equal var3 1
   var21 = 7
-elif {Equal HitboxConnected 1 || Equal PrevAction 60} || Equal var22 1
+elif Equal HitboxConnected 1 || Equal PrevAction 60 || Equal var22 1
   var21 = 16.4
 endif
 var14 = BBoundary
@@ -571,7 +581,9 @@ label isActionable
   endif
 var22 = 0
 
-if Equal CanCancelAttack 1 || {HasCurry && Equal HitboxConnected 1} || {CurrAction >= 103 && CurrAction <= 109}
+if Equal CanCancelAttack 1 
+elif HasCurry && Equal HitboxConnected 1 
+elif CurrAction >= 103 && CurrAction <= 109
 elif Equal CurrAction 22 
   if Equal PrevAction 33
     Return

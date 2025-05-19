@@ -78,7 +78,7 @@ label landing
 Return
 label edgeCheck
 anotherTempVar = 0
-immediateTempVar = 8 * YDistFloor + 10
+immediateTempVar = 8 * YDistFloor + 18
 if DistBackEdge > immediateTempVar
   anotherTempVar = -1
 elif DistFrontEdge > immediateTempVar

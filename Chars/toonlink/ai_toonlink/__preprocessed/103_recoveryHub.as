@@ -33,7 +33,10 @@ Abs var0
 
 var5 = 0
 var6 = 0
-if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
+if !(NoOneHanging) && Rnd < 0.8
+  JmpNextIfLabel
+elif Rnd < 0.25
+  IfLabel
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -63,7 +66,8 @@ if var17 < 10 && var17 > -10
   else
     var2 = -4
   endif
-elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
+elif var1 < TopNX && var0 > TopNX 
+elif var0 < TopNX && var1 > TopNX
 elif TopNY < var2
   if var17 < 0
     var2 = 6

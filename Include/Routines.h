@@ -1,4 +1,93 @@
-﻿
+﻿// 0x6011 = slot0 = Very Close Attacks
+// 0x6012 = slot1 = Medium Range Attacks
+// 0x6013 = slot2 = Close Attacks
+// 0x6014 = slot3 = Ground Attacks to edgeguard with (opponent below)
+// 0x6015 = slot4 = Attacks that send the opponent high up
+// 0x6016 = slot5 = general edgeguard attacks (combos @ pplus)
+// 0x6017 = slot6 = attacks that cover both sides
+// 0x6018 = slot7 = (UNCONFIRMED) fast counterhit
+// 0x6019 = slot8 = Aerial OR ground approach options
+// 0x601a = slot9 = close-range defensive attacks
+// 0x601b = slot10 = Block Edgeguard
+// 0x601c = slot11 = Jump Aerial approach options neutral
+// 0x601d = slot12 = Jump Aerial approach option front
+// 0x601e = slot13 = Jump Aerial Approach option behind
+// 0x601f = slot14 = Jump Aerial approach hit above
+// 0x6020 = slot15 = Jump Aerial approach options below
+
+// unsure why these exist
+// 0x6021 = slot11_sp
+// 0x6022 = slot12_sp
+// 0x6023 = slot13_sp
+// 0x6024 = slot14_sp
+// 0x6025 = slot15_sp
+
+// 0x6026 = slot16 = general moves to use in neutral
+// 0x6027 = slot17 = more powerful back-sending aerials
+// 0x6028 = slot18 = move-powerful up-sending aerials
+// 0x6029 = slot19 = Meteor Smashes
+// -- edgeguarding (1140)
+// 0x602a = slot20 = (UNCONFIRMED) defensive recovery attacks
+// 0x602b = slot21 = main recovery
+// -- also used in act_change (0x2040)
+// 0x602c = slot22 = recover from side
+// 0x602d = slot23 = recover from up high
+
+//- /*
+//-   CPU types:
+//-   CPUType > 5:
+//-     - on idle
+//-       - set script to 0
+//-       - var6 = 5 to 35
+//-     > else:
+//-       - var6 = 0 to 8
+//- 
+//-   CPUType 4 to 5:
+//-     - chase subroutine:
+//-       - 4x as likely to not return a thing
+//- 
+//-   0x0: 
+//-   0x1:
+//-   0x2:
+//-   0x3:
+//-   0x4:
+//-   0x5:
+//-   0x6:
+//-   0x7:
+//-   0x8:
+//-   0x9:
+//-   0xA:
+//-   0xB:
+//-   0xC:
+//-   0xD:
+//-   0xE:
+//-   0xF:
+//-   0x10:
+//-   0x11:
+//-   0x12:
+//-   - if snake 
+//-     - disable slot 10
+//-   0x13:
+//-   - disable slot 7, 12
+//-   0x14: 
+//-   - forces dspecial usage
+//-   - if snake disable slot 7
+//-   0x15:
+//-     - does not check if offstage (?)
+//-   0x16:
+//-   0x17:
+//-   0x18:
+//-   0x19:
+//-   0x1A:
+//-   0x1B:
+//-   - 80% chancr to not catch and throw down (unless Dedede) ?
+//-   0x1C:
+//-   - if sheik:
+//-     - disable slots 0x15, 0x16
+//-   - if peach or zelda:
+//-     - use dspecial if on ground
+//- */
+
 ///Seems to be doing nothing
 act Nothing : 0x0
 
@@ -43,6 +132,7 @@ act SHopDJ : 0x57
 act FHopDJ : 0x58
 
 act DashUp : 0x60
+act DashBack : 0x61
 
 act RollBase : 0x70
 act RollF : 0x71
@@ -53,19 +143,25 @@ act GetBehind0 : 0x80
 //Ground attack routines
 
 // jab, grab (slot1); XDistLE 10
+act DoVeryClose : 0x1010
 act Unk1010 : 0x1010
 // fsmash (slot3); XDistLE 25
+act DoClose : 0x1020
 act Unk1020 : 0x1020
 // utilt, usmash (slot4); XDistLE 15
+act SendHigh : 0x1030
 act Unk1030 : 0x1030
 // jab, grab (slot1); XDistLE 30 + 20*Rnd only if opponent "close" 
+act DoMedRange : 0x1040
 act Unk1040 : 0x1040
 // wait until touching ground and can act for 10 frames; face the opponent; and attack with slot2 (NB, DB)
+act BlkRecoveryProj : 0x1050
 act Unk1050 : 0x1050
 
 // usmash, upB (slot5) if opponent will fall into attack range in 30 frames (0.5s); else run to location
 /// NOTE: often called when opponent is high up and
 /// when opponent and self are on same plane
+act AntiAir : 0x1060
 act Unk1060 : 0x1060
 
 /// id of 0x9070
@@ -90,8 +186,10 @@ act Unk1078 : 0x1078
 
 /// follow opponent coming down and execute slot 17, 18, or 11
 act Unk1080 : 0x1080
+act AtkAerialApproachGround : 0x1080
 /// aggressively run to opponent coming down and execute slot8 (jab, usmash, grab, nair, fair, bair, uair)
 act Unk1090 : 0x1090
+act AtkAirOrGroundApproach : 0x1090
 
 ///Deals with intercepting the opponent's recovery
 /// act_a_meteo_aft
@@ -100,6 +198,7 @@ act BlockRecovery1 : 0x10A1
 act BlockRecovery2 : 0x10A2
 act BlockRecovery3 : 0x10A3
 /// DSmash (slot6) if idling -- something to hit an opponent behind them
+act AtkCoverBothSides : 0x10D0
 act Unk10D0 : 0x10D0
 ///Called when the opponent is hanging cliff
 /// act_a_meteo_aft
@@ -143,9 +242,11 @@ act JumpOnStage9 : 0x2019
 /// sideb to ledge if offstage, else run towards center
 /// only used with mario 
 act Unk2020 : 0x2020
+act RecoverNonUpSpMash : 0x2020
 /// jump in direction of ledge
 /// never used/called
 act Unk2030 : 0x2030
+act RecoverNonUSpOnce : 0x2030
 
 /// act_r_jump_aft_shot
 act EdgeRecover : 0x2040
@@ -170,7 +271,8 @@ act LedgeHang : 0x2060
 ///Lying
 act Lying : 0x2070
 
-//Defensive Options
+///Recover back on stage after being knocked up really high
+act RecoverFromReallyHigh : 0x2080
 
 /// act_d_wait_init/act_d_wait (action defensive wait?)
 /// | basic defensive wait
@@ -209,7 +311,7 @@ act SSpecial : 0x6039
 act USpecial : 0x603A
 act DSpecial : 0x603B
 act Grab : 0x603C
-// act Nothing : 0x603D
+// act Nothing : 0x603DF
 
 act AerialBase : 0x6040
 act NAir : 0x6041
@@ -597,32 +699,3 @@ act Unk3050 : 0x3050
 act Unk3060 : 0x3060
 
 act Unk6010 : 0x6010
-// 0x6011 = slot0
-// 0x6012 = slot1
-// 0x6013 = slot2
-// 0x6014 = slot3
-// 0x6015 = slot4
-// 0x6016 = slot5
-// 0x6017 = slot6
-// 0x6018 = slot7
-// 0x6019 = slot8
-// 0x601a = slot9
-// 0x601b = slot10
-// 0x601c = slot11
-// 0x601d = slot12
-// 0x601e = slot13
-// 0x601f = slot14
-// 0x6020 = slot15
-// 0x6021 = slot11
-// 0x6022 = slot12
-// 0x6023 = slot13
-// 0x6024 = slot14
-// 0x6025 = slot15
-// 0x6026 = slot16
-// 0x6027 = slot17
-// 0x6028 = slot18
-// 0x6029 = slot19
-// 0x602a = slot20
-// 0x602b = slot21
-// 0x602c = slot22
-// 0x602d = slot23

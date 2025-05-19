@@ -14,14 +14,14 @@
 
 #snippet NSPECIAL 
   if Equal CurrAction hex(0x118)
-    if XDistLE 50
+    if XDistLE 30 && OYDistFloor > 0
       anotherTempVar = OTopNY - TopNY
-      if anotherTempVar < 20
+      if anotherTempVar < 20 && Rnd < 0.25
         Button B
       else
         Button R
       endif 
-    elif Rnd < 0.04
+    elif Rnd < 0.02
       if Rnd < 0.25
         Button B
       else
@@ -36,5 +36,32 @@
 
 #snippet NSPECIALAIR
   Seek nspecial
+  Jump
+#endsnippet
+
+#snippet SSPECIAL 
+  #let timer = var3
+  timer = 0
+  globTempVar = TopNY - OTopNY
+  Abs globTempVar
+  if globTempVar > 10 || Rnd < 0.25
+    timer = 12
+  endif
+  label sspecial_routine
+    Goto PFC
+    Seek sspecial_routine
+    Stick 0.7
+    timer -= 1
+    if timer <= 0
+      Button B
+      if timer < -20
+        Seek finish
+      endif
+    endif
+  Return
+#endsnippet
+
+#snippet SSPECIALAIR
+  Seek sspecial
   Jump
 #endsnippet

@@ -198,7 +198,7 @@ label dspecial
   Return
 // dspecialair; 15
 label dspecialair
-  SetVarAttackData -5 41.3 27.466 37.872 24 15 95 13 0 50 100
+  SetVarAttackData -5 41.3 12.466 37.872 24 15 95 13 0 50 100
   var22 = 361
   Return
 // sspecial; 16
@@ -336,9 +336,9 @@ elif Equal var22 200
   Goto saveTempRegs
   if XDistLE 60 || OFramesHitstun > 0
     getCurrentPredictValue var17 4
-    var23 = PT_AGGRESSION * 5 + 10
-    // LOGSTR_NL str("posthitstun")
-    // LOGVAL_NL globTempVar
+    var23 = PT_AGGRESSION * 5 + 6
+    LOGSTR 1886352128 1952999680 1953723392 1970143232 0
+    LOGVAL var17
     if var17 > 200
       var22 = 0
       Goto restoreTempRegs
@@ -349,7 +349,9 @@ elif Equal var22 200
       Goto restoreTempRegs
       Return
     endif
-    if {OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)} || {Equal OCurrAction 73 && OYDistFloor > 15} || {Equal HitboxConnected 1 || Equal PrevAction 60}
+    if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
+    elif Equal OCurrAction 73 && OYDistFloor > 15 
+    elif Equal PrevAction 60
     else
       // LOGSTR_NL str("NOT COMBOING")
       var22 = 0
@@ -544,7 +546,9 @@ var17 = var22
           LOGVAL var17
           LOGVAL var23
           PRINTLN
-          if {var17 > 10 && var23 >= 10} || {Equal OCurrAction 77 && OAnimFrame > 25} || Equal var21 16.5 || Equal var21 10.2
+          if var17 > 10 && var23 >= 10
+          elif Equal OCurrAction 77 && OAnimFrame > 25
+          elif Equal var21 16.5 || Equal var21 10.2
           elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
             // LOGSTR_NL str("defending")
             if OCurrAction >= 3 && OCurrAction <= 15 && OAnimFrame > 5

@@ -1,4 +1,5 @@
-﻿///This value is a threshold which means the opponent is far.
+﻿
+///This value is a threshold which means the opponent is far.
 func AIPDFloat1 : 0x0
 
 ///This value is a threshold which means the opponent is in middle distance.
@@ -13,9 +14,11 @@ func Direction : 0x2
 func OPos : 0x3
 
 ///Returns X coordinate of the character.
+/// can be vector
 func XCoord : 0x4
 
 ///Returns X coordinate of the opponent.
+/// can be vector
 func OXCoord : 0x5
 
 ///Returns the distance between the character and an edge in which side the opponent is.
@@ -25,6 +28,7 @@ func DistToOEdge : 0x6
 func NumFrames : 0x7
 
 ///Returns X speed of the character
+/// can be vector
 func XSpeed : 0x8
 
 ///Always returns 0.This is used to initiate a vector.
@@ -62,31 +66,39 @@ func RandXOffset : 0x12
 ///Unknown
 func Func13 : 0x13
 
+///Random Y offset for attacks (only within 603X and 604X)
+func RandYOffset : 0x13
+
 ///Returns X coordinate of an object like PK thunder.
+/// can be vector
 func ObjXCoord : 0x14
 
 ///Returns Y coordinate of an object like PK thunder.
 func ObjYCoord : 0x15
 
 ///Returns X speed of the opponent
+/// can be vector
 func OXSpeed : 0x16
 
 ///Returns Y speed of the opponent
 func OYSpeed : 0x17
 
 ///Returns X speed of an object like PK thunder.
+/// can be vector
 func ObjXSpeed : 0x18
 
 ///Returns Y speed of an object like PK thunder.
 func ObjYSpeed : 0x19
 
 ///Returns X coordinate of the character's landing collision.
+/// can be vector
 func ExactXCoord : 0x1A
 
 ///Returns Y coordinate of the character's landing collision.
 func ExactYCoord : 0x1B
 
 ///Returns X coordinate of the opponent's landing collision
+/// can be vector
 func ExactOXCoord : 0x1C
 
 ///Returns Y coordinate of the opponent's landing collision.

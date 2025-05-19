@@ -179,7 +179,12 @@ cmd EstOPosVecR : 0x2E variable1 variable2 second
 ///Something attack range related
 /// still no idea how the end result works until i know what r23 and f27 are
 /// Attack Range Related
-cmd Cmd2F : 0x2F variable unkval
+/// local_c8 = double converted item range
+/// dvar27 = base range
+/// if dvar27 < 0.2
+/// variable = 0.2
+/// weapon range
+cmd Cmd2F : 0x2F variable baseRange
 
 ///Always used with AtkDiceRoll and cmd2F. This seems to restrict characters' move
 /// Calls swingChkSet with 0 as the argument

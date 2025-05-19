@@ -105,6 +105,8 @@ req OIsCharOf : 0x101F charID
 ///Always true
 req True : 0x0
 
+// SITUATIONS
+
 ///This situation happens when the opponent is recoverying
 req MeteoChance : 0x1
 

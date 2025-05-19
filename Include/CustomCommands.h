@@ -228,3 +228,9 @@ cmd PRINTLN : 0xF4
 
 ///brings up fudge menu, effectively pausing the game
 cmd PAUSE : 0xF5
+
+///jumps to the next IfLabel
+cmd JmpNextIfLabel : 0xFE
+
+///label to allow for multiple if statements to end up at the same place easily
+cmd IfLabel : 0xFF

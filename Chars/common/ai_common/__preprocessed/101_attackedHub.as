@@ -125,14 +125,16 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction 73
     if Rnd < 0.5
       var1 -= 0.5
     endif
-    if {Equal IsOnStage 0 || KBSpeed > 3 || DistBackEdge > -20 || DistFrontEdge < 20} && Rnd < 0.8
-      // if offstage with high damage, switch to survival DI
-      var0 = TopNX * -1
-      var1 = 1
-      if KBAngle > 90 && KBAngle < 170
-        var0 *= -1 * Rnd
-      elif KBAngle > 180
-        var1 = 0
+    if Rnd < 0.8 || LevelValue >= 100 
+      if Equal IsOnStage 0 || KBSpeed > 3 || DistBackEdge > -20 || DistFrontEdge < 20 
+        // if offstage with high damage, switch to survival DI
+        var0 = TopNX * -1
+        var1 = 1
+        if KBAngle > 90 && KBAngle < 170
+          var0 *= -1 * Rnd
+        elif KBAngle > 180 
+          var1 = 0
+        endif
       endif
     endif
   else
@@ -142,7 +144,7 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction 73
     var1 *= -1
   endif
   var2 = 40 - FramesSinceShield
-  var3 = Rnd * 10 + 26
+  var3 = Rnd * 8 + 12
   var4 = 0
   var5 = -2
   label HSHandler
@@ -160,7 +162,9 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction 73
   PRINTLN
   // LOGVAL_NL 10001
   if LevelValue >= 21 && Equal var5 -2
-    if {Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1} || GettingThrown
+    if Equal IsOnStage 0 && Equal CurrAction 69 && FramesHitlag <= 1 
+      Goto _checkTech
+    elif GettingThrown
       Goto _checkTech
     elif Equal PrevAction 66 && AnimFrame < 5
     elif Equal IsOnStage 1 && YDistFloor < 25 && TotalYSpeed < 0.3
@@ -243,7 +247,10 @@ if FramesHitstun > 0 || GettingThrown || Equal CurrAction 73
   endif
 endif
 // LOGVAL_NL 10003
-if {FramesHitstun > 0 && CurrAction <= 16} || {FramesHitstun > 0 && var4 > 3 && LevelValue >= 42}
+if FramesHitstun > 0 && CurrAction <= 16
+  JmpNextIfLabel
+elif FramesHitstun > 0 && var4 > 3 && LevelValue >= 42
+  IfLabel
   label _done
   Seek _done
   // techskill
@@ -292,7 +299,9 @@ if CurrAction >= 17 && CurrAction <= 23
   var4 += 1
 endif
 
-if FramesHitstun > 0 || GettingThrown || {CurrAction >= 78 && CurrAction <= 100}
+if FramesHitstun > 0 || GettingThrown 
+  Return
+elif CurrAction >= 78 && CurrAction <= 100
   Return
 endif
 CallI MainHub
@@ -351,9 +360,9 @@ Return
 label _checkMeteorCancel
   if KBAngle >= 230 && KBAngle <= 310 && var3 <= 0 && Equal IsOnStage 0
     var17 = (100 - LevelValue) / 100
-    var17 = 0.9 - var17
-    if Rnd < 0.9
-      if {CanJump && Rnd < 0.5} || {CanJump && YDistFrontEdge > 15}
+    var17 = 0.98 - var17
+    if Rnd < var17
+      if NumJumps > 0 && Rnd < 0.5 || YDistBackEdge > 10
         Button X
       else
         Stick 0 0.7
@@ -361,7 +370,7 @@ label _checkMeteorCancel
         Call RecoveryHub
       endif
     endif
-    var3 = 41
+    var3 = 21
   endif
   var3 -= 1
 Return

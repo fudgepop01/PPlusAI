@@ -63,7 +63,7 @@
 
 #snippet JUMP_TO_STAGE_OLD
   ClearStick
-  if Equal isBelowStage 1 || {nearCliffX > 6 || nearCliffX < -6}
+  if Equal isBelowStage 1 || nearCliffX > 6 || nearCliffX < -6
     globTempVar = nearCliffX * -1
     AbsStick globTempVar
   elif YDistBackEdge < cs_djumpHeight
@@ -74,7 +74,7 @@
 
 #snippet JUMP_TO_STAGE_NEW
   ClearStick
-  if Equal isBelowStage 1 || {cliffDistX > 6 || cliffDistX < -6}
+  if Equal isBelowStage 1 || cliffDistX > 6 || cliffDistX < -6
     AbsStick cliffDistX
   elif YDistBackEdge < cs_djumpHeight
     globTempVar = cliffDistX * 3
@@ -170,7 +170,10 @@
   highCliffY = nearCliffY
   // LOGVAL nearCliffY
 
-  if !(NoOneHanging) || {shouldGoHigh >= true && isBelowStage <= false}
+  if !(NoOneHanging)
+    JmpNextIfLabel
+  elif shouldGoHigh >= true && isBelowStage <= false
+    IfLabel
     highCliffY += shouldGoHigh
     // LOGSTR str("hcy")
     // LOGVAL highCliffY

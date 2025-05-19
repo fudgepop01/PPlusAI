@@ -1,0 +1,15 @@
+#include <Definition_AIMain.h>
+//TrueID=0x3060
+id 0x3060
+
+//Set Unknown
+unk 0x00000
+
+//Strings
+
+label
+if OutOfStage
+    Finish
+endif
+Call Reflect
+Return

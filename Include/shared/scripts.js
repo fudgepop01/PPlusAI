@@ -22,6 +22,7 @@ export const genActions = (name, actions) => {
 
 export const genPersonalityStrings = () => {
   clearOut();
+  
   const items = Object.entries($globals).filter(([k, v]) => {
     return k.startsWith("pt_");
   });

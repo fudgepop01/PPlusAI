@@ -58,18 +58,21 @@ if Equal OPrevAction 68 || Equal OPrevAction 69 || Equal OPrevAction 73
   endif
 endif
 // frame count after hitstun ends
-if {OCurrAction >= 65 && OCurrAction <= 100} || OFramesHitstun > 0
+if OCurrAction >= 65 && OCurrAction <= 100
+  JmpNextIfLabel
+elif OFramesHitstun > 0
+  IfLabel
   trackOAction 4 0
 else 
   getCurrentPredictValue var22 4
-  if var22 < 250
+  if var22 < 120
     incrementPrediction 4
   endif
 endif
-// O OOS Option
+// Track OAttack Params
 if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnimFrame 0 && Equal OActionTimer 0
   RetrieveFullATKD var23 var23 var23 var17 var22 var23 var23 OCurrSubaction 1
-  if var23 >= 0
+  if !(Equal var23 -1)
     Abs var17
     Abs var22
     if var17 < var22
@@ -91,7 +94,9 @@ if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal OAnimFr
     // anotherTempVar = globTempVar - immediateTempVar
     // trackOAction man_OAvgEndlag anotherTempVar
   endif
-elif Equal OAnimFrame 0 && OFramesSinceShield < 20
+endif
+// O OOS Option
+if Equal OAnimFrame 0 && OFramesSinceShield < 20
   if Equal OCurrAction 33
     trackOAction 14 1
   elif OAttacking && !(Equal OCurrAction 52)
@@ -127,7 +132,9 @@ if Equal OAnimFrame 10
   endif
 endif
 // O Bait/Defend Option
-if {var21 >= 7 && var21 < 11} || Equal var21 13 || Rnd < 0.2
+if var21 >= 7 && var21 < 11 
+  Goto baitDefendOption
+elif Equal var21 13 || Rnd < 0.2
   Goto baitDefendOption
 endif
 if !(True)
@@ -174,9 +181,17 @@ endif
 //--- special state switches
 if Equal CurrAction 124 || Equal CurrAction 125
   Stick -1
-elif {NoJumpPrevFrame && CurrAction >= 179 && CurrAction <= 188} || Equal CurrAction 186 || {CurrAction >= 146 && CurrAction <= 148}
+elif NoJumpPrevFrame && CurrAction >= 179 && CurrAction <= 188 
+  JmpNextIfLabel
+elif Equal CurrAction 186
+  JmpNextIfLabel
+elif CurrAction >= 146 && CurrAction <= 148
+  IfLabel
   Button X
-elif {CurrAction >= 152 && CurrAction <= 154} || {CurrAction >= 169 && CurrAction <= 174}
+elif CurrAction >= 152 && CurrAction <= 154 
+  JmpNextIfLabel
+elif CurrAction >= 169 && CurrAction <= 174
+  IfLabel
   Button A
   var22 = Rnd * 2 - 1
   var23 = Rnd * 2 - 1
@@ -186,7 +201,14 @@ elif {CurrAction >= 152 && CurrAction <= 154} || {CurrAction >= 169 && CurrActio
   endif
 elif Equal CurrAction 57 && !(CalledFrom ExecuteAttack)
   CallI ExecuteAttack
-elif {CurrAction >= 61 && CurrAction <= 63} || {CurrAction >= 90 && CurrAction <= 95} || {CurrAction >= 199 && CurrAction <= 218} || Equal CurrAction 236
+elif CurrAction >= 61 && CurrAction <= 63
+  JmpNextIfLabel
+elif CurrAction >= 90 && CurrAction <= 95
+  JmpNextIfLabel
+elif CurrAction >= 199 && CurrAction <= 218
+  JmpNextIfLabel
+elif Equal CurrAction 236
+  IfLabel
   MOD var22 GameTimer 5
   if var22 >= 3
     var22 = Rnd * 2 - 1
@@ -196,18 +218,25 @@ elif {CurrAction >= 61 && CurrAction <= 63} || {CurrAction >= 90 && CurrAction <
 elif !(CalledFrom LedgeDash) && !(CalledFrom LedgeStall) && !(CalledFrom OnLedge) && CurrAction >= 115 && CurrAction <= 117
   CallI OnLedge
 elif !(CalledFrom LyingDown)
-  if {CurrAction >= 74 && CurrAction <= 84} || {CurrAction >= 138 && CurrAction <= 141}
+  if CurrAction >= 74 && CurrAction <= 84
+    CallI LyingDown
+  elif CurrAction >= 138 && CurrAction <= 141
     CallI LyingDown
   endif
 endif
 
 //--- switch tactic if conditions are met
 if !(CalledFrom AttackedHub)
-  if {CurrAction >= 66 && CurrAction <= 73} || GettingThrown
+  if GettingThrown
+    JmpNextIfLabel
+  elif CurrAction >= 66 && CurrAction <= 73
+    IfLabel
     if FramesHitlag > 0 || FramesHitstun > 0
       Goto OnGotHitAdjustments
       CallI AttackedHub
-    elif GettingThrown || Equal CurrAction 238 || {CurrAction >= 69 && CurrAction <= 73 && YDistFloor > 0 && YDistFloor < 10}
+    elif CurrAction >= 69 && CurrAction <= 73 && YDistFloor > 0 && YDistFloor < 10
+      CallI AttackedHub
+    elif GettingThrown || Equal CurrAction 238
       CallI AttackedHub
     endif
   endif

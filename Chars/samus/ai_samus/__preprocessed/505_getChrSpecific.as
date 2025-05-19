@@ -6,7 +6,7 @@ unk 0x0
 if Equal var22 19 || Equal var22 19.1
   // chr cs moveData
 if Equal var22 19.1
-  if var20 >= 0 && var20 < 28
+  if var20 >= 0 && var20 < 29
     GotoByValue var20
     Return
     if !(True)
@@ -61,6 +61,9 @@ if Equal var22 19.1
       label _sspecialStr
       LOGSTR 1936945152 1701013760 1634467840 0 0
       Return
+      label _sspecialairStr
+      LOGSTR 1936945152 1701013760 1634492672 1769078784 0
+      Return
       label _grabStr
       LOGSTR 1735549184 1644167168 0 0 0
       Return
@@ -101,8 +104,8 @@ if Equal var22 19.1
   endif
 Return
 endif
-if var20 >= 0 && var20 < 28
-  var22 = var20 + 28
+if var20 >= 0 && var20 < 29
+  var22 = var20 + 29
   GotoByValue var22
   Goto __ANGLE_FIX__
   Return
@@ -197,57 +200,62 @@ label sspecial
   SetVarAttackData 8.554 -1.929 76.3 35.5 22 27 49 -15 0 40 110
   var22 = 80
   Return
-// grab; 17
+// sspecialair; 17
+label sspecialair
+  SetVarAttackData 8.554 -1.929 76.3 10.5 22 27 25 -15 0 40 110
+  var22 = 80
+  Return
+// grab; 18
 label grab
   SetVarAttackData 2 -3.04 16 4 14 9 74 0 0 0 0
   var22 = 0
   Return
-// fthrow; 18
+// fthrow; 19
 label fthrow
   SetVarAttackData 2 -3.04 16 4 14 14 43 9 0 60 55
   var22 = 42
   Return
-// dthrow; 19
+// dthrow; 20
 label dthrow
   SetVarAttackData 2 -3.04 16 4 14 20 43 6 0 80 25
   var22 = 80
   Return
-// bthrow; 20
+// bthrow; 21
 label bthrow
   SetVarAttackData 2 -3.04 16 4 14 11 43 8 0 60 55
   var22 = 140
   Return
-// uthrow; 21
+// uthrow; 22
 label uthrow
   SetVarAttackData 2 -3.04 16 4 14 30 43 3 0 80 80
   var22 = 90
   Return
-// nair; 22
+// nair; 23
 label nair
   SetVarAttackData -3.79 1.5 7.82 6.7 5 3 39 14 0 10 100
   var22 = 361
   Return
-// nair_weak; 23
+// nair_weak; 24
 label nair_weak
   SetVarAttackData -3.83 1.5 7.86 6.7 5 24 39 10 0 10 100
   var22 = 361
   Return
-// fair; 24
+// fair; 25
 label fair
   SetVarAttackData -2.83 5.81 9.95 13.1 5 24 49 5 0 20 100
   var22 = 361
   Return
-// bair; 25
+// bair; 26
 label bair
   SetVarAttackData -16.22 -1.35 7.61 5.75 9 3 36 14 0 42 100
   var22 = 361
   Return
-// uair; 26
+// uair; 27
 label uair
   SetVarAttackData -5.7 -1.88 7.54 9.45 5 16 38 4 0 40 120
   var22 = 361
   Return
-// dair; 27
+// dair; 28
 label dair
   SetVarAttackData -11.91 8.84 12.29 7.97 13 4 42 16 0 30 100
   var22 = 270
@@ -304,7 +312,7 @@ elif Equal var22 18
 elif Equal var22 100
   // chr chk_isAerialAttack
   var22 = 0
-if  Equal var20 12 || var20 >= 22 && var20 <= 27
+if  Equal var20 12 || Equal var20 17 || var20 >= 23 && var20 <= 28
     var22 = 1
   endif
 elif Equal var22 200
@@ -312,9 +320,9 @@ elif Equal var22 200
   Goto saveTempRegs
   if XDistLE 60 || OFramesHitstun > 0
     getCurrentPredictValue var17 4
-    var23 = PT_AGGRESSION * 5 + 10
-    // LOGSTR_NL str("posthitstun")
-    // LOGVAL_NL globTempVar
+    var23 = PT_AGGRESSION * 5 + 6
+    LOGSTR 1886352128 1952999680 1953723392 1970143232 0
+    LOGVAL var17
     if var17 > 200
       var22 = 0
       Goto restoreTempRegs
@@ -325,7 +333,9 @@ elif Equal var22 200
       Goto restoreTempRegs
       Return
     endif
-    if {OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)} || {Equal OCurrAction 73 && OYDistFloor > 15} || {Equal HitboxConnected 1 || Equal PrevAction 60}
+    if OCurrAction >= 66 && OCurrAction <= 89 && !(Equal OCurrAction 73)
+    elif Equal OCurrAction 73 && OYDistFloor > 15 
+    elif Equal PrevAction 60
     else
       // LOGSTR_NL str("NOT COMBOING")
       var22 = 0
@@ -355,16 +365,16 @@ elif Equal var22 300
   var22 = 1
 elif Equal var22 0.001
   // chr get_moveDir
-if Equal var20 25
+if Equal var20 26
   var22 = -1
-elif Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 6 || Equal var20 7 || Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24
+elif Equal var20 0 || Equal var20 1 || Equal var20 2 || Equal var20 3 || Equal var20 4 || Equal var20 5 || Equal var20 6 || Equal var20 7 || Equal var20 10 || Equal var20 11 || Equal var20 12 || Equal var20 16 || Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22 || Equal var20 23 || Equal var20 24 || Equal var20 25
   var22 = 1
 else
   var22 = 0
 endif
 elif Equal var22 0.002
   // chr get_moveDirY
-if Equal var20 15 || Equal var20 27
+if Equal var20 15 || Equal var20 28
   var22 = -1
 elif !(True)
   var22 = 1
@@ -520,7 +530,9 @@ var17 = var22
           LOGVAL var17
           LOGVAL var23
           PRINTLN
-          if {var17 > 10 && var23 >= 10} || {Equal OCurrAction 77 && OAnimFrame > 25} || Equal var21 16.5 || Equal var21 10.2
+          if var17 > 10 && var23 >= 10
+          elif Equal OCurrAction 77 && OAnimFrame > 25
+          elif Equal var21 16.5 || Equal var21 10.2
           elif !(Equal var21 13) && OFramesHitstun <= 0 && !(CalledFrom Shield) && !(Equal var21 10.2)
             // LOGSTR_NL str("defending")
             if OCurrAction >= 3 && OCurrAction <= 15 && OAnimFrame > 5

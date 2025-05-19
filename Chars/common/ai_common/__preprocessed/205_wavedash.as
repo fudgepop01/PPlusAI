@@ -85,7 +85,7 @@ var17 = var22
 Return
 label edgeCheck
 var23 = 0
-var22 = 8 * YDistFloor + 10
+var22 = 8 * YDistFloor + 18
 if DistBackEdge > var22
   var23 = -1
 elif DistFrontEdge > var22

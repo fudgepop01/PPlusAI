@@ -70,9 +70,14 @@ if globTempVar > 0 && currGoal < cg_bait_dashdance
   immediateTempVar = TopNY + 3 - immediateTempVar
   globTempVar = TopNY + 100 - globTempVar
   if currGoal >= cg_attack && currGoal <= calc(cg_attack + 1) && OFramesHitstun <= 0
-  elif immediateTempVar < globTempVar && !(CalledFrom BoardPlatform) && {CHANCE_MUL_LE PT_PLATCHANCE 1 || {globTempVar < simGoalY && CHANCE_MUL_LE PT_PLATCHANCE 1}}
-    Seek platSkill
-    Jump
+  elif immediateTempVar < globTempVar && !(CalledFrom BoardPlatform)
+    if CHANCE_MUL_LE PT_PLATCHANCE 1 
+      JmpNextIfLabel
+    elif globTempVar < simGoalY && CHANCE_MUL_LE PT_PLATCHANCE 1
+      IfLabel
+      Seek platSkill
+      Jump
+    endif
   endif
 endif
 GetAttribute immediateTempVar attr_jumpSquatFrames 0
@@ -111,12 +116,14 @@ Abs immediateTempVar
 anotherTempVar = xRange * 3
 // LOGVAL_NL anotherTempVar
 if TopNY < simGoalY
-  if anotherTempVar <= immediateTempVar || Equal CurrSubaction JumpSquat
+  if immediateTempVar <= anotherTempVar || Equal CurrSubaction JumpSquat
     #let totalJumpHeight = var1
     #let djumpHeight = var2
     GET_CHAR_TRAIT(djumpHeight, chr_cs_djumpHeight)
     immediateTempVar = simGoalY - TopNY
     totalJumpHeight = djumpHeight * NumJumps * 1.2
+    anotherTempVar = TopNY + totalJumpHeight
+    DrawDebugLine TopNX TopNY TopNX anotherTempVar color(0xFFFF0088)
     if immediateTempVar < totalJumpHeight
       if Equal AirGroundState 1 
         #let shortHopHeight = var1
@@ -131,12 +138,16 @@ if TopNY < simGoalY
         endif
       elif AnimFrame > 3
         anotherTempVar = TopNY + djumpHeight - 5
-        if YSpeed > 0
-          immediateTempVar = YSpeed / Gravity
-          EstYCoord anotherTempVar immediateTempVar
-        endif
+
+        // if TotalYSpeed > 0
+        //   immediateTempVar = TotalYSpeed / Gravity
+        //   EstYCoord anotherTempVar immediateTempVar
+        // endif
+
         // anotherTempVar += HurtboxSize
-        // anotherTempVar -= yRange           
+        // anotherTempVar -= yRange
+        // DrawDebugCircle goalX anotherTempVar 3 
+
         if anotherTempVar < simGoalY
           #let isAerialAttack = var0
           Goto isAirAttack
@@ -186,7 +197,10 @@ else
   endif
 endif
 if currGoal < cg_edgeguard
-  if {Equal AirGroundState 2 && !(OutOfStage)} || Equal CurrAction hex(0xA)
+  if Equal AirGroundState 2 && !(OutOfStage)
+    JmpNextIfLabel
+  elif Equal CurrAction hex(0xA)
+    IfLabel
     #let isGoingOffstage = var1
     #let throwaway = var2
     GOING_OFFSTAGE(isGoingOffstage, throwaway, 15)
@@ -224,7 +238,9 @@ label stickMovement
   // LOGVAL_NL anotherTempVar
 
   if Equal AirGroundState 1 && !(Equal CurrAction hex(0xA)) && Equal isAerialAttack 0 && !(Equal currGoal cg_attack_wall)
-    if {anotherTempVar > 0 && anotherTempVar < xOffset && currGoal < cg_edgeguard} || {currGoal >= cg_edgeguard && DistToOEdge < 30}
+    if anotherTempVar > 0 && anotherTempVar < xOffset && currGoal < cg_edgeguard
+      stickMagnitude *= 0.72
+    elif currGoal >= cg_edgeguard && DistToOEdge < 30
       stickMagnitude *= 0.72
     // elif anotherTempVar < 0
     //   stickMagnitude = 1
@@ -303,7 +319,10 @@ label stickMovement
           // within 80 x units
           if globTempVar <= 80
             // within djump height
-            if {immediateTempVar < djumpHeight && immediateTempVar > 0} || globTempVar > 60
+            if immediateTempVar < djumpHeight && immediateTempVar > 0
+              JmpNextIfLabel
+            elif globTempVar > 60
+              IfLabel
               if Equal CurrSubaction JumpSquat
                 Goto jumpPreCheck
               else
@@ -477,7 +496,9 @@ if !(Equal AirGroundState 3)
           globTempVar = -0.3
         endif
         Stick globTempVar (-0.75)
-      elif {globTempVar < 0 && !(Equal CurrAction hex(0x0A))} && {CurrAction < hex(0x16) || CurrAction > hex(0x19)}
+      elif globTempVar < 0 && !(Equal CurrAction hex(0x0A))
+        Button X
+      elif CurrAction < hex(0x16) || CurrAction > hex(0x19)
         Button X
       endif
     else

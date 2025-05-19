@@ -163,85 +163,85 @@
 #const mv_jabReset = 1
 
 #const jab123_IASA = 14
-#const jab123_xOffset = 1
-#const jab123_yOffset = -9
-#const jab123_xRange = 8
-#const jab123_yRange = 2
-#const jab123_hitFrame = 3
-#const jab123_lastHitFrame = 5
+#const jab123_xOffset = 1.54
+#const jab123_yOffset = -5.71
+#const jab123_xRange = 9.03
+#const jab123_yRange = 5.16
+#const jab123_hitFrame = 6
+#const jab123_lastHitFrame = 12
 
 // ftilt
-#const ftilt_IASA = 30
-#const ftilt_xOffset = 1
-#const ftilt_yOffset = -9
-#const ftilt_xRange = 9
-#const ftilt_yRange = 3
+#const ftilt_IASA = 29
+#const ftilt_xOffset = 2.35
+#const ftilt_yOffset = -8.15
+#const ftilt_xRange = 9.53
+#const ftilt_yRange = 4.39
 #const ftilt_hitFrame = 9
 #const ftilt_lastHitFrame = 11
 
 // utilt
-#const utilt_IASA = 38
-#const utilt_xOffset = 1
-#const utilt_yOffset = 2
-#const utilt_xRange = 7
-#const utilt_yRange = 13
+#const utilt_IASA = 37
+#const utilt_xOffset = -0.24
+#const utilt_yOffset = 3.79
+#const utilt_xRange = 10.77
+#const utilt_yRange = 15.57
 #const utilt_hitFrame = 17
 #const utilt_lastHitFrame = 22
 
 // dtilt
-#const dtilt_IASA = 35
-#const dtilt_xOffset = 1
-#const dtilt_yOffset = 0
-#const dtilt_xRange = 10
-#const dtilt_yRange = 5
+#const dtilt_IASA = 34
+#const dtilt_xOffset = 0.59
+#const dtilt_yOffset = 1.61
+#const dtilt_xRange = 11.23
+#const dtilt_yRange = 5.23
 #const dtilt_hitFrame = 10
 #const dtilt_lastHitFrame = 15
 
 // fsmash
-#const fsmash_IASA = 49
-#const fsmash_xOffset = 3
-#const fsmash_yOffset = -7
-#const fsmash_xRange = 8
-#const fsmash_yRange = 3
+#const fsmash_IASA = 60
+#const fsmash_xOffset = 5.73
+#const fsmash_yOffset = -5.3
+#const fsmash_xRange = 10.91
+#const fsmash_yRange = 4.24
 #const fsmash_hitFrame = 19
 #const fsmash_lastHitFrame = 21
 
 // usmash
-#const usmash_IASA = 41
-#const usmash_xOffset = -1
-#const usmash_yOffset = -3
-#const usmash_xRange = 6
-#const usmash_yRange = 13
+#const usmash_IASA = 40
+#const usmash_xOffset = -2.55
+#const usmash_yOffset = -2.89
+#const usmash_xRange = 8.37
+#const usmash_yRange = 13.9
 #const usmash_hitFrame = 22
 #const usmash_lastHitFrame = 29
 
 // dsmash
-#const dsmash_IASA = 9999.9999
-#const dsmash_xOffset = 9999.9999
-#const dsmash_yOffset = 9999.9999
-#const dsmash_xRange = 9999.9999
-#const dsmash_yRange = 9999.9999
-#const dsmash_yRange = 9999.9999
-#const dsmash_hitFrame = 9999.9999
+#const dsmash_IASA = 44
+#const dsmash_xOffset = -7.005
+#const dsmash_yOffset = -6.99
+#const dsmash_xRange = 39.21
+#const dsmash_yRange = 4.79
+#const dsmash_hitFrame = 20
+#const dsmash_lastHitFrame = 32
 #const dsmash_lastHitFrame = 9999.9999
 
 // noochB
-#const nspecial_IASA = 9999.9999
-#const nspecial_xOffset = 9999.9999
-#const nspecial_yOffset = 9999.9999
-#const nspecial_xRange = 9999.9999
-#const nspecial_yRange = 9999.9999
-#const nspecial_hitFrame = 9999.9999
-#const nspecial_lastHitFrame = 9999.9999
+#const nspecial_IASA = 101
+#const nspecial_xOffset = 4.05
+#const nspecial_yOffset = -4.98
+#const nspecial_xRange = 11.32
+#const nspecial_yRange = 4.93
+#const nspecial_hitFrame = 53
+#const nspecial_lastHitFrame = 57
 
 // sideB
-#const sspecial_IASA = 9999.9999
-#const sspecial_xOffset = 9999.9999
-#const sspecial_yOffset = 9999.9999
-#const sspecial_xRange = 9999.9999
-#const sspecial_yRange = 9999.9999
-#const sspecial_hitFrame = 9999.9999
-#const sspecial_lastHitFrame = 9999.9999
+#const sspecial_IASA = 60
+#const sspecial_xOffset = -1.56
+#const sspecial_yOffset = -1.41
+#const sspecial_xRange = 11.08
+#const sspecial_yRange = 9.11
+#const sspecial_hitFrame = 4
+#const sspecial_lastHitFrame = 8
 
 // upB
 #const uspecial_IASA = 9999.9999
@@ -283,12 +283,12 @@
 #const mv_techChase = 1
 
 #const grab_IASA = 32
-#const grab_xOffset = 1
-#const grab_yOffset = -6
-#const grab_xRange = 3
-#const grab_yRange = 4
+#const grab_xOffset = -0.91
+#const grab_yOffset = -5.94
+#const grab_xRange = 5.82
+#const grab_yRange = 3.91
 #const grab_hitFrame = 7
-#const grab_lastHitFrame = 8
+#const grab_lastHitFrame = 7
 
 // NAir
 #const nair_IASA = 45

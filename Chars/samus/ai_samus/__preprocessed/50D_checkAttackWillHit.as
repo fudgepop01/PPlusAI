@@ -85,8 +85,26 @@ endif
 var17 = OAnimFrame + var7
 // __, __, roll, spotdodge, airdodge, roll from ledge, ledgeroll SLOW
 if var17 < 8
-elif {OCurrAction >= 78 && OCurrAction <= 82 && var17 < 26} || {OCurrAction >= 96 && OCurrAction <= 97 && var17 < 19} || {OCurrAction >= 31 && OCurrAction <= 32 && var17 < 19} || {{Equal OCurrAction 30 || Equal OCurrAction 142 || Equal OCurrAction 144 || Equal OCurrAction 145} && var17 < 15} || {Equal OCurrAction 33 && var17 < 29} || {{Equal OCurrSubaction 217 || Equal OCurrSubaction 48} && var17 < 33} || {{Equal OCurrSubaction 222 || Equal OCurrSubaction 221} && var17 < 61}
+elif OCurrAction >= 78 && OCurrAction <= 82 && var17 < 26 
   Return
+elif OCurrAction >= 96 && OCurrAction <= 97 && var17 < 19 
+  Return
+elif OCurrAction >= 31 && OCurrAction <= 32 && var17 < 19
+  Return
+elif Equal OCurrAction 30 || Equal OCurrAction 142 || Equal OCurrAction 144 || Equal OCurrAction 145
+  if var17 < 15 
+    Return
+  endif
+elif Equal OCurrAction 33 && var17 < 29
+  Return
+elif Equal OCurrSubaction 217 || Equal OCurrSubaction 48
+  if var17 < 33
+    Return
+  endif
+elif Equal OCurrSubaction 222 || Equal OCurrSubaction 221
+  if  var17 < 61
+    Return
+  endif
 endif
 
 // 3. setup ranges
@@ -207,10 +225,11 @@ endif
 // endif
 // move_centerX += immediateTempVar
 
-if  var20 >= 10 && var20 <= 16
+if  var20 >= 10 && var20 <= 17
   Abs var0
 elif Equal AirGroundState 1
-  if {var0 < 0 && OPos < 0} || {var0 > 0 && OPos > 0}
+  if var0 < 0 && OPos < 0
+  elif var0 > 0 && OPos > 0
   elif True
     var0 *= -1
   endif
@@ -287,7 +306,7 @@ endif
 // LOGVAL move_xRange
 // LOGVAL_NL move_xRange
 
-if Equal var20 17 || Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21
+if Equal var20 18 || Equal var20 19 || Equal var20 20 || Equal var20 21 || Equal var20 22
   if Equal OCurrAction 74 || Equal OCurrAction 77 || Equal OCurrAction 83 || Equal OCurrAction 84
     Return
   endif
@@ -347,10 +366,13 @@ STACK_PUSH var9 1
 STACK_PUSH var0 1
 
 var22 = 0
-if  Equal var20 12 || var20 >= 22 && var20 <= 27
+if  Equal var20 12 || Equal var20 17 || var20 >= 23 && var20 <= 28
   var22 = TotalYSpeed
   if OTopNY >= TopNY
-    if Equal AirGroundState 1 || {YDistFloor < 2 && YDistFloor > 0}
+    if YDistFloor < 2 && YDistFloor > 0
+      JmpNextIfLabel
+    elif Equal AirGroundState 1
+      IfLabel
       // LOGSTR_NL str("AAT AGS1")
       GetAttribute var22 84 0
       // globTempVar = TopNY + immediateTempVar //- move_centerY
@@ -447,20 +469,20 @@ var2 += var7
 
   var22 = LTF_STACK_READ * -1 // var0
   var17 = 0
-if  var20 >= 10 && var20 <= 16
+if  var20 >= 10 && var20 <= 17
     var17 = 1
     var22 *= OPos
   endif
-if  Equal var20 12 || var20 >= 22 && var20 <= 27
+if  Equal var20 12 || Equal var20 17 || var20 >= 23 && var20 <= 28
     if Equal var17 0
       var22 *= Direction
     endif
   endif
   var23 = TopNX
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
   elif True
   // immediateTempVar = move_centerX
-if  Equal var20 12 || var20 >= 22 && var20 <= 27
+if  Equal var20 12 || Equal var20 17 || var20 >= 23 && var20 <= 28
     var23 = TotalXSpeed * var2
     if Equal AirGroundState 1
       var23 = GetJumpLength * var2
@@ -479,9 +501,9 @@ if  Equal var20 12 || var20 >= 22 && var20 <= 27
 
   var23 = TopNY
   var22 = LTF_STACK_READ // estYVelocity
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
   elif True
-if  Equal var20 12 || var20 >= 22 && var20 <= 27
+if  Equal var20 12 || Equal var20 17 || var20 >= 23 && var20 <= 28
     // LOGSTR str("yvel; ychange")
     // LOGVAL immediateTempVar
     CalcYChange var23 var2 var22 Gravity MaxFallSpeed FastFallSpeed 0
@@ -525,13 +547,13 @@ if  Equal var20 12 || var20 >= 22 && var20 <= 27
 //   endif
 // endif
 // 2. where will defender be at end of frame
-  if var16 < 0
+  if True
 
-    if OCurrAction > 32 && OAnimFrame > 3
-      EstOXCoord var23 var2
-    else
+    // if OCurrAction > hex(0x20) && OAnimFrame > 3
+    //   EstOXCoord estOXPos estFrame
+    // else
       var23 = OCenterX + OTotalXSpeed * var2
-    endif
+    // endif
 
     // if OYDistBackEdge > 20
     //   estOXPos = OTopNX
@@ -542,14 +564,14 @@ if  Equal var20 12 || var20 >= 22 && var20 <= 27
 
     if Equal OAirGroundState 2
       var23 = var2
-      if OAnimFrame <= 3 && !(Equal OYSpeed 0)
+      if Equal OTotalYSpeed OCharYSpeed
         CalcYChange var23 var23 OCharYSpeed OGravity OMaxFallSpeed OFastFallSpeed 0
         var23 += OCenterY
         // immediateTempVar = OHurtboxSize
         // estOYPos += immediateTempVar
       else
         EstOYCoord var23 var23
-        var22 = OHurtboxSize
+        var22 = OHurtboxSize * 0.5
         var23 += var22
       endif
     else
@@ -568,45 +590,24 @@ if  Equal var20 12 || var20 >= 22 && var20 <= 27
     // estOYPos += trueOHBSize
     // estOYPos += OHurtboxSize
     STACK_PUSH var23 0
-  elif True
 
+  // elif True
+  //   $tempVar(estOXPos, immediateTempVar)
+  //   $tempVar(estOYPos, anotherTempVar)
+  //   immediateTempVar = OCenterX
+  //   anotherTempVar = OCenterY
+  //   globTempVar = estFrame
+  //   O_RECOVERY_POSITION(immediateTempVar, anotherTempVar, globTempVar)
 
-    var22 = OCenterX
-    var23 = OCenterY
-    var17 = var2
-  STACK_PUSH var0 0
-  STACK_PUSH var1 0
-  STACK_PUSH var2 0
-  STACK_PUSH var3 0
-  STACK_PUSH var4 0
-  STACK_PUSH var5 0
-  STACK_PUSH var6 0
-STACK_PUSH 23 0
-STACK_PUSH 22 0
-  STACK_PUSH var17 0
-  var22 = 22
-  OXGoto GetChrSpecific
-  if Equal var22 -123456789
-    STACK_TOSS 3
-    EstOXCoord var22 var17
-    EstOYCoord var23 var17
-  endif
-  var6 = STACK_POP
-  var5 = STACK_POP
-  var4 = STACK_POP
-  var3 = STACK_POP
-  var2 = STACK_POP
-  var1 = STACK_POP
-  var0 = STACK_POP
-
-    if OYDistBackEdge > 20
-      var22 = OTopNX
-    endif
+  //   if OYDistBackEdge > 20
+  //     estOXPos = OTopNX
+  //   endif
     
-    STACK_PUSH var22 0
-    Goto adjustPosIfInGround
-    // estOYPos += OHurtboxSize
-    STACK_PUSH var23 0
+  //   STACK_PUSH estOXPos 0
+  //   Goto adjustPosIfInGround
+  //   // estOYPos += OHurtboxSize
+  //   STACK_PUSH estOYPos 0
+  
   endif
 
   // NOTE visualization OTHER
@@ -669,9 +670,10 @@ STACK_PUSH 22 0
 
   // tempXRange *= 0.5
   // tempYRange *= 0.5
-  var23 = OWidth * 0.5
+  var17 = 2 - 0.3 * var2
+  var23 = OWidth * 0.5 - var17
   var4 += var23
-  var23 = OHurtboxSize * 0.5
+  var23 = OHurtboxSize * 0.5 - var17
   var5 += var23
 
   var17 = var10 + OTotalXSpeed * 12 // wavedash lag
@@ -738,7 +740,7 @@ var3 = var22
       // LOGSTR str("y diff")
       // LOGVAL yDiff
       if !(Equal OYSpeed 0) || !(Equal OAirGroundState 2)
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
   elif True
   if var21 < 16.7
     var23 = LevelValue + 2
@@ -775,7 +777,7 @@ if Equal var20 12 || Equal var20 15
         if var11 <= var5
           var16 = 1
           var10 = YDistFloor + 1
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
           elif True  
   var17 = var7 + var15 - var8
   if Equal CurrSubaction JumpSquat || Equal AirGroundState 1 || Equal CurrAction 11 && Equal AnimFrame 0
@@ -811,7 +813,7 @@ if Equal var20 12 || Equal var20 15
         GetAttribute var23 84 0
       endif
       var10 = YDistFloor + 1
-if Equal var20 12 || Equal var20 15
+if Equal var20 12 || Equal var20 15 || Equal var20 17
       elif True
         CalcYChange var10 var2 var23 Gravity MaxFallSpeed FastFallSpeed 0
       endif
@@ -1020,7 +1022,11 @@ label checkCanEdgeguard
   GetYDistFloorOffset var22 var22 5 0
   var23 = var14 + 10
   GetYDistFloorAbsPos var23 var13 var23
-  if Equal var22 -1 || Equal var23 -1 || Equal YDistFloor -1 || {var21 >= 16.7 && Equal OYDistFloor -1}
+  if Equal var22 -1 || Equal var23 -1 || Equal YDistFloor -1 
+    JmpNextIfLabel
+  elif var21 >= 16.7 && Equal OYDistFloor -1
+    IfLabel
+
   var22 = 18
   XGoto GetChrSpecific
   //= XReciever
@@ -1055,7 +1061,7 @@ label checkIfAirViable
   XGoto GetChrSpecific
   //= XReciever
     var22 *= Direction * OPos
-if  var20 >= 10 && var20 <= 16
+if  var20 >= 10 && var20 <= 17
       if NoJumpPrevFrame
         Button X
       endif

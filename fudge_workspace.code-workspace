@@ -1,9 +1,6 @@
 {
 	"folders": [
 		{
-			"path": "../../../../Documents/Kaitai-Struct-Compiler"
-		},
-		{
 			"path": "../../../../Documents/Syriinge"
 		},
 		{
@@ -13,14 +10,6 @@
 		{
 			"name": "PPlusCpp",
 			"path": "../../../../Documents/PPlusCpp"
-		},
-		{
-			"name": "RAIExt",
-			"path": "../../../../Documents/RAIExt"
-		},
-		{
-			"name": "Source",
-			"path": "../Wombuild-content/exported/Source"
 		},
 		{
 			"name": "aiscriptpad-editor",
@@ -35,40 +24,16 @@
 			"path": "../../../../Documents/PPlusSpark"
 		},
 		{
-			"name": "PPlusPSA",
-			"path": "../../../../Documents/PPlusPSA"
-		},
-		{
-			"name": "Kaitai-Struct",
-			"path": "../../../../Documents/Kaitai-Struct"
-		},
-		{
-			"name": "fudgedit",
-			"path": "../../../../Documents/fudgedit"
-		},
-		{
 			"path": "../../../../Documents/Rukai/RukaiData"
-		},
-		{
-			"path": "../../../../Documents/Rukai/brawllib_rs"
 		},
 		{
 			"path": "../Wombuild-content/reltools-v1.3.0-beta"
 		},
 		{
-			"path": "../../../../Documents/AIScriptCLA"
-		},
-		{
 			"path": "../../../Documents/RevE-Brawl-FighterPac"
 		},
 		{
-			"path": "../../../../Documents/OpenSA3"
-		},
-		{
 			"path": "../../../Documents/RoAutocomplete/rivals-of-aether-gml-support"
-		},
-		{
-			"path": "../../../../AppData/Local/RivalsofAether/workshop/Goku"
 		},
 		{
 			"path": "../../../../Documents/Project-ACMD"
@@ -78,6 +43,21 @@
 		},
 		{
 			"path": "../../../../Documents/BrawlREGithub"
+		},
+		{
+			"path": "../../../../Documents/_$JOBHUNT/penis.gg"
+		},
+		{
+			"path": "../../../../Documents/BrawlModules"
+		},
+		{
+			"path": "../../../../Documents/_$JOBHUNT/R2PoC"
+		},
+		{
+			"path": "../../../../Documents/KH2-AI"
+		},
+		{
+			"path": "../../../../GameMakerProjects/Platform Fighter Engine 1/scripts"
 		}
 	],
 	"settings": {
@@ -122,7 +102,11 @@
 			"memory": "cpp",
 			"sstream": "cpp",
 			"streambuf": "cpp",
-			"xiosbase": "cpp"
+			"xiosbase": "cpp",
+			"exception": "cpp",
+			"iterator": "cpp",
+			"xlocinfo": "cpp",
+			"xmemory": "cpp"
 		},
 		"liveServer.settings.multiRootWorkspaceName": null,
 		"lldb.displayFormat": "auto",

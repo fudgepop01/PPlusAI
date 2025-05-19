@@ -93,7 +93,11 @@ if var21 >= 7 && var21 < 8
   if LevelValue <= 42
     Call MainHub
   endif
+  ADJUST_PERSONALITY 5 -0.002 1
   Goto shuffleBaitCamp
+  if Equal var21 10
+    Return
+  endif
 
   SetDebugOverlayColor 0 0 255 136
   EnableDebugOverlay
@@ -109,7 +113,7 @@ var17 = var22
   MOD var22 GameTimer var22
   if var22 <= 1
     var17 = OTopNY - TopNY
-    if {var17 > 45 || OYDistBackEdge < -20} && Equal AirGroundState 1
+    if var17 > 45 || OYDistBackEdge < -20 && Equal AirGroundState 1
       GetCommitPredictChance var22
       if CHANCE_MUL_LE PT_AGGRESSION 0.2 && XDistLE 40 && var22 < 0.125
         var21 = 16
@@ -201,6 +205,7 @@ var17 = var22
     endif
   endif
 elif var21 >= 10 && var21 < 11
+  ADJUST_PERSONALITY 3 -0.001 1
   if LevelValue <= 21
     var21 = 16
     Return
@@ -272,7 +277,7 @@ var17 = var22
     Goto OPosGoal
 
     var17 = OTopNY - TopNY
-    if {var17 > 45 || OYDistBackEdge < -20} && Equal AirGroundState 1 && CHANCE_MUL_LE PT_AGGRESSION 1.25
+    if var17 > 45 || OYDistBackEdge < -20 && Equal AirGroundState 1 && CHANCE_MUL_LE PT_AGGRESSION 1.25
       var21 = 16
       Return
     endif
@@ -435,7 +440,8 @@ var17 = var22
     if CHANCE_MUL_LE PT_BAIT_DASHAWAYCHANCE 0.25
       var15 = -10
     endif
-    if CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.45 && LevelValue >= 60
+    if XDistBackEdge > -15 || XDistFrontEdge < 15
+    elif CHANCE_MUL_LE PT_BAIT_WDASHAWAYCHANCE 0.2 && LevelValue >= 60
       var16 = 2
       Call Wavedash
     endif
@@ -487,7 +493,10 @@ var17 = var22
     if Equal var21 10.2 && Equal AirGroundState 1
       label startup
       Stick 1
-      if {Equal CurrAction 3 && AnimFrame >= 5} || {CurrAction <= 5 && !(Equal CurrAction 0)}
+      if {Equal CurrAction 3 && AnimFrame >= 5}
+        JmpNextIfLabel
+      elif {CurrAction <= 5 && !(Equal CurrAction 0)}
+        IfLabel
         Seek slide
         Jump
       endif
@@ -651,7 +660,10 @@ elif var21 >= 16 && var21 < 17
   var22 = 200
   XGoto GetChrSpecific
   //= XReciever
-  if var21 < 16.4 || {Equal OIsOnStage 1 && var21 >= 16.7}
+  if var21 < 16.4
+    JmpNextIfLabel
+  elif Equal OIsOnStage 1 && var21 >= 16.7
+    IfLabel
     if var22 > 0
       var21 = 16.4
     endif
@@ -695,11 +707,9 @@ elif var21 >= 16 && var21 < 17
   else
     SetDebugOverlayColor 0 255 255 136
 
-    if {CHANCE_MUL_LE PT_BAITCHANCE 0.15 || CHANCE_MUL_LE PT_AGGRESSION 0.1}
-      if {Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0 && YDistFloor > 0 && DistToOEdge < 40 && OXDistBackEdge > 20}
-        var21 = 16.72
-        Return
-      endif
+    if {CHANCE_MUL_LE PT_BAITCHANCE 0.15 || CHANCE_MUL_LE PT_AGGRESSION 0.1} && Rnd < 0.02 && !(Equal OAirGroundState 3) && OYDistBackEdge > 0 && YDistFloor > 0 && DistToOEdge < 40 && OXDistBackEdge > 20}
+      var21 = 16.72
+      Return
     endif
     // if Equal OAirGroundState 1 
     //   currGoal = cg_attack_reversal
@@ -1037,16 +1047,24 @@ Norm var22 var22 var23
 Abs var22
 Return
 label shuffleBaitCamp
-  MOD var22 GameTimer 450
-  if var22 >= 449
-    Call MainHub
+  MOD var22 GameTimer 350
+  if var22 >= 335
+    ADJUST_PERSONALITY 5 -0.4 1
+    ADJUST_PERSONALITY 5 -0.02 ODamage
+    if Rnd < 0.25
+      Call MainHub
+    endif
+    var21 = 10
+    Return
   endif
 Return
 label changeGoal
   XGoto CalcAttackGoal
 Return
 label forceChangeGoal
-  if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.35 || {Equal var21 7 && Rnd < 0.75}
+  if CHANCE_MUL_LE PT_CIRCLECAMPCHANCE 0.35
+    XGoto CircleCampGoal
+  elif Equal var21 7 && Rnd < 0.75
     XGoto CircleCampGoal
   else
     XGoto RandomizeGoal

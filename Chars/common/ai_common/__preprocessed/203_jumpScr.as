@@ -73,7 +73,10 @@ if Equal var16 1
     Return
   endif
   AbsStick var0
-  if {var21 >= 16 && var21 < 17} || !(Equal var0 OPos) || YSpeed < 0
+  if var21 >= 16 && var21 < 17
+    JmpNextIfLabel
+  elif !(Equal var0 OPos) || YSpeed < 0
+    IfLabel
     if var21 < 16
       var16 = 2
       CallI AerialDrift

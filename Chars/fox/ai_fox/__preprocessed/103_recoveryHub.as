@@ -37,7 +37,10 @@ Abs var0
 
 var5 = 0
 var6 = 0
-if {!(NoOneHanging) && Rnd < 0.8} || Rnd < 0.25
+if !(NoOneHanging) && Rnd < 0.8
+  JmpNextIfLabel
+elif Rnd < 0.25
+  IfLabel
   var6 = HurtboxSize + 45 * Rnd
 endif
 label begin
@@ -68,7 +71,8 @@ if var17 < 10 && var17 > -10
   else
     var2 = -1
   endif
-elif {var1 < TopNX && var0 > TopNX } || {var0 < TopNX && var1 > TopNX }
+elif var1 < TopNX && var0 > TopNX 
+elif var0 < TopNX && var1 > TopNX
 elif TopNY < var2
   if var17 < 0
     var2 = 1
@@ -222,7 +226,10 @@ endif
   var1 -= var23
   var3 = var1
   // LOGVAL nearCliffY
-  if !(NoOneHanging) || {var6 >= 1 && var16 <= 0}
+  if !(NoOneHanging)
+    JmpNextIfLabel
+  elif var6 >= 1 && var16 <= 0
+    IfLabel
     var3 += var6
     // LOGSTR str("hcy")
     // LOGVAL highCliffY
@@ -416,7 +423,7 @@ Return
 
 label handleJumpToStage
   ClearStick
-  if Equal var16 1 || {var0 > 6 || var0 < -6}
+  if Equal var16 1 || var0 > 6 || var0 < -6
     AbsStick var0
   elif YDistBackEdge < 42.39
     var17 = var0 * 3

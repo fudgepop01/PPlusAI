@@ -69,7 +69,9 @@ else
     if !(Equal var21 10.2)
       GetCommitPredictChance var22
       PredictOMov var23 15
-      if {Rnd < 0.3 && var22 > 0.21} || var23 > 0.12
+      if Rnd < 0.3 && var22 > 0.21 
+        Goto rollOption
+      elif var23 > 0.12
         Goto rollOption
       endif
     endif
@@ -97,7 +99,7 @@ if OCurrAction >= 36 && OCurrAction <= 52 || OCurrAction >= 274 && Equal var1 -1
 endif
 
 MOD var17 GameTimer 3
-if {Equal var17 0 || var2 <= 0} && {Equal CurrAction 27 || Equal CurrAction 17 || Equal CurrAction 18}
+if Equal var17 0 || var2 <= 0 && Equal CurrAction 27 || Equal CurrAction 17 || Equal CurrAction 18
   GetShieldRemain var17
   var22 = var0 * 0.05
   GetCommitPredictChance var23
@@ -111,7 +113,10 @@ if {Equal var17 0 || var2 <= 0} && {Equal CurrAction 27 || Equal CurrAction 17 |
     Jump
   elif OAttacking && var1 < 1
     Return
-  elif Rnd <= var22 || {var2 <= 0 && !(XDistLE 10)}
+  elif Rnd <= var22
+    JmpNextIfLabel
+  elif var2 <= 0 && !(XDistLE 10)
+    IfLabel
     Seek pickOption
     Jump
   endif
@@ -122,7 +127,10 @@ var1 += 8
 predictAverage var22 10
 var22 += 10
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
-  if {var1 > 10 && Rnd < 0.85} || {Equal var3 1 && Rnd < 0.6}
+  if var1 > 10 && Rnd < 0.85
+    Seek exec_attack
+    Jump
+  elif Equal var3 1 && Rnd < 0.6
     Seek exec_attack
     Jump
   elif Rnd < 0.2 && XDistLE var22
@@ -150,9 +158,14 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal var3 1 || var1 > 10
     CallI MainHub
   endif
 
-  if {{var1 > 5 && Rnd < 0.75} || Equal var3 1} && {Equal OPos Direction && XDistLE 10}
-    Button A
-    Call ExecuteAttack
+  if Equal var3 1
+    JmpNextIfLabel
+  elif var1 > 5 && Rnd < 0.75
+    IfLabel 
+    if Equal OPos Direction && XDistLE 10
+      Button A
+      Call ExecuteAttack
+    endif
   endif
 endif
 

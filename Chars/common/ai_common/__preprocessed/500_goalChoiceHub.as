@@ -2,25 +2,27 @@
 id 0x8500
 unk 0x0
 
+// ENTIRELY OBSOLETED
+
 //= XReciever
-if var21 < 8
-  XGoto CircleCampGoal
-  //= XReciever
-elif var21 < 11
-  Return
-elif var21 >= 16 && var21 < 17
+// if currGoal < calc(cg_circleCamp + 1)
+//   XGoto CircleCampGoal
+//   //= XReciever
+// elif currGoal < calc(cg_bait + 1)
+//   Return
+// elif currGoal >= cg_attack && currGoal < calc(cg_attack + 1)
   
-  XGoto CalcAttackGoal
-  //= XReciever
-  XGoto SetAttackGoal
-  //= XReciever
-else
-  var21 = 0
-  XGoto RandomizeGoal
-  //= XReciever
-  if CHANCE_MUL_LE 1 0.8
-    var21 = 10
-  endif
-endif
+//   XGoto CalcAttackGoal
+//   //= XReciever
+//   XGoto SetAttackGoal
+//   //= XReciever
+// else
+//   currGoal = cg_nothing
+//   XGoto RandomizeGoal
+//   //= XReciever
+//   if CHANCE_MUL_LE pt_baitChance 0.8
+//     currGoal = cg_bait
+//   endif
+// endif
 Return
 Return

@@ -70,7 +70,9 @@ else
     if !(Equal currGoal cg_bait_shield)
       GetCommitPredictChance immediateTempVar
       PredictOMov anotherTempVar mov_grab
-      if {Rnd < 0.3 && immediateTempVar > 0.21} || anotherTempVar > 0.12
+      if Rnd < 0.3 && immediateTempVar > 0.21 
+        Goto rollOption
+      elif anotherTempVar > 0.12
         Goto rollOption
       endif
     endif
@@ -98,7 +100,7 @@ if OAttackCond && Equal OEndLag -1 && CurrAction <= hex(0x1E)
 endif
 
 MOD globTempVar GameTimer 3
-if {Equal globTempVar 0 || patience <= 0} && {Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x11) || Equal CurrAction hex(0x12)}
+if Equal globTempVar 0 || patience <= 0 && Equal CurrAction hex(0x1B) || Equal CurrAction hex(0x11) || Equal CurrAction hex(0x12)
   GetShieldRemain globTempVar
   immediateTempVar = OHasHitShield * 0.05
   GetCommitPredictChance anotherTempVar
@@ -112,7 +114,10 @@ if {Equal globTempVar 0 || patience <= 0} && {Equal CurrAction hex(0x1B) || Equa
     Jump
   elif OAttacking && OEndLag < 1
     Return
-  elif Rnd <= immediateTempVar || {patience <= 0 && !(XDistLE 10)}
+  elif Rnd <= immediateTempVar
+    JmpNextIfLabel
+  elif patience <= 0 && !(XDistLE 10)
+    IfLabel
     Seek pickOption
     Jump
   endif
@@ -123,7 +128,10 @@ OEndLag += 8
 predictAverage immediateTempVar man_OXHitDist
 immediateTempVar += 10
 if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
-  if {OEndLag > 10 && Rnd < 0.85} || {Equal willStrike true && Rnd < 0.6}
+  if OEndLag > 10 && Rnd < 0.85
+    Seek exec_attack
+    Jump
+  elif Equal willStrike true && Rnd < 0.6
     Seek exec_attack
     Jump
   elif Rnd < 0.2 && XDistLE immediateTempVar
@@ -151,9 +159,14 @@ if CHANCE_MUL_LE PT_AGGRESSION 0.35 || Equal willStrike true || OEndLag > 10
     CallI MainHub
   endif
 
-  if {{OEndLag > 5 && Rnd < 0.75} || Equal willStrike true} && {Equal OPos Direction && XDistLE 10}
-    Button A
-    Call ExecuteAttack
+  if Equal willStrike true
+    JmpNextIfLabel
+  elif OEndLag > 5 && Rnd < 0.75
+    IfLabel 
+    if Equal OPos Direction && XDistLE 10
+      Button A
+      Call ExecuteAttack
+    endif
   endif
 endif
 
